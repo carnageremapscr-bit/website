@@ -11016,112 +11016,104 @@ I would like to request a quote for tuning this vehicle.`,
     const ecus = getECUData(manufacturer, engineData.type, engine);
     
     resultsContainer.innerHTML = `
-      <div style="background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 0; overflow: hidden;">
+      <div style="background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 0; overflow: hidden; max-width: 100%; box-sizing: border-box;">
         <!-- Vehicle Header -->
-        <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 1.5rem; border-bottom: 1px solid #334155;">
-          <div style="display: flex; align-items: center; gap: 1rem;">
-            <div style="width: 48px; height: 48px; background: #dc2626; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; color: white;">
+        <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 1rem; border-bottom: 1px solid #334155;">
+          <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+            <div style="width: 40px; height: 40px; background: #dc2626; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: bold; color: white; flex-shrink: 0;">
               ${manufacturer.charAt(0).toUpperCase()}
             </div>
-            <div>
-              <h3 style="margin: 0; font-size: 1.25rem; color: white;">${manufacturer.charAt(0).toUpperCase() + manufacturer.slice(1)} ${model} ${engine}</h3>
-              <p style="margin: 0.25rem 0 0; color: #94a3b8; font-size: 0.875rem;">${year}</p>
+            <div style="min-width: 0; flex: 1;">
+              <h3 style="margin: 0; font-size: 1rem; color: white; word-wrap: break-word;">${manufacturer.charAt(0).toUpperCase() + manufacturer.slice(1)} ${model}</h3>
+              <p style="margin: 0.25rem 0 0; color: #94a3b8; font-size: 0.75rem;">${year} • ${engine}</p>
             </div>
           </div>
         </div>
         
         <!-- Engine Specs -->
-        <div style="padding: 1.5rem; background: #0f172a;">
-          <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+        <div style="padding: 1rem; background: #0f172a;">
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 1rem;">
             <div>
-              <div style="color: #64748b; font-size: 0.75rem; margin-bottom: 0.25rem;">Engine Capacity:</div>
-              <div style="color: white; font-weight: 600;">${engine.includes('1.0') ? '1.0L (998cc)' : engine.includes('1.2') ? '1.2L (1197cc)' : engine.includes('1.4') ? '1.4L (1390cc)' : engine.includes('1.5') ? '1.5L (1498cc)' : engine.includes('1.6') ? '1.6L (1598cc)' : engine.includes('1.8') ? '1.8L (1798cc)' : engine.includes('1.9') ? '1.9L (1896cc)' : engine.includes('2.0') ? '2.0L (1968cc)' : engine.includes('2.2') ? '2.2L (2198cc)' : engine.includes('2.5') ? '2.5L (2480cc)' : engine.includes('3.0') ? '3.0L (2993cc)' : 'Variable'}</div>
+              <div style="color: #64748b; font-size: 0.7rem; margin-bottom: 0.2rem;">Capacity:</div>
+              <div style="color: white; font-weight: 600; font-size: 0.85rem;">${engine.includes('1.0') ? '1.0L' : engine.includes('1.2') ? '1.2L' : engine.includes('1.4') ? '1.4L' : engine.includes('1.5') ? '1.5L' : engine.includes('1.6') ? '1.6L' : engine.includes('1.8') ? '1.8L' : engine.includes('1.9') ? '1.9L' : engine.includes('2.0') ? '2.0L' : engine.includes('2.2') ? '2.2L' : engine.includes('2.5') ? '2.5L' : engine.includes('3.0') ? '3.0L' : 'N/A'}</div>
             </div>
             <div>
-              <div style="color: #64748b; font-size: 0.75rem; margin-bottom: 0.25rem;">Cylinders:</div>
-              <div style="color: white; font-weight: 600;">${engine.includes('3.0') ? '6' : '4'}</div>
+              <div style="color: #64748b; font-size: 0.7rem; margin-bottom: 0.2rem;">Cylinders:</div>
+              <div style="color: white; font-weight: 600; font-size: 0.85rem;">${engine.includes('3.0') ? '6' : '4'}</div>
             </div>
             <div>
-              <div style="color: #64748b; font-size: 0.75rem; margin-bottom: 0.25rem;">Aspiration:</div>
-              <div style="color: white; font-weight: 600; background: #3b82f6; padding: 0.25rem 0.75rem; border-radius: 6px; display: inline-block; font-size: 0.875rem;">Turbocharged</div>
+              <div style="color: #64748b; font-size: 0.7rem; margin-bottom: 0.2rem;">Aspiration:</div>
+              <div style="color: white; font-weight: 600; background: #3b82f6; padding: 0.2rem 0.5rem; border-radius: 4px; display: inline-block; font-size: 0.75rem;">Turbo</div>
             </div>
             <div>
-              <div style="color: #64748b; font-size: 0.75rem; margin-bottom: 0.25rem;">Engine Bore:</div>
-              <div style="color: white; font-weight: 600;">${engine.includes('1.6') ? '79.5mm' : engine.includes('2.0') ? '82.5mm' : engine.includes('3.0') ? '84mm' : '81mm'}</div>
-            </div>
-            <div>
-              <div style="color: #64748b; font-size: 0.75rem; margin-bottom: 0.25rem;">Fuel:</div>
-              <div style="color: white; font-weight: 600; background: ${engineData.type === 'diesel' ? '#10b981' : '#ef4444'}; padding: 0.25rem 0.75rem; border-radius: 6px; display: inline-block; font-size: 0.875rem;">${engineData.type.charAt(0).toUpperCase() + engineData.type.slice(1)}</div>
+              <div style="color: #64748b; font-size: 0.7rem; margin-bottom: 0.2rem;">Fuel:</div>
+              <div style="color: white; font-weight: 600; background: ${engineData.type === 'diesel' ? '#10b981' : '#ef4444'}; padding: 0.2rem 0.5rem; border-radius: 4px; display: inline-block; font-size: 0.75rem;">${engineData.type.charAt(0).toUpperCase() + engineData.type.slice(1)}</div>
             </div>
           </div>
           
           <!-- Options Available -->
-          <div style="border-top: 1px solid #334155; padding-top: 1.5rem; margin-bottom: 1.5rem;">
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-              <span style="font-size: 1.25rem;">⚡</span>
-              <span style="color: white; font-weight: 600;">Tuning options available:</span>
+          <div style="border-top: 1px solid #334155; padding-top: 1rem; margin-bottom: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span style="font-size: 1rem;">⚡</span>
+              <span style="color: white; font-weight: 600; font-size: 0.85rem;">Tuning options:</span>
             </div>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <div style="background: transparent; border: 1px solid #22c55e; color: #22c55e; padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500;">✓ DTC Error Removal</div>
-              <div style="background: transparent; border: 1px solid #22c55e; color: #22c55e; padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500;">✓ EGR Removal</div>
-              <div style="background: transparent; border: 1px solid #22c55e; color: #22c55e; padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500;">✓ DPF Removal</div>
-              <div style="background: transparent; border: 1px solid #22c55e; color: #22c55e; padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500;">✓ AdBlue/SCR Off</div>
-              <div style="background: transparent; border: 1px solid #22c55e; color: #22c55e; padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500;">✓ Pops & Bangs</div>
-              <div style="background: transparent; border: 1px solid #22c55e; color: #22c55e; padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500;">✓ Launch Control</div>
-              <div style="background: transparent; border: 1px solid #22c55e; color: #22c55e; padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500;">✓ Speed Limiter Removal</div>
-              <div style="background: transparent; border: 1px solid #22c55e; color: #22c55e; padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500;">✓ Anti-Lag System</div>
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+              <div style="background: transparent; border: 1px solid #22c55e; color: #22c55e; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.65rem; font-weight: 500;">✓ DTC</div>
+              <div style="background: transparent; border: 1px solid #22c55e; color: #22c55e; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.65rem; font-weight: 500;">✓ EGR</div>
+              <div style="background: transparent; border: 1px solid #22c55e; color: #22c55e; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.65rem; font-weight: 500;">✓ DPF</div>
+              <div style="background: transparent; border: 1px solid #22c55e; color: #22c55e; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.65rem; font-weight: 500;">✓ AdBlue</div>
+              <div style="background: transparent; border: 1px solid #22c55e; color: #22c55e; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.65rem; font-weight: 500;">✓ Pops</div>
+              <div style="background: transparent; border: 1px solid #22c55e; color: #22c55e; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.65rem; font-weight: 500;">✓ Launch</div>
             </div>
           </div>
           
           <!-- Stage 1 Performance -->
-          <div style="border-top: 1px solid #334155; padding-top: 1.5rem;">
-            <div style="background: linear-gradient(135deg, #475569 0%, #64748b 100%); border-radius: 12px; padding: 1.5rem; color: white;">
-              <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; text-align: center; letter-spacing: 0.5px;">STAGE 1 PERFORMANCE GAINS</div>
+          <div style="border-top: 1px solid #334155; padding-top: 1rem;">
+            <div style="background: linear-gradient(135deg, #475569 0%, #64748b 100%); border-radius: 10px; padding: 1rem; color: white;">
+              <div style="font-size: 0.9rem; font-weight: 700; margin-bottom: 1rem; text-align: center; letter-spacing: 0.5px;">STAGE 1 GAINS</div>
               
               <!-- Power Comparison -->
-              <div style="margin-bottom: 2rem;">
-                <div style="font-size: 0.875rem; color: #cbd5e1; margin-bottom: 1rem; font-weight: 600; letter-spacing: 0.5px; text-align: center;">POWER (HP)</div>
-                <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: center;">
+              <div style="margin-bottom: 1rem;">
+                <div style="font-size: 0.75rem; color: #cbd5e1; margin-bottom: 0.5rem; font-weight: 600; letter-spacing: 0.5px; text-align: center;">POWER (HP)</div>
+                <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.5rem; align-items: center;">
                   <!-- Stock Power -->
-                  <div style="text-align: center; padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 8px;">
-                    <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase;">Stock</div>
-                    <div style="font-size: 2rem; font-weight: 700; color: #94a3b8;">${engineData.power}</div>
-                    <div style="font-size: 0.75rem; color: #94a3b8;">hp</div>
+                  <div style="text-align: center; padding: 0.5rem; background: rgba(0,0,0,0.2); border-radius: 6px;">
+                    <div style="font-size: 0.65rem; color: #94a3b8; margin-bottom: 0.25rem; font-weight: 600; text-transform: uppercase;">Stock</div>
+                    <div style="font-size: 1.25rem; font-weight: 700; color: #94a3b8;">${engineData.power}</div>
+                    <div style="font-size: 0.6rem; color: #94a3b8;">hp</div>
                   </div>
                   
                   <!-- Arrow -->
-                  <div style="color: #22c55e; font-size: 1.5rem; font-weight: 700;">→</div>
+                  <div style="color: #22c55e; font-size: 1rem; font-weight: 700;">→</div>
                   
                   <!-- Stage 1 Power -->
-                  <div style="text-align: center; padding: 1rem; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 8px;">
-                    <div style="font-size: 0.75rem; color: #22c55e; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase;">Stage 1</div>
-                    <div style="font-size: 2rem; font-weight: 700; color: #22c55e;">${stage1Power}</div>
-                    <div style="font-size: 0.75rem; color: #22c55e;">hp</div>
-                    <div style="font-size: 0.875rem; color: #22c55e; font-weight: 600; margin-top: 0.5rem;">(+${stage1PowerGain} hp)</div>
+                  <div style="text-align: center; padding: 0.5rem; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 6px;">
+                    <div style="font-size: 0.65rem; color: #22c55e; margin-bottom: 0.25rem; font-weight: 600; text-transform: uppercase;">Stage 1</div>
+                    <div style="font-size: 1.25rem; font-weight: 700; color: #22c55e;">${stage1Power}</div>
+                    <div style="font-size: 0.6rem; color: #22c55e;">hp (+${stage1PowerGain})</div>
                   </div>
                 </div>
               </div>
               
               <!-- Torque Comparison -->
               <div>
-                <div style="font-size: 0.875rem; color: #cbd5e1; margin-bottom: 1rem; font-weight: 600; letter-spacing: 0.5px; text-align: center;">TORQUE (NM)</div>
-                <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: center;">
+                <div style="font-size: 0.75rem; color: #cbd5e1; margin-bottom: 0.5rem; font-weight: 600; letter-spacing: 0.5px; text-align: center;">TORQUE (NM)</div>
+                <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.5rem; align-items: center;">
                   <!-- Stock Torque -->
-                  <div style="text-align: center; padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 8px;">
-                    <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase;">Stock</div>
-                    <div style="font-size: 2rem; font-weight: 700; color: #94a3b8;">${engineData.torque}</div>
-                    <div style="font-size: 0.75rem; color: #94a3b8;">nm</div>
+                  <div style="text-align: center; padding: 0.5rem; background: rgba(0,0,0,0.2); border-radius: 6px;">
+                    <div style="font-size: 0.65rem; color: #94a3b8; margin-bottom: 0.25rem; font-weight: 600; text-transform: uppercase;">Stock</div>
+                    <div style="font-size: 1.25rem; font-weight: 700; color: #94a3b8;">${engineData.torque}</div>
+                    <div style="font-size: 0.6rem; color: #94a3b8;">nm</div>
                   </div>
                   
                   <!-- Arrow -->
-                  <div style="color: #22c55e; font-size: 1.5rem; font-weight: 700;">→</div>
+                  <div style="color: #22c55e; font-size: 1rem; font-weight: 700;">→</div>
                   
                   <!-- Stage 1 Torque -->
-                  <div style="text-align: center; padding: 1rem; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 8px;">
-                    <div style="font-size: 0.75rem; color: #22c55e; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase;">Stage 1</div>
-                    <div style="font-size: 2rem; font-weight: 700; color: #22c55e;">${stage1Torque}</div>
-                    <div style="font-size: 0.75rem; color: #22c55e;">nm</div>
-                    <div style="font-size: 0.875rem; color: #22c55e; font-weight: 600; margin-top: 0.5rem;">(+${stage1TorqueGain} nm)</div>
+                  <div style="text-align: center; padding: 0.5rem; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 6px;">
+                    <div style="font-size: 0.65rem; color: #22c55e; margin-bottom: 0.25rem; font-weight: 600; text-transform: uppercase;">Stage 1</div>
+                    <div style="font-size: 1.25rem; font-weight: 700; color: #22c55e;">${stage1Torque}</div>
+                    <div style="font-size: 0.6rem; color: #22c55e;">nm (+${stage1TorqueGain})</div>
                   </div>
                 </div>
               </div>
@@ -11130,38 +11122,37 @@ I would like to request a quote for tuning this vehicle.`,
         </div>
         
         <!-- Quote Contact Options -->
-        <div style="padding: 2rem; background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);">
-          <h3 style="text-align: center; color: white; margin: 0 0 1.5rem 0; font-size: 1.25rem;">🎯 Get a Quote for This Vehicle</h3>
-          <p style="text-align: center; color: white; opacity: 0.9; margin: 0 0 1.5rem 0; font-size: 0.9rem;">
-            Custom options available • Professional installation support
+        <div style="padding: 1rem; background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);">
+          <h3 style="text-align: center; color: white; margin: 0 0 0.75rem 0; font-size: 1rem;">🎯 Get a Quote</h3>
+          <p style="text-align: center; color: white; opacity: 0.9; margin: 0 0 0.75rem 0; font-size: 0.75rem;">
+            Custom options • Professional support
           </p>
-          <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
+          <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;">
             <!-- WhatsApp Button -->
-            <button onclick="openQuoteWhatsApp('${manufacturer}', '${model}', '${engine}', '${year}')" class="quote-contact-btn" style="background: #25D366; color: white; font-weight: 600; font-size: 1rem; padding: 0.875rem 1.75rem; border-radius: 10px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.625rem; flex: 1; min-width: 200px; max-width: 300px; justify-content: center;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <button onclick="openQuoteWhatsApp('${manufacturer}', '${model}', '${engine}', '${year}')" class="quote-contact-btn" style="background: #25D366; color: white; font-weight: 600; font-size: 0.75rem; padding: 0.5rem 0.75rem; border-radius: 8px; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.4rem; flex: 1; min-width: 90px; max-width: 150px; justify-content: center;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
               </svg>
-              <span>WhatsApp Quote</span>
+              <span>WhatsApp</span>
             </button>
             
             <!-- Email Button -->
-            <button onclick="openQuoteEmail('${manufacturer}', '${model}', '${engine}', '${year}')" class="quote-contact-btn" style="background: #EA4335; color: white; font-weight: 600; font-size: 1rem; padding: 0.875rem 1.75rem; border-radius: 10px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.625rem; flex: 1; min-width: 200px; max-width: 300px; justify-content: center;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <button onclick="openQuoteEmail('${manufacturer}', '${model}', '${engine}', '${year}')" class="quote-contact-btn" style="background: #EA4335; color: white; font-weight: 600; font-size: 0.75rem; padding: 0.5rem 0.75rem; border-radius: 8px; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.4rem; flex: 1; min-width: 90px; max-width: 150px; justify-content: center;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                 <polyline points="22,6 12,13 2,6"></polyline>
               </svg>
-              <span>Email Quote</span>
+              <span>Email</span>
             </button>
             
             <!-- SMS Button -->
-            <button onclick="openQuoteSMS('${manufacturer}', '${model}', '${engine}', '${year}')" class="quote-contact-btn" style="background: #0088cc; color: white; font-weight: 600; font-size: 1rem; padding: 0.875rem 1.75rem; border-radius: 10px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.625rem; flex: 1; min-width: 200px; max-width: 300px; justify-content: center;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <button onclick="openQuoteSMS('${manufacturer}', '${model}', '${engine}', '${year}')" class="quote-contact-btn" style="background: #0088cc; color: white; font-weight: 600; font-size: 0.75rem; padding: 0.5rem 0.75rem; border-radius: 8px; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.4rem; flex: 1; min-width: 90px; max-width: 150px; justify-content: center;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
               </svg>
-              <span>SMS Quote</span>
+              <span>SMS</span>
             </button>
           </div>
-          <p style="margin: 1.5rem 0 0 0; color: white; font-size: 0.875rem; opacity: 0.9; text-align: center;">Choose your preferred contact method for a personalized quote</p>
         </div>
       </div>
     `;
