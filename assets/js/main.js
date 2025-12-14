@@ -10891,7 +10891,7 @@ I would like to request a quote for tuning this vehicle.`,
       }
     };
     
-    // Year ranges for public search
+    // Year ranges for public search (fallback only)
     const PUBLIC_YEAR_RANGES = ['2021-2024', '2017-2020', '2013-2016', '2009-2012', '2005-2008', '2000-2004'];
     
     // Manufacturer change handler - use main VEHICLE_DATABASE
@@ -10913,7 +10913,7 @@ I would like to request a quote for tuning this vehicle.`,
       }
     });
     
-    // Model change handler - use standard year ranges
+    // Model change handler - use VEHICLE_ENGINE_DATABASE for year ranges when available
     modelSelect.addEventListener('change', function() {
       const manufacturer = manufacturerSelect.value;
       const model = this.value;
@@ -10923,16 +10923,32 @@ I would like to request a quote for tuning this vehicle.`,
       engineSelect.innerHTML = '<option value="">Select Engine</option>';
       
       if (manufacturer && model) {
-        PUBLIC_YEAR_RANGES.forEach(year => {
-          const option = document.createElement('option');
-          option.value = year;
-          option.textContent = year;
-          yearSelect.appendChild(option);
-        });
+        // Try to find model in VEHICLE_ENGINE_DATABASE for accurate year ranges
+        const modelKey = model.toLowerCase().replace(/\s+/g, '-');
+        const actualModelKey = findModelInDatabase(manufacturer, modelKey);
+        
+        if (actualModelKey && VEHICLE_ENGINE_DATABASE[manufacturer] && VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey]) {
+          // Use year ranges from the detailed database
+          const yearRanges = Object.keys(VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey]);
+          yearRanges.forEach(year => {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            yearSelect.appendChild(option);
+          });
+        } else {
+          // Fall back to standard year ranges
+          PUBLIC_YEAR_RANGES.forEach(year => {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            yearSelect.appendChild(option);
+          });
+        }
       }
     });
     
-    // Year change handler - use MANUFACTURER_ENGINES
+    // Year change handler - use VEHICLE_ENGINE_DATABASE for specific engines when available
     yearSelect.addEventListener('change', function() {
       const manufacturer = manufacturerSelect.value;
       const model = modelSelect.value;
@@ -10942,7 +10958,20 @@ I would like to request a quote for tuning this vehicle.`,
       engineSelect.innerHTML = '<option value="">Select Engine</option>';
       
       if (manufacturer && model && year) {
-        const engines = MANUFACTURER_ENGINES[manufacturer] || GENERIC_ENGINES;
+        // Try to find model in VEHICLE_ENGINE_DATABASE for accurate engines
+        const modelKey = model.toLowerCase().replace(/\s+/g, '-');
+        const actualModelKey = findModelInDatabase(manufacturer, modelKey);
+        
+        let engines = null;
+        if (actualModelKey && VEHICLE_ENGINE_DATABASE[manufacturer] && VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey]) {
+          engines = VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey][year];
+        }
+        
+        // Fall back to MANUFACTURER_ENGINES if no specific engines found
+        if (!engines || engines.length === 0) {
+          engines = MANUFACTURER_ENGINES[manufacturer] || GENERIC_ENGINES;
+        }
+        
         engines.forEach(engine => {
           const option = document.createElement('option');
           option.value = engine;
