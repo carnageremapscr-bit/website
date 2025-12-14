@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carnage Remaps Vehicle Search</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: transparent;
+      min-height: 100vh;
+    }
+    .widget {
+      background: #1a1a1a;
+      border-radius: 12px;
+      padding: 2rem;
+      color: #fff;
+      max-width: 100%;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .logo {
+      max-width: 180px;
+      height: auto;
+      margin-bottom: 1rem;
+    }
+    .header h2 {
+      margin: 0 0 0.5rem;
+      font-size: 1.5rem;
+      color: #fff;
+    }
+    .header p {
+      color: #94a3b8;
+      margin: 0;
+      font-size: 0.9rem;
+    }
+    .form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    select {
+      padding: 0.75rem;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.08);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      width: 100%;
+      cursor: pointer;
+    }
+    select:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    option {
+      background: #1a1a1a;
+      color: #fff;
+    }
+    .buttons {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    button {
+      padding: 0.75rem 1.5rem;
+      background: #dc2626;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      flex: 1;
+      min-width: 120px;
+      font-size: 1rem;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .secondary {
+      background: rgba(255,255,255,0.1);
+    }
+    .info {
+      color: #94a3b8;
+      font-size: 0.8rem;
+      text-align: center;
+      margin-top: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="widget">
+    <div class="header">
+      <img src="/assets/media/logo.avif" alt="Carnage Remaps" class="logo" onerror="this.style.display='none'">
+      <h2>Vehicle Performance Search</h2>
+      <p>Find ECU tuning options for your vehicle</p>
+    </div>
+    
+    <div class="form">
+      <select id="mfr">
+        <option value="">Loading manufacturers...</option>
+      </select>
+      <select id="mdl" disabled>
+        <option value="">Select Model</option>
+      </select>
+      <select id="yr" disabled>
+        <option value="">Select Year</option>
+      </select>
+      <select id="eng" disabled>
+        <option value="">Select Engine</option>
+      </select>
+    </div>
+    
+    <div class="buttons">
+      <button type="button" id="searchBtn" disabled>🔍 Search Vehicle</button>
+      <button type="button" class="secondary" id="portalBtn">Open Full Portal →</button>
+    </div>
+    
+    <p class="info">Powered by Carnage Remaps - Professional ECU Tuning</p>
+  </div>
+
+  <script>
+    (function() {
+      var portalUrl = 'https://web-production-df12d.up.railway.app';
+      var D = { models: {}, engines: {}, genericEngines: [] };
+      
+      var mfr = document.getElementById('mfr');
+      var mdl = document.getElementById('mdl');
+      var yr = document.getElementById('yr');
+      var eng = document.getElementById('eng');
+      var searchBtn = document.getElementById('searchBtn');
+      var portalBtn = document.getElementById('portalBtn');
+
+      // Get URL parameters for customization
+      var params = new URLSearchParams(window.location.search);
+      var color = params.get('color') || '#dc2626';
+      var bg = params.get('bg') || '#1a1a1a';
+      
+      // Apply custom colors
+      document.querySelector('.widget').style.background = bg;
+      searchBtn.style.background = color;
+
+      // Fetch vehicle data
+      fetch('/api/vehicles')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          D = data;
+          mfr.innerHTML = '<option value="">Select Manufacturer</option>';
+          Object.keys(data.models).sort().forEach(function(k) {
+            var opt = document.createElement('option');
+            opt.value = k;
+            opt.textContent = k.split('-').map(function(w) {
+              return w.charAt(0).toUpperCase() + w.slice(1);
+            }).join(' ');
+            mfr.appendChild(opt);
+          });
+        })
+        .catch(function() {
+          mfr.innerHTML = '<option value="">Error loading</option>';
+        });
+
+      function checkFields() {
+        searchBtn.disabled = !(mfr.value && mdl.value && yr.value && eng.value);
+      }
+
+      mfr.onchange = function() {
+        mdl.disabled = !mfr.value;
+        mdl.innerHTML = '<option value="">Select Model</option>';
+        yr.disabled = true;
+        yr.innerHTML = '<option value="">Select Year</option>';
+        eng.disabled = true;
+        eng.innerHTML = '<option value="">Select Engine</option>';
+        
+        if (mfr.value && D.models && D.models[mfr.value]) {
+          D.models[mfr.value].forEach(function(m) {
+            var opt = document.createElement('option');
+            opt.value = m.toLowerCase().replace(/\s+/g, '-');
+            opt.textContent = m;
+            mdl.appendChild(opt);
+          });
+        }
+        checkFields();
+      };
+
+      mdl.onchange = function() {
+        yr.disabled = !mdl.value;
+        yr.innerHTML = '<option value="">Select Year</option>';
+        eng.disabled = true;
+        eng.innerHTML = '<option value="">Select Engine</option>';
+        
+        if (mdl.value) {
+          for (var y = 2024; y >= 2000; y--) {
+            var opt = document.createElement('option');
+            opt.value = y;
+            opt.textContent = y;
+            yr.appendChild(opt);
+          }
+        }
+        checkFields();
+      };
+
+      yr.onchange = function() {
+        eng.disabled = !yr.value;
+        eng.innerHTML = '<option value="">Select Engine</option>';
+        
+        if (yr.value) {
+          var engines = (D.engines && D.engines[mfr.value]) ? D.engines[mfr.value] : D.genericEngines;
+          if (engines) {
+            engines.forEach(function(e) {
+              var opt = document.createElement('option');
+              opt.value = e;
+              opt.textContent = e;
+              eng.appendChild(opt);
+            });
+          }
+        }
+        checkFields();
+      };
+
+      eng.onchange = checkFields;
+
+      searchBtn.onclick = function() {
+        if (mfr.value && mdl.value && yr.value && eng.value) {
+          var url = portalUrl + '#vehicle-search?manufacturer=' + encodeURIComponent(mfr.value) +
+            '&model=' + encodeURIComponent(mdl.value) +
+            '&year=' + encodeURIComponent(yr.value) +
+            '&engine=' + encodeURIComponent(eng.value);
+          window.open(url, '_blank');
+        }
+      };
+
+      portalBtn.onclick = function() {
+        window.open(portalUrl, '_blank');
+      };
+    })();
+  </script>
+</body>
+</html>

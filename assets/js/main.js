@@ -7264,7 +7264,21 @@ I would like to request a quote for tuning this vehicle.`,
   };
 })();
 <\/script>
-<!-- End Carnage Remaps Widget -->`;
+<!-- End Carnage Remaps Widget -->
+
+<!-- ========== ALTERNATIVE: IFRAME EMBED FOR WIX ========== -->
+<!-- If the above doesn't work in Wix, use this simple iframe instead: -->
+
+<iframe 
+  src="${baseUrl}/embed.html?color=${encodeURIComponent(primaryColor)}&bg=${encodeURIComponent(bgColor)}" 
+  width="100%" 
+  height="400" 
+  style="border:none;border-radius:12px;max-width:${width};" 
+  allow="scripts"
+  title="Carnage Remaps Vehicle Search">
+</iframe>
+
+<!-- ======================================================= -->`;
 
         embedCodeOutput.value = embedCode;
         embedCodeContainer.style.display = 'block';
