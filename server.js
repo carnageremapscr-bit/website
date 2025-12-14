@@ -1,7 +1,18 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY || 'your_stripe_secret_key_here');
+
+// Check if Stripe key is configured
+const STRIPE_KEY = process.env.STRIPE_SECRET_KEY;
+const stripeConfigured = STRIPE_KEY && STRIPE_KEY.startsWith('sk_');
+const stripe = stripeConfigured ? require('stripe')(STRIPE_KEY) : null;
+
+// Log configuration status on startup
+console.log('=== Stripe Configuration ===');
+console.log('STRIPE_SECRET_KEY set:', !!STRIPE_KEY);
+console.log('Key starts with sk_:', STRIPE_KEY?.startsWith('sk_') || false);
+console.log('Stripe configured:', stripeConfigured);
+console.log('===========================');
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -37,12 +48,23 @@ app.use(express.static('.', {
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Carnage Remaps API Server Running' });
+  res.json({ 
+    status: 'ok', 
+    message: 'Carnage Remaps API Server Running',
+    stripeConfigured: stripeConfigured
+  });
 });
 
 // Create Stripe checkout session for top-ups
 app.post('/api/create-checkout-session', async (req, res) => {
   try {
+    if (!stripeConfigured) {
+      console.error('Stripe not configured - STRIPE_SECRET_KEY missing or invalid');
+      return res.status(500).json({ 
+        error: 'Stripe not configured. Please set STRIPE_SECRET_KEY environment variable with a valid Stripe secret key (starts with sk_)' 
+      });
+    }
+
     const { amount, userId, userEmail } = req.body;
 
     if (!amount || amount <= 0) {
@@ -86,6 +108,13 @@ app.post('/api/create-checkout-session', async (req, res) => {
 // Create Stripe subscription session
 app.post('/api/create-subscription-session', async (req, res) => {
   try {
+    if (!stripeConfigured) {
+      console.error('Stripe not configured - STRIPE_SECRET_KEY missing or invalid');
+      return res.status(500).json({ 
+        error: 'Stripe not configured. Please set STRIPE_SECRET_KEY environment variable with a valid Stripe secret key (starts with sk_)' 
+      });
+    }
+
     const { priceId, userId, userEmail } = req.body;
 
     if (!priceId) {
