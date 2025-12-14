@@ -55,6 +55,62 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Vehicle Database API for embed widget
+app.get('/api/vehicles', (req, res) => {
+  // Enable CORS for embed widgets on external sites
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
+  
+  const VEHICLE_DATABASE = {
+    'audi': ['A1', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'Q2', 'Q3', 'Q5', 'Q7', 'Q8', 'TT', 'R8', 'e-tron', 'Q4 e-tron', 'RS3', 'RS4', 'RS5', 'RS6', 'RS7', 'RSQ8'],
+    'bmw': ['1 Series', '2 Series', '3 Series', '4 Series', '5 Series', '6 Series', '7 Series', '8 Series', 'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X7', 'Z4', 'i3', 'i4', 'i8', 'iX', 'M2', 'M3', 'M4', 'M5', 'M8', 'X3 M', 'X4 M', 'X5 M', 'X6 M'],
+    'mercedes': ['A-Class', 'B-Class', 'C-Class', 'E-Class', 'S-Class', 'CLA', 'CLS', 'GLA', 'GLB', 'GLC', 'GLE', 'GLS', 'G-Class', 'SL', 'AMG GT', 'EQC', 'EQA', 'EQS', 'V-Class', 'Vito', 'Sprinter'],
+    'volkswagen': ['Polo', 'Golf', 'Jetta', 'Passat', 'Arteon', 'T-Cross', 'T-Roc', 'Tiguan', 'Touareg', 'Caddy', 'Transporter', 'Crafter', 'ID.3', 'ID.4', 'Golf GTI', 'Golf R', 'Scirocco', 'Amarok'],
+    'ford': ['Fiesta', 'Focus', 'Mondeo', 'Mustang', 'Puma', 'Kuga', 'Edge', 'Transit', 'Transit Custom', 'Ranger', 'S-Max', 'Fiesta ST', 'Focus ST', 'Focus RS'],
+    'vauxhall': ['Corsa', 'Astra', 'Insignia', 'Mokka', 'Crossland', 'Grandland', 'Combo', 'Vivaro', 'Movano'],
+    'land-rover': ['Defender', 'Discovery', 'Discovery Sport', 'Range Rover', 'Range Rover Sport', 'Range Rover Evoque', 'Range Rover Velar'],
+    'nissan': ['Micra', 'Juke', 'Qashqai', 'X-Trail', 'Leaf', 'GT-R', 'Navara'],
+    'toyota': ['Aygo', 'Yaris', 'Corolla', 'Prius', 'Camry', 'C-HR', 'RAV4', 'Land Cruiser', 'Hilux', 'Supra', 'Yaris GR'],
+    'peugeot': ['208', '308', '508', '2008', '3008', '5008', 'Partner', 'Boxer', 'Expert'],
+    'renault': ['Clio', 'Captur', 'Megane', 'Kadjar', 'Scenic', 'Kangoo', 'Trafic', 'Master', 'Zoe', 'Arkana'],
+    'citroen': ['C1', 'C3', 'C4', 'C5', 'C3 Aircross', 'C5 Aircross', 'Berlingo', 'Dispatch', 'Relay'],
+    'seat': ['Ibiza', 'Leon', 'Arona', 'Ateca', 'Tarraco', 'Leon Cupra'],
+    'skoda': ['Fabia', 'Scala', 'Octavia', 'Superb', 'Kamiq', 'Karoq', 'Kodiaq', 'Octavia vRS'],
+    'volvo': ['S60', 'S90', 'V40', 'V60', 'V90', 'XC40', 'XC60', 'XC90'],
+    'mazda': ['Mazda2', 'Mazda3', 'Mazda6', 'CX-3', 'CX-30', 'CX-5', 'CX-60', 'MX-5'],
+    'honda': ['Jazz', 'Civic', 'Accord', 'CR-V', 'HR-V', 'Civic Type R'],
+    'hyundai': ['i10', 'i20', 'i30', 'i40', 'Kona', 'Tucson', 'Santa Fe', 'Ioniq 5', 'i30 N'],
+    'kia': ['Picanto', 'Rio', 'Ceed', 'Stonic', 'Niro', 'Sportage', 'Sorento', 'EV6', 'Stinger'],
+    'fiat': ['500', 'Panda', 'Tipo', '500X', 'Ducato', 'Doblo'],
+    'alfa-romeo': ['Giulietta', 'Giulia', 'Stelvio', 'Tonale'],
+    'jeep': ['Renegade', 'Compass', 'Cherokee', 'Grand Cherokee', 'Wrangler'],
+    'mini': ['Hatch', 'Clubman', 'Countryman', 'JCW', 'Cooper S'],
+    'porsche': ['718 Cayman', '718 Boxster', '911', 'Panamera', 'Macan', 'Cayenne', 'Taycan'],
+    'jaguar': ['XE', 'XF', 'F-Type', 'E-Pace', 'F-Pace', 'I-Pace'],
+    'cupra': ['Formentor', 'Leon', 'Ateca', 'Born']
+  };
+
+  const MANUFACTURER_ENGINES = {
+    'audi': ['1.6 TDI - 105hp', '2.0 TDI - 150hp', '2.0 TDI - 190hp', '3.0 TDI - 272hp', '1.0 TFSI - 116hp', '1.5 TFSI - 150hp', '2.0 TFSI - 190hp', '2.0 TFSI - 245hp'],
+    'volkswagen': ['1.6 TDI - 105hp', '2.0 TDI - 150hp', '2.0 TDI - 190hp', '1.0 TSI - 115hp', '1.5 TSI - 150hp', '2.0 TSI - 190hp', '2.0 TSI - 245hp', '2.0 TSI - 300hp'],
+    'bmw': ['2.0d - 150hp', '2.0d - 190hp', '3.0d - 265hp', '2.0i - 184hp', '3.0i - 340hp', '4.4 V8 - 530hp'],
+    'mercedes': ['2.0 CDI - 163hp', '2.0 CDI - 190hp', '3.0 CDI - 258hp', '2.0 - 184hp', '2.0 - 258hp', '3.0 V6 - 367hp'],
+    'ford': ['1.5 TDCi - 120hp', '2.0 TDCi - 150hp', '1.0 EcoBoost - 125hp', '1.5 EcoBoost - 150hp', '2.0 EcoBoost - 245hp', '2.3 EcoBoost - 280hp'],
+    'seat': ['1.6 TDI - 105hp', '2.0 TDI - 150hp', '1.0 TSI - 115hp', '1.5 TSI - 150hp', '2.0 TSI - 190hp', '2.0 TSI - 300hp'],
+    'skoda': ['1.6 TDI - 105hp', '2.0 TDI - 150hp', '1.0 TSI - 110hp', '1.5 TSI - 150hp', '2.0 TSI - 190hp', '2.0 TSI - 245hp'],
+    'porsche': ['2.0 - 300hp', '2.5 - 365hp', '3.0 - 385hp', '3.0 - 450hp', '4.0 - 500hp'],
+    'volvo': ['2.0 D3 - 150hp', '2.0 D4 - 190hp', '2.0 T4 - 190hp', '2.0 T5 - 250hp', '2.0 T6 - 310hp']
+  };
+
+  const GENERIC_ENGINES = ['1.0 - 70hp', '1.2 - 90hp', '1.4 - 100hp', '1.6 - 120hp', '2.0 - 150hp', '2.0 - 180hp', '2.5 - 200hp', '3.0 - 250hp'];
+
+  res.json({
+    models: VEHICLE_DATABASE,
+    engines: MANUFACTURER_ENGINES,
+    genericEngines: GENERIC_ENGINES
+  });
+});
+
 // Create Stripe checkout session for top-ups
 app.post('/api/create-checkout-session', async (req, res) => {
   try {

@@ -7134,153 +7134,65 @@ I would like to request a quote for tuning this vehicle.`,
         const bgColor = embedBgColorText.value || '#1a1a1a';
         const width = embedWidth.value || '100%';
         const portalUrl = window.location.origin + window.location.pathname;
-
-        // Build manufacturer options from actual database
-        const mfrOptions = Object.keys(VEHICLE_DATABASE).map(mfr => {
-          const displayName = mfr.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-          return `<option value="${mfr}">${displayName}</option>`;
-        }).join('\\n          ');
-
-        // Serialize the databases for embed (compact format)
-        const modelsDB = JSON.stringify(VEHICLE_DATABASE);
-        const enginesDB = JSON.stringify(MANUFACTURER_ENGINES);
-        const genericEngines = JSON.stringify(GENERIC_ENGINES);
+        const apiUrl = API_URL;
 
         const embedCode = `<!-- Carnage Remaps Vehicle Search Embed -->
 <div id="carnage-vehicle-search" style="max-width:${width};margin:0 auto;font-family:system-ui,-apple-system,sans-serif"></div>
 <script>
-  (function() {
-    const config = {
-      logoUrl: '${logoUrl}',
-      primaryColor: '${primaryColor}',
-      bgColor: '${bgColor}',
-      portalUrl: '${portalUrl}'
-    };
-    
-    // Complete Vehicle Database
-    const MODELS = ${modelsDB};
-    const ENGINES = ${enginesDB};
-    const GENERIC_ENGINES = ${genericEngines};
-    
-    // Embed styles
-    const style = document.createElement('style');
-    style.textContent = \`
-      #carnage-vehicle-search { background: \${config.bgColor}; border-radius: 12px; padding: 2rem; color: #fff; }
-      #carnage-vehicle-search .search-header { text-align: center; margin-bottom: 2rem; }
-      #carnage-vehicle-search .search-logo { max-width: 200px; height: auto; margin-bottom: 1rem; }
-      #carnage-vehicle-search .search-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
-      #carnage-vehicle-search select { padding: 0.75rem; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); border-radius: 8px; color: #fff; font-size: 1rem; width: 100%; }
-      #carnage-vehicle-search option { background: #1a1a1a; color: #fff; }
-      #carnage-vehicle-search .btn-group { display: flex; gap: 0.5rem; }
-      #carnage-vehicle-search button { padding: 0.75rem 1.5rem; background: \${config.primaryColor}; color: #000; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; flex: 1; }
-      #carnage-vehicle-search button:hover { opacity: 0.9; transform: translateY(-2px); }
-      #carnage-vehicle-search button.secondary { background: rgba(255,255,255,0.1); color: #fff; }
-      #carnage-vehicle-search .info-text { color: #94a3b8; font-size: 0.875rem; text-align: center; margin-top: 0.5rem; }
-    \`;
-    document.head.appendChild(style);
-    
-    // Render search interface
-    const container = document.getElementById('carnage-vehicle-search');
-    container.innerHTML = \`
-      <div class="search-header">
-        <img src="\${config.logoUrl}" alt="Logo" class="search-logo" onerror="this.style.display='none'">
-        <h2 style="margin:0 0 0.5rem 0">Vehicle Performance Search</h2>
-        <p style="color:#94a3b8;margin:0">Find ECU compatibility and performance gains</p>
-      </div>
-      <div class="search-form">
-        <select id="embed-manufacturer">
-          <option value="">Select Manufacturer</option>
-          ${mfrOptions}
-        </select>
-        <select id="embed-model" disabled><option value="">Select Model</option></select>
-        <select id="embed-year" disabled><option value="">Select Year</option></select>
-        <select id="embed-engine" disabled><option value="">Select Engine</option></select>
-      </div>
-      <div class="btn-group">
-        <button onclick="carnageSearchVehicle()" id="carnage-search-btn" disabled>🔍 Search Vehicle</button>
-        <button onclick="carnageOpenPortal()" class="secondary">Open Full Portal →</button>
-      </div>
-      <p class="info-text">Powered by Carnage Remaps - Professional ECU Tuning</p>
-    \`;
-    
-    const mfr = document.getElementById('embed-manufacturer');
-    const mdl = document.getElementById('embed-model');
-    const yr = document.getElementById('embed-year');
-    const eng = document.getElementById('embed-engine');
-    const btn = document.getElementById('carnage-search-btn');
-    
-    function checkFields() {
-      btn.disabled = !(mfr.value && mdl.value && yr.value && eng.value);
+(function(){
+  const C={logo:'${logoUrl}',color:'${primaryColor}',bg:'${bgColor}',portal:'${portalUrl}',api:'${apiUrl}'};
+  let D={models:{},engines:{},generic:[]};
+  
+  // Styles
+  const s=document.createElement('style');
+  s.textContent='#carnage-vehicle-search{background:'+C.bg+';border-radius:12px;padding:2rem;color:#fff}#carnage-vehicle-search .hdr{text-align:center;margin-bottom:2rem}#carnage-vehicle-search .logo{max-width:200px;height:auto;margin-bottom:1rem}#carnage-vehicle-search .form{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1rem}#carnage-vehicle-search select{padding:.75rem;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);border-radius:8px;color:#fff;font-size:1rem;width:100%}#carnage-vehicle-search option{background:#1a1a1a;color:#fff}#carnage-vehicle-search .btns{display:flex;gap:.5rem}#carnage-vehicle-search button{padding:.75rem 1.5rem;background:'+C.color+';color:#000;border:none;border-radius:8px;font-weight:600;cursor:pointer;flex:1}#carnage-vehicle-search button:hover{opacity:.9}#carnage-vehicle-search .sec{background:rgba(255,255,255,.1);color:#fff}#carnage-vehicle-search .info{color:#94a3b8;font-size:.875rem;text-align:center;margin-top:.5rem}';
+  document.head.appendChild(s);
+  
+  const c=document.getElementById('carnage-vehicle-search');
+  c.innerHTML='<div class="hdr"><img src="'+C.logo+'" alt="" class="logo" onerror="this.style.display=\\'none\\'"><h2 style="margin:0 0 .5rem">Vehicle Performance Search</h2><p style="color:#94a3b8;margin:0">Find ECU tuning options for your vehicle</p></div><div class="form"><select id="cr-mfr"><option value="">Loading...</option></select><select id="cr-mdl" disabled><option value="">Select Model</option></select><select id="cr-yr" disabled><option value="">Select Year</option></select><select id="cr-eng" disabled><option value="">Select Engine</option></select></div><div class="btns"><button id="cr-btn" disabled>🔍 Search</button><button class="sec" onclick="window.open(\\''+C.portal+'\\',\\'_blank\\')">Open Portal →</button></div><p class="info">Powered by Carnage Remaps</p>';
+  
+  const mfr=document.getElementById('cr-mfr'),mdl=document.getElementById('cr-mdl'),yr=document.getElementById('cr-yr'),eng=document.getElementById('cr-eng'),btn=document.getElementById('cr-btn');
+  
+  // Fetch data from API
+  fetch(C.api+'/api/vehicles').then(r=>r.json()).then(d=>{
+    D=d;
+    mfr.innerHTML='<option value="">Select Manufacturer</option>';
+    Object.keys(d.models).sort().forEach(k=>{
+      const o=document.createElement('option');
+      o.value=k;
+      o.textContent=k.split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ');
+      mfr.appendChild(o);
+    });
+  }).catch(()=>{mfr.innerHTML='<option value="">Error loading</option>';});
+  
+  function chk(){btn.disabled=!(mfr.value&&mdl.value&&yr.value&&eng.value);}
+  
+  mfr.onchange=function(){
+    mdl.disabled=!mfr.value;mdl.innerHTML='<option value="">Select Model</option>';
+    yr.disabled=true;yr.innerHTML='<option value="">Select Year</option>';
+    eng.disabled=true;eng.innerHTML='<option value="">Select Engine</option>';
+    if(mfr.value&&D.models[mfr.value]){
+      D.models[mfr.value].forEach(m=>{const o=document.createElement('option');o.value=m.toLowerCase().replace(/\\s+/g,'-');o.textContent=m;mdl.appendChild(o);});
     }
-    
-    // Manufacturer change - populate models from database
-    mfr.addEventListener('change', () => {
-      mdl.disabled = !mfr.value;
-      mdl.innerHTML = '<option value="">Select Model</option>';
-      yr.disabled = true;
-      yr.innerHTML = '<option value="">Select Year</option>';
-      eng.disabled = true;
-      eng.innerHTML = '<option value="">Select Engine</option>';
-      
-      if (mfr.value && MODELS[mfr.value]) {
-        MODELS[mfr.value].forEach(m => {
-          const opt = document.createElement('option');
-          opt.value = m.toLowerCase().replace(/\\s+/g, '-');
-          opt.textContent = m;
-          mdl.appendChild(opt);
-        });
-      }
-      checkFields();
-    });
-    
-    // Model change - populate years
-    mdl.addEventListener('change', () => {
-      yr.disabled = !mdl.value;
-      yr.innerHTML = '<option value="">Select Year</option>';
-      eng.disabled = true;
-      eng.innerHTML = '<option value="">Select Engine</option>';
-      
-      if (mdl.value) {
-        for(let y = 2024; y >= 2000; y--) {
-          const opt = document.createElement('option');
-          opt.value = y;
-          opt.textContent = y;
-          yr.appendChild(opt);
-        }
-      }
-      checkFields();
-    });
-    
-    // Year change - populate engines from database
-    yr.addEventListener('change', () => {
-      eng.disabled = !yr.value;
-      eng.innerHTML = '<option value="">Select Engine</option>';
-      
-      if (yr.value) {
-        const engineList = ENGINES[mfr.value] || GENERIC_ENGINES;
-        engineList.forEach(e => {
-          const opt = document.createElement('option');
-          opt.value = e;
-          opt.textContent = e;
-          eng.appendChild(opt);
-        });
-      }
-      checkFields();
-    });
-    
-    eng.addEventListener('change', checkFields);
-    
-    // Search function - opens portal with pre-filled parameters
-    window.carnageSearchVehicle = function() {
-      const url = config.portalUrl + '#vehicle-search?manufacturer=' + mfr.value + '&model=' + mdl.value + '&year=' + yr.value + '&engine=' + encodeURIComponent(eng.value);
-      window.open(url, '_blank');
-    };
-    
-    // Open portal directly
-    window.carnageOpenPortal = function() {
-      window.open(config.portalUrl, '_blank');
-    };
-  })();
+    chk();
+  };
+  
+  mdl.onchange=function(){
+    yr.disabled=!mdl.value;yr.innerHTML='<option value="">Select Year</option>';
+    eng.disabled=true;eng.innerHTML='<option value="">Select Engine</option>';
+    if(mdl.value){for(let y=2024;y>=2000;y--){const o=document.createElement('option');o.value=y;o.textContent=y;yr.appendChild(o);}}
+    chk();
+  };
+  
+  yr.onchange=function(){
+    eng.disabled=!yr.value;eng.innerHTML='<option value="">Select Engine</option>';
+    if(yr.value){(D.engines[mfr.value]||D.genericEngines).forEach(e=>{const o=document.createElement('option');o.value=e;o.textContent=e;eng.appendChild(o);});}
+    chk();
+  };
+  
+  eng.onchange=chk;
+  btn.onclick=function(){window.open(C.portal+'#vehicle-search?manufacturer='+mfr.value+'&model='+mdl.value+'&year='+yr.value+'&engine='+encodeURIComponent(eng.value),'_blank');};
+})();
 <\/script>
 <!-- End Carnage Remaps Embed -->`;
 
