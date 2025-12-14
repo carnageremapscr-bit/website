@@ -5494,7 +5494,16 @@
           modelSelect.dataset.actualKey = actualModelKey;
           console.log('Populated', yearRanges.length, 'year ranges');
         } else {
-          console.warn('No year data found for:', manufacturer, actualModelKey);
+          // Fallback to standard year ranges if model not in detailed database
+          const fallbackYears = ['2021-2024', '2017-2020', '2013-2016', '2009-2012', '2005-2008', '2000-2004'];
+          fallbackYears.forEach(range => {
+            const option = document.createElement('option');
+            option.value = range;
+            option.textContent = range;
+            yearSelect.appendChild(option);
+          });
+          modelSelect.dataset.actualKey = '';
+          console.log('Using fallback year ranges');
         }
         
         // updateVehicleDetails(); // Disabled for upload - no need to show details
@@ -5509,26 +5518,27 @@
         console.log('Year changed to:', yearRange, 'for model:', actualModelKey);
         engineSelect.innerHTML = '<option value="">Select Engine</option>';
         
+        let engines = null;
         if (manufacturer && actualModelKey && yearRange && VEHICLE_ENGINE_DATABASE[manufacturer] && VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey]) {
           // Get engines for this specific year range
-          const engines = VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey][yearRange];
-          console.log('Found engines:', engines);
-          
-          if (engines && engines.length > 0) {
-            engines.forEach(engine => {
-              const option = document.createElement('option');
-              option.value = engine.toLowerCase().replace(/\s+/g, '-').replace(/\./g, '').replace(/--+/g, '-');
-              option.textContent = engine;
-              option.dataset.label = engine;
-              engineSelect.appendChild(option);
-            });
-            console.log('Populated', engines.length, 'engines');
-          } else {
-            console.warn('No engines in array');
-          }
-        } else {
-          console.warn('Missing data for engines:', {manufacturer, actualModelKey, yearRange});
+          engines = VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey][yearRange];
+          console.log('Found engines from database:', engines);
         }
+        
+        // Fallback to MANUFACTURER_ENGINES if no specific engines found
+        if (!engines || engines.length === 0) {
+          engines = MANUFACTURER_ENGINES[manufacturer] || GENERIC_ENGINES;
+          console.log('Using fallback engines:', engines.length);
+        }
+        
+        engines.forEach(engine => {
+          const option = document.createElement('option');
+          option.value = engine.toLowerCase().replace(/\s+/g, '-').replace(/\./g, '').replace(/--+/g, '-');
+          option.textContent = engine;
+          option.dataset.label = engine;
+          engineSelect.appendChild(option);
+        });
+        console.log('Populated', engines.length, 'engines');
         
         // updateVehicleDetails(); // Disabled for upload - no need to show details
       });
@@ -6752,6 +6762,16 @@
         
         // Store the actual key for later use
         searchModel.dataset.actualKey = actualModelKey;
+      } else {
+        // Fallback to standard year ranges if model not in detailed database
+        const fallbackYears = ['2021-2024', '2017-2020', '2013-2016', '2009-2012', '2005-2008', '2000-2004'];
+        fallbackYears.forEach(range => {
+          const option = document.createElement('option');
+          option.value = range;
+          option.textContent = range;
+          searchYear.appendChild(option);
+        });
+        searchModel.dataset.actualKey = '';
       }
     });
     
@@ -6763,27 +6783,24 @@
       const yearRange = e.target.value;
       searchEngine.innerHTML = '<option value="">Select Engine</option>';
       
-      if (manufacturer && actualModelKey && yearRange && VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey]) {
+      let engines = null;
+      
+      if (manufacturer && actualModelKey && yearRange && VEHICLE_ENGINE_DATABASE[manufacturer] && VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey]) {
         // Get engines for this specific year range
-        const engines = VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey][yearRange];
-        
-        if (engines && engines.length > 0) {
-          engines.forEach(engine => {
-            const option = document.createElement('option');
-            option.value = engine.toLowerCase().replace(/\s+/g, '-').replace(/\./g, '').replace(/--+/g, '-');
-            option.textContent = engine;
-            searchEngine.appendChild(option);
-          });
-        }
-      } else if (manufacturer && MANUFACTURER_ENGINES[manufacturer]) {
-        // Fallback to manufacturer engines
-        MANUFACTURER_ENGINES[manufacturer].forEach(engine => {
-          const option = document.createElement('option');
-          option.value = engine.toLowerCase().replace(/\s+/g, '-').replace(/\./g, '').replace(/--+/g, '-');
-          option.textContent = engine;
-          searchEngine.appendChild(option);
-        });
+        engines = VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey][yearRange];
       }
+      
+      // Fallback to MANUFACTURER_ENGINES or GENERIC_ENGINES
+      if (!engines || engines.length === 0) {
+        engines = MANUFACTURER_ENGINES[manufacturer] || GENERIC_ENGINES;
+      }
+      
+      engines.forEach(engine => {
+        const option = document.createElement('option');
+        option.value = engine.toLowerCase().replace(/\s+/g, '-').replace(/\./g, '').replace(/--+/g, '-');
+        option.textContent = engine;
+        searchEngine.appendChild(option);
+      });
     });
     
     // Search button click
