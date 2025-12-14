@@ -160,10 +160,118 @@ app.get('/api/vehicles', (req, res) => {
 
   const GENERIC_ENGINES = ['1.0 - 70hp', '1.2 - 80hp', '1.4 - 90hp', '1.5 - 100hp', '1.6 - 110hp', '1.8 - 140hp', '2.0 - 150hp', '2.0 - 180hp', '2.2 - 150hp', '2.5 - 200hp', '3.0 - 250hp'];
 
+  // Year-specific engine database (matches main.js VEHICLE_ENGINE_DATABASE)
+  const VEHICLE_ENGINE_DATABASE = {
+    'audi': {
+      'a3': {
+        '2003-2005': ['1.6 - 102hp', '2.0 FSI - 150hp', '3.2 V6 - 250hp', '1.9 TDI - 105hp', '2.0 TDI - 140hp'],
+        '2006-2008': ['1.6 - 102hp', '2.0 FSI - 150hp', '2.0 TFSI - 200hp', '1.9 TDI - 105hp', '2.0 TDI - 140hp', '2.0 TDI - 170hp'],
+        '2009-2012': ['1.2 TFSI - 105hp', '1.4 TFSI - 125hp', '1.8 TFSI - 160hp', '2.0 TFSI - 200hp', '1.6 TDI - 105hp', '2.0 TDI - 140hp', '2.0 TDI - 170hp'],
+        '2013-2016': ['1.0 TFSI - 115hp', '1.4 TFSI - 125hp', '1.4 TFSI - 150hp', '1.8 TFSI - 180hp', '2.0 TFSI - 190hp', '1.6 TDI - 110hp', '2.0 TDI - 150hp', '2.0 TDI - 184hp'],
+        '2017-2020': ['1.0 TFSI - 116hp', '1.5 TFSI - 150hp', '2.0 TFSI - 190hp', '2.0 TFSI - 310hp', '1.6 TDI - 116hp', '2.0 TDI - 150hp', '2.0 TDI - 184hp'],
+        '2021-2024': ['1.5 TFSI - 150hp', '2.0 TFSI - 190hp', '2.0 TFSI - 310hp', '2.0 TDI - 150hp', '2.0 TDI - 200hp']
+      },
+      'a4': {
+        '1995-2000': ['1.6 - 100hp', '1.8 - 125hp', '1.8 T - 150hp', '1.8 T - 180hp', '2.4 V6 - 165hp', '1.9 TDI - 90hp', '1.9 TDI - 110hp', '2.5 TDI - 150hp'],
+        '2001-2004': ['1.8 T - 163hp', '2.0 - 130hp', '3.0 V6 - 220hp', '1.9 TDI - 130hp', '2.5 TDI - 155hp'],
+        '2005-2008': ['1.8 T - 163hp', '2.0 - 130hp', '3.0 V6 - 220hp', '1.9 TDI - 116hp', '2.0 TDI - 140hp', '2.7 TDI - 180hp', '3.0 TDI - 204hp'],
+        '2009-2012': ['1.8 TFSI - 120hp', '1.8 TFSI - 160hp', '2.0 TFSI - 180hp', '2.0 TFSI - 211hp', '2.0 TDI - 143hp', '2.0 TDI - 170hp', '3.0 TDI - 240hp'],
+        '2013-2016': ['1.8 TFSI - 170hp', '2.0 TFSI - 225hp', '2.0 TFSI - 252hp', '2.0 TDI - 150hp', '2.0 TDI - 190hp', '3.0 TDI - 218hp', '3.0 TDI - 272hp'],
+        '2017-2019': ['1.4 TFSI - 150hp', '2.0 TFSI - 190hp', '2.0 TFSI - 252hp', '2.0 TDI - 150hp', '2.0 TDI - 190hp', '3.0 TDI - 218hp', '3.0 TDI - 286hp'],
+        '2020-2024': ['2.0 TFSI - 204hp', '2.0 TFSI - 265hp', '2.0 TDI - 163hp', '2.0 TDI - 204hp', '3.0 TDI - 231hp']
+      },
+      'q5': {
+        '2009-2012': ['2.0 TFSI - 211hp', '3.0 TFSI - 272hp', '2.0 TDI - 143hp', '2.0 TDI - 170hp', '3.0 TDI - 240hp'],
+        '2013-2016': ['2.0 TFSI - 220hp', '2.0 TFSI - 230hp', '2.0 TDI - 150hp', '2.0 TDI - 190hp', '3.0 TDI - 258hp'],
+        '2017-2024': ['2.0 TFSI - 252hp', '3.0 TFSI - 354hp', '2.0 TDI - 190hp', '3.0 TDI - 286hp']
+      }
+    },
+    'volkswagen': {
+      'golf': {
+        '1998-2003': ['1.4 - 75hp', '1.6 - 100hp', '1.8 - 125hp', '1.8T GTI - 180hp', '1.9 TDI - 90hp', '1.9 TDI - 110hp', '1.9 TDI - 130hp', '1.9 TDI - 150hp'],
+        '2004-2008': ['1.4 - 75hp', '1.6 - 102hp', '2.0 FSI - 150hp', '2.0 GTI - 200hp', '1.9 TDI - 90hp', '1.9 TDI - 105hp', '2.0 TDI - 140hp', '2.0 GTD - 170hp'],
+        '2009-2012': ['1.2 TSI - 85hp', '1.2 TSI - 105hp', '1.4 TSI - 122hp', '1.4 TSI - 160hp', '2.0 TSI GTI - 210hp', '1.6 TDI - 90hp', '1.6 TDI - 105hp', '2.0 TDI - 110hp', '2.0 TDI - 140hp', '2.0 GTD - 170hp'],
+        '2013-2016': ['1.0 TSI - 85hp', '1.2 TSI - 105hp', '1.4 TSI - 125hp', '1.4 TSI - 150hp', '2.0 TSI GTI - 220hp', '2.0 TSI R - 300hp', '1.6 TDI - 90hp', '1.6 TDI - 110hp', '2.0 TDI - 150hp', '2.0 GTD - 184hp'],
+        '2017-2020': ['1.0 TSI - 90hp', '1.0 TSI - 115hp', '1.5 TSI - 130hp', '1.5 TSI - 150hp', '2.0 TSI GTI - 245hp', '2.0 TSI R - 310hp', '1.6 TDI - 115hp', '2.0 TDI - 150hp', '2.0 GTD - 200hp'],
+        '2021-2024': ['1.0 eTSI - 110hp', '1.5 eTSI - 130hp', '1.5 eTSI - 150hp', '2.0 TSI GTI - 245hp', '2.0 TSI R - 320hp', '2.0 TDI - 150hp', '2.0 GTD - 200hp']
+      },
+      'polo': {
+        '2002-2009': ['1.2 - 55hp', '1.2 - 64hp', '1.4 - 75hp', '1.6 - 105hp', '1.4 TDI - 70hp', '1.4 TDI - 80hp', '1.9 TDI - 100hp'],
+        '2010-2017': ['1.0 - 60hp', '1.0 - 75hp', '1.2 TSI - 90hp', '1.2 TSI - 110hp', '1.4 TSI GTI - 180hp', '1.2 TDI - 75hp', '1.6 TDI - 90hp', '1.6 TDI - 105hp'],
+        '2018-2024': ['1.0 TSI - 80hp', '1.0 TSI - 95hp', '1.0 TSI - 110hp', '2.0 TSI GTI - 207hp', '1.6 TDI - 80hp', '1.6 TDI - 95hp']
+      },
+      'passat': {
+        '2005-2010': ['1.6 - 102hp', '1.8 TSI - 160hp', '2.0 FSI - 150hp', '1.9 TDI - 105hp', '2.0 TDI - 140hp', '2.0 TDI - 170hp'],
+        '2011-2014': ['1.4 TSI - 122hp', '1.8 TSI - 160hp', '2.0 TSI - 210hp', '1.6 TDI - 105hp', '2.0 TDI - 140hp', '2.0 TDI - 170hp', '2.0 TDI - 177hp'],
+        '2015-2019': ['1.4 TSI - 125hp', '1.8 TSI - 180hp', '2.0 TSI - 220hp', '1.6 TDI - 120hp', '2.0 TDI - 150hp', '2.0 TDI - 190hp', '2.0 TDI BiTurbo - 240hp'],
+        '2020-2024': ['1.5 TSI - 150hp', '2.0 TSI - 190hp', '2.0 TDI - 150hp', '2.0 TDI - 200hp']
+      },
+      'tiguan': {
+        '2008-2011': ['1.4 TSI - 150hp', '2.0 TSI - 170hp', '2.0 TSI - 200hp', '2.0 TDI - 140hp', '2.0 TDI - 170hp'],
+        '2012-2016': ['1.4 TSI - 125hp', '1.4 TSI - 150hp', '2.0 TSI - 180hp', '2.0 TSI - 220hp', '2.0 TDI - 110hp', '2.0 TDI - 140hp', '2.0 TDI - 150hp', '2.0 TDI - 184hp'],
+        '2017-2020': ['1.5 TSI - 150hp', '2.0 TSI - 180hp', '2.0 TSI - 220hp', '2.0 TDI - 150hp', '2.0 TDI - 190hp', '2.0 TDI BiTurbo - 240hp'],
+        '2021-2024': ['1.5 TSI - 150hp', '2.0 TSI - 190hp', '2.0 TSI - 245hp', '2.0 TDI - 150hp', '2.0 TDI - 200hp']
+      }
+    },
+    'bmw': {
+      '3-series': {
+        '1999-2005': ['1.8 316i - 105hp', '2.0 320i - 150hp', '2.5 325i - 192hp', '3.0 330i - 231hp', '2.0 318d - 116hp', '2.0 320d - 150hp', '3.0 330d - 204hp'],
+        '2005-2011': ['2.0 316i - 122hp', '2.0 318i - 129hp', '2.0 320i - 170hp', '3.0 325i - 218hp', '3.0 330i - 272hp', '2.0 318d - 143hp', '2.0 320d - 184hp', '3.0 330d - 245hp'],
+        '2012-2018': ['1.6 316i - 136hp', '2.0 320i - 184hp', '2.0 328i - 245hp', '3.0 335i - 306hp', '2.0 318d - 150hp', '2.0 320d - 190hp', '3.0 330d - 258hp'],
+        '2019-2024': ['2.0 320i - 184hp', '2.0 330i - 258hp', '3.0 M340i - 374hp', '2.0 318d - 150hp', '2.0 320d - 190hp', '3.0 330d - 286hp']
+      },
+      '5-series': {
+        '2005-2010': ['2.0 520i - 170hp', '2.5 523i - 190hp', '3.0 530i - 272hp', '2.0 520d - 177hp', '3.0 530d - 235hp', '3.0 535d - 286hp'],
+        '2011-2016': ['2.0 520i - 184hp', '3.0 528i - 245hp', '3.0 535i - 306hp', '2.0 520d - 184hp', '3.0 530d - 258hp', '3.0 535d - 313hp'],
+        '2017-2023': ['2.0 520i - 184hp', '2.0 530i - 252hp', '3.0 540i - 340hp', '2.0 520d - 190hp', '3.0 530d - 265hp', '3.0 540d - 320hp'],
+        '2024': ['2.0 520i - 184hp', '2.0 530i - 252hp', '3.0 540i - 340hp', '2.0 520d - 190hp', '3.0 530d - 286hp']
+      },
+      'x3': {
+        '2005-2010': ['2.0 xDrive20i - 150hp', '2.5 xDrive25i - 218hp', '3.0 xDrive30i - 272hp', '2.0 xDrive18d - 143hp', '2.0 xDrive20d - 177hp', '3.0 xDrive30d - 235hp'],
+        '2011-2017': ['2.0 xDrive20i - 184hp', '2.0 xDrive28i - 245hp', '3.0 xDrive35i - 306hp', '2.0 xDrive18d - 143hp', '2.0 xDrive20d - 184hp', '3.0 xDrive30d - 258hp', '3.0 xDrive35d - 313hp'],
+        '2018-2024': ['2.0 xDrive20i - 184hp', '2.0 xDrive30i - 252hp', '3.0 M40i - 360hp', '2.0 xDrive18d - 150hp', '2.0 xDrive20d - 190hp', '3.0 xDrive30d - 286hp']
+      }
+    },
+    'ford': {
+      'focus': {
+        '2005-2010': ['1.4 - 80hp', '1.6 - 100hp', '1.8 - 125hp', '2.0 - 145hp', '2.5 ST - 225hp', '1.6 TDCi - 90hp', '1.6 TDCi - 109hp', '1.8 TDCi - 115hp', '2.0 TDCi - 136hp'],
+        '2011-2014': ['1.0 EcoBoost - 100hp', '1.0 EcoBoost - 125hp', '1.6 - 105hp', '2.0 ST - 250hp', '1.6 TDCi - 95hp', '1.6 TDCi - 115hp', '2.0 TDCi - 140hp', '2.0 TDCi - 163hp'],
+        '2015-2018': ['1.0 EcoBoost - 100hp', '1.0 EcoBoost - 125hp', '1.5 EcoBoost - 150hp', '1.5 EcoBoost - 182hp', '2.3 EcoBoost RS - 350hp', '1.5 TDCi - 95hp', '1.5 TDCi - 120hp', '2.0 TDCi - 150hp', '2.0 TDCi - 185hp'],
+        '2019-2024': ['1.0 EcoBoost - 100hp', '1.0 EcoBoost - 125hp', '1.5 EcoBoost - 150hp', '2.3 EcoBoost ST - 280hp', '1.5 EcoBlue - 95hp', '1.5 EcoBlue - 120hp', '2.0 EcoBlue - 150hp']
+      },
+      'fiesta': {
+        '2009-2012': ['1.25 - 82hp', '1.4 - 96hp', '1.6 - 120hp', '1.6 ST - 182hp', '1.4 TDCi - 70hp', '1.6 TDCi - 75hp', '1.6 TDCi - 95hp'],
+        '2013-2017': ['1.0 EcoBoost - 100hp', '1.0 EcoBoost - 125hp', '1.0 EcoBoost - 140hp', '1.6 ST - 182hp', '1.5 TDCi - 75hp', '1.5 TDCi - 95hp'],
+        '2018-2023': ['1.0 EcoBoost - 85hp', '1.0 EcoBoost - 100hp', '1.0 EcoBoost - 125hp', '1.5 EcoBoost ST - 200hp', '1.5 TDCi - 85hp', '1.5 TDCi - 120hp']
+      },
+      'kuga': {
+        '2008-2012': ['1.6 EcoBoost - 150hp', '2.0 - 145hp', '2.0 TDCi - 136hp', '2.0 TDCi - 163hp'],
+        '2013-2019': ['1.5 EcoBoost - 120hp', '1.5 EcoBoost - 150hp', '1.5 EcoBoost - 182hp', '1.5 TDCi - 120hp', '2.0 TDCi - 120hp', '2.0 TDCi - 150hp', '2.0 TDCi - 180hp'],
+        '2020-2024': ['1.5 EcoBoost - 120hp', '1.5 EcoBoost - 150hp', '2.5 PHEV - 225hp', '1.5 EcoBlue - 120hp', '2.0 EcoBlue - 150hp', '2.0 EcoBlue - 190hp']
+      }
+    },
+    'mercedes': {
+      'a-class': {
+        '2013-2018': ['1.6 A180 - 122hp', '2.0 A200 - 156hp', '2.0 A250 - 211hp', '2.0 A45 AMG - 360hp', '1.5 A180d - 109hp', '2.1 A200d - 136hp', '2.1 A220d - 177hp'],
+        '2019-2024': ['1.3 A180 - 136hp', '2.0 A200 - 163hp', '2.0 A250 - 224hp', '2.0 A35 AMG - 306hp', '2.0 A45 AMG - 421hp', '1.5 A180d - 116hp', '2.0 A200d - 150hp', '2.0 A220d - 190hp']
+      },
+      'c-class': {
+        '2008-2014': ['1.8 C180 - 156hp', '1.8 C200 - 184hp', '3.5 C350 - 306hp', '6.2 C63 AMG - 457hp', '2.1 C200 CDI - 136hp', '2.1 C220 CDI - 170hp', '3.0 C320 CDI - 231hp'],
+        '2015-2021': ['1.6 C160 - 129hp', '2.0 C200 - 184hp', '2.0 C300 - 245hp', '4.0 C63 AMG - 476hp', '1.6 C200d - 136hp', '2.1 C220d - 170hp', '2.1 C300d - 204hp'],
+        '2022-2024': ['1.5 C180 - 170hp', '2.0 C200 - 204hp', '2.0 C300 - 258hp', '2.0 C200d - 163hp', '2.0 C220d - 200hp', '3.0 C300d - 265hp']
+      },
+      'glc': {
+        '2016-2019': ['2.0 GLC200 - 184hp', '2.0 GLC250 - 211hp', '2.0 GLC300 - 245hp', '3.0 GLC43 AMG - 367hp', '2.1 GLC220d - 170hp', '2.1 GLC250d - 204hp', '3.0 GLC350d - 258hp'],
+        '2020-2024': ['2.0 GLC200 - 197hp', '2.0 GLC300 - 258hp', '3.0 GLC43 AMG - 390hp', '4.0 GLC63 AMG - 476hp', '2.0 GLC200d - 163hp', '2.0 GLC220d - 194hp', '2.0 GLC300d - 245hp']
+      }
+    }
+  };
+
   res.json({
     models: VEHICLE_DATABASE,
     engines: MANUFACTURER_ENGINES,
-    genericEngines: GENERIC_ENGINES
+    genericEngines: GENERIC_ENGINES,
+    yearEngines: VEHICLE_ENGINE_DATABASE
   });
 });
 
