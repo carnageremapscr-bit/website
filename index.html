@@ -1,0 +1,2607 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Carnage Remaps - Dealer Portal</title>
+  <link rel="icon" href="assets/media/logo.avif" />
+  <link rel="stylesheet" href="assets/css/carnage.css">
+  <!-- Supabase UMD bundle (fallback) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+  <!-- Stripe.js -->
+  <script src="https://js.stripe.com/v3/"></script>
+  <!-- Chart.js for graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="not-authenticated">
+  
+  <!-- Login Screen -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-container">
+      <div class="login-box">
+        <img src="assets/media/logo.avif" alt="Carnage Remaps" class="login-logo" onerror="this.style.display='none'"/>
+        <h1>Carnage Remaps Portal</h1>
+        <p class="muted">Sign in to continue</p>
+        
+        <div id="login-tabs" class="login-tabs">
+          <button class="login-tab active" data-form="signin">Sign In</button>
+          <button class="login-tab" data-form="register">Register</button>
+          <button class="login-tab" data-form="vehicle-search">🔍 Vehicle Search</button>
+        </div>
+        
+        <!-- Sign In Form -->
+        <form id="signin-form" class="auth-form active">
+          <div class="form-group">
+            <label for="signin-email">Email</label>
+            <input type="email" id="signin-email" required placeholder="Enter your email">
+          </div>
+          <div class="form-group">
+            <label for="signin-password">Password</label>
+            <input type="password" id="signin-password" required placeholder="Enter your password">
+          </div>
+          <div id="signin-error" class="error-message"></div>
+          <button type="submit" class="btn primary full-width">Sign In</button>
+        </form>
+        
+        <!-- Register Form -->
+        <form id="register-form" class="auth-form">
+          <div class="form-group">
+            <label for="register-name">Full Name</label>
+            <input type="text" id="register-name" required placeholder="Enter your full name">
+          </div>
+          <div class="form-group">
+            <label for="register-email">Email</label>
+            <input type="email" id="register-email" required placeholder="Enter your email">
+          </div>
+          <div class="form-group">
+            <label for="register-password">Password</label>
+            <input type="password" id="register-password" required placeholder="Create a password" minlength="8">
+          </div>
+          <div class="form-group">
+            <label for="register-password-confirm">Confirm Password</label>
+            <input type="password" id="register-password-confirm" required placeholder="Confirm your password">
+          </div>
+          <div id="register-error" class="error-message"></div>
+          <button type="submit" class="btn primary full-width">Register</button>
+        </form>
+        
+        <!-- Vehicle Search Form (No Login Required) -->
+        <div id="vehicle-search-form" class="auth-form">
+          <div style="text-align: center; margin-bottom: 1.5rem;">
+            <h3 style="color: #22c55e; margin-bottom: 0.5rem;">🔍 Free Vehicle Search</h3>
+            <p class="muted" style="font-size: 0.9rem;">Search vehicle specifications and performance gains without signing up</p>
+          </div>
+          
+          <div class="form-group">
+            <label for="public-manufacturer">Manufacturer</label>
+            <select id="public-manufacturer" class="form-control">
+              <option value="">Select Manufacturer</option>
+              <option value="audi">Audi</option>
+              <option value="bmw">BMW</option>
+              <option value="mercedes">Mercedes-Benz</option>
+              <option value="volkswagen">Volkswagen</option>
+              <option value="ford">Ford</option>
+              <option value="vauxhall">Vauxhall / Opel</option>
+              <option value="land-rover">Land Rover</option>
+              <option value="nissan">Nissan</option>
+              <option value="toyota">Toyota</option>
+              <option value="peugeot">Peugeot</option>
+              <option value="renault">Renault</option>
+              <option value="citroen">Citroën</option>
+              <option value="seat">Seat</option>
+              <option value="skoda">Škoda</option>
+              <option value="volvo">Volvo</option>
+              <option value="mazda">Mazda</option>
+              <option value="honda">Honda</option>
+              <option value="hyundai">Hyundai</option>
+              <option value="kia">Kia</option>
+              <option value="fiat">Fiat</option>
+              <option value="alfa-romeo">Alfa Romeo</option>
+              <option value="jeep">Jeep</option>
+              <option value="mini">Mini</option>
+              <option value="porsche">Porsche</option>
+              <option value="lexus">Lexus</option>
+              <option value="jaguar">Jaguar</option>
+              <option value="dacia">Dacia</option>
+              <option value="suzuki">Suzuki</option>
+              <option value="subaru">Subaru</option>
+              <option value="mitsubishi">Mitsubishi</option>
+              <option value="tesla">Tesla</option>
+              <option value="bentley">Bentley</option>
+              <option value="maserati">Maserati</option>
+              <option value="abarth">Abarth</option>
+              <option value="ds">DS</option>
+              <option value="smart">Smart</option>
+              <option value="ssangyong">SsangYong</option>
+              <option value="infiniti">Infiniti</option>
+              <option value="iveco">Iveco</option>
+              <option value="dodge">Dodge</option>
+              <option value="chevrolet">Chevrolet</option>
+              <option value="chrysler">Chrysler</option>
+              <option value="opel">Opel</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="public-model">Model</label>
+            <select id="public-model" class="form-control">
+              <option value="">Select Model</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="public-year">Year Range</label>
+            <select id="public-year" class="form-control">
+              <option value="">Select Year Range</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="public-engine">Engine</label>
+            <select id="public-engine" class="form-control">
+              <option value="">Select Engine</option>
+            </select>
+          </div>
+          
+          <button type="button" class="btn primary full-width" id="public-search-btn">
+            🔍 Search Vehicle
+          </button>
+          
+          <!-- Search Results Area -->
+          <div id="public-search-results" style="display:none; margin-top: 1.5rem;">
+            <!-- Results will be populated here -->
+          </div>
+          
+          <div style="text-align: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+            <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 1rem; border-radius: 8px; color: white;">
+              <p style="margin: 0; font-weight: 600; font-size: 0.9rem;">
+                🎉 <strong>Free Vehicle Database</strong> - Complete access to all specifications and performance data!
+              </p>
+              <p style="margin: 0.5rem 0 0; font-size: 0.8rem; opacity: 0.9;">
+                Professional-grade database • No signup required • Unlimited searches
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Main Portal (shown after login) -->
+  <div id="main-portal" class="main-portal" style="display:none;">
+  
+  <header class="cr-header">
+    <div class="cr-container">
+      <img src="assets/media/logo.avif" alt="Carnage Remaps" class="cr-logo" onerror="this.style.display='none'"/>
+      <nav class="cr-nav" id="main-nav">
+        <a href="#" data-tab="dashboard" class="active">Dashboard</a>
+        <a href="#" data-tab="files">Files</a>
+        <a href="#" data-tab="upload">Upload</a>
+        <a href="#" data-tab="vehicle-search">🔍 Vehicle Search</a>
+        <a href="#" data-tab="billing">💳 Billing</a>
+        <a href="#" data-tab="settings">Settings</a>
+        <a href="#" data-tab="support">Support</a>
+        <a href="#" data-tab="admin" id="admin-nav-link" style="display:none;">Admin</a>
+      </nav>
+      <div class="user-menu">
+        <div id="online-status" style="display:flex;align-items:center;gap:0.5rem;margin-right:1rem;padding:0.5rem 1rem;background:rgba(255,255,255,0.1);border-radius:8px;">
+          <span id="status-indicator" style="width:10px;height:10px;border-radius:50%;background:#22c55e;"></span>
+          <span id="status-text" style="font-size:0.875rem;font-weight:500;">Online</span>
+        </div>
+        <button class="notification-bell" id="notification-bell" style="display:none;">
+          <span class="bell-icon">🔔</span>
+          <span class="notification-badge" id="notification-badge">0</span>
+        </button>
+        <span id="user-name-display"></span>
+        <span id="user-credit-display" class="credit-badge" style="display:none;">Credits: £0.00</span>
+        <button class="btn small" id="logout-btn">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Panel -->
+  <div class="notification-panel" id="notification-panel">
+    <div class="notification-header">
+      <h3>🔔 Notifications</h3>
+      <button class="mark-all-read" id="mark-all-read">Mark all as read</button>
+    </div>
+    <div class="notification-body" id="notification-body">
+      <div class="notification-empty">No new notifications</div>
+    </div>
+  </div>
+
+  <main class="cr-container">
+    <!-- Dashboard Tab -->
+    <section id="dashboard-tab" class="cr-tab active">
+      <div class="cr-hero" style="margin-bottom:2rem">
+        <h1 style="font-size:2rem;margin-bottom:0.5rem">Welcome back, <span id="dashboard-user-name"></span></h1>
+        <p class="muted" style="font-size:1rem">Here's what's happening with your files today</p>
+      </div>
+
+      <!-- Stats Grid - Top Section -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-bottom:2rem">
+        <!-- Files Submitted Card -->
+        <div class="card" style="background:#fff;border-radius:16px;padding:2rem;box-shadow:0 1px 3px rgba(0,0,0,0.08)">
+          <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem">
+            <div style="width:48px;height:48px;background:linear-gradient(135deg,#dc2626,#b91c1c);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem">📊</div>
+            <div>
+              <h3 style="margin:0;font-size:0.875rem;color:#64748b;font-weight:500">Files submitted</h3>
+              <p style="margin:0.25rem 0 0;font-size:0.75rem;color:#94a3b8">Rolling 12 month period</p>
+            </div>
+          </div>
+          <p class="stat-number" id="total-files-count" style="font-size:2.5rem;font-weight:700;color:#0f172a;margin:1rem 0 0.5rem">0</p>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.5rem">
+            <div style="background:#f1f5f9;padding:1rem;border-radius:12px;text-align:center">
+              <p style="margin:0;font-size:0.75rem;color:#64748b;margin-bottom:0.5rem">Today</p>
+              <p id="files-today" style="margin:0;font-size:1.5rem;font-weight:700;color:#0f172a">0</p>
+              <p style="margin:0.25rem 0 0;font-size:0.75rem;color:#94a3b8">files</p>
+            </div>
+            <div style="background:#06b6d4;padding:1rem;border-radius:12px;text-align:center">
+              <p style="margin:0;font-size:0.75rem;color:rgba(255,255,255,0.9);margin-bottom:0.5rem">This week</p>
+              <p id="files-week" style="margin:0;font-size:1.5rem;font-weight:700;color:#fff">0</p>
+              <p style="margin:0.25rem 0 0;font-size:0.75rem;color:rgba(255,255,255,0.8)">files</p>
+            </div>
+            <div style="background:#3b82f6;padding:1rem;border-radius:12px;text-align:center">
+              <p style="margin:0;font-size:0.75rem;color:rgba(255,255,255,0.9);margin-bottom:0.5rem">This month</p>
+              <p id="files-month" style="margin:0;font-size:1.5rem;font-weight:700;color:#fff">0</p>
+              <p style="margin:0.25rem 0 0;font-size:0.75rem;color:rgba(255,255,255,0.8)">files</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="feature-cards">
+        <div class="feature-card">
+          <h3>� View File Pricing</h3>
+          <p>See our pricing for different tuning solutions and options</p>
+          <a class="btn" href="#" data-tab="pricing" style="background:rgba(0,0,0,0.1);color:inherit">View pricing →</a>
+        </div>
+
+        <div class="feature-card feature-green">
+          <h3>� Vehicle Search</h3>
+          <p>Search for vehicles and view performance gains</p>
+          <a class="btn" href="#" data-tab="vehicle-search" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3)">Search vehicles →</a>
+        </div>
+
+        <div class="feature-card feature-blue">
+          <h3>💾 ECU Database</h3>
+          <p>Browse our comprehensive ECU database</p>
+          <a class="btn" href="#" data-tab="ecu-database" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3)">Browse ECUs →</a>
+        </div>
+
+        <div class="feature-card feature-purple">
+          <h3>💬 Need Support?</h3>
+          <p>Our team is here to help with any questions or issues</p>
+          <a class="btn" href="#" data-tab="support" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3)">Get support →</a>
+        </div>
+
+        <div class="feature-card feature-orange">
+          <h3>🌐 Want a Website Like This?</h3>
+          <p style="margin-bottom:0.75rem"><strong>White-Label Portal Reselling</strong><br>
+          Perfect for tuning businesses wanting their own branded customer portal</p>
+          <div style="background:rgba(255,255,255,0.15);padding:0.75rem;border-radius:8px;margin-bottom:0.75rem">
+            <div style="margin-bottom:0.5rem">
+              <strong style="font-size:1.1em;color:#fff">💷 £350</strong> <span style="opacity:0.9">Setup Fee</span>
+            </div>
+            <div>
+              <strong style="font-size:1.1em;color:#fff">💷 £20/month</strong> <span style="opacity:0.9">Recurring</span>
+            </div>
+          </div>
+          <ul style="text-align:left;margin:0.75rem 0;padding-left:1.25rem;font-size:0.9em;line-height:1.6">
+            <li>✅ Fully branded with your logo & colors</li>
+            <li>✅ Customer file management portal</li>
+            <li>✅ Automated notifications & quotes</li>
+            <li>✅ Secure hosting & SSL included</li>
+            <li>✅ Updates & support included</li>
+            <li>✅ Resell to your customers</li>
+          </ul>
+          <a class="btn" href="mailto:carnageremaps@gmail.com?subject=Portal%20Reselling%20Enquiry&body=Hi,%0A%0AI'm%20interested%20in%20reselling%20your%20portal%20system.%0A%0APlease%20send%20me%20more%20information.%0A%0AThanks" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3)">Contact Us →</a>
+        </div>
+
+        <div class="feature-card feature-pink">
+          <h3>📋 Need Vehicle Search Embed?</h3>
+          <p style="margin-bottom:0.75rem"><strong>Vehicle Search Widget Subscription</strong><br>
+          Add our powerful vehicle search to your own website</p>
+          <div style="background:rgba(255,255,255,0.15);padding:0.75rem;border-radius:8px;margin-bottom:0.75rem">
+            <div style="text-align:center">
+              <strong style="font-size:1.4em;color:#fff">💷 £9.99/month</strong>
+              <div style="font-size:0.9em;opacity:0.9;margin-top:0.25rem">Monthly Subscription</div>
+            </div>
+          </div>
+          <ul style="text-align:left;margin:0.75rem 0;padding-left:1.25rem;font-size:0.9em;line-height:1.6">
+            <li>✅ Full vehicle search widget</li>
+            <li>✅ Custom branding & colors</li>
+            <li>✅ Easy copy-paste embed code</li>
+            <li>✅ Automatic database updates</li>
+            <li>✅ Responsive mobile design</li>
+            <li>✅ Unlimited searches</li>
+          </ul>
+          <a class="btn" href="#" data-tab="billing" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3)">Subscribe Now →</a>
+        </div>
+      </section>
+
+      <section style="margin-top:2rem">
+        <h3>Recent Activity</h3>
+        <div class="card" id="latest-upload-card">
+          <h3>Latest Upload</h3>
+          <p id="latest-upload">No files yet</p>
+          <a class="btn small primary" href="#" data-tab="files">View all files →</a>
+        </div>
+      </section>
+    </section>
+
+    <!-- Files Tab -->
+    <section id="files-tab" class="cr-tab">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+        <div>
+          <h2 style="margin:0 0 0.25rem">Files</h2>
+          <p class="muted" style="margin:0">View your file history</p>
+        </div>
+        <a class="btn primary" href="#" data-tab="upload">+ Upload New File</a>
+      </div>
+      
+      <div class="files-table-container">
+        <div class="files-table-controls">
+          <div class="table-show">
+            <label for="files-per-page">Show</label>
+            <select id="files-per-page" title="Number of files per page" aria-label="Files per page">
+              <option value="10" selected>10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+            <span>entries</span>
+          </div>
+          <div class="table-search">
+            <label>Search:</label>
+            <input type="text" id="files-search" placeholder="Search files...">
+          </div>
+        </div>
+        
+        <div id="files-table-wrapper" class="table-wrapper">
+          <table class="files-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th class="sortable" data-sort="date">Last Updated <span class="sort-icon">↕</span></th>
+                <th class="sortable" data-sort="name">Vehicle <span class="sort-icon">↕</span></th>
+                <th class="sortable" data-sort="registration">Registration <span class="sort-icon">↕</span></th>
+                <th class="sortable" data-sort="status">Status <span class="sort-icon">↕</span></th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="files-table-body">
+              <tr>
+                <td colspan="6" class="table-empty">No files uploaded yet. <a href="#" data-tab="upload">Upload your first file</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="table-pagination">
+          <div class="pagination-info">Showing <span id="pagination-start">0</span> to <span id="pagination-end">0</span> of <span id="pagination-total">0</span> entries</div>
+          <div class="pagination-buttons" id="pagination-buttons">
+            <button class="page-btn" data-page="prev">Previous</button>
+            <button class="page-btn active" data-page="1">1</button>
+            <button class="page-btn" data-page="next">Next</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Upload Tab -->
+    <section id="upload-tab" class="cr-tab">
+      <div class="upload-wizard">
+        <!-- Modern Step Indicators -->
+        <div class="wizard-steps-modern">
+          <div class="wizard-step-modern active" data-step="1">
+            <div class="step-circle">
+              <span class="step-number">1</span>
+              <div class="step-check">✓</div>
+            </div>
+            <div class="step-content">
+              <h4>Vehicle details & file</h4>
+              <p>Select the vehicle and upload your file</p>
+            </div>
+          </div>
+          <div class="step-connector"></div>
+          <div class="wizard-step-modern" data-step="2">
+            <div class="step-circle">
+              <span class="step-number">2</span>
+              <div class="step-check">✓</div>
+            </div>
+            <div class="step-content">
+              <h4>Select stage & options</h4>
+              <p>Select tuning stage and additional options</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 1: Vehicle Details & File Upload -->
+        <div class="wizard-content active" id="wizard-step-1">
+          <!-- Modern Card Layout -->
+          <div class="upload-cards-container">
+            <!-- Vehicle Selection Card -->
+            <div class="upload-card">
+              <div class="card-header">
+                <div class="card-icon">🚗</div>
+                <h3>Select vehicle</h3>
+              </div>
+              <div class="card-content">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label>Vehicle Type</label>
+                    <select id="vehicle-type" class="modern-select" required>
+                      <option value="">Cars/Vans</option>
+                      <option value="car">Cars</option>
+                      <option value="van">Vans</option>
+                      <option value="truck">Trucks</option>
+                      <option value="motorcycle">Motorcycles</option>
+                      <option value="agricultural">Agricultural</option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label>Manufacturer</label>
+                    <select id="vehicle-manufacturer" class="modern-select" required>
+                      <option value="">Select Manufacturer</option>
+                      <option value="abarth">Abarth</option>
+                      <option value="alfa-romeo">Alfa Romeo</option>
+                      <option value="audi">Audi</option>
+                      <option value="bentley">Bentley</option>
+                      <option value="bmw">BMW</option>
+                      <option value="chevrolet">Chevrolet</option>
+                      <option value="chrysler">Chrysler</option>
+                      <option value="citroen">Citroën</option>
+                      <option value="dacia">Dacia</option>
+                      <option value="dodge">Dodge</option>
+                      <option value="ds">DS Automobiles</option>
+                      <option value="fiat">Fiat</option>
+                      <option value="ford">Ford</option>
+                      <option value="honda">Honda</option>
+                      <option value="hyundai">Hyundai</option>
+                      <option value="infiniti">Infiniti</option>
+                      <option value="iveco">Iveco</option>
+                      <option value="jaguar">Jaguar</option>
+                      <option value="jeep">Jeep</option>
+                      <option value="kia">Kia</option>
+                      <option value="land-rover">Land Rover</option>
+                      <option value="lexus">Lexus</option>
+                      <option value="maserati">Maserati</option>
+                      <option value="mazda">Mazda</option>
+                      <option value="mercedes">Mercedes-Benz</option>
+                      <option value="mini">Mini</option>
+                      <option value="mitsubishi">Mitsubishi</option>
+                      <option value="nissan">Nissan</option>
+                      <option value="opel">Opel</option>
+                      <option value="peugeot">Peugeot</option>
+                      <option value="porsche">Porsche</option>
+                      <option value="renault">Renault</option>
+                      <option value="seat">Seat</option>
+                      <option value="skoda">Škoda</option>
+                      <option value="smart">Smart</option>
+                      <option value="ssangyong">SsangYong</option>
+                      <option value="subaru">Subaru</option>
+                      <option value="suzuki">Suzuki</option>
+                      <option value="tesla">Tesla</option>
+                      <option value="toyota">Toyota</option>
+                      <option value="vauxhall">Vauxhall</option>
+                      <option value="volkswagen">Volkswagen</option>
+                      <option value="volvo">Volvo</option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label>Model</label>
+                    <select id="vehicle-model" class="modern-select" required>
+                      <option value="">Select Model</option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label>Year Range</label>
+                    <select id="vehicle-year" class="modern-select" required>
+                      <option value="">Select Year Range</option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label>Engine</label>
+                    <select id="vehicle-engine" class="modern-select" required>
+                      <option value="">Select Engine</option>
+                      <option value="1.0-tsi-95">1.0 TSI - 95hp</option>
+                      <option value="1.0-tsi-110">1.0 TSI - 110hp</option>
+                      <option value="1.2-tsi-90">1.2 TSI - 90hp</option>
+                      <option value="1.2-tsi-110">1.2 TSI - 110hp</option>
+                      <option value="1.4-tsi-122">1.4 TSI - 122hp</option>
+                      <option value="1.4-tsi-125">1.4 TSI - 125hp</option>
+                      <option value="1.4-tsi-150">1.4 TSI - 150hp</option>
+                      <option value="1.5-tsi-130">1.5 TSI - 130hp</option>
+                      <option value="1.5-tsi-150">1.5 TSI - 150hp</option>
+                      <option value="1.6-tdi-90">1.6 TDI - 90hp</option>
+                      <option value="1.6-tdi-105">1.6 TDI - 105hp</option>
+                      <option value="1.6-tdi-115">1.6 TDI - 115hp</option>
+                      <option value="1.9-tdi-90">1.9 TDI - 90hp</option>
+                      <option value="1.9-tdi-105">1.9 TDI - 105hp</option>
+                      <option value="1.9-tdi-110">1.9 TDI - 110hp</option>
+                      <option value="2.0-tdi-110">2.0 TDI - 110hp</option>
+                      <option value="2.0-tdi-136">2.0 TDI - 136hp</option>
+                      <option value="2.0-tdi-140">2.0 TDI - 140hp</option>
+                      <option value="2.0-tdi-150">2.0 TDI - 150hp</option>
+                      <option value="2.0-tdi-170">2.0 TDI - 170hp</option>
+                      <option value="2.0-tdi-184">2.0 TDI - 184hp</option>
+                      <option value="2.0-tdi-190">2.0 TDI - 190hp</option>
+                      <option value="2.0-tfsi-180">2.0 TFSI - 180hp</option>
+                      <option value="2.0-tfsi-190">2.0 TFSI - 190hp</option>
+                      <option value="2.0-tfsi-200">2.0 TFSI - 200hp</option>
+                      <option value="2.0-tfsi-220">2.0 TFSI - 220hp</option>
+                      <option value="2.0-tfsi-245">2.0 TFSI - 245hp</option>
+                      <option value="2.5-tfsi-340">2.5 TFSI - 340hp</option>
+                      <option value="3.0-tdi-218">3.0 TDI - 218hp</option>
+                      <option value="3.0-tdi-231">3.0 TDI - 231hp</option>
+                      <option value="3.0-tdi-272">3.0 TDI - 272hp</option>
+                      <option value="3.0-tfsi-333">3.0 TFSI - 333hp</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="help-link">
+                  <a href="#" class="link-help">ℹ️ Vehicle not listed above?</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- File Upload Card -->
+            <div class="upload-card">
+              <div class="card-header">
+                <div class="card-icon">📤</div>
+                <h3>Upload file</h3>
+              </div>
+              <div class="card-content">
+                <div id="drop-zone-wizard" class="modern-drop-zone">
+                  <div class="drop-zone-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="17 8 12 3 7 8"></polyline>
+                      <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                  </div>
+                  <p class="drop-zone-text">Drag and drop a file here or click</p>
+                  <p class="drop-zone-formats">Supported: .bin, .hex, .ori, .mod</p>
+                  <input type="file" id="file-input-wizard" accept=".bin,.hex,.ori,.mod" style="display:none">
+                </div>
+                <div id="uploaded-file-info" class="uploaded-file-modern" style="display:none;">
+                  <div class="file-icon">📄</div>
+                  <div class="file-details">
+                    <p class="file-name" id="uploaded-file-name"></p>
+                    <p class="file-size" id="uploaded-file-size"></p>
+                  </div>
+                  <button class="file-remove" id="remove-file-btn">✕</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Details Card -->
+            <div class="upload-card">
+              <div class="card-header">
+                <div class="card-icon">📋</div>
+                <h3>Details</h3>
+              </div>
+              <div class="card-content">
+                <div class="file-type-selection">
+                  <div class="file-type-buttons">
+                    <button class="file-type-btn active" data-type="ecu">
+                      <span class="btn-icon">💾</span>
+                      <span>ECU File</span>
+                    </button>
+                    <button class="file-type-btn" data-type="transmission">
+                      <span class="btn-icon">⚙️</span>
+                      <span>Transmission File</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label>Vehicle registration (license plate)</label>
+                  <input type="text" id="vehicle-registration" placeholder="e.g. AB12 CDE" class="modern-input">
+                </div>
+
+                <div class="form-group">
+                  <label>Transmission</label>
+                  <div class="radio-buttons">
+                    <label class="radio-btn">
+                      <input type="radio" name="transmission" value="automatic" checked>
+                      <span class="radio-indicator"></span>
+                      <span class="radio-icon">🔄</span>
+                      <span>Automatic</span>
+                    </label>
+                    <label class="radio-btn">
+                      <input type="radio" name="transmission" value="manual">
+                      <span class="radio-indicator"></span>
+                      <span class="radio-icon">🎛️</span>
+                      <span>Manual</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="tool-select">Choose tuning tool</label>
+                  <select id="tool-select" class="modern-select" title="Select tuning tool" aria-label="Tuning tool selection">
+                    <option value="">Choose tuning tool...</option>
+                    <option value="kess3">KESS3</option>
+                    <option value="ktag">K-TAG</option>
+                    <option value="autotuner">Autotuner</option>
+                    <option value="pcmflash">PCMFlash</option>
+                    <option value="cmd">CMD</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label>Tool type</label>
+                  <div class="radio-buttons">
+                    <label class="radio-btn">
+                      <input type="radio" name="tool-type" value="slave" checked>
+                      <span class="radio-indicator"></span>
+                      <span class="radio-icon">📱</span>
+                      <span>Slave tool</span>
+                    </label>
+                    <label class="radio-btn">
+                      <input type="radio" name="tool-type" value="master">
+                      <span class="radio-indicator"></span>
+                      <span class="radio-icon">💻</span>
+                      <span>Master tool</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="checkbox-modern">
+                    <input type="checkbox" id="terms-checkbox">
+                    <span class="checkbox-indicator"></span>
+                    <span>I agree to the <a href="#" class="link-terms">terms and conditions</a></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="wizard-navigation">
+            <button class="btn-next-modern" id="next-step-btn">
+              <span>Continue to Solutions</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 2: Stage & Options -->
+        <div class="wizard-content" id="wizard-step-2">
+          <!-- Modern Solutions Section -->
+          <div class="upload-card" style="margin-bottom: 2rem;">
+            <div class="card-header">
+              <div class="card-icon">💡</div>
+              <h3>Choose your solution</h3>
+            </div>
+            <div class="card-content">
+              <div class="solutions-grid">
+                <!-- Stage 1 -->
+                <label class="solution-card-modern">
+                  <input type="radio" name="solution" value="stage1" data-price="105">
+                  <div class="solution-content">
+                    <div class="solution-badge-modern stage1">S1</div>
+                    <div class="solution-info">
+                      <h4>Stage 1 ECU / TCU</h4>
+                      <p class="solution-desc">Reliable performance tuning without mechanical modifications</p>
+                      <div class="solution-price-modern">£105</div>
+                    </div>
+                  </div>
+                </label>
+
+                <!-- Stage 2 -->
+                <label class="solution-card-modern">
+                  <input type="radio" name="solution" value="stage2" data-price="147">
+                  <div class="solution-content">
+                    <div class="solution-badge-modern stage2">S2</div>
+                    <div class="solution-info">
+                      <h4>Stage 2 ECU / TCU</h4>
+                      <p class="solution-desc">High-performance tuning with hardware modifications</p>
+                      <div class="solution-price-modern">£147</div>
+                    </div>
+                  </div>
+                </label>
+
+                <!-- Economy -->
+                <label class="solution-card-modern">
+                  <input type="radio" name="solution" value="economy" data-price="105">
+                  <div class="solution-content">
+                    <div class="solution-badge-modern economy">ECO</div>
+                    <div class="solution-info">
+                      <h4>Economy Tune</h4>
+                      <p class="solution-desc">Optimized for fuel efficiency and performance</p>
+                      <div class="solution-price-modern">£105</div>
+                    </div>
+                  </div>
+                </label>
+
+                <!-- E85 Tuning -->
+                <label class="solution-card-modern">
+                  <input type="radio" name="solution" value="e85" data-price="168">
+                  <div class="solution-content">
+                    <div class="solution-badge-modern e85">E85</div>
+                    <div class="solution-info">
+                      <h4>E85 Ethanol Tuning</h4>
+                      <p class="solution-desc">High-octane ethanol fuel optimization</p>
+                      <div class="solution-price-modern">£168</div>
+                    </div>
+                  </div>
+                </label>
+
+                <!-- Custom Diesel -->
+                <label class="solution-card-modern">
+                  <input type="radio" name="solution" value="custom-diesel" data-price="252">
+                  <div class="solution-content">
+                    <div class="solution-badge-modern custom">CDT</div>
+                    <div class="solution-info">
+                      <h4>Custom Diesel/Hybrid</h4>
+                      <p class="solution-desc">Bespoke diesel and hybrid solutions</p>
+                      <div class="solution-price-modern">£252</div>
+                    </div>
+                  </div>
+                </label>
+
+                <!-- Custom Petrol -->
+                <label class="solution-card-modern">
+                  <input type="radio" name="solution" value="custom-petrol" data-price="315">
+                  <div class="solution-content">
+                    <div class="solution-badge-modern custom">CPT</div>
+                    <div class="solution-info">
+                      <h4>Custom Petrol/Hybrid</h4>
+                      <p class="solution-desc">Bespoke petrol and hybrid solutions</p>
+                      <div class="solution-price-modern">£315</div>
+                    </div>
+                  </div>
+                </label>
+
+                <!-- Utilities Section -->
+                <div class="utilities-section">
+                  <h4 style="margin: 2rem 0 1rem; text-align: center; color: #64748b; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 1px;">Utilities & Services</h4>
+                  
+                  <div class="utility-options">
+                    <label class="solution-card-modern utility">
+                      <input type="radio" name="solution" value="original-file" data-price="63">
+                      <div class="solution-content">
+                        <div class="solution-badge-modern utility">📄</div>
+                        <div class="solution-info">
+                          <h4>Original File Request</h4>
+                          <p class="solution-desc">Get original file for this vehicle</p>
+                          <div class="solution-price-modern">£63</div>
+                        </div>
+                      </div>
+                    </label>
+
+                    <label class="solution-card-modern utility">
+                      <input type="radio" name="solution" value="map-check" data-price="35.01">
+                      <div class="solution-content">
+                        <div class="solution-badge-modern utility">🔍</div>
+                        <div class="solution-info">
+                          <h4>Map Check</h4>
+                          <p class="solution-desc">Verify if file is tuned and check quality</p>
+                          <div class="solution-price-modern">£35.01</div>
+                        </div>
+                      </div>
+                    </label>
+
+                    <label class="solution-card-modern utility">
+                      <input type="radio" name="solution" value="solution-only" data-price="87.51">
+                      <div class="solution-content">
+                        <div class="solution-badge-modern utility">⚙️</div>
+                        <div class="solution-info">
+                          <h4>Solution Only</h4>
+                          <p class="solution-desc">Base solution for combining with options</p>
+                          <div class="solution-price-modern">£87.51</div>
+                        </div>
+                      </div>
+                    </label>
+
+                    <label class="solution-card-modern utility">
+                      <input type="radio" name="solution" value="dtc-off" data-price="63">
+                      <div class="solution-content">
+                        <div class="solution-badge-modern utility">🚫</div>
+                        <div class="solution-info">
+                          <h4>DTC Off Only</h4>
+                          <p class="solution-desc">Disable diagnostic trouble codes</p>
+                          <div class="solution-price-modern">£63</div>
+                        </div>
+                      </div>
+                    </label>
+
+                    <label class="solution-card-modern utility free">
+                      <input type="radio" name="solution" value="encrypt-decrypt" data-price="0">
+                      <div class="solution-content">
+                        <div class="solution-badge-modern free">🔓</div>
+                        <div class="solution-info">
+                          <h4>Encrypt/Decrypt Only</h4>
+                          <p class="solution-desc">File encryption/decryption service</p>
+                          <div class="solution-price-modern free">FREE</div>
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modern Options Section -->
+          <div class="upload-card">
+            <div class="card-header">
+              <div class="card-icon">⚙️</div>
+              <h3>Additional options</h3>
+            </div>
+            <div class="card-content">
+              <div class="options-grid-modern">
+                <label class="option-card-modern">
+                  <input type="checkbox" name="option" value="adblue" data-price="0">
+                  <div class="option-content-modern">
+                    <span class="option-name-modern">Adblue / SCR Off</span>
+                    <span class="option-price-modern free">FREE</span>
+                  </div>
+                </label>
+
+                <label class="option-card-modern">
+                  <input type="checkbox" name="option" value="ags-off" data-price="0">
+                  <div class="option-content-modern">
+                    <span class="option-name-modern">AGS Off (Active Grill Shutter)</span>
+                    <span class="option-price-modern free">FREE</span>
+                  </div>
+                </label>
+
+                <label class="option-card-modern">
+                  <input type="checkbox" name="option" value="cold-start" data-price="0">
+                  <div class="option-content-modern">
+                    <span class="option-name-modern">Cold Start Noise Reduction</span>
+                    <span class="option-price-modern free">FREE</span>
+                  </div>
+                </label>
+
+                <label class="option-card-modern">
+                  <input type="checkbox" name="option" value="dpf-fap" data-price="0">
+                  <div class="option-content-modern">
+                    <span class="option-name-modern">DPF / FAP Off (Diesel Only)</span>
+                    <span class="option-price-modern free">FREE</span>
+                  </div>
+                </label>
+
+                <label class="option-card-modern">
+                  <input type="checkbox" name="option" value="dtc-off" data-price="0">
+                  <div class="option-content-modern">
+                    <span class="option-name-modern">DTC Off</span>
+                    <span class="option-price-modern free">FREE</span>
+                  </div>
+                </label>
+
+                <label class="option-card-modern">
+                  <input type="checkbox" name="option" value="egr-off" data-price="0">
+                  <div class="option-content-modern">
+                    <span class="option-name-modern">EGR Off</span>
+                    <span class="option-price-modern free">FREE</span>
+                  </div>
+                </label>
+
+                <label class="option-card-modern">
+                  <input type="checkbox" name="option" value="evap-removal" data-price="0">
+                  <div class="option-content-modern">
+                    <span class="option-name-modern">EVAP Removal</span>
+                    <span class="option-price-modern free">FREE</span>
+                  </div>
+                </label>
+
+                <label class="option-card-modern">
+                  <input type="checkbox" name="option" value="exhaust-flap" data-price="0">
+                  <div class="option-content-modern">
+                    <span class="option-name-modern">Exhaust Flap Off</span>
+                    <span class="option-price-modern free">FREE</span>
+                  </div>
+                </label>
+
+                <label class="option-card-modern">
+                  <input type="checkbox" name="option" value="gpf-ppf-opf" data-price="0">
+                  <div class="option-content-modern">
+                    <span class="option-name-modern">GPF / PPF / OPF Off (Petrol Only)</span>
+                    <span class="option-price-modern free">FREE</span>
+                  </div>
+                </label>
+
+                <label class="option-card-modern">
+                  <input type="checkbox" name="option" value="hardcut-popcorn" data-price="21">
+                  <div class="option-content-modern">
+                    <span class="option-name-modern">Hardcut / Popcorn Limiter (Diesel Only)</span>
+                    <span class="option-price-modern">£21</span>
+                  </div>
+                </label>
+
+                <label class="option-card-modern">
+                  <input type="checkbox" name="option" value="hot-start" data-price="0">
+                  <div class="option-content-modern">
+                    <span class="option-name-modern">Hot Start Fix</span>
+                    <span class="option-price-modern free">FREE</span>
+                  </div>
+                </label>
+
+                <label class="option-card-modern">
+                  <input type="checkbox" name="option" value="maf-off" data-price="0">
+                  <div class="option-content-modern">
+                    <span class="option-name-modern">MAF Off</span>
+                    <span class="option-price-modern free">FREE</span>
+                  </div>
+                </label>
+
+                <label class="option-card-modern">
+                  <input type="checkbox" name="option" value="o2-lambda" data-price="0">
+                  <div class="option-content-modern">
+                    <span class="option-name-modern">O2 / Lambda Off</span>
+                    <span class="option-price-modern free">FREE</span>
+                  </div>
+                </label>
+
+                <label class="option-card-modern">
+                  <input type="checkbox" name="option" value="pops-bangs" data-price="42">
+                  <div class="option-content-modern">
+                    <span class="option-name-modern">Pops & Bangs / Burbles</span>
+                    <span class="option-price-modern">£42</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="wizard-actions">
+            <button class="btn-back-modern" id="back-step-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+              <span>Back</span>
+            </button>
+            <button class="btn-submit-modern" id="submit-upload-btn">
+              <span>Submit File</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 11 12 14 22 4"></polyline>
+                <path d="m21 3-6.5 18a.55.55 0 0 1-1 0L10 14l-7-3.5a.55.55 0 0 1 0-1L21 3z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="upload-success-wizard" class="upload-message success" style="display:none;margin-top:2rem">
+        <p>✓ File uploaded successfully!</p>
+        <button class="btn small" id="view-files-wizard-btn">View Files</button>
+      </div>
+    </section>
+
+    <!-- Vehicle Search Tab -->
+    <section id="vehicle-search-tab" class="cr-tab">
+      <h2>🔍 Vehicle Search</h2>
+      <p class="muted">Search our database for detailed vehicle information, ECU compatibility, and performance gains</p>
+      
+      <div class="vehicle-search-container">
+        <div class="search-form-card card">
+          <h3>Search Vehicle</h3>
+          <div class="search-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="search-manufacturer">Manufacturer</label>
+                <select id="search-manufacturer" class="form-control">
+                  <option value="">Select Manufacturer</option>
+                  <option value="audi">Audi</option>
+                  <option value="bmw">BMW</option>
+                  <option value="mercedes">Mercedes-Benz</option>
+                  <option value="volkswagen">Volkswagen</option>
+                  <option value="ford">Ford</option>
+                  <option value="vauxhall">Vauxhall / Opel</option>
+                  <option value="land-rover">Land Rover</option>
+                  <option value="nissan">Nissan</option>
+                  <option value="toyota">Toyota</option>
+                  <option value="peugeot">Peugeot</option>
+                  <option value="renault">Renault</option>
+                  <option value="citroen">Citroën</option>
+                  <option value="seat">Seat</option>
+                  <option value="skoda">Škoda</option>
+                  <option value="volvo">Volvo</option>
+                  <option value="mazda">Mazda</option>
+                  <option value="honda">Honda</option>
+                  <option value="hyundai">Hyundai</option>
+                  <option value="kia">Kia</option>
+                  <option value="fiat">Fiat</option>
+                  <option value="alfa-romeo">Alfa Romeo</option>
+                  <option value="jeep">Jeep</option>
+                  <option value="mini">Mini</option>
+                  <option value="porsche">Porsche</option>
+                  <option value="lexus">Lexus</option>
+                  <option value="jaguar">Jaguar</option>
+                  <option value="dacia">Dacia</option>
+                  <option value="suzuki">Suzuki</option>
+                  <option value="subaru">Subaru</option>
+                  <option value="mitsubishi">Mitsubishi</option>
+                  <option value="tesla">Tesla</option>
+                  <option value="bentley">Bentley</option>
+                  <option value="maserati">Maserati</option>
+                  <option value="abarth">Abarth</option>
+                  <option value="ds">DS</option>
+                  <option value="smart">Smart</option>
+                  <option value="ssangyong">SsangYong</option>
+                  <option value="infiniti">Infiniti</option>
+                  <option value="iveco">Iveco</option>
+                  <option value="dodge">Dodge</option>
+                  <option value="chevrolet">Chevrolet</option>
+                  <option value="chrysler">Chrysler</option>
+                  <option value="opel">Opel</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label for="search-model">Model</label>
+                <select id="search-model" class="form-control">
+                  <option value="">Select Model</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label for="search-year">Year Range</label>
+                <select id="search-year" class="form-control">
+                  <option value="">Select Year Range</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label for="search-engine">Engine</label>
+                <select id="search-engine" class="form-control">
+                  <option value="">Select Engine</option>
+                </select>
+              </div>
+            </div>
+            
+            <button class="btn primary btn-search" id="search-vehicle-btn">
+              <span>🔍 Search Vehicle</span>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Search Results -->
+        <div id="search-results" class="search-results" style="display:none;">
+          <div class="card" style="background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 0; overflow: hidden;">
+            <!-- Vehicle Header -->
+            <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 1.5rem; border-bottom: 1px solid #334155;">
+              <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="width: 48px; height: 48px; background: #dc2626; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; color: white;">
+                  A
+                </div>
+                <div>
+                  <h3 id="result-vehicle-name" style="margin: 0; font-size: 1.25rem; color: white;">Audi → Q5 → 2.0 TDI - 143hp</h3>
+                  <p id="result-engine-name" style="margin: 0.25rem 0 0; color: #94a3b8; font-size: 0.875rem;">2.0 TDI - 143hp</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Engine Specs Grid -->
+            <div style="padding: 1.5rem; background: #0f172a;">
+              <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                <div>
+                  <div style="color: #64748b; font-size: 0.75rem; margin-bottom: 0.25rem;">Engine Capacity:</div>
+                  <div id="result-capacity" style="color: white; font-weight: 600;">2.0L (1968cc)</div>
+                </div>
+                <div>
+                  <div style="color: #64748b; font-size: 0.75rem; margin-bottom: 0.25rem;">Cylinders:</div>
+                  <div id="result-cylinders" style="color: white; font-weight: 600;">4</div>
+                </div>
+                <div>
+                  <div style="color: #64748b; font-size: 0.75rem; margin-bottom: 0.25rem;">Aspiration:</div>
+                  <div id="result-aspiration" style="color: white; font-weight: 600; background: #3b82f6; padding: 0.25rem 0.75rem; border-radius: 6px; display: inline-block; font-size: 0.875rem;">Turbocharged</div>
+                </div>
+                <div>
+                  <div style="color: #64748b; font-size: 0.75rem; margin-bottom: 0.25rem;">Engine Bore:</div>
+                  <div id="result-bore" style="color: white; font-weight: 600;">81mm</div>
+                </div>
+                <div>
+                  <div style="color: #64748b; font-size: 0.75rem; margin-bottom: 0.25rem;">Fuel:</div>
+                  <div id="result-fuel" style="color: white; font-weight: 600; background: #10b981; padding: 0.25rem 0.75rem; border-radius: 6px; display: inline-block; font-size: 0.875rem;">Diesel</div>
+                </div>
+              </div>
+              
+              <!-- ECUs Section -->
+              <div style="border-top: 1px solid #334155; padding-top: 1.5rem; margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                  <span style="font-size: 1.25rem;">💾</span>
+                  <span style="color: white; font-weight: 600;">ECUs:</span>
+                </div>
+                <div id="result-ecu-badges" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                  <span style="background: #3b82f6; color: white; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500;">Bosch EDC17C46</span>
+                </div>
+              </div>
+              
+              <!-- Tools Compatibility -->
+              <div style="border-top: 1px solid #334155; padding-top: 1.5rem; margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                  <span style="font-size: 1.25rem;">🔧</span>
+                  <span style="color: white; font-weight: 600;">Check your tool's compatibility:</span>
+                </div>
+                <div id="result-tools" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                  <div style="background: #475569; color: white; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500;">ALIENTECH</div>
+                  <div style="background: #475569; color: white; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500;">AUTOTUNER</div>
+                  <div style="background: #475569; color: white; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500;">CMD</div>
+                </div>
+              </div>
+              
+              <!-- Options Available -->
+              <div style="border-top: 1px solid #334155; padding-top: 1.5rem; margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                  <span style="font-size: 1.25rem;">⚡</span>
+                  <span style="color: white; font-weight: 600;">Options available:</span>
+                </div>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                  <div style="background: transparent; border: 1px solid #22c55e; color: #22c55e; padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500;">✓ Specific DTC Disable</div>
+                  <div style="background: transparent; border: 1px solid #22c55e; color: #22c55e; padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500;">✓ Launch control</div>
+                  <div style="background: transparent; border: 1px solid #22c55e; color: #22c55e; padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500;">✓ Pops & Bangs</div>
+                  <div style="background: transparent; border: 1px solid #22c55e; color: #22c55e; padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500;">✓ Start/Stop Disable</div>
+                  <div style="background: transparent; border: 1px solid #22c55e; color: #22c55e; padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500;">✓ Decat</div>
+                  <div style="background: transparent; border: 1px solid #22c55e; color: #22c55e; padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500;">✓ Speed Limiter Disable</div>
+                  <div style="background: transparent; border: 1px solid #22c55e; color: #22c55e; padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500;">✓ Anti lag</div>
+                </div>
+              </div>
+              
+              <!-- Stage 1 Card -->
+              <div style="border-top: 1px solid #334155; padding-top: 1.5rem;">
+                <div style="background: linear-gradient(135deg, #475569 0%, #64748b 100%); border-radius: 12px; padding: 1.5rem; color: white;">
+                  <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; text-align: center; letter-spacing: 0.5px;">STAGE 1 PERFORMANCE</div>
+                  
+                  <!-- Power Comparison -->
+                  <div style="margin-bottom: 2rem;">
+                    <div style="font-size: 0.875rem; color: #cbd5e1; margin-bottom: 1rem; font-weight: 600; letter-spacing: 0.5px; text-align: center;">POWER (HP)</div>
+                    <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: center;">
+                      <!-- Stock Power -->
+                      <div style="text-align: center; padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                        <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase;">Stock</div>
+                        <div id="result-stock-power" style="font-size: 2rem; font-weight: 700; color: #94a3b8;">143</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">hp</div>
+                      </div>
+                      
+                      <!-- Arrow -->
+                      <div style="color: #22c55e; font-size: 1.5rem; font-weight: 700;">→</div>
+                      
+                      <!-- Stage 1 Power -->
+                      <div style="text-align: center; padding: 1rem; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 8px;">
+                        <div style="font-size: 0.75rem; color: #22c55e; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase;">Stage 1</div>
+                        <div id="result-stage1-power" style="font-size: 2rem; font-weight: 700; color: #22c55e;">183</div>
+                        <div style="font-size: 0.75rem; color: #22c55e;">hp</div>
+                        <div id="result-gain-power" style="font-size: 0.875rem; color: #22c55e; font-weight: 600; margin-top: 0.5rem;">(+40 hp)</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Torque Comparison -->
+                  <div>
+                    <div style="font-size: 0.875rem; color: #cbd5e1; margin-bottom: 1rem; font-weight: 600; letter-spacing: 0.5px; text-align: center;">TORQUE (NM)</div>
+                    <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: center;">
+                      <!-- Stock Torque -->
+                      <div style="text-align: center; padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                        <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase;">Stock</div>
+                        <div id="result-stock-torque" style="font-size: 2rem; font-weight: 700; color: #94a3b8;">340</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">nm</div>
+                      </div>
+                      
+                      <!-- Arrow -->
+                      <div style="color: #22c55e; font-size: 1.5rem; font-weight: 700;">→</div>
+                      
+                      <!-- Stage 1 Torque -->
+                      <div style="text-align: center; padding: 1rem; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 8px;">
+                        <div style="font-size: 0.75rem; color: #22c55e; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase;">Stage 1</div>
+                        <div id="result-stage1-torque" style="font-size: 2rem; font-weight: 700; color: #22c55e;">430</div>
+                        <div style="font-size: 0.75rem; color: #22c55e;">nm</div>
+                        <div id="result-gain-torque" style="font-size: 0.875rem; color: #22c55e; font-weight: 600; margin-top: 0.5rem;">(+90 nm)</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Stage 2 Card -->
+              <div id="stage2-section" style="border-top: 1px solid #334155; padding-top: 1.5rem; display: none;">
+                <div style="background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%); border-radius: 12px; padding: 1.5rem; color: white;">
+                  <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; text-align: center; letter-spacing: 0.5px;">STAGE 2 PERFORMANCE</div>
+                  
+                  <!-- Power Comparison -->
+                  <div style="margin-bottom: 2rem;">
+                    <div style="font-size: 0.875rem; color: #e2e8f0; margin-bottom: 1rem; font-weight: 600; letter-spacing: 0.5px; text-align: center;">POWER (HP)</div>
+                    <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: center;">
+                      <!-- Stock Power -->
+                      <div style="text-align: center; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                        <div style="font-size: 0.75rem; color: #cbd5e1; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase;">Stock</div>
+                        <div id="result-stock-power-s2" style="font-size: 2rem; font-weight: 700; color: white;">143</div>
+                        <div style="font-size: 0.75rem; color: #cbd5e1;">hp</div>
+                      </div>
+                      
+                      <!-- Arrow -->
+                      <div style="color: #fbbf24; font-size: 1.5rem; font-weight: 700;">→</div>
+                      
+                      <!-- Stage 2 Power -->
+                      <div style="text-align: center; padding: 1rem; background: rgba(255, 255, 255, 0.15); border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 8px;">
+                        <div style="font-size: 0.75rem; color: #fbbf24; margin-bottom: 0.5rem; font-weight: 700; text-transform: uppercase;">Stage 2</div>
+                        <div id="result-stage2-power" style="font-size: 2rem; font-weight: 700; color: white;">195</div>
+                        <div style="font-size: 0.75rem; color: #cbd5e1;">hp</div>
+                        <div id="result-gain-power-s2" style="font-size: 0.875rem; color: #fbbf24; font-weight: 700; margin-top: 0.5rem;">(+52 hp)</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Torque Comparison -->
+                  <div>
+                    <div style="font-size: 0.875rem; color: #e2e8f0; margin-bottom: 1rem; font-weight: 600; letter-spacing: 0.5px; text-align: center;">TORQUE (NM)</div>
+                    <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: center;">
+                      <!-- Stock Torque -->
+                      <div style="text-align: center; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                        <div style="font-size: 0.75rem; color: #cbd5e1; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase;">Stock</div>
+                        <div id="result-stock-torque-s2" style="font-size: 2rem; font-weight: 700; color: white;">340</div>
+                        <div style="font-size: 0.75rem; color: #cbd5e1;">nm</div>
+                      </div>
+                      
+                      <!-- Arrow -->
+                      <div style="color: #fbbf24; font-size: 1.5rem; font-weight: 700;">→</div>
+                      
+                      <!-- Stage 2 Torque -->
+                      <div style="text-align: center; padding: 1rem; background: rgba(255, 255, 255, 0.15); border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 8px;">
+                        <div style="font-size: 0.75rem; color: #fbbf24; margin-bottom: 0.5rem; font-weight: 700; text-transform: uppercase;">Stage 2</div>
+                        <div id="result-stage2-torque" style="font-size: 2rem; font-weight: 700; color: white;">420</div>
+                        <div style="font-size: 0.75rem; color: #cbd5e1;">nm</div>
+                        <div id="result-gain-torque-s2" style="font-size: 0.875rem; color: #fbbf24; font-weight: 700; margin-top: 0.5rem;">(+80 nm)</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Stage 3 Card -->
+              <div id="stage3-section" style="border-top: 1px solid #334155; padding-top: 1.5rem; display: none;">
+                <div style="background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); border-radius: 12px; padding: 1.5rem; color: white;">
+                  <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; text-align: center; letter-spacing: 0.5px;">STAGE 3 PERFORMANCE</div>
+                  
+                  <!-- Power Comparison -->
+                  <div style="margin-bottom: 2rem;">
+                    <div style="font-size: 0.875rem; color: #fed7d7; margin-bottom: 1rem; font-weight: 600; letter-spacing: 0.5px; text-align: center;">POWER (HP)</div>
+                    <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: center;">
+                      <!-- Stock Power -->
+                      <div style="text-align: center; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                        <div style="font-size: 0.75rem; color: #fecaca; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase;">Stock</div>
+                        <div id="result-stock-power-s3" style="font-size: 2rem; font-weight: 700; color: white;">143</div>
+                        <div style="font-size: 0.75rem; color: #fecaca;">hp</div>
+                      </div>
+                      
+                      <!-- Arrow -->
+                      <div style="color: #fbbf24; font-size: 1.5rem; font-weight: 700;">→</div>
+                      
+                      <!-- Stage 3 Power -->
+                      <div style="text-align: center; padding: 1rem; background: rgba(255, 255, 255, 0.15); border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 8px;">
+                        <div style="font-size: 0.75rem; color: #fbbf24; margin-bottom: 0.5rem; font-weight: 700; text-transform: uppercase;">Stage 3</div>
+                        <div id="result-stage3-power" style="font-size: 2rem; font-weight: 700; color: white;">210</div>
+                        <div style="font-size: 0.75rem; color: #fecaca;">hp</div>
+                        <div id="result-gain-power-s3" style="font-size: 0.875rem; color: #fbbf24; font-weight: 700; margin-top: 0.5rem;">(+67 hp)</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Torque Comparison -->
+                  <div>
+                    <div style="font-size: 0.875rem; color: #fed7d7; margin-bottom: 1rem; font-weight: 600; letter-spacing: 0.5px; text-align: center;">TORQUE (NM)</div>
+                    <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: center;">
+                      <!-- Stock Torque -->
+                      <div style="text-align: center; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                        <div style="font-size: 0.75rem; color: #fecaca; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase;">Stock</div>
+                        <div id="result-stock-torque-s3" style="font-size: 2rem; font-weight: 700; color: white;">340</div>
+                        <div style="font-size: 0.75rem; color: #fecaca;">nm</div>
+                      </div>
+                      
+                      <!-- Arrow -->
+                      <div style="color: #fbbf24; font-size: 1.5rem; font-weight: 700;">→</div>
+                      
+                      <!-- Stage 3 Torque -->
+                      <div style="text-align: center; padding: 1rem; background: rgba(255, 255, 255, 0.15); border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 8px;">
+                        <div style="font-size: 0.75rem; color: #fbbf24; margin-bottom: 0.5rem; font-weight: 700; text-transform: uppercase;">Stage 3</div>
+                        <div id="result-stage3-torque" style="font-size: 2rem; font-weight: 700; color: white;">450</div>
+                        <div style="font-size: 0.75rem; color: #fecaca;">nm</div>
+                        <div id="result-gain-torque-s3" style="font-size: 0.875rem; color: #fbbf24; font-weight: 700; margin-top: 0.5rem;">(+110 nm)</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Quote Contact Options -->
+          <div style="padding: 2rem; background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+            <h3 style="text-align: center; color: white; margin: 0 0 1.5rem 0; font-size: 1.25rem;">Request a Quote</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
+              <!-- WhatsApp Button -->
+              <button id="quote-whatsapp-btn" class="quote-contact-btn" style="background: #25D366; color: white; font-weight: 600; font-size: 1rem; padding: 0.875rem 1.75rem; border-radius: 10px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.625rem; flex: 1; min-width: 200px; max-width: 300px; justify-content: center;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                <span>WhatsApp</span>
+              </button>
+              
+              <!-- Email Button -->
+              <button id="quote-email-btn" class="quote-contact-btn" style="background: #EA4335; color: white; font-weight: 600; font-size: 1rem; padding: 0.875rem 1.75rem; border-radius: 10px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.625rem; flex: 1; min-width: 200px; max-width: 300px; justify-content: center;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+                <span>Email</span>
+              </button>
+              
+              <!-- SMS Button -->
+              <button id="quote-sms-btn" class="quote-contact-btn" style="background: #0088cc; color: white; font-weight: 600; font-size: 1rem; padding: 0.875rem 1.75rem; border-radius: 10px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.625rem; flex: 1; min-width: 200px; max-width: 300px; justify-content: center;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span>SMS Text</span>
+              </button>
+            </div>
+            <p style="margin: 1.5rem 0 0 0; color: white; font-size: 0.875rem; opacity: 0.9; text-align: center;">Choose your preferred contact method for a custom quote</p>
+          </div>
+        </div>
+        
+        <!-- Empty State -->
+        <div id="search-empty-state" class="empty-state-search">
+          <div class="empty-icon">🔍</div>
+          <h3>Search for a Vehicle</h3>
+          <p>Select a manufacturer, model, and engine to view detailed specifications and performance gains</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing Tab -->
+    <section id="pricing-tab" class="cr-tab">
+      <h2>💰 File Tuning Pricing</h2>
+      <p class="muted">Complete pricing guide for all tuning solutions</p>
+
+      <div class="pricing-container" style="display:grid;gap:2rem;margin-top:2rem">
+        
+        <!-- Pricing Overview -->
+        <div class="settings-card">
+          <div style="text-align:center;margin-bottom:2rem">
+            <h2 style="margin-bottom:0.5rem;font-size:2rem">💳 Tuning Solutions Pricing</h2>
+            <p class="muted" style="font-size:1.1rem">All prices include VAT • Professional remapping with performance guarantees</p>
+          </div>
+          
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:2rem">
+            <!-- Stage Solutions -->
+            <div class="pricing-category" style="background:rgba(34,197,94,0.05);padding:1.5rem;border-radius:12px;border:2px solid rgba(34,197,94,0.2)">
+              <h3 style="color:#22c55e;margin-bottom:1.5rem;display:flex;align-items:center;gap:0.5rem;font-size:1.3rem">
+                <span style="font-size:1.5rem">🚀</span> Performance Stages
+              </h3>
+              <div class="pricing-items" style="display:grid;gap:0.75rem">
+                <div class="pricing-item" style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:rgba(255,255,255,0.5);border-radius:8px">
+                  <span class="pricing-name" style="font-weight:600;color:#000">Stage 1 Tune</span>
+                  <span class="pricing-price" style="font-size:1.25rem;font-weight:bold;color:#22c55e">£105</span>
+                </div>
+                <div class="pricing-item" style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:rgba(255,255,255,0.5);border-radius:8px">
+                  <span class="pricing-name" style="font-weight:600;color:#000">Stage 2 Tune</span>
+                  <span class="pricing-price" style="font-size:1.25rem;font-weight:bold;color:#22c55e">£147</span>
+                </div>
+                <div class="pricing-item" style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:rgba(255,255,255,0.5);border-radius:8px">
+                  <span class="pricing-name" style="font-weight:600;color:#000">Economy Tune</span>
+                  <span class="pricing-price" style="font-size:1.25rem;font-weight:bold;color:#22c55e">£105</span>
+                </div>
+                <div class="pricing-item" style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:rgba(255,255,255,0.5);border-radius:8px">
+                  <span class="pricing-name" style="font-weight:600;color:#000">E85 Ethanol Tune</span>
+                  <span class="pricing-price" style="font-size:1.25rem;font-weight:bold;color:#22c55e">£168</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Custom Solutions -->
+            <div class="pricing-category" style="background:rgba(139,92,246,0.05);padding:1.5rem;border-radius:12px;border:2px solid rgba(139,92,246,0.2)">
+              <h3 style="color:#8b5cf6;margin-bottom:1.5rem;display:flex;align-items:center;gap:0.5rem;font-size:1.3rem">
+                <span style="font-size:1.5rem">⚡</span> Custom Solutions
+              </h3>
+              <div class="pricing-items" style="display:grid;gap:0.75rem">
+                <div class="pricing-item" style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:rgba(255,255,255,0.5);border-radius:8px">
+                  <span class="pricing-name" style="font-weight:600;color:#000">Custom Diesel Tune</span>
+                  <span class="pricing-price" style="font-size:1.25rem;font-weight:bold;color:#8b5cf6">£252</span>
+                </div>
+                <div class="pricing-item" style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:rgba(255,255,255,0.5);border-radius:8px">
+                  <span class="pricing-name" style="font-weight:600;color:#000">Custom Petrol Tune</span>
+                  <span class="pricing-price" style="font-size:1.25rem;font-weight:bold;color:#8b5cf6">£315</span>
+                </div>
+                <div class="pricing-item" style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:rgba(255,255,255,0.5);border-radius:8px">
+                  <span class="pricing-name" style="font-weight:600;color:#000">DTC Error Removal</span>
+                  <span class="pricing-price" style="font-size:1.25rem;font-weight:bold;color:#8b5cf6">£63</span>
+                </div>
+                <div class="pricing-item" style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:rgba(255,255,255,0.5);border-radius:8px">
+                  <span class="pricing-name" style="font-weight:600;color:#000">Original File Recovery</span>
+                  <span class="pricing-price" style="font-size:1.25rem;font-weight:bold;color:#8b5cf6">£63</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Utility Services -->
+            <div class="pricing-category" style="background:rgba(245,158,11,0.05);padding:1.5rem;border-radius:12px;border:2px solid rgba(245,158,11,0.2)">
+              <h3 style="color:#f59e0b;margin-bottom:1.5rem;display:flex;align-items:center;gap:0.5rem;font-size:1.3rem">
+                <span style="font-size:1.5rem">🔧</span> Utility Services
+              </h3>
+              <div class="pricing-items" style="display:grid;gap:0.75rem">
+                <div class="pricing-item" style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:rgba(255,255,255,0.5);border-radius:8px">
+                  <span class="pricing-name" style="font-weight:600;color:#000">File Map Check</span>
+                  <span class="pricing-price" style="font-size:1.25rem;font-weight:bold;color:#f59e0b">£35.01</span>
+                </div>
+                <div class="pricing-item" style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:rgba(255,255,255,0.5);border-radius:8px">
+                  <span class="pricing-name" style="font-weight:600;color:#000">Solution Only (No File)</span>
+                  <span class="pricing-price" style="font-size:1.25rem;font-weight:bold;color:#f59e0b">£87.51</span>
+                </div>
+                <div class="pricing-item" style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:rgba(255,255,255,0.5);border-radius:8px">
+                  <span class="pricing-name" style="font-weight:600;color:#000">File Encrypt/Decrypt</span>
+                  <span class="pricing-price free" style="font-size:1.25rem;font-weight:bold;color:#22c55e;background:#22c55e;color:white;padding:0.25rem 0.75rem;border-radius:6px">FREE</span>
+                </div>
+                <div class="pricing-item" style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:rgba(255,255,255,0.5);border-radius:8px">
+                  <span class="pricing-name" style="font-weight:600;color:#000">Checksum Correction</span>
+                  <span class="pricing-price free" style="font-size:1.25rem;font-weight:bold;color:#22c55e;background:#22c55e;color:white;padding:0.25rem 0.75rem;border-radius:6px">FREE</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Free Add-Ons -->
+          <div style="margin-top:2.5rem;padding:2rem;background:linear-gradient(135deg,rgba(34,197,94,0.1),rgba(34,197,94,0.05));border:2px solid rgba(34,197,94,0.3);border-radius:16px;box-shadow:0 4px 12px rgba(34,197,94,0.1)">
+            <h3 style="color:#22c55e;margin-bottom:1.5rem;font-size:1.4rem;display:flex;align-items:center;gap:0.5rem">
+              <span style="font-size:1.8rem">✅</span> Free Add-On Services <span style="font-size:0.9rem;opacity:0.8">(With Any Tune)</span>
+            </h3>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;font-size:1rem">
+              <span style="padding:0.5rem;background:rgba(255,255,255,0.6);border-radius:8px;color:#000;font-weight:500">• DPF/FAP Removal</span>
+              <span style="padding:0.5rem;background:rgba(255,255,255,0.6);border-radius:8px;color:#000;font-weight:500">• EGR Removal</span>
+              <span style="padding:0.5rem;background:rgba(255,255,255,0.6);border-radius:8px;color:#000;font-weight:500">• AdBlue/SCR Off</span>
+              <span style="padding:0.5rem;background:rgba(255,255,255,0.6);border-radius:8px;color:#000;font-weight:500">• DTC Error Removal</span>
+              <span style="padding:0.5rem;background:rgba(255,255,255,0.6);border-radius:8px;color:#000;font-weight:500">• Lambda/O2 Sensor Off</span>
+              <span style="padding:0.5rem;background:rgba(255,255,255,0.6);border-radius:8px;color:#000;font-weight:500">• MAF Sensor Off</span>
+              <span style="padding:0.5rem;background:rgba(255,255,255,0.6);border-radius:8px;color:#000;font-weight:500">• Cold Start Noise Fix</span>
+              <span style="padding:0.5rem;background:rgba(255,255,255,0.6);border-radius:8px;color:#000;font-weight:500">• Hot Start Fix</span>
+              <span style="padding:0.5rem;background:rgba(255,255,255,0.6);border-radius:8px;color:#000;font-weight:500">• EVAP System Removal</span>
+              <span style="padding:0.5rem;background:rgba(255,255,255,0.6);border-radius:8px;color:#000;font-weight:500">• Exhaust Flap Off</span>
+              <span style="padding:0.5rem;background:rgba(255,255,255,0.6);border-radius:8px;color:#000;font-weight:500">• GPF/PPF/OPF Removal</span>
+              <span style="padding:0.5rem;background:rgba(255,255,255,0.6);border-radius:8px;color:#000;font-weight:500">• AGS (Active Grill) Off</span>
+            </div>
+          </div>
+
+          <!-- Premium Add-Ons -->
+          <div style="margin-top:2rem;padding:2rem;background:linear-gradient(135deg,rgba(168,85,247,0.1),rgba(168,85,247,0.05));border:2px solid rgba(168,85,247,0.3);border-radius:16px;box-shadow:0 4px 12px rgba(168,85,247,0.1)">
+            <h3 style="color:#a855f7;margin-bottom:1.5rem;font-size:1.4rem;display:flex;align-items:center;gap:0.5rem">
+              <span style="font-size:1.8rem">🔥</span> Premium Add-On Services
+            </h3>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem">
+              <div class="pricing-item" style="display:flex;justify-content:space-between;align-items:center;padding:1rem;background:rgba(255,255,255,0.6);border-radius:10px;border:1px solid rgba(168,85,247,0.2)">
+                <span class="pricing-name" style="font-weight:600;font-size:1rem;color:#000">Pops & Bangs / Burbles</span>
+                <span class="pricing-price" style="font-size:1.3rem;font-weight:bold;color:#a855f7">£42</span>
+              </div>
+              <div class="pricing-item" style="display:flex;justify-content:space-between;align-items:center;padding:1rem;background:rgba(255,255,255,0.6);border-radius:10px;border:1px solid rgba(168,85,247,0.2)">
+                <span class="pricing-name" style="font-weight:600;font-size:1rem;color:#000">Hardcut / Popcorn Limiter</span>
+                <span class="pricing-price" style="font-size:1.3rem;font-weight:bold;color:#a855f7">£21</span>
+              </div>
+              <div class="pricing-item" style="display:flex;justify-content:space-between;align-items:center;padding:1rem;background:rgba(255,255,255,0.6);border-radius:10px;border:1px solid rgba(168,85,247,0.2)">
+                <span class="pricing-name" style="font-weight:600;font-size:1rem;color:#000">Launch Control</span>
+                <span class="pricing-price" style="font-size:1.3rem;font-weight:bold;color:#a855f7">£63</span>
+              </div>
+              <div class="pricing-item" style="display:flex;justify-content:space-between;align-items:center;padding:1rem;background:rgba(255,255,255,0.6);border-radius:10px;border:1px solid rgba(168,85,247,0.2)">
+                <span class="pricing-name" style="font-weight:600;font-size:1rem;color:#000">Anti-Lag System</span>
+                <span class="pricing-price" style="font-size:1.3rem;font-weight:bold;color:#a855f7">£84</span>
+              </div>
+              <div class="pricing-item" style="display:flex;justify-content:space-between;align-items:center;padding:1rem;background:rgba(255,255,255,0.6);border-radius:10px;border:1px solid rgba(168,85,247,0.2)">
+                <span class="pricing-name" style="font-weight:600;font-size:1rem;color:#000">Rev Limiter Adjustment</span>
+                <span class="pricing-price" style="font-size:1.3rem;font-weight:bold;color:#a855f7">£35</span>
+              </div>
+              <div class="pricing-item" style="display:flex;justify-content:space-between;align-items:center;padding:1rem;background:rgba(255,255,255,0.6);border-radius:10px;border:1px solid rgba(168,85,247,0.2)">
+                <span class="pricing-name" style="font-weight:600;font-size:1rem;color:#000">Speed Limiter Removal</span>
+                <span class="pricing-price" style="font-size:1.3rem;font-weight:bold;color:#a855f7">£28</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ECU Database Tab -->
+    <section id="ecu-database-tab" class="cr-tab">
+      <h2>💾 ECU Database</h2>
+      <p class="muted">Search, filter, compare, and export from our comprehensive ECU database</p>
+
+      <div class="pricing-container" style="display:grid;gap:2rem;margin-top:2rem">
+        
+        <!-- ECU Database Search -->
+        <div class="settings-card">
+          <h3 style="margin-bottom:1rem">🔍 Advanced ECU Database Search</h3>
+          <p class="muted" style="margin-bottom:1.5rem">Search, filter, compare, and export from our comprehensive 40+ ECU database</p>
+          
+          <!-- Database Statistics -->
+          <div id="ecu-statistics" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:2rem">
+            <div class="ecu-stat-card" style="background:linear-gradient(135deg,#dc2626,#b91c1c);padding:1.5rem;border-radius:12px;text-align:center;color:white">
+              <div style="font-size:2rem;font-weight:bold" id="total-ecus">40+</div>
+              <div style="font-size:0.875rem;opacity:0.9">Total ECUs</div>
+            </div>
+            <div class="ecu-stat-card" style="background:linear-gradient(135deg,#3b82f6,#2563eb);padding:1.5rem;border-radius:12px;text-align:center;color:white">
+              <div style="font-size:2rem;font-weight:bold" id="diesel-count">22</div>
+              <div style="font-size:0.875rem;opacity:0.9">Diesel ECUs</div>
+            </div>
+            <div class="ecu-stat-card" style="background:linear-gradient(135deg,#ef4444,#dc2626);padding:1.5rem;border-radius:12px;text-align:center;color:white">
+              <div style="font-size:2rem;font-weight:bold" id="petrol-count">18</div>
+              <div style="font-size:0.875rem;opacity:0.9">Petrol ECUs</div>
+            </div>
+            <div class="ecu-stat-card" style="background:linear-gradient(135deg,#10b981,#059669);padding:1.5rem;border-radius:12px;text-align:center;color:white">
+              <div style="font-size:2rem;font-weight:bold" id="brands-count">8</div>
+              <div style="font-size:0.875rem;opacity:0.9">Brands</div>
+            </div>
+          </div>
+
+          <div class="ecu-search-container">
+            <!-- Advanced Search & Filters -->
+            <div style="background:rgba(255,255,255,0.05);border:2px solid #e5e7eb;border-radius:12px;padding:1.5rem;margin-bottom:2rem">
+              <!-- Main Search -->
+              <div style="display:grid;grid-template-columns:1fr auto;gap:1rem;margin-bottom:1.5rem">
+                <input type="text" id="ecu-search-input" placeholder="🔍 Search by ECU model, brand, vehicle, power range, or features..." 
+                       style="padding:1rem;border:2px solid #e5e7eb;border-radius:8px;font-size:1rem;font-weight:500">
+                <button class="btn primary" id="ecu-clear-search" style="background:#6b7280">✕ Clear</button>
+              </div>
+
+              <!-- Advanced Filters Row -->
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1rem">
+                <!-- Brand Filter -->
+                <div>
+                  <label for="ecu-filter-brand" style="display:block;margin-bottom:0.5rem;font-weight:600;font-size:0.875rem">🏭 Brand</label>
+                  <select id="ecu-filter-brand" style="width:100%;padding:0.75rem;border:2px solid #e5e7eb;border-radius:8px;font-weight:500" title="Filter by ECU brand" aria-label="ECU brand filter">
+                    <option value="">All Brands</option>
+                    <option value="Bosch">Bosch</option>
+                    <option value="Siemens">Siemens/Continental</option>
+                    <option value="Delphi">Delphi/Aptiv</option>
+                    <option value="Denso">Denso</option>
+                    <option value="Magneti Marelli">Magneti Marelli</option>
+                    <option value="Continental">Continental (VAG)</option>
+                    <option value="BMW">BMW (Bosch)</option>
+                    <option value="Mercedes">Mercedes (Bosch)</option>
+                  </select>
+                </div>
+
+                <!-- Type Filter -->
+                <div>
+                  <label for="ecu-filter-type" style="display:block;margin-bottom:0.5rem;font-weight:600;font-size:0.875rem">⛽ Fuel Type</label>
+                  <select id="ecu-filter-type" style="width:100%;padding:0.75rem;border:2px solid #e5e7eb;border-radius:8px;font-weight:500" title="Filter by fuel type" aria-label="Fuel type filter">
+                    <option value="">All Types</option>
+                    <option value="Diesel">Diesel</option>
+                    <option value="Petrol">Petrol</option>
+                  </select>
+                </div>
+
+                <!-- Tool Filter -->
+                <div>
+                  <label for="ecu-filter-tool" style="display:block;margin-bottom:0.5rem;font-weight:600;font-size:0.875rem">🔧 Tool Support</label>
+                  <select id="ecu-filter-tool" style="width:100%;padding:0.75rem;border:2px solid #e5e7eb;border-radius:8px;font-weight:500" title="Filter by tool support" aria-label="Tool support filter">
+                    <option value="">All Tools</option>
+                    <option value="KESS3">KESS3</option>
+                    <option value="K-TAG">K-TAG</option>
+                    <option value="Autotuner">Autotuner</option>
+                    <option value="CMD Flash">CMD Flash</option>
+                    <option value="Magic">Magic</option>
+                    <option value="PCMFlash">PCMFlash</option>
+                  </select>
+                </div>
+
+                <!-- Sort By -->
+                <div>
+                  <label for="ecu-sort-by" style="display:block;margin-bottom:0.5rem;font-weight:600;font-size:0.875rem">📊 Sort By</label>
+                  <select id="ecu-sort-by" style="width:100%;padding:0.75rem;border:2px solid #e5e7eb;border-radius:8px;font-weight:500" title="Sort ECU list" aria-label="ECU sorting options">
+                    <option value="model">Model (A-Z)</option>
+                    <option value="brand">Brand (A-Z)</option>
+                    <option value="type">Type (Diesel/Petrol)</option>
+                    <option value="power">Power (High-Low)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div style="display:flex;gap:1rem;flex-wrap:wrap">
+                <button class="btn" id="ecu-compare-mode" style="background:#8b5cf6;color:white;font-weight:600">
+                  📊 Compare Mode <span id="compare-count">(0)</span>
+                </button>
+                <button class="btn" id="ecu-export-csv" style="background:#10b981;color:white;font-weight:600">
+                  📥 Export CSV
+                </button>
+                <button class="btn" id="ecu-export-json" style="background:#f59e0b;color:white;font-weight:600">
+                  � Export JSON
+                </button>
+                <button class="btn" id="ecu-view-all" style="background:#3b82f6;color:white;font-weight:600">
+                  👁️ View All ECUs
+                </button>
+              </div>
+            </div>
+            
+            <!-- Results Summary -->
+            <div id="ecu-results-summary" style="display:none;margin-bottom:1.5rem;padding:1rem;background:rgba(59,130,246,0.1);border-left:4px solid #3b82f6;border-radius:8px">
+              <span style="font-weight:600;color:#000"></span>
+            </div>
+
+            <!-- Search Results -->
+            <div id="ecu-search-results" style="display:none">
+              <!-- Results will be populated here -->
+            </div>
+
+            <!-- Comparison Panel -->
+            <div id="ecu-comparison-panel" style="display:none;position:fixed;bottom:0;left:0;right:0;background:white;border-top:3px solid #dc2626;padding:1.5rem;box-shadow:0 -4px 20px rgba(0,0,0,0.15);z-index:1000;max-height:400px;overflow-y:auto">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+                <h4 style="margin:0;color:#000">🔄 ECU Comparison <span id="comparison-count" style="color:#dc2626"></span></h4>
+                <div style="display:flex;gap:1rem">
+                  <button class="btn" id="compare-view-details" style="background:#3b82f6;color:white">View Comparison Table</button>
+                  <button class="btn" id="compare-clear-all" style="background:#6b7280;color:white">Clear All</button>
+                  <button id="compare-close" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#6b7280">✕</button>
+                </div>
+              </div>
+              <div id="comparison-ecus" style="display:flex;gap:1rem;overflow-x:auto"></div>
+            </div>
+            
+            <!-- Empty State -->
+            <div id="ecu-search-empty" class="empty-state" style="text-align:center;padding:3rem;color:#6b7280;background:rgba(255,255,255,0.02);border-radius:12px">
+              <div style="font-size:3rem;margin-bottom:1rem">🔍</div>
+              <h3 style="color:#000;font-weight:600">Search Our ECU Database</h3>
+              <p style="color:#64748b;max-width:500px;margin:1rem auto">Enter an ECU model, brand, vehicle name, or use the advanced filters above to find detailed compatibility and specifications. 40+ ECUs available!</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Settings Tab -->
+    <section id="settings-tab" class="cr-tab">
+      <h2>⚙️ Vehicle Search Settings</h2>
+      <p class="muted">Customize your vehicle search embed and appearance</p>
+
+      <div class="settings-container" style="display:grid;gap:2rem;margin-top:2rem">
+        
+        <!-- Embed Code Generator -->
+        <div class="settings-card">
+          <h3 style="margin-bottom:1rem">📋 Embed Code Generator</h3>
+          <p class="muted" style="margin-bottom:1.5rem">Embed the vehicle search on your website with custom branding</p>
+          
+          <div style="display:grid;gap:1.5rem">
+            <!-- Logo URL -->
+            <div>
+              <label style="display:block;margin-bottom:0.5rem;font-weight:500">Logo URL</label>
+              <input type="url" id="embed-logo-url" placeholder="https://example.com/logo.png" 
+                     style="width:100%;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff">
+              <small class="muted">Enter the full URL to your logo image</small>
+            </div>
+
+            <!-- Primary Color -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+              <div>
+                <label style="display:block;margin-bottom:0.5rem;font-weight:500">Primary Color</label>
+                <div style="display:flex;gap:0.5rem;align-items:center">
+                  <input type="color" id="embed-primary-color" value="#dc2626" 
+                         style="width:60px;height:40px;border:none;border-radius:8px;cursor:pointer">
+                  <input type="text" id="embed-primary-color-text" value="#dc2626" 
+                         style="flex:1;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff">
+                </div>
+              </div>
+              
+              <!-- Background Color -->
+              <div>
+                <label style="display:block;margin-bottom:0.5rem;font-weight:500">Background Color</label>
+                <div style="display:flex;gap:0.5rem;align-items:center">
+                  <input type="color" id="embed-bg-color" value="#1a1a1a" 
+                         style="width:60px;height:40px;border:none;border-radius:8px;cursor:pointer">
+                  <input type="text" id="embed-bg-color-text" value="#1a1a1a" 
+                         style="flex:1;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff">
+                </div>
+              </div>
+            </div>
+
+            <!-- Embed Width -->
+            <div>
+              <label for="embed-width" style="display:block;margin-bottom:0.5rem;font-weight:500">Embed Width</label>
+              <select id="embed-width" style="width:100%;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff" title="Select embed width" aria-label="Embed widget width">
+                <option value="100%">Full Width (100%)</option>
+                <option value="1200px">Large (1200px)</option>
+                <option value="900px">Medium (900px)</option>
+                <option value="600px">Small (600px)</option>
+              </select>
+            </div>
+
+            <!-- Generate Button -->
+            <button class="btn primary" id="generate-embed-btn" style="margin-top:0.5rem">
+              <span>🔗 Generate Embed Code</span>
+            </button>
+
+            <!-- Generated Code -->
+            <div id="embed-code-container" style="display:none;margin-top:1rem">
+              <label style="display:block;margin-bottom:0.5rem;font-weight:500">Your Embed Code</label>
+              <div style="position:relative">
+                <textarea id="embed-code-output" readonly 
+                          style="width:100%;min-height:200px;padding:1rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#0f0;font-family:monospace;font-size:0.875rem;resize:vertical"></textarea>
+                <button class="btn small" id="copy-embed-btn" 
+                        style="position:absolute;top:0.5rem;right:0.5rem">
+                  📋 Copy
+                </button>
+              </div>
+              <small class="muted">Copy and paste this code into your website's HTML</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Appearance Settings -->
+        <div class="settings-card">
+          <h3 style="margin-bottom:1rem">🎨 Appearance Customization</h3>
+          <p class="muted" style="margin-bottom:1.5rem">Customize how the vehicle search looks on this portal</p>
+          
+          <div style="display:grid;gap:1.5rem">
+            <!-- Search Title -->
+            <div>
+              <label style="display:block;margin-bottom:0.5rem;font-weight:500">Search Section Title</label>
+              <input type="text" id="search-title" value="🔍 Vehicle Search" 
+                     style="width:100%;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff">
+            </div>
+
+            <!-- Search Description -->
+            <div>
+              <label style="display:block;margin-bottom:0.5rem;font-weight:500">Search Description</label>
+              <input type="text" id="search-description" value="Search our database for detailed vehicle information, ECU compatibility, and performance gains" 
+                     style="width:100%;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff">
+            </div>
+
+            <!-- Show/Hide Options -->
+            <div style="display:grid;gap:1rem">
+              <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer">
+                <input type="checkbox" id="show-year-dropdown" checked style="width:18px;height:18px;cursor:pointer">
+                <span>Show Year Dropdown</span>
+              </label>
+              
+              <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer">
+                <input type="checkbox" id="show-performance-badges" checked style="width:18px;height:18px;cursor:pointer">
+                <span>Show Performance Option Badges</span>
+              </label>
+              
+              <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer">
+                <input type="checkbox" id="show-stage-cards" checked style="width:18px;height:18px;cursor:pointer">
+                <span>Show All Stage Cards (Stock, 1, 2, 3)</span>
+              </label>
+            </div>
+
+            <!-- Apply Button -->
+            <button class="btn success" id="apply-appearance-btn" style="margin-top:0.5rem">
+              <span>✓ Apply Changes</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Contact Settings -->
+        <div class="settings-card">
+          <h3 style="margin-bottom:1rem">📱 Contact & Quote Settings</h3>
+          <p class="muted" style="margin-bottom:1.5rem">Configure contact details for quote requests</p>
+          
+          <div style="display:grid;gap:1.5rem">
+            <!-- WhatsApp Number -->
+            <div>
+              <label style="display:block;margin-bottom:0.5rem;font-weight:500">WhatsApp Number</label>
+              <input type="tel" id="settings-whatsapp" value="07546371963" 
+                     style="width:100%;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff"
+                     placeholder="e.g. 07546371963">
+              <small class="muted">Used for WhatsApp quote button (no spaces or special characters)</small>
+            </div>
+
+            <!-- Email Address -->
+            <div>
+              <label style="display:block;margin-bottom:0.5rem;font-weight:500">Quote Email Address</label>
+              <input type="email" id="settings-email" value="carnageremaps@gmail.com" 
+                     style="width:100%;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff"
+                     placeholder="e.g. quotes@example.com">
+              <small class="muted">Used for email quote button</small>
+            </div>
+
+            <!-- Save Button -->
+            <button class="btn primary" id="save-contact-settings-btn" style="margin-top:0.5rem">
+              <span>💾 Save Contact Settings</span>
+            </button>
+            
+            <div id="contact-settings-message" style="display:none;padding:1rem;border-radius:8px;text-align:center"></div>
+          </div>
+        </div>
+
+        <!-- Database Statistics -->
+        <div class="settings-card">
+          <h3 style="margin-bottom:1rem">📊 Database Coverage</h3>
+          <p class="muted" style="margin-bottom:1.5rem">Current vehicle database statistics</p>
+          
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">
+            <div class="stat-box" style="background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);padding:1rem;border-radius:8px">
+              <div style="font-size:2rem;font-weight:bold;color:#3b82f6" id="stat-manufacturers">21</div>
+              <div class="muted">Manufacturers</div>
+            </div>
+            
+            <div class="stat-box" style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);padding:1rem;border-radius:8px">
+              <div style="font-size:2rem;font-weight:bold;color:#10b981" id="stat-models">63+</div>
+              <div class="muted">Vehicle Models</div>
+            </div>
+            
+            <div class="stat-box" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);padding:1rem;border-radius:8px">
+              <div style="font-size:2rem;font-weight:bold;color:#f59e0b" id="stat-year-ranges">200+</div>
+              <div class="muted">Year Ranges</div>
+            </div>
+            
+            <div class="stat-box" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);padding:1rem;border-radius:8px">
+              <div style="font-size:2rem;font-weight:bold;color:#ef4444" id="stat-engines">200+</div>
+              <div class="muted">Engine Profiles</div>
+            </div>
+          </div>
+
+          <!-- Coverage List -->
+          <div style="margin-top:1.5rem;padding:1rem;background:rgba(255,255,255,0.03);border-radius:8px">
+            <h4 style="margin-bottom:0.75rem">✅ Manufacturers with Complete Data (All 21):</h4>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem" id="covered-manufacturers">
+              <span class="badge">Alfa Romeo</span>
+              <span class="badge">Audi</span>
+              <span class="badge">BMW</span>
+              <span class="badge">Citroen</span>
+              <span class="badge">Fiat</span>
+              <span class="badge">Ford</span>
+              <span class="badge">Honda</span>
+              <span class="badge">Hyundai</span>
+              <span class="badge">Kia</span>
+              <span class="badge">Land Rover</span>
+              <span class="badge">Mazda</span>
+              <span class="badge">Mercedes-Benz</span>
+              <span class="badge">Nissan</span>
+              <span class="badge">Peugeot</span>
+              <span class="badge">Renault</span>
+              <span class="badge">Seat</span>
+              <span class="badge">Skoda</span>
+              <span class="badge">Toyota</span>
+              <span class="badge">Vauxhall</span>
+              <span class="badge">Volkswagen</span>
+              <span class="badge">Volvo</span>
+            </div>
+          </div>
+
+          <div style="margin-top:1rem;padding:1rem;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:8px">
+            <h4 style="margin-bottom:0.5rem;color:#10b981">✨ Database Complete!</h4>
+            <p class="muted" style="margin:0;font-size:0.9rem">All major European & Asian manufacturers covered with comprehensive ECU and performance data from 2005-2024</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Billing Tab -->
+    <section id="billing-tab" class="cr-tab">
+      <h2>💳 My Wallet & Billing</h2>
+      <p class="muted">Your secure wallet - only you and administrators can view your balance</p>
+
+      <div style="display:grid;gap:2rem;margin-top:2rem">
+        
+        <!-- Secure Wallet Balance Card -->
+        <div class="card" style="background:linear-gradient(135deg, #10b981, #059669);color:#fff;position:relative;overflow:hidden">
+          <div style="position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,0.2);padding:0.5rem 1rem;border-radius:20px;font-size:0.875rem;font-weight:600">
+            🔒 Secure Wallet
+          </div>
+          <h3 style="margin:0 0 0.5rem;color:#fff">💰 Available Balance</h3>
+          <p style="font-size:3rem;font-weight:700;margin:0" id="credit-balance-display">£0.00</p>
+          <p style="margin:0.5rem 0 0;opacity:0.9">Protected · Private · Secure</p>
+        </div>
+
+        <!-- Card Payment Top-Up Section -->
+        <div class="settings-card">
+          <h3 style="margin-bottom:1rem">💳 Add Funds via Card Payment</h3>
+          <p class="muted" style="margin-bottom:1.5rem">Instant credit top-up using your debit or credit card (powered by Stripe)</p>
+          
+          <div style="display:grid;gap:1.5rem">
+            <!-- Quick Amount Buttons -->
+            <div>
+              <label style="display:block;margin-bottom:0.75rem;font-weight:600">Quick Top-Up</label>
+              <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:1rem">
+                <button class="btn primary" id="topup-10">£10</button>
+                <button class="btn primary" id="topup-20">£20</button>
+                <button class="btn primary" id="topup-50">£50</button>
+                <button class="btn primary" id="topup-100">£100</button>
+              </div>
+            </div>
+
+            <!-- Custom Amount -->
+            <div>
+              <label style="display:block;margin-bottom:0.75rem;font-weight:600">Custom Amount</label>
+              <div style="display:flex;gap:1rem">
+                <input type="number" id="topup-custom-amount" min="5" max="1000" step="5" placeholder="Enter amount (£5 - £1000)" style="flex:1;padding:0.75rem;border:2px solid #e5e7eb;border-radius:8px">
+                <button class="btn primary" id="topup-custom-btn">Pay with Card</button>
+              </div>
+              <p class="muted" style="margin:0.5rem 0 0;font-size:0.875rem">Minimum: £5 | Maximum: £1000</p>
+            </div>
+
+            <div style="background:#dcfce7;border:2px solid #22c55e;padding:1rem;border-radius:8px">
+              <p id="payment-method-info" style="margin:0;color:#166534"><strong>� Instant Payment:</strong> Credits are added immediately to your secure wallet after successful card payment via Stripe. All major credit/debit cards accepted. 100% secure and encrypted.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Payment Subscriptions Section -->
+        <div class="settings-card">
+          <h3 style="margin-bottom:1rem">📱 Premium Subscriptions</h3>
+          <p class="muted" style="margin-bottom:1.5rem">Pay via card - automatic monthly billing, cancel anytime</p>
+          
+          <div style="margin-bottom:2rem">
+            <div class="subscription-offer" style="background:linear-gradient(135deg, #8b5cf6, #7c3aed);padding:1.5rem;border-radius:12px;color:#fff;margin-bottom:1rem">
+              <h4 style="margin:0 0 0.5rem;color:#fff">🎯 Embed Widget Subscription</h4>
+              <p style="margin:0 0 1rem;opacity:0.9">Access to vehicle search embed widget for your website</p>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <p style="font-size:2rem;font-weight:700;margin:0">£9.99<span style="font-size:1rem;font-weight:400">/month</span></p>
+                  <p style="margin:0.25rem 0 0;font-size:0.875rem;opacity:0.8">Billed monthly to your card via Stripe</p>
+                </div>
+                <button class="btn" id="subscribe-embed-btn" style="background:#fff;color:#8b5cf6;font-weight:600">Subscribe with Card</button>
+              </div>
+            </div>
+            
+            <p class="muted" style="font-size:0.875rem;margin-bottom:1.5rem">📌 <strong>Note:</strong> Vehicle lookup is FREE for all users. The subscription is only required for the embed widget feature to use on external websites.</p>
+          </div>
+
+          <div id="subscriptions-container">
+            <p style="color: #6b7280; text-align: center; padding: 2rem;">No active subscriptions</p>
+          </div>
+        </div>
+
+        <!-- Transaction History -->
+        <div class="settings-card">
+          <h3 style="margin-bottom:1rem">📜 Transaction History</h3>
+          <p class="muted" style="margin-bottom:1.5rem">View all your credit transactions</p>
+          
+          <div class="table-container" style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse">
+              <thead>
+                <tr style="background:#f9fafb;border-bottom:2px solid #e5e7eb">
+                  <th style="padding:1rem;text-align:left;font-weight:600">Date</th>
+                  <th style="padding:1rem;text-align:left;font-weight:600">Type</th>
+                  <th style="padding:1rem;text-align:left;font-weight:600">Amount</th>
+                  <th style="padding:1rem;text-align:left;font-weight:600">Description</th>
+                </tr>
+              </thead>
+              <tbody id="transaction-history-tbody">
+                <tr>
+                  <td colspan="4" style="text-align:center; padding: 2rem; color: #6b7280;">No transactions yet</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Support Tab -->
+    <section id="support-tab" class="cr-tab">
+      <h2>Support Tickets</h2>
+      <p class="muted">Need help? Create a support ticket and our team will assist you</p>
+      
+      <button class="btn primary" id="new-ticket-btn" style="margin-bottom:1.5rem">
+        <span>+ New Ticket</span>
+      </button>
+      
+      <!-- New Ticket Form -->
+      <div id="new-ticket-form" class="ticket-form-container" style="display:none;">
+        <div class="card">
+          <h3>Create New Support Ticket</h3>
+          <form id="create-ticket-form">
+            <div class="form-group">
+              <label for="ticket-subject">Subject</label>
+              <input type="text" id="ticket-subject" required placeholder="Brief description of your issue">
+            </div>
+            <div class="form-group">
+              <label for="ticket-priority">Priority</label>
+              <select id="ticket-priority" required>
+                <option value="low">Low</option>
+                <option value="medium" selected>Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="ticket-message">Message</label>
+              <textarea id="ticket-message" required placeholder="Describe your issue in detail" rows="5"></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn primary">Submit Ticket</button>
+              <button type="button" class="btn" id="cancel-ticket-btn">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <!-- Tickets List -->
+      <div id="tickets-list" class="tickets-list">
+        <p class="empty-state">No support tickets yet</p>
+      </div>
+    </section>
+
+    <!-- Admin Tab -->
+    <section id="admin-tab" class="cr-tab">
+      <h2>Admin Dashboard</h2>
+      <p class="muted">Manage users, files, and support tickets</p>
+      
+      <div class="admin-tabs">
+        <button class="admin-tab-btn active" data-admin-tab="overview">Overview</button>
+        <button class="admin-tab-btn" data-admin-tab="notifications">🔔 Notifications</button>
+        <button class="admin-tab-btn" data-admin-tab="users">Users</button>
+        <button class="admin-tab-btn" data-admin-tab="tickets">Support Tickets</button>
+        <button class="admin-tab-btn" data-admin-tab="files">All Files</button>
+      </div>
+      
+      <!-- Admin Overview -->
+      <div id="admin-overview" class="admin-panel active">
+        <h3>System Overview</h3>
+        <div class="cr-cards">
+          <div class="card">
+            <h3>Total Users</h3>
+            <p id="admin-total-users" class="stat-number">0</p>
+          </div>
+          <div class="card">
+            <h3>Total Files</h3>
+            <p id="admin-total-files" class="stat-number">0</p>
+          </div>
+          <div class="card">
+            <h3>Open Tickets</h3>
+            <p id="admin-open-tickets" class="stat-number">0</p>
+          </div>
+          <div class="card">
+            <h3>Storage Used</h3>
+            <p id="admin-storage-used" class="stat-number">0 MB</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Admin Notifications -->
+      <div id="admin-notifications" class="admin-panel">
+        <h3>📬 Recent Activity & Notifications</h3>
+        <p class="muted" style="margin-bottom: 1.5rem;">Monitor recent file uploads, top-up requests, subscriptions, and system events</p>
+        
+        <div class="notification-filters" style="margin-bottom: 1.5rem;">
+          <button class="filter-btn active" data-notification-filter="all">All Events</button>
+          <button class="filter-btn" data-notification-filter="files">📁 Files</button>
+          <button class="filter-btn" data-notification-filter="topups">💳 Top-Ups</button>
+          <button class="filter-btn" data-notification-filter="subscriptions">📊 Subscriptions</button>
+          <button class="filter-btn" data-notification-filter="tickets">🎫 Tickets</button>
+        </div>
+        
+        <div id="admin-notifications-list" class="admin-table-container">
+          <div class="notification-empty" style="padding: 3rem; text-align: center; color: #9ca3af;">
+            No notifications yet. Activity will appear here when users upload files, request top-ups, or subscribe.
+          </div>
+        </div>
+      </div>
+      
+      <!-- Admin Users & Wallet Management -->
+      <div id="admin-users" class="admin-panel">
+        <h3>👥 Users & Wallet Management</h3>
+        <p class="muted">Manage users, wallets, and payment balances</p>
+        
+        <!-- User List with Credit Balances -->
+        <div class="card" style="margin: 20px auto 30px; max-width: 100%;">
+          <h4 style="margin-bottom: 15px;">📋 All Users & Wallet Balances</h4>
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr style="background: #f3f4f6; border-bottom: 2px solid #e5e7eb;">
+                  <th style="padding: 12px; text-align: left; font-weight: 600;">ID</th>
+                  <th style="padding: 12px; text-align: left; font-weight: 600;">Name</th>
+                  <th style="padding: 12px; text-align: left; font-weight: 600;">Email</th>
+                  <th style="padding: 12px; text-align: center; font-weight: 600;">Role</th>
+                  <th style="padding: 12px; text-align: right; font-weight: 600;">💰 Wallet</th>
+                  <th style="padding: 12px; text-align: center; font-weight: 600;">Status</th>
+                  <th style="padding: 12px; text-align: center; font-weight: 600;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-users-list">
+                <tr>
+                  <td colspan="7" style="text-align: center; padding: 20px; color: #6b7280;">Loading users...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Pending Stripe Payments -->
+        <div class="card" style="margin: 20px auto 30px; max-width: 100%;">
+          <h4 style="margin-bottom: 15px;">💳 Pending Stripe Payment Confirmations</h4>
+          <p class="muted" style="margin-bottom: 15px;">Payments completed in Stripe (money is in YOUR account). Confirm to update user wallets.</p>
+          <div id="topup-requests-list">
+            <p style="text-align: center; padding: 20px; color: #6b7280;">No pending payments. All Stripe webhooks should auto-update wallets.</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Admin Tickets -->
+      <div id="admin-tickets" class="admin-panel">
+        <h3>Support Ticket Management</h3>
+        <div class="ticket-filters">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="open">Open</button>
+          <button class="filter-btn" data-filter="in-progress">In Progress</button>
+          <button class="filter-btn" data-filter="resolved">Resolved</button>
+        </div>
+        <div id="admin-tickets-list" class="admin-tickets-grid"></div>
+      </div>
+      
+      <!-- Admin Files -->
+      <div id="admin-files" class="admin-panel">
+        <h3>All Uploaded Files</h3>
+        <div id="admin-files-list" class="files-grid"></div>
+      </div>
+
+
+    </section>
+  </main>
+  
+  <!-- File Detail Modal -->
+  <div id="file-detail-modal" class="modal" style="display:none;">
+    <div class="modal-content file-detail-modal">
+      <span class="close" onclick="closeFileDetailModal()">&times;</span>
+      
+      <div class="file-detail-container">
+        <!-- Left Column: File Details -->
+        <div class="file-detail-left">
+          <h2>File Details</h2>
+          
+          <!-- Vehicle Information -->
+          <div class="detail-section">
+            <h3>Vehicle Information</h3>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">Make:</span>
+                <span class="detail-value" id="fd-make"></span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Model:</span>
+                <span class="detail-value" id="fd-model"></span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Year:</span>
+                <span class="detail-value" id="fd-year"></span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Engine:</span>
+                <span class="detail-value" id="fd-engine"></span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Registration:</span>
+                <span class="detail-value" id="fd-registration"></span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Transmission:</span>
+                <span class="detail-value" id="fd-transmission"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ECU Information -->
+          <div class="detail-section">
+            <h3>ECU Information</h3>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">ECU:</span>
+                <span class="detail-value" id="fd-ecu"></span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">TCU:</span>
+                <span class="detail-value" id="fd-tcu"></span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Tool Used:</span>
+                <span class="detail-value" id="fd-tool"></span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">ECU File:</span>
+                <span class="detail-value" id="fd-filename"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Solutions & Options -->
+          <div class="detail-section">
+            <h3>Selected Solutions & Options</h3>
+            <div id="fd-solutions" class="detail-list"></div>
+            <div id="fd-options" class="detail-list"></div>
+          </div>
+
+          <!-- Pricing -->
+          <div class="detail-section">
+            <h3>Pricing</h3>
+            <div class="pricing-breakdown">
+              <div id="fd-pricing"></div>
+              <div class="pricing-total">
+                <span>Total:</span>
+                <span id="fd-total" class="total-amount"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- File Downloads -->
+          <div class="detail-section">
+            <h3>File Downloads</h3>
+            <div class="file-downloads">
+              <button class="cr-btn-primary" id="fd-download-original">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download Original File
+              </button>
+              <button class="cr-btn-primary" id="fd-download-modified" style="display:none;background:#10b981;border-color:#10b981">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                ⚡ Download Tuned File ⚡
+              </button>
+              <button class="cr-btn-primary" id="fd-open-support" style="background:#8b5cf6;border-color:#8b5cf6">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                Get Support for this File
+              </button>
+              <button class="cr-btn-secondary" id="fd-download-invoice">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                Download Invoice
+              </button>
+            </div>
+            <div id="fd-download-message" style="display:none;margin-top:1rem;padding:1rem;border-radius:8px;text-align:center;animation:fadeIn 0.3s ease"></div>
+          </div>
+
+          <!-- Admin Upload Section -->
+          <div class="detail-section admin-only" id="fd-admin-upload" style="display:none;">
+            <h3>Upload Modified File</h3>
+            <div class="admin-upload-zone" id="admin-upload-zone">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              <p>Drop modified file here or click to browse</p>
+              <input type="file" id="admin-file-input" accept=".bin,.hex,.flash,.ori" hidden>
+            </div>
+            <div id="admin-file-info" style="display:none;"></div>
+            <button class="cr-btn-primary" id="admin-upload-btn" style="display:none;">Upload Modified File</button>
+          </div>
+
+          <!-- Admin Status Control -->
+          <div class="detail-section admin-only" id="fd-admin-status" style="display:none;">
+            <h3>File Status Control</h3>
+            <div class="status-control">
+              <label for="fd-status-select">Current Status:</label>
+              <select id="fd-status-select" class="status-select">
+                <option value="queued">Queued</option>
+                <option value="in-progress">In Progress</option>
+                <option value="completed">Completed</option>
+                <option value="returned">Returned to User</option>
+              </select>
+              <button class="cr-btn-primary" id="fd-update-status">Update Status</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Messages -->
+        <div class="file-detail-right">
+          <h2 id="file-messages-header">Messages</h2>
+          <div class="file-messages" id="file-messages">
+            <!-- Messages will be loaded here -->
+          </div>
+          <div class="file-message-input">
+            <textarea id="file-message-text" placeholder="Type your message here... (Ctrl+Enter to send)" rows="3"></textarea>
+            <button class="cr-btn-primary" id="send-file-message">Send Message</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+  <footer class="cr-footer">
+    <div class="cr-container">© 2025 Carnage Remaps. All rights reserved.</div>
+  </footer>
+
+  <!-- Top Up Credit Modal -->
+  <div id="topup-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h2>💰 Top Up Credit</h2>
+        <button class="modal-close" onclick="closeTopUpModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 1.5rem; color: #6b7280;">Add credit to your account. £70 payment = £70 credit added instantly.</p>
+        
+        <div style="background: #fef3c7; padding: 1rem; border-radius: 8px; border-left: 4px solid #f59e0b; margin-bottom: 1.5rem;">
+          <p style="margin: 0; color: #92400e; font-size: 0.9rem;">
+            💡 <strong>Important:</strong> Please contact admin to arrange payment. Once confirmed, credit will be added to your account.
+          </p>
+        </div>
+
+        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Amount to Top Up (£)</label>
+        <input type="number" id="topup-amount" placeholder="Enter amount (e.g. 70)" min="10" step="10" 
+               style="width: 100%; padding: 0.75rem; border: 2px solid #d1d5db; border-radius: 8px; font-size: 1rem; margin-bottom: 1.5rem;">
+
+        <p style="font-size: 0.9rem; color: #6b7280; margin-bottom: 1.5rem;">
+          Payment methods: Bank Transfer, PayPal, or Cash
+        </p>
+
+        <button class="btn primary" onclick="requestTopUp()" style="width: 100%;">
+          📧 Request Top Up
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Detail Modal -->
+  <div id="user-detail-modal" style="display: none;">
+    <div class="modal-overlay" onclick="closeUserDetailModal()"></div>
+    <div class="modal">
+      <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-header">
+          <h3 style="margin: 0; color: #1e293b;">👤 Account Details</h3>
+          <button onclick="closeUserDetailModal()" style="background: none; border: none; color: #64748b; font-size: 1.5rem; cursor: pointer; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: all 0.2s;">×</button>
+        </div>
+        
+        <div class="modal-body">
+          <!-- User Info Section -->
+          <div class="card" style="margin-bottom: 1.5rem; background: #f8fafc; border: 1px solid #e2e8f0;">
+            <h4 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: #1e293b;">
+              <span>📋</span> Personal Information
+            </h4>
+            <div style="display: grid; gap: 1rem;">
+              <div style="display: grid; grid-template-columns: 140px 1fr; gap: 0.5rem; align-items: center;">
+                <span style="color: #64748b; font-size: 0.875rem;">User ID:</span>
+                <span id="modal-user-id" style="font-weight: 500; color: #1e293b;">-</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 140px 1fr; gap: 0.5rem; align-items: center;">
+                <span style="color: #64748b; font-size: 0.875rem;">Name:</span>
+                <span id="modal-user-name" style="font-weight: 500; color: #1e293b;">-</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 140px 1fr; gap: 0.5rem; align-items: center;">
+                <span style="color: #64748b; font-size: 0.875rem;">Email:</span>
+                <span id="modal-user-email" style="font-weight: 500; color: #1e293b;">-</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 140px 1fr; gap: 0.5rem; align-items: center;">
+                <span style="color: #64748b; font-size: 0.875rem;">Role:</span>
+                <span id="modal-user-role" style="font-weight: 500;">-</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 140px 1fr; gap: 0.5rem; align-items: center;">
+                <span style="color: #64748b; font-size: 0.875rem;">Account Created:</span>
+                <span id="modal-user-created" style="font-weight: 500; color: #1e293b;">-</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 140px 1fr; gap: 0.5rem; align-items: center;">
+                <span style="color: #64748b; font-size: 0.875rem;">Status:</span>
+                <span id="modal-user-status" style="font-weight: 500;">-</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Wallet Section -->
+          <div class="card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none;">
+            <h4 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: white;">
+              <span>💰</span> Secure Wallet
+            </h4>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <div style="color: rgba(255,255,255,0.8); font-size: 0.875rem; margin-bottom: 0.5rem;">Current Balance</div>
+                <div style="font-size: 2rem; font-weight: 700; color: white;" id="modal-wallet-balance">£0.00</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 8px; backdrop-filter: blur(10px);">
+                <div style="font-size: 2rem;">🔒</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Admin Controls (only visible to admins) -->
+          <div id="modal-admin-controls" class="card" style="margin-bottom: 1.5rem; background: #fef2f2; border: 1px solid #fecaca; display: none;">
+            <h4 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: #dc2626;">
+              <span>🔧</span> Admin Controls
+            </h4>
+            
+            <!-- Credit Adjustment -->
+            <div style="margin-bottom: 1.5rem;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #1e293b;">Adjust Wallet Balance</label>
+              <div style="display: flex; gap: 0.5rem;">
+                <input type="number" id="modal-credit-amount" placeholder="Amount (£)" step="0.01" 
+                       style="flex: 1; padding: 0.75rem; border: 1px solid #d1d5db; background: #fff; border-radius: 8px; color: #1e293b;">
+                <button class="btn" onclick="modalAddCredit()" style="background: #10b981; color: white; padding: 0.75rem 1.25rem; white-space: nowrap;">
+                  ➕ Add
+                </button>
+                <button class="btn" onclick="modalRemoveCredit()" style="background: #dc2626; color: white; padding: 0.75rem 1.25rem; white-space: nowrap;">
+                  ➖ Remove
+                </button>
+              </div>
+            </div>
+
+            <!-- Quick Amounts -->
+            <div style="margin-bottom: 1.5rem;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #1e293b;">Quick Add</label>
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;">
+                <button class="btn" onclick="document.getElementById('modal-credit-amount').value='9.99'" 
+                        style="background: #6366f1; color: white; padding: 0.75rem;">£9.99</button>
+                <button class="btn" onclick="document.getElementById('modal-credit-amount').value='70'" 
+                        style="background: #6366f1; color: white; padding: 0.75rem;">£70</button>
+                <button class="btn" onclick="document.getElementById('modal-credit-amount').value='100'" 
+                        style="background: #6366f1; color: white; padding: 0.75rem;">£100</button>
+                <button class="btn" onclick="document.getElementById('modal-credit-amount').value='200'" 
+                        style="background: #6366f1; color: white; padding: 0.75rem;">£200</button>
+              </div>
+            </div>
+
+            <!-- Account Actions -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+              <button class="btn" onclick="modalToggleUserStatus()" id="modal-toggle-status-btn" 
+                      style="background: #f59e0b; color: white; padding: 0.75rem;">
+                Toggle Status
+              </button>
+              <button class="btn" onclick="modalDeleteUser()" 
+                      style="background: #dc2626; color: white; padding: 0.75rem;">
+                Delete Account
+              </button>
+            </div>
+          </div>
+
+          <!-- Activity Section -->
+          <div class="card" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+            <h4 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: #1e293b;">
+              <span>📊</span> Account Activity
+            </h4>
+            <div id="modal-user-activity" style="color: #64748b; font-size: 0.875rem;">
+              Loading activity...
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn primary" onclick="closeUserDetailModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ECU Detail Modal -->
+  <div id="ecu-detail-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:2000;padding:2rem;overflow-y:auto">
+    <div style="max-width:900px;margin:2rem auto;background:white;border-radius:16px;overflow:hidden">
+      <div style="background:linear-gradient(135deg,#dc2626,#b91c1c);padding:2rem;color:white">
+        <div style="display:flex;justify-content:space-between;align-items:start">
+          <div>
+            <h2 id="modal-ecu-title" style="margin:0;color:white">ECU Details</h2>
+            <p id="modal-ecu-subtitle" style="margin:0.5rem 0 0 0;opacity:0.9"></p>
+          </div>
+          <button id="close-ecu-modal" style="background:rgba(255,255,255,0.2);border:none;color:white;font-size:1.5rem;padding:0.5rem 1rem;border-radius:8px;cursor:pointer;font-weight:bold">✕</button>
+        </div>
+      </div>
+      
+      <div style="padding:2rem">
+        <div style="display:grid;gap:1.5rem">
+          <!-- Power & Type -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+            <div style="padding:1.5rem;background:rgba(59,130,246,0.1);border-radius:12px;border-left:4px solid #3b82f6">
+              <div style="font-size:0.875rem;color:#64748b;margin-bottom:0.5rem;font-weight:600">⚡ POWER RANGE</div>
+              <div id="modal-power" style="font-size:1.5rem;font-weight:bold;color:#000"></div>
+            </div>
+            <div style="padding:1.5rem;background:rgba(239,68,68,0.1);border-radius:12px;border-left:4px solid #ef4444">
+              <div style="font-size:0.875rem;color:#64748b;margin-bottom:0.5rem;font-weight:600">⛽ FUEL TYPE</div>
+              <div id="modal-type" style="font-size:1.5rem;font-weight:bold;color:#000"></div>
+            </div>
+          </div>
+
+          <!-- Applications -->
+          <div style="padding:1.5rem;background:rgba(249,250,251,1);border-radius:12px;border:2px solid #e5e7eb">
+            <h4 style="margin:0 0 1rem 0;color:#000;display:flex;align-items:center;gap:0.5rem">
+              📱 Vehicle Applications
+            </h4>
+            <div id="modal-applications" style="display:grid;gap:0.5rem"></div>
+          </div>
+
+          <!-- Features -->
+          <div style="padding:1.5rem;background:rgba(249,250,251,1);border-radius:12px;border:2px solid #e5e7eb">
+            <h4 style="margin:0 0 1rem 0;color:#000;display:flex;align-items:center;gap:0.5rem">
+              ⚙️ Technical Features
+            </h4>
+            <div id="modal-features" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem"></div>
+          </div>
+
+          <!-- Tool Support -->
+          <div style="padding:1.5rem;background:rgba(249,250,251,1);border-radius:12px;border:2px solid #e5e7eb">
+            <h4 style="margin:0 0 1rem 0;color:#000;display:flex;align-items:center;gap:0.5rem">
+              🔧 Programming Tool Support
+            </h4>
+            <div id="modal-tools" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:0.75rem"></div>
+          </div>
+
+          <!-- Tuning Notes -->
+          <div id="modal-notes-section" style="padding:1.5rem;background:rgba(34,197,94,0.1);border-radius:12px;border-left:4px solid #22c55e">
+            <h4 style="margin:0 0 1rem 0;color:#000;display:flex;align-items:center;gap:0.5rem">
+              💡 Tuning Notes & Tips
+            </h4>
+            <p id="modal-notes" style="margin:0;color:#000;font-style:italic;line-height:1.6"></p>
+          </div>
+
+          <!-- Action Buttons -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem">
+            <button id="modal-add-compare" class="btn" style="background:#8b5cf6;color:white;font-weight:600;padding:1rem">
+              ➕ Add to Comparison
+            </button>
+            <button id="modal-export-details" class="btn" style="background:#10b981;color:white;font-weight:600;padding:1rem">
+              📥 Export Details
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ECU Comparison Modal -->
+  <div id="ecu-comparison-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:2000;padding:2rem;overflow-y:auto">
+    <div style="max-width:1400px;margin:2rem auto;background:white;border-radius:16px;overflow:hidden">
+      <div style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);padding:2rem;color:white">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h2 style="margin:0;color:white">📊 ECU Comparison Table</h2>
+          <button id="close-comparison-modal" style="background:rgba(255,255,255,0.2);border:none;color:white;font-size:1.5rem;padding:0.5rem 1rem;border-radius:8px;cursor:pointer;font-weight:bold">✕</button>
+        </div>
+      </div>
+      
+      <div style="padding:2rem;overflow-x:auto">
+        <table id="comparison-table" style="width:100%;border-collapse:collapse"></table>
+        
+        <div style="margin-top:2rem;display:flex;gap:1rem;justify-content:center">
+          <button id="export-comparison-csv" class="btn" style="background:#10b981;color:white;font-weight:600">
+            📥 Export Comparison CSV
+          </button>
+          <button id="clear-comparison-modal" class="btn" style="background:#ef4444;color:white;font-weight:600">
+            🗑️ Clear Comparison
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticket Detail Modal (moved to body level for proper z-index) -->
+  <div id="ticket-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-ticket-subject"></h3>
+        <button class="modal-close" id="close-ticket-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="ticket-detail-meta">
+          <span class="ticket-badge" id="modal-ticket-status"></span>
+          <span class="ticket-badge" id="modal-ticket-priority"></span>
+          <span class="ticket-date" id="modal-ticket-date"></span>
+        </div>
+        <div id="ticket-messages" class="ticket-messages"></div>
+        <form id="reply-ticket-form" class="reply-form">
+          <textarea id="reply-message" placeholder="Type your reply..." rows="3" required></textarea>
+          <button type="submit" class="btn primary small">Send Reply</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load Supabase modules first (shared client, then adapters) - cache bust v2 -->
+  <script type="module" src="assets/js/supabase-client.js?v=2"></script>
+  <script type="module" src="assets/js/supabase-auth.js?v=2"></script>
+  <script type="module" src="assets/js/supabase-files.js?v=2"></script>
+  <script type="module" src="assets/js/supabase-support.js?v=2"></script>
+  <script type="module" src="assets/js/supabase-compat.js?v=2"></script>
+  
+  <!-- Legacy modules (compatibility maintained) -->
+  <script src="assets/js/support.js?v=2"></script>
+  <script src="assets/js/main.js?v=2"></script>
+</body>
+</html>
