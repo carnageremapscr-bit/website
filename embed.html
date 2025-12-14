@@ -59,7 +59,7 @@
     option { background: #1a1a1a; color: #fff; }
     .btn-row { display: flex; gap: 0.5rem; }
     button {
-      padding: 0.5rem 1rem;
+      padding: 0.75rem 1rem;
       background: var(--accent, #dc2626);
       color: #fff;
       border: none;
@@ -67,11 +67,13 @@
       font-weight: 600;
       cursor: pointer;
       flex: 1;
-      font-size: 0.85rem;
+      font-size: 1rem;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      min-height: 48px;
     }
     button:hover { opacity: 0.9; }
     button:disabled { opacity: 0.5; cursor: not-allowed; }
-    .secondary { background: rgba(255,255,255,0.1); }
     .info { color: #94a3b8; font-size: 0.65rem; text-align: center; margin-top: 0.5rem; }
 
     /* Results */
@@ -146,7 +148,9 @@
       </div>
       <div class="btn-row">
         <button id="searchBtn" disabled>🔍 Search</button>
-        <button class="secondary" id="portalBtn">Full Portal →</button>
+      </div>
+      <div style="text-align: center; margin-top: 0.5rem;">
+        <a href="https://web-production-df12d.up.railway.app" target="_blank" style="color: #94a3b8; font-size: 0.75rem; text-decoration: underline;">Open Full Portal</a>
       </div>
       <p class="info">Powered by Carnage Remaps</p>
     </div>
@@ -178,7 +182,6 @@
       var yr = document.getElementById('yr');
       var eng = document.getElementById('eng');
       var searchBtn = document.getElementById('searchBtn');
-      var portalBtn = document.getElementById('portalBtn');
       var backBtn = document.getElementById('backBtn');
       var searchForm = document.getElementById('searchForm');
       var resultsView = document.getElementById('resultsView');
@@ -277,13 +280,11 @@
 
       eng.onchange = checkReady;
 
-      searchBtn.onclick = function() {
+      searchBtn.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
         if (!mfr.value || !mdl.value || !yr.value || !eng.value) return;
         showResults();
-      };
-
-      portalBtn.onclick = function() {
-        window.open(API, '_blank');
       };
 
       backBtn.onclick = function() {
