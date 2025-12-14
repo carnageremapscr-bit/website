@@ -10891,7 +10891,10 @@ I would like to request a quote for tuning this vehicle.`,
       }
     };
     
-    // Manufacturer change handler
+    // Year ranges for public search
+    const PUBLIC_YEAR_RANGES = ['2021-2024', '2017-2020', '2013-2016', '2009-2012', '2005-2008', '2000-2004'];
+    
+    // Manufacturer change handler - use main VEHICLE_DATABASE
     manufacturerSelect.addEventListener('change', function() {
       const manufacturer = this.value;
       
@@ -10900,9 +10903,8 @@ I would like to request a quote for tuning this vehicle.`,
       yearSelect.innerHTML = '<option value="">Select Year Range</option>';
       engineSelect.innerHTML = '<option value="">Select Engine</option>';
       
-      if (manufacturer && vehicleData[manufacturer]) {
-        const models = Object.keys(vehicleData[manufacturer]);
-        models.forEach(model => {
+      if (manufacturer && VEHICLE_DATABASE[manufacturer]) {
+        VEHICLE_DATABASE[manufacturer].forEach(model => {
           const option = document.createElement('option');
           option.value = model;
           option.textContent = model;
@@ -10911,7 +10913,7 @@ I would like to request a quote for tuning this vehicle.`,
       }
     });
     
-    // Model change handler
+    // Model change handler - use standard year ranges
     modelSelect.addEventListener('change', function() {
       const manufacturer = manufacturerSelect.value;
       const model = this.value;
@@ -10920,9 +10922,8 @@ I would like to request a quote for tuning this vehicle.`,
       yearSelect.innerHTML = '<option value="">Select Year Range</option>';
       engineSelect.innerHTML = '<option value="">Select Engine</option>';
       
-      if (manufacturer && model && vehicleData[manufacturer] && vehicleData[manufacturer][model]) {
-        const years = Object.keys(vehicleData[manufacturer][model]);
-        years.forEach(year => {
+      if (manufacturer && model) {
+        PUBLIC_YEAR_RANGES.forEach(year => {
           const option = document.createElement('option');
           option.value = year;
           option.textContent = year;
@@ -10931,7 +10932,7 @@ I would like to request a quote for tuning this vehicle.`,
       }
     });
     
-    // Year change handler
+    // Year change handler - use MANUFACTURER_ENGINES
     yearSelect.addEventListener('change', function() {
       const manufacturer = manufacturerSelect.value;
       const model = modelSelect.value;
@@ -10940,11 +10941,8 @@ I would like to request a quote for tuning this vehicle.`,
       // Clear engine dropdown
       engineSelect.innerHTML = '<option value="">Select Engine</option>';
       
-      if (manufacturer && model && year && 
-          vehicleData[manufacturer] && 
-          vehicleData[manufacturer][model] && 
-          vehicleData[manufacturer][model][year]) {
-        const engines = Object.keys(vehicleData[manufacturer][model][year]);
+      if (manufacturer && model && year) {
+        const engines = MANUFACTURER_ENGINES[manufacturer] || GENERIC_ENGINES;
         engines.forEach(engine => {
           const option = document.createElement('option');
           option.value = engine;
@@ -10954,7 +10952,7 @@ I would like to request a quote for tuning this vehicle.`,
       }
     });
     
-    // Search button handler
+    // Search button handler - parse engine data from string
     searchBtn.addEventListener('click', function() {
       const manufacturer = manufacturerSelect.value;
       const model = modelSelect.value;
@@ -10966,7 +10964,17 @@ I would like to request a quote for tuning this vehicle.`,
         return;
       }
       
-      const engineData = vehicleData[manufacturer][model][year][engine];
+      // Parse engine data from string (e.g. "2.0 TDI - 150hp")
+      const hpMatch = engine.match(/(\d+)\s*hp/i);
+      const stockHP = hpMatch ? parseInt(hpMatch[1]) : 150;
+      const isDiesel = /tdi|cdi|hdi|dci|jtd|d-4d|crdi|bluehdi|skyactiv-d|diesel|multijet/i.test(engine);
+      const stockTorque = Math.round(stockHP * (isDiesel ? 2.2 : 1.1));
+      
+      const engineData = {
+        power: stockHP,
+        torque: stockTorque,
+        type: isDiesel ? 'diesel' : 'petrol'
+      };
       displayPublicSearchResults(manufacturer, model, year, engine, engineData);
     });
   }
