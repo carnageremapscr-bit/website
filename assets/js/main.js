@@ -7135,6 +7135,17 @@ I would like to request a quote for tuning this vehicle.`,
         const width = embedWidth.value || '100%';
         const portalUrl = window.location.origin + window.location.pathname;
 
+        // Build manufacturer options from actual database
+        const mfrOptions = Object.keys(VEHICLE_DATABASE).map(mfr => {
+          const displayName = mfr.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+          return `<option value="${mfr}">${displayName}</option>`;
+        }).join('\\n          ');
+
+        // Serialize the databases for embed (compact format)
+        const modelsDB = JSON.stringify(VEHICLE_DATABASE);
+        const enginesDB = JSON.stringify(MANUFACTURER_ENGINES);
+        const genericEngines = JSON.stringify(GENERIC_ENGINES);
+
         const embedCode = `<!-- Carnage Remaps Vehicle Search Embed -->
 <div id="carnage-vehicle-search" style="max-width:${width};margin:0 auto;font-family:system-ui,-apple-system,sans-serif"></div>
 <script>
@@ -7146,6 +7157,11 @@ I would like to request a quote for tuning this vehicle.`,
       portalUrl: '${portalUrl}'
     };
     
+    // Complete Vehicle Database
+    const MODELS = ${modelsDB};
+    const ENGINES = ${enginesDB};
+    const GENERIC_ENGINES = ${genericEngines};
+    
     // Embed styles
     const style = document.createElement('style');
     style.textContent = \`
@@ -7156,9 +7172,9 @@ I would like to request a quote for tuning this vehicle.`,
       #carnage-vehicle-search select { padding: 0.75rem; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); border-radius: 8px; color: #fff; font-size: 1rem; width: 100%; }
       #carnage-vehicle-search option { background: #1a1a1a; color: #fff; }
       #carnage-vehicle-search .btn-group { display: flex; gap: 0.5rem; }
-      #carnage-vehicle-search button { padding: 0.75rem 1.5rem; background: \${config.primaryColor}; color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; flex: 1; }
+      #carnage-vehicle-search button { padding: 0.75rem 1.5rem; background: \${config.primaryColor}; color: #000; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; flex: 1; }
       #carnage-vehicle-search button:hover { opacity: 0.9; transform: translateY(-2px); }
-      #carnage-vehicle-search button.secondary { background: rgba(255,255,255,0.1); }
+      #carnage-vehicle-search button.secondary { background: rgba(255,255,255,0.1); color: #fff; }
       #carnage-vehicle-search .info-text { color: #94a3b8; font-size: 0.875rem; text-align: center; margin-top: 0.5rem; }
     \`;
     document.head.appendChild(style);
@@ -7174,39 +7190,30 @@ I would like to request a quote for tuning this vehicle.`,
       <div class="search-form">
         <select id="embed-manufacturer">
           <option value="">Select Manufacturer</option>
-          <option value="audi">Audi</option>
-          <option value="volkswagen">Volkswagen</option>
-          <option value="bmw">BMW</option>
-          <option value="mercedes">Mercedes-Benz</option>
-          <option value="ford">Ford</option>
-          <option value="toyota">Toyota</option>
-          <option value="honda">Honda</option>
-          <option value="mazda">Mazda</option>
-          <option value="volvo">Volvo</option>
-          <option value="alfa-romeo">Alfa Romeo</option>
+          ${mfrOptions}
         </select>
         <select id="embed-model" disabled><option value="">Select Model</option></select>
         <select id="embed-year" disabled><option value="">Select Year</option></select>
         <select id="embed-engine" disabled><option value="">Select Engine</option></select>
       </div>
       <div class="btn-group">
-        <button onclick="carnageSearchVehicle()" id="search-btn" disabled>🔍 Search Vehicle</button>
+        <button onclick="carnageSearchVehicle()" id="carnage-search-btn" disabled>🔍 Search Vehicle</button>
         <button onclick="carnageOpenPortal()" class="secondary">Open Full Portal →</button>
       </div>
       <p class="info-text">Powered by Carnage Remaps - Professional ECU Tuning</p>
     \`;
     
-    // Enable search button when all fields are selected
     const mfr = document.getElementById('embed-manufacturer');
     const mdl = document.getElementById('embed-model');
     const yr = document.getElementById('embed-year');
     const eng = document.getElementById('embed-engine');
-    const btn = document.getElementById('search-btn');
+    const btn = document.getElementById('carnage-search-btn');
     
     function checkFields() {
       btn.disabled = !(mfr.value && mdl.value && yr.value && eng.value);
     }
     
+    // Manufacturer change - populate models from database
     mfr.addEventListener('change', () => {
       mdl.disabled = !mfr.value;
       mdl.innerHTML = '<option value="">Select Model</option>';
@@ -7215,11 +7222,10 @@ I would like to request a quote for tuning this vehicle.`,
       eng.disabled = true;
       eng.innerHTML = '<option value="">Select Engine</option>';
       
-      // Add model options based on manufacturer (simplified)
-      if (mfr.value === 'volkswagen') {
-        ['Golf', 'Passat', 'Tiguan', 'Polo'].forEach(m => {
+      if (mfr.value && MODELS[mfr.value]) {
+        MODELS[mfr.value].forEach(m => {
           const opt = document.createElement('option');
-          opt.value = m.toLowerCase();
+          opt.value = m.toLowerCase().replace(/\\s+/g, '-');
           opt.textContent = m;
           mdl.appendChild(opt);
         });
@@ -7227,11 +7233,15 @@ I would like to request a quote for tuning this vehicle.`,
       checkFields();
     });
     
+    // Model change - populate years
     mdl.addEventListener('change', () => {
       yr.disabled = !mdl.value;
       yr.innerHTML = '<option value="">Select Year</option>';
+      eng.disabled = true;
+      eng.innerHTML = '<option value="">Select Engine</option>';
+      
       if (mdl.value) {
-        for(let y=2024; y>=2005; y--) {
+        for(let y = 2024; y >= 2000; y--) {
           const opt = document.createElement('option');
           opt.value = y;
           opt.textContent = y;
@@ -7241,11 +7251,14 @@ I would like to request a quote for tuning this vehicle.`,
       checkFields();
     });
     
+    // Year change - populate engines from database
     yr.addEventListener('change', () => {
       eng.disabled = !yr.value;
       eng.innerHTML = '<option value="">Select Engine</option>';
+      
       if (yr.value) {
-        ['2.0 TDI - 150hp', '1.5 TSI - 150hp', '2.0 TSI - 190hp'].forEach(e => {
+        const engineList = ENGINES[mfr.value] || GENERIC_ENGINES;
+        engineList.forEach(e => {
           const opt = document.createElement('option');
           opt.value = e;
           opt.textContent = e;
@@ -7259,13 +7272,7 @@ I would like to request a quote for tuning this vehicle.`,
     
     // Search function - opens portal with pre-filled parameters
     window.carnageSearchVehicle = function() {
-      const manufacturer = mfr.value;
-      const model = mdl.value;
-      const year = yr.value;
-      const engine = eng.value;
-      
-      // Open portal in new tab with search parameters
-      const url = \`\${config.portalUrl}#vehicle-search?manufacturer=\${manufacturer}&model=\${model}&year=\${year}&engine=\${encodeURIComponent(engine)}\`;
+      const url = config.portalUrl + '#vehicle-search?manufacturer=' + mfr.value + '&model=' + mdl.value + '&year=' + yr.value + '&engine=' + encodeURIComponent(eng.value);
       window.open(url, '_blank');
     };
     
@@ -7274,7 +7281,7 @@ I would like to request a quote for tuning this vehicle.`,
       window.open(config.portalUrl, '_blank');
     };
   })();
-</script>
+<\/script>
 <!-- End Carnage Remaps Embed -->`;
 
         embedCodeOutput.value = embedCode;
