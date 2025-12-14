@@ -5265,14 +5265,26 @@
 
   // Function to find engine data with fallback logic (used by upload and vehicle search)
   function findEngineData(engineKey) {
+    console.log('findEngineData called with:', engineKey);
+    
+    // Normalize the key first
+    let normalizedKey = engineKey.toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/\./g, '')
+      .replace(/--+/g, '-')
+      .replace(/^-|-$/g, '');
+    
+    console.log('Normalized key:', normalizedKey);
+    
     // Try exact match first
-    if (ENGINE_ECU_DATABASE[engineKey]) {
-      return ENGINE_ECU_DATABASE[engineKey];
+    if (ENGINE_ECU_DATABASE[normalizedKey]) {
+      console.log('Exact match found');
+      return ENGINE_ECU_DATABASE[normalizedKey];
     }
     
     // Try removing variant names (GTI, R, GTD, BiTurbo, etc.)
-    const variants = ['gti', 'gtd', 'r', 'rs', 's', 'st', 'biturbo', 'bi-turbo', 'etsi', 'e-tsi', 'tdi-e', 'phev', 'hybrid', 'sport', 'performance', 'edition', 'black-edition', 'special', 'vti', 'vvt-i'];
-    let cleanedKey = engineKey;
+    const variants = ['gti', 'gtd', 'r', 'rs', 's', 'st', 'biturbo', 'bi-turbo', 'etsi', 'e-tsi', 'tdi-e', 'phev', 'hybrid', 'sport', 'performance', 'edition', 'black-edition', 'special', 'vti', 'vvt-i', 'evo', 'line', 's-line', 'm-sport', 'amg', 'quattro', '4motion', 'xdrive', 'bluemotion', 'greenline', 'gt', 'se', 'sel', 'titanium', 'zetec', 'st-line', 'fr', 'xcellence', 'monte-carlo'];
+    let cleanedKey = normalizedKey;
     
     for (const variant of variants) {
       // Remove variant from middle (e.g., "20-tsi-gti-245hp" → "20-tsi-245hp")
@@ -5288,11 +5300,13 @@
     }
     
     // Extract capacity and power from the key
-    const capacityPowerMatch = engineKey.match(/^(\d+)-(.*?)-(\d+hp)$/);
+    const capacityPowerMatch = normalizedKey.match(/^(\d+)-(.*?)-(\d+hp)$/);
     if (capacityPowerMatch) {
       const capacity = capacityPowerMatch[1];
       const engineType = capacityPowerMatch[2];
       const power = capacityPowerMatch[3];
+      
+      console.log('Parsed engine - Capacity:', capacity, 'Type:', engineType, 'Power:', power);
       
       // Try different engine type variations for same capacity/power
       const typeVariations = [
@@ -5314,36 +5328,74 @@
         engineType.replace(/puretech/gi, 'vti'),
         engineType.replace(/vti/gi, 'puretech'),
         engineType.replace(/ecoboost/gi, 'tdci'),
-        engineType.replace(/tdci/gi, 'ecoboost')
+        engineType.replace(/tdci/gi, 'ecoboost'),
+        engineType.replace(/ecotec/gi, 'cdti'),
+        engineType.replace(/cdti/gi, 'ecotec'),
+        engineType.replace(/skyactiv-d/gi, 'diesel'),
+        engineType.replace(/skyactiv-g/gi, 'petrol'),
+        engineType.replace(/mpi/gi, 'fsi'),
+        engineType.replace(/fsi/gi, 'mpi'),
+        // Try just "tdi", "tsi", etc. without other parts
+        engineType.replace(/-.*$/, ''),
+        'tdi', 'tsi', 'tfsi', 'diesel', 'petrol'
       ];
       
       // Try each variation
       for (const variation of typeVariations) {
         const variantKey = `${capacity}-${variation}-${power}`;
         if (ENGINE_ECU_DATABASE[variantKey]) {
+          console.log('Match found with variation:', variantKey);
           return ENGINE_ECU_DATABASE[variantKey];
         }
       }
       
-      // Try matching by capacity and power only
+      // Try matching by capacity and power only (best fallback)
+      console.log('Trying capacity+power match only...');
       for (const [key, data] of Object.entries(ENGINE_ECU_DATABASE)) {
         if (key.startsWith(capacity + '-') && key.endsWith('-' + power)) {
+          console.log('Match found by capacity+power:', key);
           return data;
         }
       }
       
-      // Try matching with ±5hp tolerance
+      // Try matching with ±10hp tolerance (increased from ±5)
       const powerValue = parseInt(power.replace('hp', ''));
-      for (let i = -5; i <= 5; i++) {
+      console.log('Trying power tolerance match for', powerValue, 'hp...');
+      for (let i = -10; i <= 10; i++) {
         const tolerantPower = `${powerValue + i}hp`;
         for (const [key, data] of Object.entries(ENGINE_ECU_DATABASE)) {
           if (key.startsWith(capacity + '-') && key.endsWith('-' + tolerantPower)) {
+            console.log('Match found with power tolerance:', key);
             return data;
           }
         }
       }
+      
+      // Last resort: match just by capacity with similar power range
+      console.log('Last resort: matching by capacity only...');
+      const capacityMatches = Object.entries(ENGINE_ECU_DATABASE).filter(([key]) => 
+        key.startsWith(capacity + '-')
+      );
+      if (capacityMatches.length > 0) {
+        // Find closest power match
+        let closest = null;
+        let closestDiff = Infinity;
+        for (const [key, data] of capacityMatches) {
+          const keyPower = parseInt(key.match(/-(\d+)hp$/)?.[1] || 0);
+          const diff = Math.abs(keyPower - powerValue);
+          if (diff < closestDiff) {
+            closestDiff = diff;
+            closest = { key, data };
+          }
+        }
+        if (closest && closestDiff <= 30) {
+          console.log('Closest match found:', closest.key, '(diff:', closestDiff, 'hp)');
+          return closest.data;
+        }
+      }
     }
     
+    console.log('No engine data found for:', engineKey);
     return null;
   }
 
