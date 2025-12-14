@@ -6,9 +6,7 @@
   // For production: Set this to your Railway backend URL
   const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:3002'
-    : (window.location.origin.includes('railway.app') 
-       ? window.location.origin 
-       : 'https://website-production-b004.up.railway.app'); // Your Railway backend URL
+    : 'https://web-production-df12d.up.railway.app'; // Your Railway backend URL
 
   const DB_NAME = 'CarnageRemapsDB';
   const DB_VERSION = 2;
