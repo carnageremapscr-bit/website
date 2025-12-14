@@ -2,6 +2,14 @@
 (function() {
   'use strict';
 
+  // API Configuration - Auto-detect environment
+  // For production: Set this to your Railway backend URL
+  const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:3002'
+    : (window.location.origin.includes('railway.app') 
+       ? window.location.origin 
+       : 'https://website-production-b004.up.railway.app'); // Your Railway backend URL
+
   const DB_NAME = 'CarnageRemapsDB';
   const DB_VERSION = 2;
   const STORE_NAME = 'files';
@@ -9049,7 +9057,7 @@ I would like to request a quote for tuning this vehicle.`,
         // 1. Create a Stripe subscription (recurring monthly payment)
         // 2. Money goes to YOUR Stripe account every month
         // 3. On successful payment (webhook), activate subscription in database
-        const response = await fetch('http://localhost:3002/api/create-subscription-session', {
+        const response = await fetch(`${API_URL}/api/create-subscription-session`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -12181,7 +12189,7 @@ Thank you for choosing Carnage Remaps!
         // 1. Create a Stripe checkout session for the amount
         // 2. Money goes to YOUR Stripe account
         // 3. On successful payment (webhook), update user's wallet balance in database
-        const response = await fetch('http://localhost:3002/api/create-checkout-session', {
+        const response = await fetch(`${API_URL}/api/create-checkout-session`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -12394,7 +12402,7 @@ Thank you for choosing Carnage Remaps!
         // 2. Set up monthly billing at £9.99
         // 3. On successful subscription (webhook), activate user's embed access
         // 4. Handle subscription lifecycle events (payment_failed, subscription_cancelled, etc.)
-        const response = await fetch('http://localhost:3002/api/create-subscription-session', {
+        const response = await fetch(`${API_URL}/api/create-subscription-session`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
