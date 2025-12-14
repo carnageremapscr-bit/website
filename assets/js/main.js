@@ -7129,156 +7129,28 @@ I would like to request a quote for tuning this vehicle.`,
           return;
         }
         
-        const logoUrl = embedLogoUrl.value || 'https://web-production-df12d.up.railway.app/assets/media/logo.avif';
         const primaryColor = embedPrimaryColorText.value || '#dc2626';
         const bgColor = embedBgColorText.value || '#1a1a1a';
         const width = embedWidth.value || '100%';
         
-        // Always use HTTPS for Wix/external sites
+        // Always use HTTPS for external sites
         const baseUrl = 'https://web-production-df12d.up.railway.app';
-        const portalUrl = baseUrl;
-        const apiUrl = baseUrl;
 
+        // Simple iframe embed - works everywhere including Wix
         const embedCode = `<!-- Carnage Remaps Vehicle Search Widget -->
 <!-- Works with: Wix, WordPress, Squarespace, Shopify, any HTML site -->
-<div id="carnage-vehicle-search" style="max-width:${width};margin:0 auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif"></div>
-<script type="text/javascript">
-(function(){
-  "use strict";
-  var C={
-    logo:"${logoUrl}",
-    color:"${primaryColor}",
-    bg:"${bgColor}",
-    portal:"${portalUrl}",
-    api:"${apiUrl}"
-  };
-  var D={models:{},engines:{},genericEngines:[]};
-  
-  // Add styles
-  var s=document.createElement("style");
-  s.textContent="#carnage-vehicle-search{background:"+C.bg+";border-radius:12px;padding:2rem;color:#fff;box-sizing:border-box}#carnage-vehicle-search *{box-sizing:border-box}#carnage-vehicle-search .cr-hdr{text-align:center;margin-bottom:1.5rem}#carnage-vehicle-search .cr-logo{max-width:180px;height:auto;margin-bottom:1rem}#carnage-vehicle-search .cr-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1rem}#carnage-vehicle-search select{padding:0.75rem;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);border-radius:8px;color:#fff;font-size:1rem;width:100%;cursor:pointer}#carnage-vehicle-search select:disabled{opacity:0.5;cursor:not-allowed}#carnage-vehicle-search option{background:#1a1a1a;color:#fff}#carnage-vehicle-search .cr-btns{display:flex;gap:0.5rem;flex-wrap:wrap}#carnage-vehicle-search button{padding:0.75rem 1.5rem;background:"+C.color+";color:#000;border:none;border-radius:8px;font-weight:600;cursor:pointer;flex:1;min-width:120px;font-size:1rem}#carnage-vehicle-search button:hover{opacity:0.9}#carnage-vehicle-search button:disabled{opacity:0.5;cursor:not-allowed}#carnage-vehicle-search .cr-sec{background:rgba(255,255,255,0.1);color:#fff}#carnage-vehicle-search .cr-info{color:#94a3b8;font-size:0.8rem;text-align:center;margin-top:0.75rem}";
-  document.head.appendChild(s);
-  
-  // Build widget HTML
-  var container=document.getElementById("carnage-vehicle-search");
-  if(!container)return;
-  
-  container.innerHTML='<div class="cr-hdr"><img src="'+C.logo+'" alt="Carnage Remaps" class="cr-logo" onerror="this.style.display=\\'none\\'"><h2 style="margin:0 0 0.5rem;font-size:1.5rem">Vehicle Performance Search</h2><p style="color:#94a3b8;margin:0;font-size:0.9rem">Find ECU tuning options for your vehicle</p></div><div class="cr-form"><select id="carnage-mfr"><option value="">Loading manufacturers...</option></select><select id="carnage-mdl" disabled><option value="">Select Model</option></select><select id="carnage-yr" disabled><option value="">Select Year</option></select><select id="carnage-eng" disabled><option value="">Select Engine</option></select></div><div class="cr-btns"><button type="button" id="carnage-btn" disabled>🔍 Search Vehicle</button><button type="button" class="cr-sec" id="carnage-portal">Open Full Portal →</button></div><p class="cr-info">Powered by Carnage Remaps - Professional ECU Tuning</p>';
-  
-  var mfr=document.getElementById("carnage-mfr");
-  var mdl=document.getElementById("carnage-mdl");
-  var yr=document.getElementById("carnage-yr");
-  var eng=document.getElementById("carnage-eng");
-  var btn=document.getElementById("carnage-btn");
-  var portal=document.getElementById("carnage-portal");
-  
-  // Fetch vehicle data from API
-  var xhr=new XMLHttpRequest();
-  xhr.open("GET",C.api+"/api/vehicles",true);
-  xhr.onreadystatechange=function(){
-    if(xhr.readyState===4){
-      if(xhr.status===200){
-        try{
-          D=JSON.parse(xhr.responseText);
-          mfr.innerHTML='<option value="">Select Manufacturer</option>';
-          var keys=Object.keys(D.models).sort();
-          for(var i=0;i<keys.length;i++){
-            var k=keys[i];
-            var opt=document.createElement("option");
-            opt.value=k;
-            opt.textContent=k.split("-").map(function(w){return w.charAt(0).toUpperCase()+w.slice(1);}).join(" ");
-            mfr.appendChild(opt);
-          }
-        }catch(e){
-          mfr.innerHTML='<option value="">Error loading data</option>';
-        }
-      }else{
-        mfr.innerHTML='<option value="">Failed to load</option>';
-      }
-    }
-  };
-  xhr.send();
-  
-  function checkFields(){
-    btn.disabled=!(mfr.value&&mdl.value&&yr.value&&eng.value);
-  }
-  
-  mfr.onchange=function(){
-    mdl.disabled=!mfr.value;
-    mdl.innerHTML='<option value="">Select Model</option>';
-    yr.disabled=true;yr.innerHTML='<option value="">Select Year</option>';
-    eng.disabled=true;eng.innerHTML='<option value="">Select Engine</option>';
-    if(mfr.value&&D.models&&D.models[mfr.value]){
-      var models=D.models[mfr.value];
-      for(var i=0;i<models.length;i++){
-        var opt=document.createElement("option");
-        opt.value=models[i].toLowerCase().replace(/\\s+/g,"-");
-        opt.textContent=models[i];
-        mdl.appendChild(opt);
-      }
-    }
-    checkFields();
-  };
-  
-  mdl.onchange=function(){
-    yr.disabled=!mdl.value;
-    yr.innerHTML='<option value="">Select Year</option>';
-    eng.disabled=true;eng.innerHTML='<option value="">Select Engine</option>';
-    if(mdl.value){
-      for(var y=2024;y>=2000;y--){
-        var opt=document.createElement("option");
-        opt.value=y;opt.textContent=y;
-        yr.appendChild(opt);
-      }
-    }
-    checkFields();
-  };
-  
-  yr.onchange=function(){
-    eng.disabled=!yr.value;
-    eng.innerHTML='<option value="">Select Engine</option>';
-    if(yr.value){
-      var engines=(D.engines&&D.engines[mfr.value])?D.engines[mfr.value]:D.genericEngines;
-      if(engines){
-        for(var i=0;i<engines.length;i++){
-          var opt=document.createElement("option");
-          opt.value=engines[i];opt.textContent=engines[i];
-          eng.appendChild(opt);
-        }
-      }
-    }
-    checkFields();
-  };
-  
-  eng.onchange=checkFields;
-  
-  btn.onclick=function(){
-    if(mfr.value&&mdl.value&&yr.value&&eng.value){
-      var url=C.portal+"#vehicle-search?manufacturer="+encodeURIComponent(mfr.value)+"&model="+encodeURIComponent(mdl.value)+"&year="+encodeURIComponent(yr.value)+"&engine="+encodeURIComponent(eng.value);
-      window.open(url,"_blank");
-    }
-  };
-  
-  portal.onclick=function(){
-    window.open(C.portal,"_blank");
-  };
-})();
-<\/script>
-<!-- End Carnage Remaps Widget -->
-
-<!-- ========== ALTERNATIVE: IFRAME EMBED FOR WIX ========== -->
-<!-- If the above doesn't work in Wix, use this simple iframe instead: -->
+<!-- Just copy and paste this code into an HTML embed element -->
 
 <iframe 
   src="${baseUrl}/embed.html?color=${encodeURIComponent(primaryColor)}&bg=${encodeURIComponent(bgColor)}" 
-  width="100%" 
-  height="400" 
-  style="border:none;border-radius:12px;max-width:${width};" 
-  allow="scripts"
-  title="Carnage Remaps Vehicle Search">
+  width="${width}" 
+  height="550" 
+  style="border:none;border-radius:12px;max-width:100%;" 
+  title="Carnage Remaps Vehicle Search"
+  loading="lazy">
 </iframe>
 
-<!-- ======================================================= -->`;
+<!-- End Carnage Remaps Widget -->`;
 
         embedCodeOutput.value = embedCode;
         embedCodeContainer.style.display = 'block';
