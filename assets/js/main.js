@@ -7034,7 +7034,9 @@ I would like to request a quote for tuning this vehicle.`,
   // Initialize settings functionality
   async function initSettings() {
     // Check subscription status and lock/unlock embed section
-    const hasSubscription = await hasActiveEmbedSubscription();
+    // Admins bypass subscription requirement
+    const isAdmin = await CarnageAuth.isAdmin();
+    const hasSubscription = isAdmin || await hasActiveEmbedSubscription();
     const embedSection = document.querySelector('#settings-tab .settings-card');
     
     if (!hasSubscription && embedSection) {
@@ -7105,8 +7107,9 @@ I would like to request a quote for tuning this vehicle.`,
     // Generate embed code
     if (generateEmbedBtn) {
       generateEmbedBtn.addEventListener('click', async () => {
-        // Check if user has active embed subscription
-        const hasSubscription = await hasActiveEmbedSubscription();
+        // Check if user has active embed subscription (admins bypass)
+        const isAdminUser = await CarnageAuth.isAdmin();
+        const hasSubscription = isAdminUser || await hasActiveEmbedSubscription();
         
         if (!hasSubscription) {
           const upgrade = confirm('🔒 Embed Widget Access Required\n\nThe embed widget feature requires an active subscription (£9.99/month).\n\nVehicle lookup is FREE for all users, but embedding the widget on external websites requires a subscription.\n\nWould you like to go to the Billing tab to subscribe?');
