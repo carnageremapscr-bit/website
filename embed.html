@@ -10,17 +10,20 @@
     html, body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: transparent;
-      -webkit-overflow-scrolling: touch;
-      overflow-x: hidden;
-      height: 100%;
+      width: 100%;
+      min-height: 100%;
     }
+    /* Hide scrollbars but allow scroll */
+    html { overflow-y: auto; overflow-x: hidden; }
+    ::-webkit-scrollbar { width: 0; height: 0; background: transparent; }
+    * { -ms-overflow-style: none; scrollbar-width: none; }
+    
     .widget {
       background: var(--bg, #1a1a1a);
       border-radius: 16px;
-      padding: 1.5rem;
+      padding: 1.25rem;
       color: #fff;
-      max-width: 100%;
-      min-height: 100%;
+      width: 100%;
     }
     .header {
       text-align: center;
@@ -59,8 +62,11 @@
       font-size: 16px;
       width: 100%;
       cursor: pointer;
-      -webkit-appearance: none;
       min-height: 52px;
+      /* Keep native appearance on mobile for proper dropdown behavior */
+      -webkit-appearance: menulist;
+      -moz-appearance: menulist;
+      appearance: menulist;
     }
     select:disabled { opacity: 0.5; cursor: not-allowed; }
     option { background: #1a1a1a; color: #fff; }
@@ -84,7 +90,7 @@
     .info { color: #94a3b8; font-size: 0.85rem; text-align: center; margin-top: 1rem; }
 
     /* Results */
-    .results { display: none; }
+    .results { display: none; overflow-y: auto; overflow-x: hidden; }
     .results.show { display: block; }
     .vehicle-title {
       background: linear-gradient(135deg, #8b5cf6, #3b82f6);
