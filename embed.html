@@ -11,9 +11,9 @@
       background: transparent;
     }
     .widget {
-      background: #1a1a1a;
+      background: var(--bg, #1a1a1a);
       border-radius: 12px;
-      padding: 1.5rem;
+      padding: 1.25rem;
       color: #fff;
       max-width: 100%;
     }
@@ -22,101 +22,84 @@
       margin-bottom: 1rem;
     }
     .logo {
-      max-width: 150px;
+      max-width: 120px;
       height: auto;
       margin-bottom: 0.5rem;
     }
     .header h2 {
       margin: 0 0 0.25rem;
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       color: #fff;
     }
     .header p {
       color: #94a3b8;
       margin: 0;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
     }
     .form {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.75rem;
-      margin-bottom: 1rem;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
     }
-    @media (max-width: 500px) {
+    @media (max-width: 400px) {
       .form { grid-template-columns: 1fr; }
     }
     select {
-      padding: 0.6rem;
+      padding: 0.5rem;
       border: 1px solid rgba(255,255,255,0.2);
       background: rgba(255,255,255,0.08);
-      border-radius: 8px;
+      border-radius: 6px;
       color: #fff;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       width: 100%;
       cursor: pointer;
     }
-    select:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    option {
-      background: #1a1a1a;
-      color: #fff;
-    }
-    .buttons {
-      display: flex;
-      gap: 0.5rem;
-    }
+    select:disabled { opacity: 0.5; cursor: not-allowed; }
+    option { background: #1a1a1a; color: #fff; }
+    .btn-row { display: flex; gap: 0.5rem; }
     button {
-      padding: 0.6rem 1rem;
-      background: #dc2626;
+      padding: 0.5rem 1rem;
+      background: var(--accent, #dc2626);
       color: #fff;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       font-weight: 600;
       cursor: pointer;
       flex: 1;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
     }
     button:hover { opacity: 0.9; }
     button:disabled { opacity: 0.5; cursor: not-allowed; }
     .secondary { background: rgba(255,255,255,0.1); }
-    .info {
-      color: #94a3b8;
-      font-size: 0.7rem;
-      text-align: center;
-      margin-top: 0.5rem;
-    }
-    
-    /* Results Section */
-    .results {
-      display: none;
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px solid rgba(255,255,255,0.1);
-    }
+    .info { color: #94a3b8; font-size: 0.65rem; text-align: center; margin-top: 0.5rem; }
+
+    /* Results */
+    .results { display: none; }
     .results.show { display: block; }
-    .results h3 {
+    .vehicle-title {
+      background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .engine-badge {
+      background: rgba(139,92,246,0.2);
+      border: 1px solid rgba(139,92,246,0.4);
+      border-radius: 6px;
+      padding: 0.5rem;
       margin-bottom: 0.75rem;
-      color: #fff;
+      font-size: 0.8rem;
     }
-    .vehicle-info {
-      background: rgba(255,255,255,0.05);
-      padding: 0.75rem;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      font-size: 0.85rem;
-    }
-    .stages {
-      display: grid;
-      gap: 0.75rem;
-    }
-    .stage {
-      background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(59,130,246,0.1));
-      border: 1px solid rgba(139,92,246,0.3);
+    .stage-card {
+      background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(34,197,94,0.05));
+      border: 1px solid rgba(34,197,94,0.3);
       border-radius: 8px;
       padding: 0.75rem;
+      margin-bottom: 0.5rem;
     }
     .stage-header {
       display: flex;
@@ -124,73 +107,72 @@
       align-items: center;
       margin-bottom: 0.5rem;
     }
-    .stage-name {
-      font-weight: 600;
-      color: #a78bfa;
-      font-size: 0.9rem;
-    }
-    .stage-power {
-      color: #22c55e;
-      font-weight: 600;
-      font-size: 0.85rem;
-    }
-    .stage-details {
+    .stage-name { font-weight: 700; color: #22c55e; font-size: 0.9rem; }
+    .stage-method { font-size: 0.7rem; color: #94a3b8; }
+    .perf-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr 1fr;
       gap: 0.5rem;
-      font-size: 0.8rem;
     }
-    .detail-item {
-      display: flex;
-      justify-content: space-between;
+    .perf-box {
+      background: rgba(0,0,0,0.2);
+      border-radius: 4px;
+      padding: 0.4rem;
+      text-align: center;
     }
-    .detail-label { color: #94a3b8; }
-    .detail-value { color: #fff; font-weight: 500; }
-    .back-btn {
-      margin-top: 1rem;
-      background: rgba(255,255,255,0.1);
-    }
+    .perf-label { font-size: 0.65rem; color: #94a3b8; margin-bottom: 0.2rem; }
+    .perf-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; }
+    .stock { color: #94a3b8; }
+    .arrow { color: #22c55e; }
+    .tuned { color: #22c55e; font-weight: 700; }
+    .gain { color: #22c55e; font-size: 0.7rem; }
+    .back-btn { margin-top: 0.75rem; background: rgba(255,255,255,0.1); }
   </style>
 </head>
 <body>
-  <div class="widget">
-    <!-- Search Form -->
-    <div id="searchSection">
+  <div class="widget" id="widget">
+    <!-- SEARCH FORM -->
+    <div id="searchForm">
       <div class="header">
-        <img src="/assets/media/logo.avif" alt="Carnage Remaps" class="logo" onerror="this.style.display='none'">
+        <img src="https://web-production-df12d.up.railway.app/assets/media/logo.avif" alt="Carnage Remaps" class="logo" onerror="this.style.display='none'">
         <h2>Vehicle Performance Search</h2>
         <p>Find ECU tuning options for your vehicle</p>
       </div>
-      
       <div class="form">
-        <select id="mfr"><option value="">Loading...</option></select>
+        <select id="mfr"><option value="">Select Manufacturer</option></select>
         <select id="mdl" disabled><option value="">Select Model</option></select>
-        <select id="yr" disabled><option value="">Select Year</option></select>
+        <select id="yr" disabled><option value="">Select Year Range</option></select>
         <select id="eng" disabled><option value="">Select Engine</option></select>
       </div>
-      
-      <div class="buttons">
-        <button type="button" id="searchBtn" disabled>🔍 Search</button>
-        <button type="button" class="secondary" id="portalBtn">Full Portal →</button>
+      <div class="btn-row">
+        <button id="searchBtn" disabled>🔍 Search</button>
+        <button class="secondary" id="portalBtn">Full Portal →</button>
       </div>
-      
       <p class="info">Powered by Carnage Remaps</p>
     </div>
-    
-    <!-- Results Section -->
-    <div id="resultsSection" class="results">
-      <h3>🏎️ Tuning Options Available</h3>
-      <div class="vehicle-info" id="vehicleInfo"></div>
-      <div class="stages" id="stagesContainer"></div>
-      <button type="button" class="back-btn" id="backBtn">← Back to Search</button>
+
+    <!-- RESULTS -->
+    <div id="resultsView" class="results">
+      <div class="vehicle-title" id="vehicleTitle"></div>
+      <div class="engine-badge" id="engineBadge"></div>
+      <div id="stagesContainer"></div>
+      <button class="back-btn" id="backBtn">← New Search</button>
     </div>
   </div>
 
   <script>
     (function() {
-      var portalUrl = 'https://web-production-df12d.up.railway.app';
-      var D = { models: {}, engines: {}, genericEngines: [] };
+      var API = 'https://web-production-df12d.up.railway.app';
       
+      // Get URL params for customization
+      var params = new URLSearchParams(window.location.search);
+      var accentColor = params.get('color') || '#dc2626';
+      var bgColor = params.get('bg') || '#1a1a1a';
+      
+      var widget = document.getElementById('widget');
+      widget.style.setProperty('--accent', accentColor);
+      widget.style.setProperty('--bg', bgColor);
+
       var mfr = document.getElementById('mfr');
       var mdl = document.getElementById('mdl');
       var yr = document.getElementById('yr');
@@ -198,200 +180,197 @@
       var searchBtn = document.getElementById('searchBtn');
       var portalBtn = document.getElementById('portalBtn');
       var backBtn = document.getElementById('backBtn');
-      var searchSection = document.getElementById('searchSection');
-      var resultsSection = document.getElementById('resultsSection');
-      var vehicleInfo = document.getElementById('vehicleInfo');
-      var stagesContainer = document.getElementById('stagesContainer');
+      var searchForm = document.getElementById('searchForm');
+      var resultsView = document.getElementById('resultsView');
 
-      // Tuning data (Stage gains)
-      var TUNING_DATA = {
-        'diesel': {
-          'stage1': { powerGain: '20-30%', torqueGain: '25-35%', method: 'ECU Remap' },
-          'stage2': { powerGain: '30-45%', torqueGain: '35-50%', method: 'Remap + Hardware' },
-          'stage3': { powerGain: '45-60%', torqueGain: '50-70%', method: 'Full Build' }
-        },
-        'petrol': {
-          'stage1': { powerGain: '15-25%', torqueGain: '15-25%', method: 'ECU Remap' },
-          'stage2': { powerGain: '25-40%', torqueGain: '25-40%', method: 'Remap + Intake/Exhaust' },
-          'stage3': { powerGain: '40-60%', torqueGain: '40-55%', method: 'Full Build' }
-        }
-      };
+      // Vehicle database (will be populated from API)
+      var DB = { models: {}, engines: {}, yearData: {} };
 
-      // Get URL parameters for customization
-      var params = new URLSearchParams(window.location.search);
-      var color = params.get('color') || '#dc2626';
-      var bg = params.get('bg') || '#1a1a1a';
-      
-      document.querySelector('.widget').style.background = bg;
-      searchBtn.style.background = color;
-      document.querySelectorAll('.stage-name').forEach(function(el) {
-        el.style.color = color;
-      });
+      // Year ranges for models
+      var YEAR_RANGES = ['2021-2024', '2017-2020', '2013-2016', '2009-2012', '2005-2008', '2000-2004'];
 
-      // Fetch vehicle data
-      fetch('/api/vehicles')
+      // Load data from API
+      fetch(API + '/api/vehicles')
         .then(function(r) { return r.json(); })
         .then(function(data) {
-          D = data;
-          mfr.innerHTML = '<option value="">Select Manufacturer</option>';
-          Object.keys(data.models).sort().forEach(function(k) {
-            var opt = document.createElement('option');
-            opt.value = k;
-            opt.textContent = k.split('-').map(function(w) {
-              return w.charAt(0).toUpperCase() + w.slice(1);
-            }).join(' ');
-            mfr.appendChild(opt);
-          });
+          DB.models = data.models;
+          DB.engines = data.engines;
+          DB.genericEngines = data.genericEngines;
+          populateManufacturers();
         })
-        .catch(function() {
-          mfr.innerHTML = '<option value="">Error loading</option>';
+        .catch(function(err) {
+          console.error('Failed to load vehicle data:', err);
+          mfr.innerHTML = '<option value="">Error loading data</option>';
         });
 
-      function checkFields() {
+      function populateManufacturers() {
+        mfr.innerHTML = '<option value="">Select Manufacturer</option>';
+        Object.keys(DB.models).sort().forEach(function(key) {
+          var opt = document.createElement('option');
+          opt.value = key;
+          opt.textContent = formatName(key);
+          mfr.appendChild(opt);
+        });
+      }
+
+      function formatName(str) {
+        return str.split('-').map(function(w) {
+          return w.charAt(0).toUpperCase() + w.slice(1);
+        }).join(' ');
+      }
+
+      function checkReady() {
         searchBtn.disabled = !(mfr.value && mdl.value && yr.value && eng.value);
       }
 
       mfr.onchange = function() {
-        mdl.disabled = !mfr.value;
         mdl.innerHTML = '<option value="">Select Model</option>';
-        yr.disabled = true;
-        yr.innerHTML = '<option value="">Select Year</option>';
-        eng.disabled = true;
+        yr.innerHTML = '<option value="">Select Year Range</option>';
         eng.innerHTML = '<option value="">Select Engine</option>';
-        
-        if (mfr.value && D.models && D.models[mfr.value]) {
-          D.models[mfr.value].forEach(function(m) {
+        mdl.disabled = !mfr.value;
+        yr.disabled = true;
+        eng.disabled = true;
+
+        if (mfr.value && DB.models[mfr.value]) {
+          DB.models[mfr.value].forEach(function(m) {
             var opt = document.createElement('option');
             opt.value = m.toLowerCase().replace(/\s+/g, '-');
             opt.textContent = m;
             mdl.appendChild(opt);
           });
         }
-        checkFields();
+        checkReady();
       };
 
       mdl.onchange = function() {
-        yr.disabled = !mdl.value;
-        yr.innerHTML = '<option value="">Select Year</option>';
-        eng.disabled = true;
+        yr.innerHTML = '<option value="">Select Year Range</option>';
         eng.innerHTML = '<option value="">Select Engine</option>';
-        
+        yr.disabled = !mdl.value;
+        eng.disabled = true;
+
         if (mdl.value) {
-          for (var y = 2024; y >= 2000; y--) {
+          YEAR_RANGES.forEach(function(range) {
             var opt = document.createElement('option');
-            opt.value = y;
-            opt.textContent = y;
+            opt.value = range;
+            opt.textContent = range;
             yr.appendChild(opt);
-          }
+          });
         }
-        checkFields();
+        checkReady();
       };
 
       yr.onchange = function() {
-        eng.disabled = !yr.value;
         eng.innerHTML = '<option value="">Select Engine</option>';
-        
+        eng.disabled = !yr.value;
+
         if (yr.value) {
-          var engines = (D.engines && D.engines[mfr.value]) ? D.engines[mfr.value] : D.genericEngines;
-          if (engines) {
-            engines.forEach(function(e) {
-              var opt = document.createElement('option');
-              opt.value = e;
-              opt.textContent = e;
-              eng.appendChild(opt);
-            });
-          }
+          var engines = DB.engines[mfr.value] || DB.genericEngines;
+          engines.forEach(function(e) {
+            var opt = document.createElement('option');
+            opt.value = e;
+            opt.textContent = e;
+            eng.appendChild(opt);
+          });
         }
-        checkFields();
+        checkReady();
       };
 
-      eng.onchange = checkFields;
+      eng.onchange = checkReady;
 
-      // Show results instead of redirect
       searchBtn.onclick = function() {
-        if (mfr.value && mdl.value && yr.value && eng.value) {
-          showResults();
-        }
+        if (!mfr.value || !mdl.value || !yr.value || !eng.value) return;
+        showResults();
+      };
+
+      portalBtn.onclick = function() {
+        window.open(API, '_blank');
+      };
+
+      backBtn.onclick = function() {
+        searchForm.style.display = 'block';
+        resultsView.classList.remove('show');
       };
 
       function showResults() {
         var mfrName = mfr.options[mfr.selectedIndex].textContent;
         var mdlName = mdl.options[mdl.selectedIndex].textContent;
-        var engineText = eng.value;
+        var yearRange = yr.value;
+        var engineStr = eng.value;
+
+        // Parse engine info
+        var hpMatch = engineStr.match(/(\d+)\s*hp/i);
+        var stockHP = hpMatch ? parseInt(hpMatch[1]) : 150;
         
-        // Determine if diesel or petrol
-        var isDiesel = engineText.toLowerCase().includes('tdi') || 
-                       engineText.toLowerCase().includes('cdi') || 
-                       engineText.toLowerCase().includes('hdi') ||
-                       engineText.toLowerCase().includes('dci') ||
-                       engineText.toLowerCase().includes('jtd') ||
-                       engineText.toLowerCase().includes('d-4d') ||
-                       engineText.toLowerCase().includes('crdi') ||
-                       engineText.toLowerCase().includes('diesel') ||
-                       engineText.toLowerCase().includes('bluehdi') ||
-                       engineText.toLowerCase().includes('skyactiv-d');
-        
-        var fuelType = isDiesel ? 'diesel' : 'petrol';
-        var tuning = TUNING_DATA[fuelType];
-        
-        // Parse original power
-        var powerMatch = engineText.match(/(\d+)\s*hp/i);
-        var originalPower = powerMatch ? parseInt(powerMatch[1]) : 150;
-        
-        // Show vehicle info
-        vehicleInfo.innerHTML = '<strong>' + yr.value + ' ' + mfrName + ' ' + mdlName + '</strong><br>' +
-          '<span style="color:#94a3b8">' + engineText + '</span>';
-        
-        // Build stage cards
-        var stagesHTML = '';
+        // Determine if diesel
+        var isDiesel = /tdi|cdi|hdi|dci|jtd|d-4d|crdi|bluehdi|skyactiv-d|diesel|multijet/i.test(engineStr);
+        var fuelType = isDiesel ? 'Diesel' : 'Petrol';
+
+        // Calculate stage power (diesel gets more gains)
+        var s1Power = Math.round(stockHP * (isDiesel ? 1.25 : 1.20));
+        var s2Power = Math.round(stockHP * (isDiesel ? 1.40 : 1.35));
+        var s3Power = Math.round(stockHP * (isDiesel ? 1.55 : 1.50));
+
+        // Estimate torque (diesel ~2x, petrol ~1.5x of HP)
+        var stockTorque = Math.round(stockHP * (isDiesel ? 2.2 : 1.1));
+        var s1Torque = Math.round(stockTorque * (isDiesel ? 1.30 : 1.20));
+        var s2Torque = Math.round(stockTorque * (isDiesel ? 1.45 : 1.35));
+        var s3Torque = Math.round(stockTorque * (isDiesel ? 1.60 : 1.50));
+
+        // Update title
+        document.getElementById('vehicleTitle').textContent = mfrName + ' ' + mdlName + ' (' + yearRange + ')';
+        document.getElementById('engineBadge').innerHTML = 
+          '<strong>' + engineStr + '</strong> • ' + fuelType + ' • Turbocharged';
+
+        // Build stages
+        var html = '';
         
         // Stage 1
-        var s1Min = Math.round(originalPower * 1.15);
-        var s1Max = Math.round(originalPower * (isDiesel ? 1.30 : 1.25));
-        stagesHTML += buildStageCard('Stage 1', s1Min + '-' + s1Max + ' HP', 
-          '+' + tuning.stage1.powerGain + ' Power', '+' + tuning.stage1.torqueGain + ' Torque', tuning.stage1.method);
+        html += buildStageCard('Stage 1', 'ECU Remap Only', stockHP, s1Power, stockTorque, s1Torque);
         
         // Stage 2
-        var s2Min = Math.round(originalPower * 1.25);
-        var s2Max = Math.round(originalPower * (isDiesel ? 1.45 : 1.40));
-        stagesHTML += buildStageCard('Stage 2', s2Min + '-' + s2Max + ' HP',
-          '+' + tuning.stage2.powerGain + ' Power', '+' + tuning.stage2.torqueGain + ' Torque', tuning.stage2.method);
+        html += buildStageCard('Stage 2', 'Remap + Intake/Exhaust', stockHP, s2Power, stockTorque, s2Torque);
         
         // Stage 3
-        var s3Min = Math.round(originalPower * 1.40);
-        var s3Max = Math.round(originalPower * (isDiesel ? 1.60 : 1.55));
-        stagesHTML += buildStageCard('Stage 3', s3Min + '-' + s3Max + ' HP',
-          '+' + tuning.stage3.powerGain + ' Power', '+' + tuning.stage3.torqueGain + ' Torque', tuning.stage3.method);
-        
-        stagesContainer.innerHTML = stagesHTML;
-        
-        // Toggle sections
-        searchSection.style.display = 'none';
-        resultsSection.classList.add('show');
+        html += buildStageCard('Stage 3', 'Full Build + Hybrid Turbo', stockHP, s3Power, stockTorque, s3Torque);
+
+        document.getElementById('stagesContainer').innerHTML = html;
+
+        // Toggle views
+        searchForm.style.display = 'none';
+        resultsView.classList.add('show');
       }
-      
-      function buildStageCard(name, power, powerGain, torqueGain, method) {
-        return '<div class="stage">' +
+
+      function buildStageCard(name, method, stockHP, tunedHP, stockTq, tunedTq) {
+        var hpGain = tunedHP - stockHP;
+        var tqGain = tunedTq - stockTq;
+        
+        return '<div class="stage-card">' +
           '<div class="stage-header">' +
             '<span class="stage-name">' + name + '</span>' +
-            '<span class="stage-power">' + power + '</span>' +
+            '<span class="stage-method">' + method + '</span>' +
           '</div>' +
-          '<div class="stage-details">' +
-            '<div class="detail-item"><span class="detail-label">Power:</span><span class="detail-value">' + powerGain + '</span></div>' +
-            '<div class="detail-item"><span class="detail-label">Torque:</span><span class="detail-value">' + torqueGain + '</span></div>' +
-            '<div class="detail-item"><span class="detail-label">Method:</span><span class="detail-value">' + method + '</span></div>' +
+          '<div class="perf-grid">' +
+            '<div class="perf-box">' +
+              '<div class="perf-label">POWER</div>' +
+              '<div class="perf-row">' +
+                '<span class="stock">' + stockHP + '</span>' +
+                '<span class="arrow">→</span>' +
+                '<span class="tuned">' + tunedHP + ' HP</span>' +
+              '</div>' +
+              '<div class="gain">+' + hpGain + ' HP (+' + Math.round(hpGain/stockHP*100) + '%)</div>' +
+            '</div>' +
+            '<div class="perf-box">' +
+              '<div class="perf-label">TORQUE</div>' +
+              '<div class="perf-row">' +
+                '<span class="stock">' + stockTq + '</span>' +
+                '<span class="arrow">→</span>' +
+                '<span class="tuned">' + tunedTq + ' Nm</span>' +
+              '</div>' +
+              '<div class="gain">+' + tqGain + ' Nm (+' + Math.round(tqGain/stockTq*100) + '%)</div>' +
+            '</div>' +
           '</div>' +
         '</div>';
       }
-
-      backBtn.onclick = function() {
-        searchSection.style.display = 'block';
-        resultsSection.classList.remove('show');
-      };
-
-      portalBtn.onclick = function() {
-        window.open(portalUrl, '_blank');
-      };
     })();
   </script>
 </body>
