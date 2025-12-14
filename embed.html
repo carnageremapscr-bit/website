@@ -202,8 +202,11 @@
       // Year ranges for models
       var YEAR_RANGES = ['2021-2024', '2017-2020', '2013-2016', '2009-2012', '2005-2008', '2000-2004'];
 
-      // Load data from API
-      fetch(API + '/api/vehicles')
+      // Load data from API with cache-busting
+      fetch(API + '/api/vehicles?v=' + Date.now(), {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache' }
+      })
         .then(function(r) { return r.json(); })
         .then(function(data) {
           DB.models = data.models;
