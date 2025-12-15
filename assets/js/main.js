@@ -7903,7 +7903,7 @@ I would like to request a quote for tuning this vehicle.`,
       
     } catch (error) {
       console.error('Error loading subscriptions:', error);
-      tbody.innerHTML = '<tr><td colspan="6" style="padding: 2rem; text-align: center; color: #ef4444;">Error loading subscriptions. Please try again.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" style="padding: 2rem; text-align: center; color: #ef4444;">❌ Error loading subscriptions:<br>' + error.message + '</td></tr>';
     }
   }
 
@@ -8274,6 +8274,7 @@ I would like to request a quote for tuning this vehicle.`,
       });
     } catch (error) {
       console.error('Error loading files:', error);
+      container.innerHTML = '<p style="color: #ef4444; text-align: center; padding: 2rem;">❌ Error loading files:<br>' + error.message + '</p>';
     }
   }
 
