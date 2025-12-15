@@ -30,20 +30,225 @@ console.log('===========================');
 const app = express();
 const PORT = process.env.PORT || 3002;
 
-// Middleware
+// IMPORTANT: Webhook route MUST be defined BEFORE any body-parsing middleware
+// Stripe webhook endpoint (for handling payment events)
+app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+  } catch (err) {
+    console.error('Webhook signature verification failed:', err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  console.log('✅ Webhook received:', event.type);
+
+  // Handle the event
+  switch (event.type) {
+    case 'checkout.session.completed':
+      const session = event.data.object;
+      console.log('Checkout session completed:', session.id);
+      
+      // Handle wallet top-up payments
+      if (session.mode === 'payment' && session.metadata?.type === 'topup' && supabase) {
+        try {
+          const email = session.customer_email || session.customer_details?.email;
+          const userId = session.metadata?.userId;
+          const amount = parseFloat(session.metadata?.amount) || (session.amount_total / 100);
+          
+          if (userId && amount > 0) {
+            // Get current user credits
+            const { data: userData, error: fetchError } = await supabase
+              .from('users')
+              .select('credits')
+              .eq('id', userId)
+              .single();
+            
+            if (fetchError) {
+              console.error('Error fetching user credits:', fetchError);
+            } else {
+              const currentCredits = userData?.credits || 0;
+              const newCredits = currentCredits + amount;
+              
+              // Update user credits
+              const { error: updateError } = await supabase
+                .from('users')
+                .update({ credits: newCredits })
+                .eq('id', userId);
+              
+              if (updateError) {
+                console.error('Failed to update credits:', updateError);
+              } else {
+                console.log(`✅ Wallet topped up: £${amount} for user ${userId} (${email}). New balance: £${newCredits}`);
+                
+                // Save transaction record
+                await supabase
+                  .from('transactions')
+                  .insert({
+                    user_id: userId,
+                    email: email,
+                    type: 'topup',
+                    amount: amount,
+                    status: 'completed',
+                    stripe_session_id: session.id,
+                    description: `Wallet top-up via Stripe`,
+                    created_at: new Date().toISOString()
+                  });
+              }
+            }
+          }
+        } catch (err) {
+          console.error('Error processing wallet top-up:', err);
+        }
+      }
+      
+      // Handle subscription checkouts
+      if (session.mode === 'subscription' && supabase) {
+        try {
+          const email = session.customer_email || session.customer_details?.email;
+          const userId = session.metadata?.userId;
+          const subscriptionId = session.subscription;
+          const customerId = session.customer;
+          
+          // Get subscription details from Stripe
+          const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+          
+          // Upsert subscription in Supabase
+          const { error } = await supabase
+            .from('subscriptions')
+            .upsert({
+              user_id: userId || null,
+              email: email,
+              stripe_customer_id: customerId,
+              stripe_subscription_id: subscriptionId,
+              type: session.metadata?.type || 'embed',
+              status: 'active',
+              price_amount: session.amount_total,
+              currency: session.currency,
+              current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+              current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+              updated_at: new Date().toISOString()
+            }, {
+              onConflict: 'stripe_subscription_id'
+            });
+          
+          if (error) {
+            console.error('Failed to save subscription:', error);
+          } else {
+            console.log('✅ Subscription saved for:', email);
+          }
+        } catch (err) {
+          console.error('Error processing checkout:', err);
+        }
+      }
+      break;
+    
+    case 'invoice.paid':
+      // Handle successful subscription renewal
+      console.log('Subscription payment received');
+      if (supabase) {
+        try {
+          const invoice = event.data.object;
+          const subscriptionId = invoice.subscription;
+          
+          if (subscriptionId) {
+            const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+            
+            const { error } = await supabase
+              .from('subscriptions')
+              .update({
+                status: 'active',
+                current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+                current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+                updated_at: new Date().toISOString()
+              })
+              .eq('stripe_subscription_id', subscriptionId);
+            
+            if (error) {
+              console.error('Failed to update subscription:', error);
+            } else {
+              console.log('✅ Subscription renewed:', subscriptionId);
+            }
+          }
+        } catch (err) {
+          console.error('Error processing invoice.paid:', err);
+        }
+      }
+      break;
+    
+    case 'invoice.payment_failed':
+      // Handle failed subscription payment
+      console.log('Subscription payment failed');
+      if (supabase) {
+        try {
+          const invoice = event.data.object;
+          const subscriptionId = invoice.subscription;
+          
+          if (subscriptionId) {
+            const { error } = await supabase
+              .from('subscriptions')
+              .update({
+                status: 'past_due',
+                updated_at: new Date().toISOString()
+              })
+              .eq('stripe_subscription_id', subscriptionId);
+            
+            if (error) {
+              console.error('Failed to update subscription status:', error);
+            } else {
+              console.log('⚠️ Subscription marked past_due:', subscriptionId);
+            }
+          }
+        } catch (err) {
+          console.error('Error processing payment_failed:', err);
+        }
+      }
+      break;
+    
+    case 'customer.subscription.deleted':
+      // Handle subscription cancellation
+      console.log('Subscription cancelled');
+      if (supabase) {
+        try {
+          const subscription = event.data.object;
+          const subscriptionId = subscription.id;
+          
+          const { error } = await supabase
+            .from('subscriptions')
+            .update({
+              status: 'cancelled',
+              updated_at: new Date().toISOString()
+            })
+            .eq('stripe_subscription_id', subscriptionId);
+          
+          if (error) {
+            console.error('Failed to cancel subscription:', error);
+          } else {
+            console.log('❌ Subscription cancelled:', subscriptionId);
+          }
+        } catch (err) {
+          console.error('Error processing subscription deletion:', err);
+        }
+      }
+      break;
+    
+    default:
+      console.log(`Unhandled event type ${event.type}`);
+  }
+
+  res.json({ received: true });
+});
+
+// Middleware (AFTER webhook route)
 app.use(cors({
   origin: true, // Allow all origins (or specify your frontend domain)
   credentials: true
 }));
-
-// Parse JSON for all routes EXCEPT the webhook (webhook needs raw body)
-app.use((req, res, next) => {
-  if (req.originalUrl === '/api/webhook') {
-    next();
-  } else {
-    express.json()(req, res, next);
-  }
-});
+app.use(express.json());
 
 // Security and performance headers
 app.use((req, res, next) => {
@@ -462,216 +667,6 @@ app.post('/api/wallet-subscription', async (req, res) => {
     console.error('Wallet subscription error:', error);
     res.status(500).json({ error: error.message || 'Failed to create wallet subscription' });
   }
-});
-
-// Stripe webhook endpoint (for handling payment events)
-app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
-  const sig = req.headers['stripe-signature'];
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-  let event;
-
-  try {
-    event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
-  } catch (err) {
-    console.error('Webhook signature verification failed:', err.message);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
-  }
-
-  // Handle the event
-  switch (event.type) {
-    case 'checkout.session.completed':
-      const session = event.data.object;
-      console.log('Checkout session completed:', session.id);
-      
-      // Handle wallet top-up payments
-      if (session.mode === 'payment' && session.metadata?.type === 'topup' && supabase) {
-        try {
-          const email = session.customer_email || session.customer_details?.email;
-          const userId = session.metadata?.userId;
-          const amount = parseFloat(session.metadata?.amount) || (session.amount_total / 100);
-          
-          if (userId && amount > 0) {
-            // Get current user credits
-            const { data: userData, error: fetchError } = await supabase
-              .from('users')
-              .select('credits')
-              .eq('id', userId)
-              .single();
-            
-            if (fetchError) {
-              console.error('Error fetching user credits:', fetchError);
-            } else {
-              const currentCredits = userData?.credits || 0;
-              const newCredits = currentCredits + amount;
-              
-              // Update user credits
-              const { error: updateError } = await supabase
-                .from('users')
-                .update({ credits: newCredits })
-                .eq('id', userId);
-              
-              if (updateError) {
-                console.error('Failed to update credits:', updateError);
-              } else {
-                console.log(`✅ Wallet topped up: £${amount} for user ${userId} (${email}). New balance: £${newCredits}`);
-                
-                // Save transaction record
-                await supabase
-                  .from('transactions')
-                  .insert({
-                    user_id: userId,
-                    email: email,
-                    type: 'topup',
-                    amount: amount,
-                    status: 'completed',
-                    stripe_session_id: session.id,
-                    description: `Wallet top-up via Stripe`,
-                    created_at: new Date().toISOString()
-                  });
-              }
-            }
-          }
-        } catch (err) {
-          console.error('Error processing wallet top-up:', err);
-        }
-      }
-      
-      // Handle subscription checkouts
-      if (session.mode === 'subscription' && supabase) {
-        try {
-          const email = session.customer_email || session.customer_details?.email;
-          const userId = session.metadata?.userId;
-          const subscriptionId = session.subscription;
-          const customerId = session.customer;
-          
-          // Get subscription details from Stripe
-          const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-          
-          // Upsert subscription in Supabase
-          const { error } = await supabase
-            .from('subscriptions')
-            .upsert({
-              user_id: userId || null,
-              email: email,
-              stripe_customer_id: customerId,
-              stripe_subscription_id: subscriptionId,
-              type: session.metadata?.type || 'embed',
-              status: 'active',
-              price_amount: session.amount_total,
-              currency: session.currency,
-              current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-              current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-              updated_at: new Date().toISOString()
-            }, {
-              onConflict: 'stripe_subscription_id'
-            });
-          
-          if (error) {
-            console.error('Failed to save subscription:', error);
-          } else {
-            console.log('✅ Subscription saved for:', email);
-          }
-        } catch (err) {
-          console.error('Error processing checkout:', err);
-        }
-      }
-      break;
-    
-    case 'invoice.paid':
-      // Handle successful subscription renewal
-      console.log('Subscription payment received');
-      if (supabase) {
-        try {
-          const invoice = event.data.object;
-          const subscriptionId = invoice.subscription;
-          
-          if (subscriptionId) {
-            const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-            
-            const { error } = await supabase
-              .from('subscriptions')
-              .update({
-                status: 'active',
-                current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-                current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-                updated_at: new Date().toISOString()
-              })
-              .eq('stripe_subscription_id', subscriptionId);
-            
-            if (error) {
-              console.error('Failed to update subscription:', error);
-            } else {
-              console.log('✅ Subscription renewed:', subscriptionId);
-            }
-          }
-        } catch (err) {
-          console.error('Error processing invoice.paid:', err);
-        }
-      }
-      break;
-    
-    case 'invoice.payment_failed':
-      // Handle failed subscription payment
-      console.log('Subscription payment failed');
-      if (supabase) {
-        try {
-          const invoice = event.data.object;
-          const subscriptionId = invoice.subscription;
-          
-          if (subscriptionId) {
-            const { error } = await supabase
-              .from('subscriptions')
-              .update({
-                status: 'past_due',
-                updated_at: new Date().toISOString()
-              })
-              .eq('stripe_subscription_id', subscriptionId);
-            
-            if (error) {
-              console.error('Failed to update subscription status:', error);
-            } else {
-              console.log('⚠️ Subscription marked past_due:', subscriptionId);
-            }
-          }
-        } catch (err) {
-          console.error('Error processing payment_failed:', err);
-        }
-      }
-      break;
-    
-    case 'customer.subscription.deleted':
-      // Handle subscription cancellation
-      console.log('Subscription cancelled');
-      if (supabase) {
-        try {
-          const subscription = event.data.object;
-          const subscriptionId = subscription.id;
-          
-          const { error } = await supabase
-            .from('subscriptions')
-            .update({
-              status: 'cancelled',
-              updated_at: new Date().toISOString()
-            })
-            .eq('stripe_subscription_id', subscriptionId);
-          
-          if (error) {
-            console.error('Failed to cancel subscription:', error);
-          } else {
-            console.log('❌ Subscription cancelled:', subscriptionId);
-          }
-        } catch (err) {
-          console.error('Error processing subscription deletion:', err);
-        }
-      }
-      break;
-    
-    default:
-      console.log(`Unhandled event type ${event.type}`);
-  }
-
-  res.json({ received: true });
 });
 
 // Verify payment session
