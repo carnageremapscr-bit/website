@@ -1,6 +1,19 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const { createClient } = require('@supabase/supabase-js');
+
+// Initialize Supabase client (use service role for webhook access)
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://jvjyqpesanfugsysdnku.supabase.co';
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabaseConfigured = SUPABASE_URL && SUPABASE_SERVICE_KEY;
+const supabase = supabaseConfigured ? createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY) : null;
+
+console.log('=== Supabase Configuration ===');
+console.log('SUPABASE_URL set:', !!SUPABASE_URL);
+console.log('SUPABASE_SERVICE_ROLE_KEY set:', !!SUPABASE_SERVICE_KEY);
+console.log('Supabase configured:', supabaseConfigured);
+console.log('==============================');
 
 // Check if Stripe key is configured
 const STRIPE_KEY = process.env.STRIPE_SECRET_KEY;
@@ -382,23 +395,136 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
   switch (event.type) {
     case 'checkout.session.completed':
       const session = event.data.object;
-      console.log('Payment successful:', session);
+      console.log('Checkout session completed:', session.id);
       
-      // Here you would:
-      // 1. Get userId from session.metadata
-      // 2. Add credits to user's account
-      // 3. Update your database
-      
+      // Only process subscription checkouts
+      if (session.mode === 'subscription' && supabase) {
+        try {
+          const email = session.customer_email || session.customer_details?.email;
+          const userId = session.metadata?.userId;
+          const subscriptionId = session.subscription;
+          const customerId = session.customer;
+          
+          // Get subscription details from Stripe
+          const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+          
+          // Upsert subscription in Supabase
+          const { error } = await supabase
+            .from('subscriptions')
+            .upsert({
+              user_id: userId || null,
+              email: email,
+              stripe_customer_id: customerId,
+              stripe_subscription_id: subscriptionId,
+              type: session.metadata?.type || 'embed',
+              status: 'active',
+              price_amount: session.amount_total,
+              currency: session.currency,
+              current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+              current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+              updated_at: new Date().toISOString()
+            }, {
+              onConflict: 'stripe_subscription_id'
+            });
+          
+          if (error) {
+            console.error('Failed to save subscription:', error);
+          } else {
+            console.log('✅ Subscription saved for:', email);
+          }
+        } catch (err) {
+          console.error('Error processing checkout:', err);
+        }
+      }
       break;
     
     case 'invoice.paid':
-      // Handle successful subscription payment
+      // Handle successful subscription renewal
       console.log('Subscription payment received');
+      if (supabase) {
+        try {
+          const invoice = event.data.object;
+          const subscriptionId = invoice.subscription;
+          
+          if (subscriptionId) {
+            const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+            
+            const { error } = await supabase
+              .from('subscriptions')
+              .update({
+                status: 'active',
+                current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+                current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+                updated_at: new Date().toISOString()
+              })
+              .eq('stripe_subscription_id', subscriptionId);
+            
+            if (error) {
+              console.error('Failed to update subscription:', error);
+            } else {
+              console.log('✅ Subscription renewed:', subscriptionId);
+            }
+          }
+        } catch (err) {
+          console.error('Error processing invoice.paid:', err);
+        }
+      }
       break;
     
     case 'invoice.payment_failed':
       // Handle failed subscription payment
       console.log('Subscription payment failed');
+      if (supabase) {
+        try {
+          const invoice = event.data.object;
+          const subscriptionId = invoice.subscription;
+          
+          if (subscriptionId) {
+            const { error } = await supabase
+              .from('subscriptions')
+              .update({
+                status: 'past_due',
+                updated_at: new Date().toISOString()
+              })
+              .eq('stripe_subscription_id', subscriptionId);
+            
+            if (error) {
+              console.error('Failed to update subscription status:', error);
+            } else {
+              console.log('⚠️ Subscription marked past_due:', subscriptionId);
+            }
+          }
+        } catch (err) {
+          console.error('Error processing payment_failed:', err);
+        }
+      }
+      break;
+    
+    case 'customer.subscription.deleted':
+      // Handle subscription cancellation
+      console.log('Subscription cancelled');
+      if (supabase) {
+        try {
+          const subscription = event.data.object;
+          const subscriptionId = subscription.id;
+          
+          const { error } = await supabase
+            .from('subscriptions')
+            .update({
+              status: 'cancelled',
+              updated_at: new Date().toISOString()
+            })
+            .eq('stripe_subscription_id', subscriptionId);
+          
+          if (error) {
+            console.error('Failed to cancel subscription:', error);
+          } else {
+            console.log('❌ Subscription cancelled:', subscriptionId);
+          }
+        } catch (err) {
+          console.error('Error processing subscription deletion:', err);
+        }
+      }
       break;
     
     default:

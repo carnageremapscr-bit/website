@@ -7740,11 +7740,76 @@ I would like to request a quote for tuning this vehicle.`,
         }
         if (tabName === 'topups') loadTopUpRequests();
         if (tabName === 'overview') loadAdminOverview(); // Only load when overview tab is clicked
+        if (tabName === 'subscriptions') loadAdminSubscriptions();
       });
     });
     
     // Load overview stats in background (non-blocking)
     setTimeout(() => loadAdminOverview(), 0);
+  }
+  
+  // Load admin subscriptions
+  async function loadAdminSubscriptions() {
+    const tbody = document.getElementById('subscriptions-tbody');
+    const activeCount = document.getElementById('active-subs-count');
+    const pastdueCount = document.getElementById('pastdue-subs-count');
+    const cancelledCount = document.getElementById('cancelled-subs-count');
+    const revenueEl = document.getElementById('monthly-revenue');
+    
+    if (!tbody) return;
+    
+    tbody.innerHTML = '<tr><td colspan="6" style="padding: 2rem; text-align: center; color: #9ca3af;">Loading subscriptions...</td></tr>';
+    
+    try {
+      const subscriptions = await CarnageAuth.getAllSubscriptions();
+      
+      // Calculate stats
+      const active = subscriptions.filter(s => s.status === 'active');
+      const pastdue = subscriptions.filter(s => s.status === 'past_due');
+      const cancelled = subscriptions.filter(s => s.status === 'cancelled');
+      const monthlyRevenue = active.reduce((sum, s) => sum + (s.price_amount || 999), 0) / 100;
+      
+      if (activeCount) activeCount.textContent = active.length;
+      if (pastdueCount) pastdueCount.textContent = pastdue.length;
+      if (cancelledCount) cancelledCount.textContent = cancelled.length;
+      if (revenueEl) revenueEl.textContent = '£' + monthlyRevenue.toFixed(2);
+      
+      if (subscriptions.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="padding: 2rem; text-align: center; color: #9ca3af;">No subscriptions yet. Subscriptions will appear here when users subscribe to the embed widget.</td></tr>';
+        return;
+      }
+      
+      tbody.innerHTML = subscriptions.map(sub => {
+        const statusColors = {
+          'active': '#10b981',
+          'past_due': '#f59e0b',
+          'cancelled': '#ef4444'
+        };
+        const statusColor = statusColors[sub.status] || '#6b7280';
+        const amount = sub.price_amount ? '£' + (sub.price_amount / 100).toFixed(2) : '£9.99';
+        const periodEnd = sub.current_period_end ? new Date(sub.current_period_end).toLocaleDateString() : '-';
+        const created = sub.created_at ? new Date(sub.created_at).toLocaleDateString() : '-';
+        
+        return `
+          <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px;">${sub.email || 'Unknown'}</td>
+            <td style="padding: 12px; text-align: center;">
+              <span style="background: ${statusColor}20; color: ${statusColor}; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">
+                ${sub.status}
+              </span>
+            </td>
+            <td style="padding: 12px; text-align: center;">${sub.type || 'embed'}</td>
+            <td style="padding: 12px; text-align: right; font-weight: 600;">${amount}/mo</td>
+            <td style="padding: 12px; text-align: center;">${periodEnd}</td>
+            <td style="padding: 12px; text-align: center; color: #6b7280;">${created}</td>
+          </tr>
+        `;
+      }).join('');
+      
+    } catch (error) {
+      console.error('Error loading subscriptions:', error);
+      tbody.innerHTML = '<tr><td colspan="6" style="padding: 2rem; text-align: center; color: #ef4444;">Error loading subscriptions. Please try again.</td></tr>';
+    }
   }
 
   // Load admin overview

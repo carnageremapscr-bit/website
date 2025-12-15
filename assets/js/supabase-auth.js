@@ -279,10 +279,57 @@ window.SupabaseAuth = {
     return result ? result.credits : newCredits;
   },
 
-  // Get active subscriptions (placeholder for now)
+  // Get active subscriptions for current user
   async getActiveSubscriptions(userId) {
-    // TODO: Implement subscription tracking in Supabase
-    return [];
+    try {
+      // Get current user if no userId provided
+      if (!userId) {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return [];
+        userId = user.id;
+      }
+      
+      // Get user's email for fallback lookup
+      const { data: { user } } = await supabase.auth.getUser();
+      const userEmail = user?.email;
+      
+      // Query subscriptions - check by user_id OR email
+      const { data, error } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .or(`user_id.eq.${userId},email.eq.${userEmail}`)
+        .eq('status', 'active');
+      
+      if (error) {
+        console.error('Error fetching subscriptions:', error);
+        return [];
+      }
+      
+      return data || [];
+    } catch (err) {
+      console.error('Error in getActiveSubscriptions:', err);
+      return [];
+    }
+  },
+  
+  // Get all subscriptions (for admin)
+  async getAllSubscriptions() {
+    try {
+      const { data, error } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        console.error('Error fetching all subscriptions:', error);
+        return [];
+      }
+      
+      return data || [];
+    } catch (err) {
+      console.error('Error in getAllSubscriptions:', err);
+      return [];
+    }
   },
 
   // Get transaction history (placeholder for now)

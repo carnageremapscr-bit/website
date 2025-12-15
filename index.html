@@ -2029,6 +2029,7 @@
       <div class="admin-tabs">
         <button class="admin-tab-btn active" data-admin-tab="overview">Overview</button>
         <button class="admin-tab-btn" data-admin-tab="notifications">🔔 Notifications</button>
+        <button class="admin-tab-btn" data-admin-tab="subscriptions">💳 Subscriptions</button>
         <button class="admin-tab-btn" data-admin-tab="users">Users</button>
         <button class="admin-tab-btn" data-admin-tab="tickets">Support Tickets</button>
         <button class="admin-tab-btn" data-admin-tab="files">All Files</button>
@@ -2074,6 +2075,53 @@
           <div class="notification-empty" style="padding: 3rem; text-align: center; color: #9ca3af;">
             No notifications yet. Activity will appear here when users upload files, request top-ups, or subscribe.
           </div>
+        </div>
+      </div>
+      
+      <!-- Admin Subscriptions -->
+      <div id="admin-subscriptions" class="admin-panel">
+        <h3>💳 Embed Widget Subscriptions</h3>
+        <p class="muted" style="margin-bottom: 1.5rem;">View and manage all embed widget subscription licenses</p>
+        
+        <div class="subscription-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+          <div class="card" style="text-align: center; padding: 1rem;">
+            <p style="font-size: 2rem; font-weight: bold; color: #10b981;" id="active-subs-count">0</p>
+            <p style="font-size: 0.875rem; color: #6b7280;">Active</p>
+          </div>
+          <div class="card" style="text-align: center; padding: 1rem;">
+            <p style="font-size: 2rem; font-weight: bold; color: #f59e0b;" id="pastdue-subs-count">0</p>
+            <p style="font-size: 0.875rem; color: #6b7280;">Past Due</p>
+          </div>
+          <div class="card" style="text-align: center; padding: 1rem;">
+            <p style="font-size: 2rem; font-weight: bold; color: #ef4444;" id="cancelled-subs-count">0</p>
+            <p style="font-size: 0.875rem; color: #6b7280;">Cancelled</p>
+          </div>
+          <div class="card" style="text-align: center; padding: 1rem;">
+            <p style="font-size: 2rem; font-weight: bold; color: #8b5cf6;" id="monthly-revenue">£0</p>
+            <p style="font-size: 0.875rem; color: #6b7280;">Monthly Revenue</p>
+          </div>
+        </div>
+        
+        <div class="card" style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse;" id="subscriptions-table">
+            <thead>
+              <tr style="background: #f3f4f6; border-bottom: 2px solid #e5e7eb;">
+                <th style="padding: 12px; text-align: left; font-weight: 600;">Email</th>
+                <th style="padding: 12px; text-align: center; font-weight: 600;">Status</th>
+                <th style="padding: 12px; text-align: center; font-weight: 600;">Type</th>
+                <th style="padding: 12px; text-align: right; font-weight: 600;">Amount</th>
+                <th style="padding: 12px; text-align: center; font-weight: 600;">Period End</th>
+                <th style="padding: 12px; text-align: center; font-weight: 600;">Created</th>
+              </tr>
+            </thead>
+            <tbody id="subscriptions-tbody">
+              <tr>
+                <td colspan="6" style="padding: 2rem; text-align: center; color: #9ca3af;">
+                  Loading subscriptions...
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
       
