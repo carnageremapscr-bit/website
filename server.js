@@ -377,6 +377,71 @@ app.post('/api/create-subscription-session', async (req, res) => {
   }
 });
 
+// Create subscription via wallet payment (manual renewal)
+app.post('/api/wallet-subscription', async (req, res) => {
+  try {
+    if (!supabase) {
+      return res.status(500).json({ error: 'Database not configured' });
+    }
+    
+    const { userId, email, userName, type, amount, periodStart, periodEnd } = req.body;
+    
+    if (!email || !type) {
+      return res.status(400).json({ error: 'Email and subscription type required' });
+    }
+    
+    // Generate a unique ID for wallet subscriptions
+    const walletSubId = 'wallet_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    // Upsert subscription (update if exists, insert if not)
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .upsert({
+        user_id: userId || null,
+        email: email,
+        stripe_customer_id: null,
+        stripe_subscription_id: walletSubId,
+        type: type,
+        status: 'active',
+        price_amount: Math.round(amount * 100), // Store in pence
+        currency: 'gbp',
+        current_period_start: periodStart,
+        current_period_end: periodEnd,
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'email,type',
+        ignoreDuplicates: false
+      });
+    
+    if (error) {
+      // If upsert fails due to unique constraint, try update instead
+      const { error: updateError } = await supabase
+        .from('subscriptions')
+        .update({
+          status: 'active',
+          price_amount: Math.round(amount * 100),
+          current_period_start: periodStart,
+          current_period_end: periodEnd,
+          updated_at: new Date().toISOString()
+        })
+        .eq('email', email)
+        .eq('type', type);
+      
+      if (updateError) {
+        console.error('Failed to save wallet subscription:', updateError);
+        return res.status(500).json({ error: 'Failed to activate subscription' });
+      }
+    }
+    
+    console.log('✅ Wallet subscription activated for:', email);
+    res.json({ success: true, message: 'Subscription activated' });
+    
+  } catch (error) {
+    console.error('Wallet subscription error:', error);
+    res.status(500).json({ error: error.message || 'Failed to create wallet subscription' });
+  }
+});
+
 // Stripe webhook endpoint (for handling payment events)
 app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
