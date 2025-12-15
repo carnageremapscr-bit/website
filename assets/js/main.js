@@ -12221,9 +12221,19 @@ Thank you for choosing Carnage Remaps!
       }
     }
     
+    // Validation constants
+    const MIN_TOPUP = 1;
+    const MAX_TOPUP = 5000;
+    
     // Initiate Stripe top-up or manual request
     async function initiateTopUp(amount) {
       try {
+        // Validate amount
+        if (!amount || isNaN(amount) || amount < MIN_TOPUP || amount > MAX_TOPUP) {
+          alert(`Amount must be between £${MIN_TOPUP} and £${MAX_TOPUP}`);
+          return;
+        }
+        
         if (STRIPE_ENABLED && stripe) {
           // Stripe integration enabled
           await initiateStripeTopUp(amount);
@@ -12320,28 +12330,47 @@ Thank you for choosing Carnage Remaps!
     
     // Initiate manual top-up request (admin approval required)
     async function initiateManualTopUp(amount) {
-      const topUpRequest = {
-        id: generateId(),
-        userId: sessionStorage.getItem('userId'),
-        userEmail: sessionStorage.getItem('userEmail'),
-        userName: sessionStorage.getItem('userName'),
-        amount: amount,
-        status: 'pending',
-        requestDate: new Date().toISOString(),
-        type: 'manual'
-      };
+      const userId = sessionStorage.getItem('userId');
+      const userEmail = sessionStorage.getItem('userEmail');
+      const userName = sessionStorage.getItem('userName');
       
-      await saveTopUpRequest(topUpRequest);
-      
-      // Create notification for admin
-      await createAdminNotification({
-        type: 'topup_request',
-        title: 'New Top-Up Request',
-        message: `${topUpRequest.userName} requested £${amount.toFixed(2)} credit top-up`,
-        data: topUpRequest
-      });
-      
-      alert(`✅ Top-up request submitted!\n\n£${amount.toFixed(2)} will be added to your account once approved by an admin.\n\nYou'll receive a notification when processed.`);
+      try {
+        // Save to Supabase instead of IndexedDB for persistence
+        const { data, error } = await supabase
+          .from('top_up_requests')
+          .insert({
+            user_id: userId,
+            email: userEmail,
+            user_name: userName,
+            amount: amount,
+            status: 'pending'
+          })
+          .select();
+        
+        if (error) throw new Error(error.message);
+        
+        // Send admin email notification
+        const emailHtml = `<h2>💰 Manual Top-Up Request</h2><p><strong>User:</strong> ${userName} (${userEmail})</p><p><strong>Amount:</strong> £${amount.toFixed(2)}</p><p><strong>Action Required:</strong> Approve or reject in admin panel</p><p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>`;
+        
+        // Fetch admin email from backend (or use default)
+        // For now, we'll create a server endpoint to handle this
+        await fetch('/api/notify-topup-request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_name: userName,
+            user_email: userEmail,
+            amount: amount,
+            request_id: data[0].id
+          })
+        }).catch(err => console.warn('Email notification failed:', err));
+        
+        alert(`✅ Top-up request submitted!\n\n£${amount.toFixed(2)} will be added to your account once approved by an admin.\n\nYou'll receive a notification when processed.`);
+        
+      } catch (error) {
+        console.error('Error submitting top-up request:', error);
+        alert('Failed to submit top-up request. Please try again.');
+      }
     }
     
     // Handle successful Stripe payment (called from success page or webhook)

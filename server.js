@@ -59,6 +59,28 @@ const upload = multer({
   }
 });
 
+// Email notifications setup (nodemailer)
+const nodemailer = require('nodemailer');
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'carnageremaps@gmail.com';
+const EMAIL_USER = process.env.EMAIL_USER || 'carnageremaps@gmail.com';
+const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD || '';
+
+// Create transporter
+const transporter = EMAIL_PASSWORD ? nodemailer.createTransport({
+  service: 'gmail',
+  auth: { user: EMAIL_USER, pass: EMAIL_PASSWORD }
+}) : null;
+
+// Helper to send admin emails
+async function sendAdminEmail(subject, text, html) {
+  if (!transporter) { console.warn('Email not configured:', subject); return false; }
+  try {
+    await transporter.sendMail({ from: EMAIL_USER, to: ADMIN_EMAIL, subject, text, html: html || `<pre>${text}</pre>` });
+    console.log('✉️ Admin email sent:', subject);
+    return true;
+  } catch (err) { console.error('Email failed:', err); return false; }
+}
+
 // IMPORTANT: Webhook route MUST be defined BEFORE any body-parsing middleware
 // Stripe webhook endpoint (for handling payment events)
 app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
@@ -113,6 +135,10 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
                 console.error('Failed to update credits:', updateError);
               } else {
                 console.log(`✅ Wallet topped up: £${amount} for user ${userId} (${email}). New balance: £${newCredits}`);
+                
+                // Send admin email notification
+                const emailHtml = `<h2>💳 Wallet Top-Up Received</h2><p><strong>User:</strong> ${email}</p><p><strong>Amount:</strong> £${amount}</p><p><strong>New Balance:</strong> £${newCredits}</p><p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>`;
+                sendAdminEmail(`💳 Wallet Top-Up: £${amount} from ${email}`, `Wallet topped up by £${amount} for ${email}. New balance: £${newCredits}`, emailHtml);
                 
                 // Save transaction record
                 await supabase
@@ -169,6 +195,9 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
             console.error('Failed to save subscription:', error);
           } else {
             console.log('✅ Subscription saved for:', email);
+            // Send admin email notification
+            const emailHtml = `<h2>✅ New Subscription</h2><p><strong>User:</strong> ${email}</p><p><strong>Type:</strong> ${session.metadata?.type || 'embed'}</p><p><strong>Amount:</strong> £${(session.amount_total / 100).toFixed(2)}</p><p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>`;
+            sendAdminEmail(`✅ New Subscription: ${email}`, `New subscription from ${email}`, emailHtml);
           }
         } catch (err) {
           console.error('Error processing checkout:', err);
@@ -309,11 +338,40 @@ app.get('/api/health', (req, res) => {
 });
 
 // Simple image upload endpoint for embed logo
-app.post('/api/upload-logo', upload.single('logo'), (req, res) => {
+app.post('/api/upload-logo', upload.single('logo'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   // Build public URL relative to server
   const fileUrl = `${req.protocol}://${req.get('host')}/assets/media/uploads/${req.file.filename}`;
+  
+  // Send admin email notification
+  const emailHtml = `<h2>🖼️ Logo Uploaded</h2><p><strong>File:</strong> ${req.file.originalname}</p><p><strong>Size:</strong> ${(req.file.size / 1024).toFixed(2)} KB</p><p><strong>URL:</strong> <a href="${fileUrl}">View</a></p><p><strong>Time:</strong> ${new Date().toISOString()}</p>`;
+  sendAdminEmail(`🖼️ Logo Uploaded: ${req.file.originalname}`, `Logo file uploaded: ${req.file.originalname}`, emailHtml);
+  
   res.json({ url: fileUrl });
+});
+
+// Notify admin of manual top-up request
+app.post('/api/notify-topup-request', express.json(), async (req, res) => {
+  const { user_name, user_email, amount, request_id } = req.body;
+  
+  if (!user_name || !user_email || !amount) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+  
+  try {
+    const emailHtml = `<h2>💰 Manual Top-Up Request</h2><p><strong>User:</strong> ${user_name}</p><p><strong>Email:</strong> ${user_email}</p><p><strong>Amount:</strong> £${amount.toFixed(2)}</p><p><strong>Request ID:</strong> ${request_id}</p><p><strong>Action:</strong> Review in admin panel</p><p><strong>Time:</strong> ${new Date().toISOString()}</p>`;
+    
+    await sendAdminEmail(
+      `💰 Manual Top-Up Request: £${amount} from ${user_name}`,
+      `${user_name} (${user_email}) requested £${amount.toFixed(2)} wallet credit`,
+      emailHtml
+    );
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error sending top-up notification:', error);
+    res.status(500).json({ error: 'Failed to send notification' });
+  }
 });
 
 // Vehicle Database API for embed widget
