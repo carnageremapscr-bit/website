@@ -8030,8 +8030,8 @@ I would like to request a quote for tuning this vehicle.`,
                   £${(user.creditBalance || 0).toFixed(2)}
                 </td>
                 <td style="padding: 12px; text-align: center;">
-                  <span style="background: ${user.isActive ? '#10b981' : '#6b7280'}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 500;">
-                    ${user.isActive ? 'Active' : 'Disabled'}
+                  <span style="background: ${user.is_active ? '#10b981' : '#6b7280'}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 500;">
+                    ${user.is_active ? 'Active' : 'Disabled'}
                   </span>
                 </td>
                 <td style="padding: 12px; text-align: center;">
