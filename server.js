@@ -31,12 +31,10 @@ app.use((req, res, next) => {
 });
 
 app.use(express.static('.', {
-  maxAge: '1y',
-  immutable: true,
   setHeaders: (res, path) => {
     if (path.endsWith('.html')) {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.setHeader('Cache-Control', 'public, max-age=3600');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     } else if (path.endsWith('.avif')) {
       res.setHeader('Content-Type', 'image/avif');
       res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
