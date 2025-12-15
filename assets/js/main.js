@@ -7152,6 +7152,9 @@ I would like to request a quote for tuning this vehicle.`,
         
         // Always use HTTPS for external sites
         const baseUrl = 'https://web-production-df12d.up.railway.app';
+        
+        // Cache-busting version - increment when embed.html changes
+        const embedVersion = '3';
 
         // Simple iframe embed - works everywhere including Wix
         const embedCode = `<!-- Carnage Remaps Vehicle Search Widget -->
@@ -7159,7 +7162,7 @@ I would like to request a quote for tuning this vehicle.`,
 <!-- Just copy and paste this code into an HTML embed element -->
 
 <iframe 
-  src="${baseUrl}/embed.html?color=${encodeURIComponent(primaryColor)}&bg=${encodeURIComponent(bgColor)}" 
+  src="${baseUrl}/embed.html?v=${embedVersion}&color=${encodeURIComponent(primaryColor)}&bg=${encodeURIComponent(bgColor)}" 
   width="${width}" 
   height="550" 
   style="border:none;border-radius:12px;max-width:100%;" 
