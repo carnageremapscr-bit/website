@@ -12102,10 +12102,10 @@ Thank you for choosing Carnage Remaps!
       if (customBtn && customInput) {
         customBtn.addEventListener('click', () => {
           const amount = parseFloat(customInput.value);
-          if (amount && amount >= 5 && amount <= 1000) {
+          if (amount && amount >= 1 && amount <= 1000) {
             initiateTopUp(amount);
           } else {
-            alert('Please enter an amount between £5 and £1000');
+            alert('Please enter an amount between £1 and £1000');
           }
         });
       }
