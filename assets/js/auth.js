@@ -461,8 +461,8 @@
       const user = await getUserById(resolvedUserId);
       if (!user) throw new Error('User not found');
       
-      // Use creditBalance field
-      user.creditBalance = (user.creditBalance || 0) + amount;
+      // Use credits field
+      user.credits = (user.credits || 0) + amount;
       
       const transaction = authDB.transaction([USERS_STORE], 'readwrite');
       const store = transaction.objectStore(USERS_STORE);
@@ -478,7 +478,7 @@
         sessionStorage.removeItem('userCreditTime');
       }
       
-      return user.creditBalance;
+      return user.credits;
     } catch (error) {
       throw error;
     }
@@ -533,7 +533,7 @@
 
       const user = await getUserById(resolvedUserId);
       console.log('User data:', user);
-      const credit = user ? (user.creditBalance || 0) : 0;
+      const credit = user ? (user.credits || 0) : 0;
       console.log('Credit balance:', credit);
       
       // Cache the result in sessionStorage

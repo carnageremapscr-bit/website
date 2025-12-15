@@ -7993,8 +7993,8 @@ I would like to request a quote for tuning this vehicle.`,
           <tr style="border-bottom: 1px solid #e5e7eb;">
             <td style="padding: 12px;">${escapeHtml(user.name)}</td>
             <td style="padding: 12px;">${escapeHtml(user.email)}</td>
-            <td style="padding: 12px; text-align: right; font-weight: 600; color: ${(user.creditBalance || 0) > 0 ? '#059669' : '#6b7280'};">
-              £${(user.creditBalance || 0).toFixed(2)}
+            <td style="padding: 12px; text-align: right; font-weight: 600; color: ${(user.credits || 0) > 0 ? '#059669' : '#6b7280'};">
+              £${(user.credits || 0).toFixed(2)}
             </td>
             <td style="padding: 12px; text-align: center;">
               <button class="btn" onclick="quickAddCredit('${escapeHtml(user.email)}')" 
@@ -8026,8 +8026,8 @@ I would like to request a quote for tuning this vehicle.`,
                     ${user.role}
                   </span>
                 </td>
-                <td style="padding: 12px; text-align: right; font-weight: 600; color: ${(user.creditBalance || 0) > 0 ? '#10b981' : '#6b7280'};">
-                  £${(user.creditBalance || 0).toFixed(2)}
+                <td style="padding: 12px; text-align: right; font-weight: 600; color: ${(user.credits || 0) > 0 ? '#10b981' : '#6b7280'};">
+                  £${(user.credits || 0).toFixed(2)}
                 </td>
                 <td style="padding: 12px; text-align: center;">
                   <span style="background: ${user.is_active ? '#10b981' : '#6b7280'}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 500;">
@@ -12700,7 +12700,7 @@ Thank you for choosing Carnage Remaps!
         `;
         
         // Populate wallet
-        const balance = user.creditBalance || 0;
+        const balance = user.credits || 0;
         document.getElementById('modal-wallet-balance').textContent = `£${balance.toFixed(2)}`;
         
         // Show/hide admin controls
@@ -12786,7 +12786,7 @@ Thank you for choosing Carnage Remaps!
       
       // Get current user and confirm
       const user = await CarnageAuth.getUserById(currentModalUserId);
-      const currentBalance = user.creditBalance || 0;
+      const currentBalance = user.credits || 0;
       const newBalance = currentBalance + amount;
       
       if (!confirm(`Add £${amount.toFixed(2)} to ${user.name}?\n\nCurrent Balance: £${currentBalance.toFixed(2)}\nNew Balance: £${newBalance.toFixed(2)}`)) {
@@ -12799,7 +12799,7 @@ Thank you for choosing Carnage Remaps!
         
         // Refresh modal data
         const user = await CarnageAuth.getUserById(currentModalUserId);
-        document.getElementById('modal-wallet-balance').textContent = `£${(user.creditBalance || 0).toFixed(2)}`;
+        document.getElementById('modal-wallet-balance').textContent = `£${(user.credits || 0).toFixed(2)}`;
         document.getElementById('modal-credit-amount').value = '';
         
         // Refresh user table
@@ -12820,7 +12820,7 @@ Thank you for choosing Carnage Remaps!
       
       // Get current user and confirm
       const user = await CarnageAuth.getUserById(currentModalUserId);
-      const currentBalance = user.creditBalance || 0;
+      const currentBalance = user.credits || 0;
       const newBalance = currentBalance - amount;
       
       if (!confirm(`⚠️ Remove £${amount.toFixed(2)} from ${user.name}?\n\nCurrent Balance: £${currentBalance.toFixed(2)}\nNew Balance: £${newBalance.toFixed(2)}`)) {
@@ -12833,7 +12833,7 @@ Thank you for choosing Carnage Remaps!
         
         // Refresh modal data
         const user = await CarnageAuth.getUserById(currentModalUserId);
-        document.getElementById('modal-wallet-balance').textContent = `£${(user.creditBalance || 0).toFixed(2)}`;
+        document.getElementById('modal-wallet-balance').textContent = `£${(user.credits || 0).toFixed(2)}`;
         document.getElementById('modal-credit-amount').value = '';
         
         // Refresh user table
