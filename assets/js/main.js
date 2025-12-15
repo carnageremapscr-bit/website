@@ -12739,9 +12739,15 @@ Thank you for choosing Carnage Remaps!
         const user = await CarnageAuth.getUserById(userId);
         if (!user) throw new Error('User not found');
         
+        console.log('📊 Loading activity for user:', user.email);
+        
         // Get user's files by email
         const files = await getAllFiles();
+        console.log('📁 Total files in database:', files.length);
+        console.log('📋 Sample files:', files.slice(0, 3).map(f => ({ name: f.filename, email: f.customerEmail })));
+        
         const userFiles = files.filter(f => f.customerEmail === user.email);
+        console.log('🔍 Files matching user email:', userFiles.length);
         
         // Count by status
         const pending = userFiles.filter(f => f.status === 'queued').length;
