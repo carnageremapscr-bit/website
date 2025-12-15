@@ -30,6 +30,35 @@ console.log('===========================');
 const app = express();
 const PORT = process.env.PORT || 3002;
 
+const path = require('path');
+const fs = require('fs');
+// Multer for handling file uploads
+const multer = require('multer');
+
+// Ensure upload directory exists
+const UPLOAD_DIR = path.join(__dirname, 'assets', 'media', 'uploads');
+try { fs.mkdirSync(UPLOAD_DIR, { recursive: true }); } catch (e) { /* ignore */ }
+
+// Multer storage
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, UPLOAD_DIR);
+  },
+  filename: function (req, file, cb) {
+    const safe = Date.now() + '-' + file.originalname.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+    cb(null, safe);
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter: function (req, file, cb) {
+    if (!file.mimetype.startsWith('image/')) return cb(new Error('Only image uploads allowed'), false);
+    cb(null, true);
+  }
+});
+
 // IMPORTANT: Webhook route MUST be defined BEFORE any body-parsing middleware
 // Stripe webhook endpoint (for handling payment events)
 app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
@@ -277,6 +306,14 @@ app.get('/api/health', (req, res) => {
     message: 'Carnage Remaps API Server Running',
     stripeConfigured: stripeConfigured
   });
+});
+
+// Simple image upload endpoint for embed logo
+app.post('/api/upload-logo', upload.single('logo'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  // Build public URL relative to server
+  const fileUrl = `${req.protocol}://${req.get('host')}/assets/media/uploads/${req.file.filename}`;
+  res.json({ url: fileUrl });
 });
 
 // Vehicle Database API for embed widget

@@ -1671,9 +1671,12 @@
             <!-- Logo URL -->
             <div>
               <label style="display:block;margin-bottom:0.5rem;font-weight:500">Logo URL</label>
-              <input type="url" id="embed-logo-url" placeholder="https://example.com/logo.png" 
-                     style="width:100%;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff">
-              <small class="muted">Enter the full URL to your logo image</small>
+              <div style="display:flex;gap:0.5rem;align-items:center">
+                <input type="url" id="embed-logo-url" placeholder="https://example.com/logo.png" 
+                       style="flex:1;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff">
+                <button class="btn small" id="upload-logo-btn" type="button">⬆️ Upload</button>
+              </div>
+              <small class="muted">Enter a public image URL or upload a file to host here</small>
             </div>
 
             <!-- Primary Color -->

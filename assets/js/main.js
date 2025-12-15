@@ -7097,6 +7097,19 @@ I would like to request a quote for tuning this vehicle.`,
     const embedCodeContainer = document.getElementById('embed-code-container');
     const embedCodeOutput = document.getElementById('embed-code-output');
     const copyEmbedBtn = document.getElementById('copy-embed-btn');
+    const uploadLogoBtn = document.getElementById('upload-logo-btn');
+
+    // Hidden file input for uploads
+    let _hiddenLogoInput = null;
+    function ensureHiddenInput() {
+      if (_hiddenLogoInput) return _hiddenLogoInput;
+      _hiddenLogoInput = document.createElement('input');
+      _hiddenLogoInput.type = 'file';
+      _hiddenLogoInput.accept = 'image/*';
+      _hiddenLogoInput.style.display = 'none';
+      document.body.appendChild(_hiddenLogoInput);
+      return _hiddenLogoInput;
+    }
 
     // Sync color inputs
     if (embedPrimaryColor && embedPrimaryColorText) {
@@ -7230,6 +7243,45 @@ I would like to request a quote for tuning this vehicle.`,
         setTimeout(() => {
           copyEmbedBtn.textContent = '📋 Copy';
         }, 2000);
+      });
+    }
+    // Upload logo button
+    if (uploadLogoBtn && embedLogoUrl) {
+      uploadLogoBtn.addEventListener('click', () => {
+        const input = ensureHiddenInput();
+        input.value = '';
+        input.click();
+        input.onchange = async () => {
+          const file = input.files[0];
+          if (!file) return;
+          // Basic client-side validation
+          if (!file.type.startsWith('image/')) {
+            alert('Please select an image file');
+            return;
+          }
+          const form = new FormData();
+          form.append('logo', file);
+          uploadLogoBtn.textContent = 'Uploading...';
+          try {
+            const resp = await fetch('/api/upload-logo', {
+              method: 'POST',
+              body: form
+            });
+            if (!resp.ok) throw new Error('Upload failed');
+            const data = await resp.json();
+            if (data.url) {
+              embedLogoUrl.value = data.url;
+              uploadLogoBtn.textContent = '✓ Uploaded';
+              setTimeout(() => uploadLogoBtn.textContent = '⬆️ Upload', 2000);
+            } else {
+              throw new Error('No URL returned');
+            }
+          } catch (err) {
+            console.error('Logo upload error', err);
+            alert('Upload failed. Check server and try again.');
+            uploadLogoBtn.textContent = '⬆️ Upload';
+          }
+        };
       });
     }
     // Appearance Settings
