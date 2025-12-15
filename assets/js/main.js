@@ -12673,7 +12673,7 @@ Thank you for choosing Carnage Remaps!
         const user = await CarnageAuth.getUserById(userId);
         
         if (!user) {
-          showToast('User not found', 'error');
+          alert('User not found');
           return;
         }
         
@@ -12720,7 +12720,7 @@ Thank you for choosing Carnage Remaps!
         document.body.style.overflow = 'hidden';
       } catch (error) {
         console.error('Error opening user detail modal:', error);
-        showToast('Error loading user details', 'error');
+        alert('Error loading user details');
       }
     }
     
