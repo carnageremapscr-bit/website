@@ -7127,7 +7127,6 @@ I would like to request a quote for tuning this vehicle.`,
         // Check if user has active embed subscription (admins bypass)
         const isAdminUser = await CarnageAuth.isAdmin();
         const hasSubscription = isAdminUser || await hasActiveEmbedSubscription();
-        
         if (!hasSubscription) {
           const upgrade = confirm('🔒 Embed Widget Access Required\n\nThe embed widget feature requires an active subscription (£9.99/month).\n\nVehicle lookup is FREE for all users, but embedding the widget on external websites requires a subscription.\n\nWould you like to go to the Billing tab to subscribe?');
           if (upgrade) {
@@ -7145,24 +7144,40 @@ I would like to request a quote for tuning this vehicle.`,
           }
           return;
         }
-        
+
         const primaryColor = embedPrimaryColorText.value || '#dc2626';
         const bgColor = embedBgColorText.value || '#1a1a1a';
         const width = embedWidth.value || '100%';
-        
+        // Appearance settings
+        const searchTitleVal = (document.getElementById('search-title')?.value || '').trim();
+        const searchDescVal = (document.getElementById('search-description')?.value || '').trim();
+        const showYearDropdownVal = document.getElementById('show-year-dropdown')?.checked ? '1' : '0';
+        const showPerformanceBadgesVal = document.getElementById('show-performance-badges')?.checked ? '1' : '0';
+        const showStageCardsVal = document.getElementById('show-stage-cards')?.checked ? '1' : '0';
+
         // Always use HTTPS for external sites
         const baseUrl = 'https://web-production-df12d.up.railway.app';
-        
         // Cache-busting version - increment when embed.html changes
-        const embedVersion = '3';
+        const embedVersion = '4';
 
-        // Simple iframe embed - works everywhere including Wix
+        // Build query string with all settings
+        const params = [
+          `v=${embedVersion}`,
+          `color=${encodeURIComponent(primaryColor)}`,
+          `bg=${encodeURIComponent(bgColor)}`,
+          searchTitleVal ? `title=${encodeURIComponent(searchTitleVal)}` : '',
+          searchDescVal ? `desc=${encodeURIComponent(searchDescVal)}` : '',
+          `showYear=${showYearDropdownVal}`,
+          `showPerf=${showPerformanceBadgesVal}`,
+          `showStages=${showStageCardsVal}`
+        ].filter(Boolean).join('&');
+
         const embedCode = `<!-- Carnage Remaps Vehicle Search Widget -->
 <!-- Works with: Wix, WordPress, Squarespace, Shopify, any HTML site -->
 <!-- Just copy and paste this code into an HTML embed element -->
 
 <iframe 
-  src="${baseUrl}/embed.html?v=${embedVersion}&color=${encodeURIComponent(primaryColor)}&bg=${encodeURIComponent(bgColor)}" 
+  src="${baseUrl}/embed.html?${params}" 
   width="${width}" 
   height="550" 
   style="border:none;border-radius:12px;max-width:100%;" 

@@ -250,10 +250,36 @@
       var params = new URLSearchParams(window.location.search);
       var accentColor = params.get('color') || '#dc2626';
       var bgColor = params.get('bg') || '#1a1a1a';
-      
+      var customTitle = params.get('title');
+      var customDesc = params.get('desc');
+      var showYear = params.get('showYear');
+      var showPerf = params.get('showPerf');
+      var showStages = params.get('showStages');
+
       var widget = document.getElementById('widget');
       widget.style.setProperty('--accent', accentColor);
       widget.style.setProperty('--bg', bgColor);
+
+      // Apply custom title/description if provided
+      var headerTitle = document.querySelector('.header h2');
+      var headerDesc = document.querySelector('.header p');
+      if (customTitle && headerTitle) headerTitle.textContent = customTitle;
+      if (customDesc && headerDesc) headerDesc.textContent = customDesc;
+
+      // Show/hide year dropdown
+      var yearDropdown = document.getElementById('yr');
+      if (yearDropdown && showYear !== null) {
+        yearDropdown.style.display = showYear === '1' ? 'inline-block' : 'none';
+      }
+
+      // Show/hide performance badges (quote section)
+      var quoteSection = document.getElementById('quoteSection');
+      if (quoteSection && showPerf !== null) {
+        quoteSection.style.display = showPerf === '1' ? 'block' : 'none';
+      }
+
+      // Show/hide all stage cards (handled after results are rendered)
+      var _showStages = showStages;
 
       var mfr = document.getElementById('mfr');
       var mdl = document.getElementById('mdl');
@@ -447,6 +473,13 @@
         html += buildStageCard('Stage 3', 'Full Build + Hybrid Turbo', stockHP, s3Power, stockTorque, s3Torque);
 
         document.getElementById('stagesContainer').innerHTML = html;
+        // Hide all stage cards if showStages param is 0
+        if (_showStages === '0') {
+          var stageCards = document.querySelectorAll('.stage-card');
+          stageCards.forEach(function(card) {
+            card.style.display = 'none';
+          });
+        }
 
         // Set up quote buttons
         var quoteMsg = encodeURIComponent(
