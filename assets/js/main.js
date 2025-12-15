@@ -12790,7 +12790,7 @@ Thank you for choosing Carnage Remaps!
       const amount = parseFloat(document.getElementById('modal-credit-amount').value);
       
       if (!amount || amount <= 0) {
-        showToast('Please enter a valid amount', 'error');
+        alert('Please enter a valid amount');
         return;
       }
       
@@ -12805,7 +12805,7 @@ Thank you for choosing Carnage Remaps!
       
       try {
         await CarnageAuth.updateUserCredit(amount, currentModalUserId);
-        showToast(`£${amount.toFixed(2)} added successfully`, 'success');
+        alert(`£${amount.toFixed(2)} added successfully`);
         
         // Refresh modal data
         const user = await CarnageAuth.getUserById(currentModalUserId);
@@ -12816,7 +12816,7 @@ Thank you for choosing Carnage Remaps!
         await loadAdminUsers();
       } catch (error) {
         console.error('Error adding credit:', error);
-        showToast('Error adding credit', 'error');
+        alert('Error adding credit');
       }
     }
     
@@ -12824,7 +12824,7 @@ Thank you for choosing Carnage Remaps!
       const amount = parseFloat(document.getElementById('modal-credit-amount').value);
       
       if (!amount || amount <= 0) {
-        showToast('Please enter a valid amount', 'error');
+        alert('Please enter a valid amount');
         return;
       }
       
@@ -12839,7 +12839,7 @@ Thank you for choosing Carnage Remaps!
       
       try {
         await CarnageAuth.updateUserCredit(-amount, currentModalUserId);
-        showToast(`£${amount.toFixed(2)} removed successfully`, 'success');
+        alert(`£${amount.toFixed(2)} removed successfully`);
         
         // Refresh modal data
         const user = await CarnageAuth.getUserById(currentModalUserId);
@@ -12850,7 +12850,7 @@ Thank you for choosing Carnage Remaps!
         await loadAdminUsers();
       } catch (error) {
         console.error('Error removing credit:', error);
-        showToast('Error removing credit', 'error');
+        alert('Error removing credit');
       }
     }
     
