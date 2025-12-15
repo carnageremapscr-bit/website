@@ -12686,7 +12686,7 @@ Thank you for choosing Carnage Remaps!
             ${user.role}
           </span>
         `;
-        document.getElementById('modal-user-created').textContent = new Date(user.createdAt).toLocaleDateString('en-GB', {
+        document.getElementById('modal-user-created').textContent = new Date(user.created_at).toLocaleDateString('en-GB', {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
@@ -12694,8 +12694,8 @@ Thank you for choosing Carnage Remaps!
           minute: '2-digit'
         });
         document.getElementById('modal-user-status').innerHTML = `
-          <span style="background: ${user.isActive ? '#10b981' : '#6b7280'}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.875rem; font-weight: 500;">
-            ${user.isActive ? 'Active' : 'Disabled'}
+          <span style="background: ${user.is_active ? '#10b981' : '#6b7280'}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.875rem; font-weight: 500;">
+            ${user.is_active ? 'Active' : 'Disabled'}
           </span>
         `;
         
