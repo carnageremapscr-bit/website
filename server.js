@@ -35,7 +35,15 @@ app.use(cors({
   origin: true, // Allow all origins (or specify your frontend domain)
   credentials: true
 }));
-app.use(express.json());
+
+// Parse JSON for all routes EXCEPT the webhook (webhook needs raw body)
+app.use((req, res, next) => {
+  if (req.originalUrl === '/api/webhook') {
+    next();
+  } else {
+    express.json()(req, res, next);
+  }
+});
 
 // Security and performance headers
 app.use((req, res, next) => {
