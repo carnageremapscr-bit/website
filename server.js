@@ -434,6 +434,20 @@ app.post('/api/wallet-subscription', async (req, res) => {
     }
     
     console.log('✅ Wallet subscription activated for:', email);
+    
+    // Log transaction
+    await supabase
+      .from('transactions')
+      .insert({
+        user_id: userId || null,
+        email: email,
+        type: 'wallet_subscription',
+        amount: amount,
+        status: 'completed',
+        description: `Embed widget subscription (1 month) - paid from wallet`,
+        created_at: new Date().toISOString()
+      });
+    
     res.json({ success: true, message: 'Subscription activated' });
     
   } catch (error) {
@@ -462,7 +476,60 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
       const session = event.data.object;
       console.log('Checkout session completed:', session.id);
       
-      // Only process subscription checkouts
+      // Handle wallet top-up payments
+      if (session.mode === 'payment' && session.metadata?.type === 'topup' && supabase) {
+        try {
+          const email = session.customer_email || session.customer_details?.email;
+          const userId = session.metadata?.userId;
+          const amount = parseFloat(session.metadata?.amount) || (session.amount_total / 100);
+          
+          if (userId && amount > 0) {
+            // Get current user credits
+            const { data: userData, error: fetchError } = await supabase
+              .from('users')
+              .select('credits')
+              .eq('id', userId)
+              .single();
+            
+            if (fetchError) {
+              console.error('Error fetching user credits:', fetchError);
+            } else {
+              const currentCredits = userData?.credits || 0;
+              const newCredits = currentCredits + amount;
+              
+              // Update user credits
+              const { error: updateError } = await supabase
+                .from('users')
+                .update({ credits: newCredits })
+                .eq('id', userId);
+              
+              if (updateError) {
+                console.error('Failed to update credits:', updateError);
+              } else {
+                console.log(`✅ Wallet topped up: £${amount} for user ${userId} (${email}). New balance: £${newCredits}`);
+                
+                // Save transaction record
+                await supabase
+                  .from('transactions')
+                  .insert({
+                    user_id: userId,
+                    email: email,
+                    type: 'topup',
+                    amount: amount,
+                    status: 'completed',
+                    stripe_session_id: session.id,
+                    description: `Wallet top-up via Stripe`,
+                    created_at: new Date().toISOString()
+                  });
+              }
+            }
+          }
+        } catch (err) {
+          console.error('Error processing wallet top-up:', err);
+        }
+      }
+      
+      // Handle subscription checkouts
       if (session.mode === 'subscription' && supabase) {
         try {
           const email = session.customer_email || session.customer_details?.email;
