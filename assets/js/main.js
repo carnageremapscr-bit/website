@@ -12744,9 +12744,9 @@ Thank you for choosing Carnage Remaps!
         const userFiles = files.filter(f => f.customerEmail === user.email);
         
         // Count by status
-        const pending = userFiles.filter(f => f.status === 'pending').length;
-        const processing = userFiles.filter(f => f.status === 'processing').length;
-        const completed = userFiles.filter(f => f.status === 'completed').length;
+        const pending = userFiles.filter(f => f.status === 'queued').length;
+        const processing = userFiles.filter(f => f.status === 'processing' || f.status === 'in-progress').length;
+        const completed = userFiles.filter(f => f.status === 'completed' || f.status === 'returned').length;
         
         activityDiv.innerHTML = `
           <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem;">
