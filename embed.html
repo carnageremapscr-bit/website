@@ -255,6 +255,9 @@
       var showYear = params.get('showYear');
       var showPerf = params.get('showPerf');
       var showStages = params.get('showStages');
+      var logoParam = params.get('logo');
+      var waParam = params.get('wa');
+      var emailParam = params.get('email');
 
       var widget = document.getElementById('widget');
       widget.style.setProperty('--accent', accentColor);
@@ -266,6 +269,16 @@
       if (customTitle && headerTitle) headerTitle.textContent = customTitle;
       if (customDesc && headerDesc) headerDesc.textContent = customDesc;
 
+      // Apply logo override if provided
+      if (logoParam) {
+        var logoImg = document.querySelector('.logo');
+        if (logoImg) {
+          logoImg.src = logoParam;
+          // keep existing onerror behaviour
+          logoImg.style.display = 'block';
+        }
+      }
+
       // Show/hide year dropdown
       var yearDropdown = document.getElementById('yr');
       if (yearDropdown && showYear !== null) {
@@ -276,6 +289,30 @@
       var quoteSection = document.getElementById('quoteSection');
       if (quoteSection && showPerf !== null) {
         quoteSection.style.display = showPerf === '1' ? 'block' : 'none';
+      }
+
+      // Apply contact overrides (WhatsApp / email) if provided
+      var whatsappBtn = document.getElementById('whatsappBtn');
+      var emailBtn = document.getElementById('emailBtn');
+      var smsBtn = document.getElementById('smsBtn');
+      function normalizePhone(p) {
+        if (!p) return '';
+        var phone = p.replace(/[^0-9+]/g, '');
+        if (phone.startsWith('+')) phone = phone.slice(1);
+        // convert leading 0 to 44 (UK) as best-effort
+        if (phone.length >= 10 && phone[0] === '0') phone = '44' + phone.slice(1);
+        return phone;
+      }
+      var normalized = normalizePhone(waParam);
+      if (whatsappBtn) {
+        // leave link for quote message populated later; if we have a phone override, use it in base
+        whatsappBtn.dataset.override = normalized || '';
+      }
+      if (emailBtn) {
+        emailBtn.dataset.override = emailParam || '';
+      }
+      if (smsBtn) {
+        smsBtn.dataset.override = normalized || '';
       }
 
       // Show/hide all stage cards (handled after results are rendered)
@@ -487,14 +524,22 @@
           ' (' + yearRange + ') with ' + engineStr + '. Can you provide a quote?'
         );
         
-        document.getElementById('whatsappBtn').href = 
-          'https://wa.me/447546371963?text=' + quoteMsg;
-        document.getElementById('emailBtn').href = 
-          'mailto:carnageremaps@gmail.com?subject=' + 
-          encodeURIComponent('Quote Request: ' + mfrName + ' ' + mdlName) + 
-          '&body=' + quoteMsg;
-        document.getElementById('smsBtn').href = 
-          'sms:+447546371963?body=' + quoteMsg;
+        // Use overrides passed via data attributes (from URL params) if present
+        var waBtn = document.getElementById('whatsappBtn');
+        var emBtn = document.getElementById('emailBtn');
+        var sBtn = document.getElementById('smsBtn');
+        var waOverride = waBtn?.dataset?.override || '';
+        var emailOverride = emBtn?.dataset?.override || '';
+        var defaultPhone = '447546371963';
+        var defaultEmail = 'carnageremaps@gmail.com';
+
+        var targetPhone = waOverride || defaultPhone;
+        // whatsapp link
+        if (waBtn) waBtn.href = 'https://wa.me/' + targetPhone + '?text=' + quoteMsg;
+        // email link
+        if (emBtn) emBtn.href = 'mailto:' + (emailOverride || defaultEmail) + '?subject=' + encodeURIComponent('Quote Request: ' + mfrName + ' ' + mdlName) + '&body=' + quoteMsg;
+        // sms link (ensure leading + when using sms: on some platforms)
+        if (sBtn) sBtn.href = 'sms:+' + (targetPhone) + '?body=' + quoteMsg;
 
         // Toggle views
         searchForm.style.display = 'none';

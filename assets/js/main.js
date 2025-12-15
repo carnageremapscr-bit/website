@@ -7148,6 +7148,31 @@ I would like to request a quote for tuning this vehicle.`,
         const primaryColor = embedPrimaryColorText.value || '#dc2626';
         const bgColor = embedBgColorText.value || '#1a1a1a';
         const width = embedWidth.value || '100%';
+        // Branding / contact inputs (use current inputs even if not saved)
+        const embedLogoVal = (embedLogoUrl?.value || '').trim();
+        const settingsWhatsappVal = (document.getElementById('settings-whatsapp')?.value || '').trim();
+        const settingsEmailVal = (document.getElementById('settings-email')?.value || '').trim();
+
+        // If key branding/contact fields are empty, prompt user to fill them first
+        if (!embedLogoVal || !settingsWhatsappVal || !settingsEmailVal) {
+          const fill = confirm('Some branding/contact fields (logo, WhatsApp or email) are empty.\n\nPress OK to open the settings so you can fill them before creating the embed, or Cancel to continue without them.');
+          if (fill) {
+            // Focus the first empty field
+            if (!embedLogoVal) {
+              embedLogoUrl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              embedLogoUrl?.focus();
+            } else if (!settingsWhatsappVal) {
+              const el = document.getElementById('settings-whatsapp');
+              el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              el?.focus();
+            } else if (!settingsEmailVal) {
+              const el = document.getElementById('settings-email');
+              el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              el?.focus();
+            }
+            return;
+          }
+        }
         // Appearance settings
         const searchTitleVal = (document.getElementById('search-title')?.value || '').trim();
         const searchDescVal = (document.getElementById('search-description')?.value || '').trim();
@@ -7160,13 +7185,16 @@ I would like to request a quote for tuning this vehicle.`,
         // Cache-busting version - increment when embed.html changes
         const embedVersion = '4';
 
-        // Build query string with all settings
+        // Build query string with all settings (include branding/contact when present)
         const params = [
           `v=${embedVersion}`,
           `color=${encodeURIComponent(primaryColor)}`,
           `bg=${encodeURIComponent(bgColor)}`,
           searchTitleVal ? `title=${encodeURIComponent(searchTitleVal)}` : '',
           searchDescVal ? `desc=${encodeURIComponent(searchDescVal)}` : '',
+          embedLogoVal ? `logo=${encodeURIComponent(embedLogoVal)}` : '',
+          settingsWhatsappVal ? `wa=${encodeURIComponent(settingsWhatsappVal)}` : '',
+          settingsEmailVal ? `email=${encodeURIComponent(settingsEmailVal)}` : '',
           `showYear=${showYearDropdownVal}`,
           `showPerf=${showPerformanceBadgesVal}`,
           `showStages=${showStageCardsVal}`
