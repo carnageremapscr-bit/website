@@ -70,20 +70,40 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'carnageremaps@gmail.com';
 const EMAIL_USER = process.env.EMAIL_USER || 'carnageremaps@gmail.com';
 const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD || '';
 
+console.log('=== Email Configuration ===');
+console.log('ADMIN_EMAIL:', ADMIN_EMAIL);
+console.log('EMAIL_USER:', EMAIL_USER);
+console.log('EMAIL_PASSWORD set:', !!EMAIL_PASSWORD);
+console.log('EMAIL_PASSWORD length:', EMAIL_PASSWORD?.length || 0);
+console.log('EMAIL_PASSWORD (first 10 chars):', EMAIL_PASSWORD ? EMAIL_PASSWORD.substring(0, 10) + '***' : 'NOT SET');
+
 // Create transporter
 const transporter = EMAIL_PASSWORD ? nodemailer.createTransport({
   service: 'gmail',
   auth: { user: EMAIL_USER, pass: EMAIL_PASSWORD }
 }) : null;
 
+console.log('Transporter created:', !!transporter);
+console.log('===========================');
+
 // Helper to send admin emails
 async function sendAdminEmail(subject, text, html) {
-  if (!transporter) { console.warn('Email not configured:', subject); return false; }
+  console.log('📧 sendAdminEmail called for:', subject);
+  if (!transporter) { 
+    console.warn('⚠️ Email not configured (transporter is null):', subject);
+    console.warn('   EMAIL_PASSWORD must be set in environment variables');
+    return false;
+  }
   try {
+    console.log('📤 Attempting to send email to:', ADMIN_EMAIL);
     await transporter.sendMail({ from: EMAIL_USER, to: ADMIN_EMAIL, subject, text, html: html || `<pre>${text}</pre>` });
-    console.log('✉️ Admin email sent:', subject);
+    console.log('✉️ Admin email sent successfully:', subject);
     return true;
-  } catch (err) { console.error('Email failed:', err); return false; }
+  } catch (err) { 
+    console.error('❌ Email send failed:', err.message);
+    console.error('   Error details:', err);
+    return false;
+  }
 }
 
 // IMPORTANT: Webhook route MUST be defined BEFORE any body-parsing middleware
@@ -366,13 +386,21 @@ app.get('/api/health', (req, res) => {
 
 // Simple image upload endpoint for embed logo
 app.post('/api/upload-logo', upload.single('logo'), async (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  console.log('🖼️ Logo upload endpoint called');
+  if (!req.file) {
+    console.warn('❌ No file received in upload');
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+  
+  console.log('✅ File received:', req.file.filename);
+  
   // Build public URL relative to server
   const fileUrl = `${req.protocol}://${req.get('host')}/assets/media/uploads/${req.file.filename}`;
   
   // Send admin email notification
   const emailHtml = `<h2>🖼️ Logo Uploaded</h2><p><strong>File:</strong> ${req.file.originalname}</p><p><strong>Size:</strong> ${(req.file.size / 1024).toFixed(2)} KB</p><p><strong>URL:</strong> <a href="${fileUrl}">View</a></p><p><strong>Time:</strong> ${new Date().toISOString()}</p>`;
-  sendAdminEmail(`🖼️ Logo Uploaded: ${req.file.originalname}`, `Logo file uploaded: ${req.file.originalname}`, emailHtml);
+  const emailResult = await sendAdminEmail(`🖼️ Logo Uploaded: ${req.file.originalname}`, `Logo file uploaded: ${req.file.originalname}`, emailHtml);
+  console.log('📧 Email send result:', emailResult);
   
   res.json({ url: fileUrl });
 });
