@@ -7980,7 +7980,10 @@ I would like to request a quote for tuning this vehicle.`,
       console.log('Fetching users from database...');
       const users = await CarnageAuth.getAllUsers();
       console.log('Users loaded successfully:', users ? users.length : 0, 'users');
-      console.log('Sample user data:', users && users.length > 0 ? { id: users[0].id, name: users[0].name, email: users[0].email, credits: users[0].credits } : 'No users');
+      if (users && users.length > 0) {
+        console.log('🔍 Sample user 0:', users[0]);
+        console.log('💰 User 0 credits value:', users[0].credits, 'type:', typeof users[0].credits);
+      }
       
       if (!users) {
         throw new Error('getAllUsers returned null or undefined');
@@ -7996,7 +7999,7 @@ I would like to request a quote for tuning this vehicle.`,
         container.innerHTML = '<tr><td colspan="5" class="empty-cell">No users found</td></tr>';
       } else {
         container.innerHTML = users.map(user => `
-          <tr onclick="openUserDetailModal(${user.id})">
+          <tr data-user-id="${user.id}">
             <td>
               <div style="display: flex; align-items: center; gap: 0.75rem;">
                 <div style="width: 36px; height: 36px; background: ${user.role === 'admin' ? '#fef2f2' : '#eff6ff'}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; color: ${user.role === 'admin' ? '#dc2626' : '#3b82f6'};">
@@ -8023,7 +8026,7 @@ I would like to request a quote for tuning this vehicle.`,
               </span>
             </td>
             <td style="text-align: center;">
-              <button onclick="event.stopPropagation(); openUserDetailModal(${user.id})" 
+              <button onclick="(function(){ const userId = '${user.id}'; console.log('🔘 Manage clicked for:', userId); window.openUserDetailModal(userId); })()" 
                       style="background: #f3f4f6; border: 1px solid #e5e7eb; color: #374151; padding: 0.375rem 0.75rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: 500; transition: all 0.15s;">
                 Manage
               </button>
@@ -12655,11 +12658,24 @@ Thank you for choosing Carnage Remaps!
     let currentModalUserId = null;
     
     async function openUserDetailModal(userId) {
-      console.log('🔍 Opening user detail modal for user ID:', userId);
+      console.log('🔍 OPENING USER MODAL - USER ID:', userId);
+      
       try {
+        // Validate we have the modal element
+        const modal = document.getElementById('user-detail-modal');
+        if (!modal) {
+          console.error('❌ Modal element not found!');
+          alert('Error: Modal not found on page');
+          return;
+        }
+        console.log('✅ Modal element found');
+
+        // Get user data
+        console.log('📡 Fetching user data...');
         currentModalUserId = userId;
         const user = await CarnageAuth.getUserById(userId);
-        console.log('👤 User data retrieved:', user);
+        console.log('✅ User data received:', user);
+        console.log('💰 User credits from DB:', user.credits, 'type:', typeof user.credits);
 
         if (!user) {
           alert('User not found');
@@ -12667,50 +12683,69 @@ Thank you for choosing Carnage Remaps!
         }
 
         // Populate user info
-        document.getElementById('modal-user-id').textContent = user.id;
-        document.getElementById('modal-user-name').textContent = user.name;
-        document.getElementById('modal-user-email').textContent = user.email;
-        document.getElementById('modal-user-role').innerHTML = `
+        console.log('📝 Populating modal fields...');
+        const idField = document.getElementById('modal-user-id');
+        const nameField = document.getElementById('modal-user-name');
+        const emailField = document.getElementById('modal-user-email');
+        const roleField = document.getElementById('modal-user-role');
+        const createdField = document.getElementById('modal-user-created');
+        const statusField = document.getElementById('modal-user-status');
+        const balanceField = document.getElementById('modal-wallet-balance');
+
+        if (!idField || !nameField || !emailField) {
+          console.error('❌ Modal fields not found!');
+          alert('Error: Modal fields missing');
+          return;
+        }
+
+        idField.textContent = user.id;
+        nameField.textContent = user.name;
+        emailField.textContent = user.email;
+        roleField.innerHTML = `
           <span style="background: ${user.role === 'admin' ? '#dc2626' : '#3b82f6'}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.875rem; font-weight: 600; text-transform: uppercase;">
             ${user.role}
           </span>
         `;
-        document.getElementById('modal-user-created').textContent = new Date(user.created_at).toLocaleDateString('en-GB', {
+        createdField.textContent = new Date(user.created_at).toLocaleDateString('en-GB', {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
           hour: '2-digit',
           minute: '2-digit'
         });
-        document.getElementById('modal-user-status').innerHTML = `
+        statusField.innerHTML = `
           <span style="background: ${user.is_active ? '#10b981' : '#6b7280'}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.875rem; font-weight: 500;">
             ${user.is_active ? 'Active' : 'Disabled'}
           </span>
         `;
 
-        // Populate wallet
+        // Populate wallet - ensure we have fresh data with credits
         const balance = parseFloat(user.credits) || 0;
-        console.log('💰 User credits:', user.credits, 'Balance to display:', balance);
-        document.getElementById('modal-wallet-balance').textContent = `£${balance.toFixed(2)}`;
+        console.log('💵 Setting balance to:', balance);
+        balanceField.textContent = `£${balance.toFixed(2)}`;
 
         // Show/hide admin controls
         const currentUser = await CarnageAuth.getCurrentUser();
         const adminControls = document.getElementById('modal-admin-controls');
         if (currentUser && currentUser.role === 'admin') {
           adminControls.style.display = 'block';
+          console.log('✅ Admin controls shown');
         } else {
           adminControls.style.display = 'none';
+          console.log('ℹ️ Admin controls hidden (not admin)');
         }
 
         // Load activity
+        console.log('📊 Loading user activity...');
         await loadUserActivity(userId);
 
         // Show modal
-        document.getElementById('user-detail-modal').style.display = 'block';
+        console.log('🎬 Showing modal...');
+        modal.style.display = 'block';
         document.body.style.overflow = 'hidden';
-        console.log('✅ User detail modal opened successfully');
+        console.log('✅ USER MODAL OPENED SUCCESSFULLY');
       } catch (error) {
-        console.error('❌ Error opening user detail modal:', error);
+        console.error('❌ ERROR OPENING MODAL:', error);
         alert('Error loading user details: ' + error.message);
       }
     }

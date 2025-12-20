@@ -210,10 +210,22 @@ window.SupabaseAuth = {
   async getAllUsers() {
     const { data, error } = await supabase
       .from('users')
-      .select('id, name, email, role, is_active, created_at, credits')
+      .select('*')
       .order('created_at', { ascending: false });
 
     if (error) throw error;
+    
+    // Detailed logging for debugging
+    if (data && data.length > 0) {
+      console.log('📊 getAllUsers returned', data.length, 'users');
+      const firstUser = data[0];
+      console.log('🔍 First user FULL object:', JSON.stringify(firstUser, null, 2));
+      console.log('💰 First user credits value:', firstUser.credits, 'type:', typeof firstUser.credits);
+      console.log('📋 All fields in first user:', Object.keys(firstUser));
+    } else {
+      console.log('⚠️  getAllUsers returned empty array');
+    }
+    
     return data;
   },
 
