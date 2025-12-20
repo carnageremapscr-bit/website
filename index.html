@@ -2133,9 +2133,89 @@
         <h3>👥 Users & Wallet Management</h3>
         <p class="muted">Manage users, wallets, and payment balances</p>
         
+        <!-- Quick Top-Up Form - Simple User ID Based -->
+        <div class="card" style="margin: 20px auto 30px; max-width: 600px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; color: white;">
+          <h4 style="margin-bottom: 15px; display: flex; align-items: center; gap: 0.5rem; color: white;">
+            <span style="font-size: 1.5rem;">💳</span> Quick Top-Up
+          </h4>
+          <p style="margin-bottom: 20px; color: rgba(255,255,255,0.9); font-size: 0.9rem;">
+            Credit a customer's wallet instantly using their User ID
+          </p>
+          
+          <div id="quick-topup-form">
+            <!-- User ID Input -->
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: rgba(255,255,255,0.9); font-size: 0.875rem;">User ID</label>
+              <input type="number" id="quick-topup-user-id" placeholder="Enter User ID (e.g., 1, 2, 3...)" 
+                     style="width: 100%; padding: 0.875rem; border: 2px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.15); border-radius: 8px; color: white; font-size: 1rem; box-sizing: border-box;"
+                     oninput="lookupUserById(this.value)">
+            </div>
+            
+            <!-- User Preview (shows after lookup) -->
+            <div id="quick-topup-user-preview" style="display: none; margin-bottom: 1rem; padding: 1rem; background: rgba(255,255,255,0.15); border-radius: 8px; border: 2px solid rgba(255,255,255,0.3);">
+              <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">👤</div>
+                <div style="flex: 1;">
+                  <div id="quick-topup-user-name" style="font-weight: 600; font-size: 1rem;">-</div>
+                  <div id="quick-topup-user-email" style="font-size: 0.875rem; color: rgba(255,255,255,0.8);">-</div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-size: 0.75rem; color: rgba(255,255,255,0.7);">Current Balance</div>
+                  <div id="quick-topup-user-balance" style="font-size: 1.25rem; font-weight: 700;">£0.00</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Not Found Message -->
+            <div id="quick-topup-not-found" style="display: none; margin-bottom: 1rem; padding: 1rem; background: rgba(220, 38, 38, 0.3); border-radius: 8px; border: 2px solid rgba(220, 38, 38, 0.5); text-align: center;">
+              <span style="font-size: 1.25rem;">❌</span>
+              <span style="margin-left: 0.5rem;">User not found. Please check the ID.</span>
+            </div>
+            
+            <!-- Amount Input -->
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: rgba(255,255,255,0.9); font-size: 0.875rem;">Amount (£)</label>
+              <input type="number" id="quick-topup-amount" placeholder="Enter amount to add" step="0.01" min="0.01"
+                     style="width: 100%; padding: 0.875rem; border: 2px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.15); border-radius: 8px; color: white; font-size: 1rem; box-sizing: border-box;">
+            </div>
+            
+            <!-- Quick Amount Buttons -->
+            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-bottom: 1.5rem;">
+              <button type="button" onclick="document.getElementById('quick-topup-amount').value='10'" 
+                      style="padding: 0.625rem; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 6px; font-weight: 500; cursor: pointer; transition: all 0.2s;">£10</button>
+              <button type="button" onclick="document.getElementById('quick-topup-amount').value='25'" 
+                      style="padding: 0.625rem; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 6px; font-weight: 500; cursor: pointer; transition: all 0.2s;">£25</button>
+              <button type="button" onclick="document.getElementById('quick-topup-amount').value='50'" 
+                      style="padding: 0.625rem; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 6px; font-weight: 500; cursor: pointer; transition: all 0.2s;">£50</button>
+              <button type="button" onclick="document.getElementById('quick-topup-amount').value='100'" 
+                      style="padding: 0.625rem; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 6px; font-weight: 500; cursor: pointer; transition: all 0.2s;">£100</button>
+              <button type="button" onclick="document.getElementById('quick-topup-amount').value='200'" 
+                      style="padding: 0.625rem; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 6px; font-weight: 500; cursor: pointer; transition: all 0.2s;">£200</button>
+            </div>
+            
+            <!-- Submit Button -->
+            <button type="button" id="quick-topup-submit" onclick="submitQuickTopUp()" 
+                    style="width: 100%; padding: 1rem; background: white; color: #059669; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+              <span style="font-size: 1.25rem;">💰</span>
+              <span>Add Credits to User</span>
+            </button>
+          </div>
+          
+          <!-- Success Message (hidden by default) -->
+          <div id="quick-topup-success" style="display: none; text-align: center; padding: 1.5rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
+            <div style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">Top-Up Successful!</div>
+            <div id="quick-topup-success-details" style="color: rgba(255,255,255,0.9);"></div>
+            <button onclick="resetQuickTopUp()" style="margin-top: 1rem; padding: 0.75rem 1.5rem; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 6px; cursor: pointer;">
+              Add Another Top-Up
+            </button>
+          </div>
+        </div>
+
         <!-- User List with Credit Balances -->
         <div class="card" style="margin: 20px auto 30px; max-width: 100%;">
           <h4 style="margin-bottom: 15px;">📋 All Users & Wallet Balances</h4>
+          <p class="muted" style="margin-bottom: 15px; font-size: 0.875rem;">Click on any user to view full details or use their ID in the Quick Top-Up form above</p>
           <div style="overflow-x: auto;">
             <table style="width: 100%; border-collapse: collapse;">
               <thead>

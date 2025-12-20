@@ -12948,6 +12948,167 @@ Thank you for choosing Carnage Remaps!
     window.modalDeleteUser = modalDeleteUser;
     
     // ============================================
+    // QUICK TOP-UP FUNCTIONALITY (Admin)
+    // ============================================
+    
+    // Store the looked-up user for Quick Top-Up
+    let quickTopUpUser = null;
+    let lookupDebounceTimer = null;
+    
+    // Look up user by ID as admin types
+    async function lookupUserById(userIdInput) {
+      const userId = parseInt(userIdInput, 10);
+      const previewEl = document.getElementById('quick-topup-user-preview');
+      const notFoundEl = document.getElementById('quick-topup-not-found');
+      
+      // Clear previous state
+      quickTopUpUser = null;
+      
+      // Hide both initially
+      if (previewEl) previewEl.style.display = 'none';
+      if (notFoundEl) notFoundEl.style.display = 'none';
+      
+      // If input is empty or not a number, just return
+      if (!userId || isNaN(userId)) {
+        return;
+      }
+      
+      // Debounce the lookup
+      clearTimeout(lookupDebounceTimer);
+      lookupDebounceTimer = setTimeout(async () => {
+        try {
+          // Check if CarnageAuth exists
+          if (!window.CarnageAuth) {
+            console.error('CarnageAuth not initialized');
+            return;
+          }
+          
+          const user = await CarnageAuth.getUserById(userId);
+          
+          if (user) {
+            // User found - show preview
+            quickTopUpUser = user;
+            
+            document.getElementById('quick-topup-user-name').textContent = user.name || 'Unknown';
+            document.getElementById('quick-topup-user-email').textContent = user.email || 'No email';
+            document.getElementById('quick-topup-user-balance').textContent = `£${(user.credits || 0).toFixed(2)}`;
+            
+            if (previewEl) previewEl.style.display = 'block';
+            if (notFoundEl) notFoundEl.style.display = 'none';
+          } else {
+            // User not found
+            quickTopUpUser = null;
+            if (previewEl) previewEl.style.display = 'none';
+            if (notFoundEl) notFoundEl.style.display = 'block';
+          }
+        } catch (error) {
+          console.error('Error looking up user:', error);
+          quickTopUpUser = null;
+          if (previewEl) previewEl.style.display = 'none';
+          if (notFoundEl) notFoundEl.style.display = 'block';
+        }
+      }, 300); // 300ms debounce
+    }
+    
+    // Submit Quick Top-Up
+    async function submitQuickTopUp() {
+      const userIdInput = document.getElementById('quick-topup-user-id');
+      const amountInput = document.getElementById('quick-topup-amount');
+      const formEl = document.getElementById('quick-topup-form');
+      const successEl = document.getElementById('quick-topup-success');
+      const successDetails = document.getElementById('quick-topup-success-details');
+      
+      const userId = parseInt(userIdInput.value, 10);
+      const amount = parseFloat(amountInput.value);
+      
+      // Validate User ID
+      if (!userId || isNaN(userId)) {
+        showToast('Please enter a valid User ID', 'error');
+        userIdInput.focus();
+        return;
+      }
+      
+      // Validate Amount
+      if (!amount || isNaN(amount) || amount <= 0) {
+        showToast('Please enter a valid amount', 'error');
+        amountInput.focus();
+        return;
+      }
+      
+      // If we don't have a cached user or IDs don't match, look up now
+      if (!quickTopUpUser || quickTopUpUser.id !== userId) {
+        try {
+          quickTopUpUser = await CarnageAuth.getUserById(userId);
+        } catch (e) {
+          quickTopUpUser = null;
+        }
+      }
+      
+      if (!quickTopUpUser) {
+        showToast('User not found. Please check the User ID.', 'error');
+        return;
+      }
+      
+      const currentBalance = quickTopUpUser.credits || 0;
+      const newBalance = currentBalance + amount;
+      
+      // Confirm the action
+      if (!confirm(`Add £${amount.toFixed(2)} to ${quickTopUpUser.name}'s wallet?\n\nCurrent Balance: £${currentBalance.toFixed(2)}\nNew Balance: £${newBalance.toFixed(2)}`)) {
+        return;
+      }
+      
+      try {
+        // Add the credits
+        await CarnageAuth.updateUserCredit(amount, userId);
+        
+        // Show success state
+        if (formEl) formEl.style.display = 'none';
+        if (successEl) successEl.style.display = 'block';
+        if (successDetails) {
+          successDetails.innerHTML = `
+            <strong>£${amount.toFixed(2)}</strong> added to <strong>${quickTopUpUser.name}</strong><br>
+            <span style="font-size: 0.9rem; opacity: 0.9;">New Balance: £${newBalance.toFixed(2)}</span>
+          `;
+        }
+        
+        showToast(`£${amount.toFixed(2)} credited successfully!`, 'success');
+        
+        // Refresh the admin users table
+        loadAdminUsers();
+        
+      } catch (error) {
+        console.error('Error adding credit:', error);
+        showToast('Error adding credit: ' + error.message, 'error');
+      }
+    }
+    
+    // Reset Quick Top-Up form for another entry
+    function resetQuickTopUp() {
+      const formEl = document.getElementById('quick-topup-form');
+      const successEl = document.getElementById('quick-topup-success');
+      const previewEl = document.getElementById('quick-topup-user-preview');
+      const notFoundEl = document.getElementById('quick-topup-not-found');
+      
+      // Reset form
+      document.getElementById('quick-topup-user-id').value = '';
+      document.getElementById('quick-topup-amount').value = '';
+      quickTopUpUser = null;
+      
+      // Hide preview/notfound
+      if (previewEl) previewEl.style.display = 'none';
+      if (notFoundEl) notFoundEl.style.display = 'none';
+      
+      // Show form, hide success
+      if (formEl) formEl.style.display = 'block';
+      if (successEl) successEl.style.display = 'none';
+    }
+    
+    // Expose Quick Top-Up functions globally
+    window.lookupUserById = lookupUserById;
+    window.submitQuickTopUp = submitQuickTopUp;
+    window.resetQuickTopUp = resetQuickTopUp;
+    
+    // ============================================
     // PRICING PAGE FUNCTIONALITY
     // ============================================
     
