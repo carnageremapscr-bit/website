@@ -210,7 +210,7 @@ window.SupabaseAuth = {
   async getAllUsers() {
     const { data, error } = await supabase
       .from('users')
-      .select('*')
+      .select('id, name, email, role, is_active, created_at, credits')
       .order('created_at', { ascending: false });
 
     if (error) throw error;

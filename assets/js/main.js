@@ -7979,7 +7979,8 @@ I would like to request a quote for tuning this vehicle.`,
       
       console.log('Fetching users from database...');
       const users = await CarnageAuth.getAllUsers();
-      console.log('Users loaded successfully:', users ? users.length : 0);
+      console.log('Users loaded successfully:', users ? users.length : 0, 'users');
+      console.log('Sample user data:', users && users.length > 0 ? { id: users[0].id, name: users[0].name, email: users[0].email, credits: users[0].credits } : 'No users');
       
       if (!users) {
         throw new Error('getAllUsers returned null or undefined');
@@ -8012,8 +8013,8 @@ I would like to request a quote for tuning this vehicle.`,
                 ${user.role}
               </span>
             </td>
-            <td style="text-align: right; font-weight: 600; color: ${(user.credits || 0) > 0 ? '#10b981' : '#94a3b8'};">
-              £${(user.credits || 0).toFixed(2)}
+            <td style="text-align: right; font-weight: 600; color: ${(parseFloat(user.credits) || 0) > 0 ? '#10b981' : '#94a3b8'};">
+              £${(parseFloat(user.credits) || 0).toFixed(2)}
             </td>
             <td style="text-align: center;">
               <span style="display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.8rem; color: ${user.is_active ? '#10b981' : '#94a3b8'};">
@@ -12654,15 +12655,17 @@ Thank you for choosing Carnage Remaps!
     let currentModalUserId = null;
     
     async function openUserDetailModal(userId) {
+      console.log('🔍 Opening user detail modal for user ID:', userId);
       try {
         currentModalUserId = userId;
         const user = await CarnageAuth.getUserById(userId);
-        
+        console.log('👤 User data retrieved:', user);
+
         if (!user) {
           alert('User not found');
           return;
         }
-        
+
         // Populate user info
         document.getElementById('modal-user-id').textContent = user.id;
         document.getElementById('modal-user-name').textContent = user.name;
@@ -12684,11 +12687,12 @@ Thank you for choosing Carnage Remaps!
             ${user.is_active ? 'Active' : 'Disabled'}
           </span>
         `;
-        
+
         // Populate wallet
-        const balance = user.credits || 0;
+        const balance = parseFloat(user.credits) || 0;
+        console.log('💰 User credits:', user.credits, 'Balance to display:', balance);
         document.getElementById('modal-wallet-balance').textContent = `£${balance.toFixed(2)}`;
-        
+
         // Show/hide admin controls
         const currentUser = await CarnageAuth.getCurrentUser();
         const adminControls = document.getElementById('modal-admin-controls');
@@ -12697,16 +12701,17 @@ Thank you for choosing Carnage Remaps!
         } else {
           adminControls.style.display = 'none';
         }
-        
+
         // Load activity
         await loadUserActivity(userId);
-        
+
         // Show modal
         document.getElementById('user-detail-modal').style.display = 'block';
         document.body.style.overflow = 'hidden';
+        console.log('✅ User detail modal opened successfully');
       } catch (error) {
-        console.error('Error opening user detail modal:', error);
-        alert('Error loading user details');
+        console.error('❌ Error opening user detail modal:', error);
+        alert('Error loading user details: ' + error.message);
       }
     }
     
@@ -12790,19 +12795,27 @@ Thank you for choosing Carnage Remaps!
       }
       
       try {
+        console.log('💳 Adding credit:', amount, 'to user:', currentModalUserId);
         await CarnageAuth.updateUserCredit(amount, currentModalUserId);
+        console.log('✅ Credit added successfully');
         alert(`£${amount.toFixed(2)} added successfully`);
         
         // Refresh modal data
-        const user = await CarnageAuth.getUserById(currentModalUserId);
-        document.getElementById('modal-wallet-balance').textContent = `£${(user.credits || 0).toFixed(2)}`;
+        console.log('🔄 Refreshing modal data...');
+        const updatedUser = await CarnageAuth.getUserById(currentModalUserId);
+        console.log('👤 Updated user data:', updatedUser);
+        const newBalance = parseFloat(updatedUser.credits) || 0;
+        console.log('💰 New balance:', newBalance);
+        document.getElementById('modal-wallet-balance').textContent = `£${newBalance.toFixed(2)}`;
         document.getElementById('modal-credit-amount').value = '';
         
         // Refresh user table
+        console.log('📋 Refreshing user table...');
         await loadAdminUsers();
+        console.log('✅ Modal and table refreshed');
       } catch (error) {
-        console.error('Error adding credit:', error);
-        alert('Error adding credit');
+        console.error('❌ Error adding credit:', error);
+        alert('Error adding credit: ' + error.message);
       }
     }
     
