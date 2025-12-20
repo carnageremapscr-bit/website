@@ -2026,246 +2026,114 @@
 
     <!-- Admin Tab -->
     <section id="admin-tab" class="cr-tab">
-      <h2>Admin Dashboard</h2>
-      <p class="muted">Manage users, files, and support tickets</p>
+      <div class="admin-header">
+        <h2>Admin Dashboard</h2>
+        <p class="muted">Manage your portal</p>
+      </div>
       
       <div class="admin-tabs">
         <button class="admin-tab-btn active" data-admin-tab="overview">Overview</button>
-        <button class="admin-tab-btn" data-admin-tab="notifications">🔔 Notifications</button>
-        <button class="admin-tab-btn" data-admin-tab="subscriptions">💳 Subscriptions</button>
         <button class="admin-tab-btn" data-admin-tab="users">Users</button>
-        <button class="admin-tab-btn" data-admin-tab="tickets">Support Tickets</button>
-        <button class="admin-tab-btn" data-admin-tab="files">All Files</button>
+        <button class="admin-tab-btn" data-admin-tab="tickets">Tickets</button>
+        <button class="admin-tab-btn" data-admin-tab="files">Files</button>
       </div>
       
-      <!-- Admin Overview -->
+      <!-- Overview Panel -->
       <div id="admin-overview" class="admin-panel active">
-        <h3>System Overview</h3>
-        <div class="cr-cards">
-          <div class="card">
-            <h3>Total Users</h3>
-            <p id="admin-total-users" class="stat-number">0</p>
+        <div class="admin-stats-grid">
+          <div class="admin-stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-info">
+              <span class="stat-value" id="admin-total-users">0</span>
+              <span class="stat-label">Total Users</span>
+            </div>
           </div>
-          <div class="card">
-            <h3>Total Files</h3>
-            <p id="admin-total-files" class="stat-number">0</p>
+          <div class="admin-stat-card">
+            <div class="stat-icon">📁</div>
+            <div class="stat-info">
+              <span class="stat-value" id="admin-total-files">0</span>
+              <span class="stat-label">Total Files</span>
+            </div>
           </div>
-          <div class="card">
-            <h3>Open Tickets</h3>
-            <p id="admin-open-tickets" class="stat-number">0</p>
+          <div class="admin-stat-card">
+            <div class="stat-icon">🎫</div>
+            <div class="stat-info">
+              <span class="stat-value" id="admin-open-tickets">0</span>
+              <span class="stat-label">Open Tickets</span>
+            </div>
           </div>
-          <div class="card">
-            <h3>Storage Used</h3>
-            <p id="admin-storage-used" class="stat-number">0 MB</p>
+          <div class="admin-stat-card">
+            <div class="stat-icon">💾</div>
+            <div class="stat-info">
+              <span class="stat-value" id="admin-storage-used">0 MB</span>
+              <span class="stat-label">Storage</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Recent Activity -->
+        <div class="admin-section">
+          <h3>Recent Activity</h3>
+          <div id="admin-notifications-list" class="admin-activity-list">
+            <div class="empty-state">
+              <span>📭</span>
+              <p>No recent activity</p>
+            </div>
           </div>
         </div>
       </div>
       
-      <!-- Admin Notifications -->
-      <div id="admin-notifications" class="admin-panel">
-        <h3>📬 Recent Activity & Notifications</h3>
-        <p class="muted" style="margin-bottom: 1.5rem;">Monitor recent file uploads, top-up requests, subscriptions, and system events</p>
-        
-        <div class="notification-filters" style="margin-bottom: 1.5rem;">
-          <button class="filter-btn active" data-notification-filter="all">All Events</button>
-          <button class="filter-btn" data-notification-filter="files">📁 Files</button>
-          <button class="filter-btn" data-notification-filter="topups">💳 Top-Ups</button>
-          <button class="filter-btn" data-notification-filter="subscriptions">📊 Subscriptions</button>
-          <button class="filter-btn" data-notification-filter="tickets">🎫 Tickets</button>
-        </div>
-        
-        <div id="admin-notifications-list" class="admin-table-container">
-          <div class="notification-empty" style="padding: 3rem; text-align: center; color: #9ca3af;">
-            No notifications yet. Activity will appear here when users upload files, request top-ups, or subscribe.
-          </div>
-        </div>
-      </div>
-      
-      <!-- Admin Subscriptions -->
-      <div id="admin-subscriptions" class="admin-panel">
-        <h3>💳 Embed Widget Subscriptions</h3>
-        <p class="muted" style="margin-bottom: 1.5rem;">View and manage all embed widget subscription licenses</p>
-        
-        <div class="subscription-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
-          <div class="card" style="text-align: center; padding: 1rem;">
-            <p style="font-size: 2rem; font-weight: bold; color: #10b981;" id="active-subs-count">0</p>
-            <p style="font-size: 0.875rem; color: #6b7280;">Active</p>
-          </div>
-          <div class="card" style="text-align: center; padding: 1rem;">
-            <p style="font-size: 2rem; font-weight: bold; color: #f59e0b;" id="pastdue-subs-count">0</p>
-            <p style="font-size: 0.875rem; color: #6b7280;">Past Due</p>
-          </div>
-          <div class="card" style="text-align: center; padding: 1rem;">
-            <p style="font-size: 2rem; font-weight: bold; color: #ef4444;" id="cancelled-subs-count">0</p>
-            <p style="font-size: 0.875rem; color: #6b7280;">Cancelled</p>
-          </div>
-          <div class="card" style="text-align: center; padding: 1rem;">
-            <p style="font-size: 2rem; font-weight: bold; color: #8b5cf6;" id="monthly-revenue">£0</p>
-            <p style="font-size: 0.875rem; color: #6b7280;">Monthly Revenue</p>
-          </div>
-        </div>
-        
-        <div class="card" style="overflow-x: auto;">
-          <table style="width: 100%; border-collapse: collapse;" id="subscriptions-table">
-            <thead>
-              <tr style="background: #f3f4f6; border-bottom: 2px solid #e5e7eb;">
-                <th style="padding: 12px; text-align: left; font-weight: 600;">Email</th>
-                <th style="padding: 12px; text-align: center; font-weight: 600;">Status</th>
-                <th style="padding: 12px; text-align: center; font-weight: 600;">Type</th>
-                <th style="padding: 12px; text-align: right; font-weight: 600;">Amount</th>
-                <th style="padding: 12px; text-align: center; font-weight: 600;">Period End</th>
-                <th style="padding: 12px; text-align: center; font-weight: 600;">Created</th>
-              </tr>
-            </thead>
-            <tbody id="subscriptions-tbody">
-              <tr>
-                <td colspan="6" style="padding: 2rem; text-align: center; color: #9ca3af;">
-                  Loading subscriptions...
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      
-      <!-- Admin Users & Wallet Management -->
+      <!-- Users Panel -->
       <div id="admin-users" class="admin-panel">
-        <h3>👥 Users & Wallet Management</h3>
-        <p class="muted">Manage users, wallets, and payment balances</p>
-        
-        <!-- Quick Top-Up Form - Simple User ID Based -->
-        <div class="card" style="margin: 20px auto 30px; max-width: 600px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; color: white;">
-          <h4 style="margin-bottom: 15px; display: flex; align-items: center; gap: 0.5rem; color: white;">
-            <span style="font-size: 1.5rem;">💳</span> Quick Top-Up
-          </h4>
-          <p style="margin-bottom: 20px; color: rgba(255,255,255,0.9); font-size: 0.9rem;">
-            Credit a customer's wallet instantly using their User ID
-          </p>
-          
-          <div id="quick-topup-form">
-            <!-- User ID Input -->
-            <div style="margin-bottom: 1rem;">
-              <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: rgba(255,255,255,0.9); font-size: 0.875rem;">User ID</label>
-              <input type="number" id="quick-topup-user-id" placeholder="Enter User ID (e.g., 1, 2, 3...)" 
-                     style="width: 100%; padding: 0.875rem; border: 2px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.15); border-radius: 8px; color: white; font-size: 1rem; box-sizing: border-box;"
-                     oninput="lookupUserById(this.value)">
-            </div>
-            
-            <!-- User Preview (shows after lookup) -->
-            <div id="quick-topup-user-preview" style="display: none; margin-bottom: 1rem; padding: 1rem; background: rgba(255,255,255,0.15); border-radius: 8px; border: 2px solid rgba(255,255,255,0.3);">
-              <div style="display: flex; align-items: center; gap: 1rem;">
-                <div style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">👤</div>
-                <div style="flex: 1;">
-                  <div id="quick-topup-user-name" style="font-weight: 600; font-size: 1rem;">-</div>
-                  <div id="quick-topup-user-email" style="font-size: 0.875rem; color: rgba(255,255,255,0.8);">-</div>
-                </div>
-                <div style="text-align: right;">
-                  <div style="font-size: 0.75rem; color: rgba(255,255,255,0.7);">Current Balance</div>
-                  <div id="quick-topup-user-balance" style="font-size: 1.25rem; font-weight: 700;">£0.00</div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Not Found Message -->
-            <div id="quick-topup-not-found" style="display: none; margin-bottom: 1rem; padding: 1rem; background: rgba(220, 38, 38, 0.3); border-radius: 8px; border: 2px solid rgba(220, 38, 38, 0.5); text-align: center;">
-              <span style="font-size: 1.25rem;">❌</span>
-              <span style="margin-left: 0.5rem;">User not found. Please check the ID.</span>
-            </div>
-            
-            <!-- Amount Input -->
-            <div style="margin-bottom: 1rem;">
-              <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: rgba(255,255,255,0.9); font-size: 0.875rem;">Amount (£)</label>
-              <input type="number" id="quick-topup-amount" placeholder="Enter amount to add" step="0.01" min="0.01"
-                     style="width: 100%; padding: 0.875rem; border: 2px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.15); border-radius: 8px; color: white; font-size: 1rem; box-sizing: border-box;">
-            </div>
-            
-            <!-- Quick Amount Buttons -->
-            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-bottom: 1.5rem;">
-              <button type="button" onclick="document.getElementById('quick-topup-amount').value='10'" 
-                      style="padding: 0.625rem; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 6px; font-weight: 500; cursor: pointer; transition: all 0.2s;">£10</button>
-              <button type="button" onclick="document.getElementById('quick-topup-amount').value='25'" 
-                      style="padding: 0.625rem; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 6px; font-weight: 500; cursor: pointer; transition: all 0.2s;">£25</button>
-              <button type="button" onclick="document.getElementById('quick-topup-amount').value='50'" 
-                      style="padding: 0.625rem; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 6px; font-weight: 500; cursor: pointer; transition: all 0.2s;">£50</button>
-              <button type="button" onclick="document.getElementById('quick-topup-amount').value='100'" 
-                      style="padding: 0.625rem; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 6px; font-weight: 500; cursor: pointer; transition: all 0.2s;">£100</button>
-              <button type="button" onclick="document.getElementById('quick-topup-amount').value='200'" 
-                      style="padding: 0.625rem; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 6px; font-weight: 500; cursor: pointer; transition: all 0.2s;">£200</button>
-            </div>
-            
-            <!-- Submit Button -->
-            <button type="button" id="quick-topup-submit" onclick="submitQuickTopUp()" 
-                    style="width: 100%; padding: 1rem; background: white; color: #059669; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-              <span style="font-size: 1.25rem;">💰</span>
-              <span>Add Credits to User</span>
-            </button>
+        <div class="admin-section">
+          <div class="section-header">
+            <h3>All Users</h3>
+            <span class="user-count" id="user-count-badge">0 users</span>
           </div>
-          
-          <!-- Success Message (hidden by default) -->
-          <div id="quick-topup-success" style="display: none; text-align: center; padding: 1.5rem;">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
-            <div style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">Top-Up Successful!</div>
-            <div id="quick-topup-success-details" style="color: rgba(255,255,255,0.9);"></div>
-            <button onclick="resetQuickTopUp()" style="margin-top: 1rem; padding: 0.75rem 1.5rem; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 6px; cursor: pointer;">
-              Add Another Top-Up
-            </button>
-          </div>
-        </div>
-
-        <!-- User List with Credit Balances -->
-        <div class="card" style="margin: 20px auto 30px; max-width: 100%;">
-          <h4 style="margin-bottom: 15px;">📋 All Users & Wallet Balances</h4>
-          <p class="muted" style="margin-bottom: 15px; font-size: 0.875rem;">Click on any user to view full details or use their ID in the Quick Top-Up form above</p>
-          <div style="overflow-x: auto;">
-            <table style="width: 100%; border-collapse: collapse;">
+          <div class="admin-table-wrap">
+            <table class="admin-table">
               <thead>
-                <tr style="background: #f3f4f6; border-bottom: 2px solid #e5e7eb;">
-                  <th style="padding: 12px; text-align: left; font-weight: 600;">ID</th>
-                  <th style="padding: 12px; text-align: left; font-weight: 600;">Name</th>
-                  <th style="padding: 12px; text-align: left; font-weight: 600;">Email</th>
-                  <th style="padding: 12px; text-align: center; font-weight: 600;">Role</th>
-                  <th style="padding: 12px; text-align: right; font-weight: 600;">💰 Wallet</th>
-                  <th style="padding: 12px; text-align: center; font-weight: 600;">Status</th>
-                  <th style="padding: 12px; text-align: center; font-weight: 600;">Actions</th>
+                <tr>
+                  <th>User</th>
+                  <th>Role</th>
+                  <th class="text-right">Balance</th>
+                  <th>Status</th>
+                  <th class="text-center">Actions</th>
                 </tr>
               </thead>
               <tbody id="admin-users-list">
                 <tr>
-                  <td colspan="7" style="text-align: center; padding: 20px; color: #6b7280;">Loading users...</td>
+                  <td colspan="5" class="empty-cell">Loading users...</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
-
-        <!-- Pending Stripe Payments -->
-        <div class="card" style="margin: 20px auto 30px; max-width: 100%;">
-          <h4 style="margin-bottom: 15px;">💳 Pending Stripe Payment Confirmations</h4>
-          <p class="muted" style="margin-bottom: 15px;">Payments completed in Stripe (money is in YOUR account). Confirm to update user wallets.</p>
-          <div id="topup-requests-list">
-            <p style="text-align: center; padding: 20px; color: #6b7280;">No pending payments. All Stripe webhooks should auto-update wallets.</p>
-          </div>
-        </div>
       </div>
       
-      <!-- Admin Tickets -->
+      <!-- Tickets Panel -->
       <div id="admin-tickets" class="admin-panel">
-        <h3>Support Ticket Management</h3>
-        <div class="ticket-filters">
-          <button class="filter-btn active" data-filter="all">All</button>
-          <button class="filter-btn" data-filter="open">Open</button>
-          <button class="filter-btn" data-filter="in-progress">In Progress</button>
-          <button class="filter-btn" data-filter="resolved">Resolved</button>
+        <div class="admin-section">
+          <div class="section-header">
+            <h3>Support Tickets</h3>
+            <div class="ticket-filters">
+              <button class="filter-btn active" data-filter="all">All</button>
+              <button class="filter-btn" data-filter="open">Open</button>
+              <button class="filter-btn" data-filter="in-progress">In Progress</button>
+              <button class="filter-btn" data-filter="resolved">Resolved</button>
+            </div>
+          </div>
+          <div id="admin-tickets-list" class="admin-tickets-grid"></div>
         </div>
-        <div id="admin-tickets-list" class="admin-tickets-grid"></div>
       </div>
       
-      <!-- Admin Files -->
+      <!-- Files Panel -->
       <div id="admin-files" class="admin-panel">
-        <h3>All Uploaded Files</h3>
-        <div id="admin-files-list" class="files-grid"></div>
+        <div class="admin-section">
+          <h3>All Uploaded Files</h3>
+          <div id="admin-files-list" class="files-grid"></div>
+        </div>
       </div>
-
 
     </section>
   </main>

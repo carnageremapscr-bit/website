@@ -7952,6 +7952,7 @@ I would like to request a quote for tuning this vehicle.`,
   // Load admin users
   async function loadAdminUsers() {
     const container = document.getElementById('admin-users-list');
+    const countBadge = document.getElementById('user-count-badge');
     
     if (!container) {
       console.error('Container admin-users-list not found');
@@ -7969,7 +7970,7 @@ I would like to request a quote for tuning this vehicle.`,
     
     try {
       // Show loading state
-      container.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #6b7280;">Loading users...</td></tr>';
+      container.innerHTML = '<tr><td colspan="5" class="empty-cell">Loading users...</td></tr>';
       
       // Check if CarnageAuth exists
       if (!window.CarnageAuth) {
@@ -7978,84 +7979,68 @@ I would like to request a quote for tuning this vehicle.`,
       
       console.log('Fetching users from database...');
       const users = await CarnageAuth.getAllUsers();
-      console.log('Users loaded successfully:', users ? users.length : 0, users);
+      console.log('Users loaded successfully:', users ? users.length : 0);
       
       if (!users) {
         throw new Error('getAllUsers returned null or undefined');
       }
       
-      // If we're in the credit management panel, show the credit balances
-      if (container.closest('#admin-credit')) {
-        console.log('Rendering credit management view...');
-        container.innerHTML = users.length === 0 
-          ? '<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #6b7280;">No users found</td></tr>'
-          : users.map(user => `
-          <tr style="border-bottom: 1px solid #e5e7eb;">
-            <td style="padding: 12px;">${escapeHtml(user.name)}</td>
-            <td style="padding: 12px;">${escapeHtml(user.email)}</td>
-            <td style="padding: 12px; text-align: right; font-weight: 600; color: ${(user.credits || 0) > 0 ? '#059669' : '#6b7280'};">
+      // Update count badge
+      if (countBadge) {
+        countBadge.textContent = `${users.length} user${users.length !== 1 ? 's' : ''}`;
+      }
+      
+      // Render clean user table
+      if (users.length === 0) {
+        container.innerHTML = '<tr><td colspan="5" class="empty-cell">No users found</td></tr>';
+      } else {
+        container.innerHTML = users.map(user => `
+          <tr onclick="openUserDetailModal(${user.id})">
+            <td>
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div style="width: 36px; height: 36px; background: ${user.role === 'admin' ? '#fef2f2' : '#eff6ff'}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; color: ${user.role === 'admin' ? '#dc2626' : '#3b82f6'};">
+                  ${user.name ? user.name.charAt(0).toUpperCase() : '?'}
+                </div>
+                <div>
+                  <div style="font-weight: 500; color: #1e293b;">${escapeHtml(user.name)}</div>
+                  <div style="font-size: 0.8rem; color: #64748b;">${escapeHtml(user.email)}</div>
+                </div>
+              </div>
+            </td>
+            <td style="text-align: center;">
+              <span style="background: ${user.role === 'admin' ? '#fef2f2' : '#eff6ff'}; color: ${user.role === 'admin' ? '#dc2626' : '#3b82f6'}; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">
+                ${user.role}
+              </span>
+            </td>
+            <td style="text-align: right; font-weight: 600; color: ${(user.credits || 0) > 0 ? '#10b981' : '#94a3b8'};">
               £${(user.credits || 0).toFixed(2)}
             </td>
-            <td style="padding: 12px; text-align: center;">
-              <button class="btn" onclick="quickAddCredit('${escapeHtml(user.email)}')" 
-                      style="background: #10b981; color: white; padding: 6px 12px; font-size: 0.875rem; margin-right: 5px;">
-                + Credit
-              </button>
-              <button class="btn" onclick="document.getElementById('admin-credit-email').value='${escapeHtml(user.email)}'; document.getElementById('admin-credit-email').scrollIntoView({behavior: 'smooth', block: 'center'});" 
-                      style="background: #6b7280; color: white; padding: 6px 12px; font-size: 0.875rem;">
-                Select
+            <td style="text-align: center;">
+              <span style="display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.8rem; color: ${user.is_active ? '#10b981' : '#94a3b8'};">
+                <span style="width: 6px; height: 6px; background: ${user.is_active ? '#10b981' : '#d1d5db'}; border-radius: 50%;"></span>
+                ${user.is_active ? 'Active' : 'Inactive'}
+              </span>
+            </td>
+            <td style="text-align: center;">
+              <button onclick="event.stopPropagation(); openUserDetailModal(${user.id})" 
+                      style="background: #f3f4f6; border: 1px solid #e5e7eb; color: #374151; padding: 0.375rem 0.75rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: 500; transition: all 0.15s;">
+                Manage
               </button>
             </td>
           </tr>
         `).join('');
-        console.log('Credit management view rendered');
-      } else {
-        console.log('Rendering regular user table...');
-        // Otherwise show the regular user table
-        container.innerHTML = users.length === 0
-          ? '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: #6b7280;">No users found</td></tr>'
-          : users.map(user => `
-              <tr onclick="openUserDetailModal(${user.id})" style="cursor: pointer; transition: background 0.2s;" 
-                  onmouseover="this.style.background='rgba(255,255,255,0.05)'" 
-                  onmouseout="this.style.background='transparent'">
-                <td style="padding: 12px;">${user.id}</td>
-                <td style="padding: 12px;">${escapeHtml(user.name)}</td>
-                <td style="padding: 12px;">${escapeHtml(user.email)}</td>
-                <td style="padding: 12px; text-align: center;">
-                  <span style="background: ${user.role === 'admin' ? '#dc2626' : '#3b82f6'}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">
-                    ${user.role}
-                  </span>
-                </td>
-                <td style="padding: 12px; text-align: right; font-weight: 600; color: ${(user.credits || 0) > 0 ? '#10b981' : '#6b7280'};">
-                  £${(user.credits || 0).toFixed(2)}
-                </td>
-                <td style="padding: 12px; text-align: center;">
-                  <span style="background: ${user.is_active ? '#10b981' : '#6b7280'}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 500;">
-                    ${user.is_active ? 'Active' : 'Disabled'}
-                  </span>
-                </td>
-                <td style="padding: 12px; text-align: center;">
-                  <button class="btn" onclick="event.stopPropagation(); openUserDetailModal(${user.id})" 
-                          style="background: #6366f1; color: white; padding: 6px 12px; font-size: 0.875rem;">
-                    View Details
-                  </button>
-                </td>
-              </tr>
-            `).join('');
-        console.log('Regular user table rendered');
       }
+      
+      console.log('User table rendered');
     } catch (error) {
       console.error('Error loading users:', error);
-      container.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #dc2626;">
-        Error loading users: ${error.message}<br>
-        <button class="btn" onclick="loadAdminUsers()" style="margin-top: 10px;">Retry</button>
+      container.innerHTML = `<tr><td colspan="5" class="empty-cell" style="color: #dc2626;">
+        Error: ${error.message}<br>
+        <button onclick="loadAdminUsers()" style="margin-top: 0.75rem; background: var(--cr-primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">Retry</button>
       </td></tr>`;
     } finally {
-      // Reset loading flag after a short delay
-      console.log('Resetting loading flag...');
       setTimeout(() => {
         isLoadingAdminUsers = false;
-        console.log('Loading flag reset');
       }, 500);
     }
   }
@@ -12946,167 +12931,6 @@ Thank you for choosing Carnage Remaps!
     window.modalRemoveCredit = modalRemoveCredit;
     window.modalToggleUserStatus = modalToggleUserStatus;
     window.modalDeleteUser = modalDeleteUser;
-    
-    // ============================================
-    // QUICK TOP-UP FUNCTIONALITY (Admin)
-    // ============================================
-    
-    // Store the looked-up user for Quick Top-Up
-    let quickTopUpUser = null;
-    let lookupDebounceTimer = null;
-    
-    // Look up user by ID as admin types
-    async function lookupUserById(userIdInput) {
-      const userId = parseInt(userIdInput, 10);
-      const previewEl = document.getElementById('quick-topup-user-preview');
-      const notFoundEl = document.getElementById('quick-topup-not-found');
-      
-      // Clear previous state
-      quickTopUpUser = null;
-      
-      // Hide both initially
-      if (previewEl) previewEl.style.display = 'none';
-      if (notFoundEl) notFoundEl.style.display = 'none';
-      
-      // If input is empty or not a number, just return
-      if (!userId || isNaN(userId)) {
-        return;
-      }
-      
-      // Debounce the lookup
-      clearTimeout(lookupDebounceTimer);
-      lookupDebounceTimer = setTimeout(async () => {
-        try {
-          // Check if CarnageAuth exists
-          if (!window.CarnageAuth) {
-            console.error('CarnageAuth not initialized');
-            return;
-          }
-          
-          const user = await CarnageAuth.getUserById(userId);
-          
-          if (user) {
-            // User found - show preview
-            quickTopUpUser = user;
-            
-            document.getElementById('quick-topup-user-name').textContent = user.name || 'Unknown';
-            document.getElementById('quick-topup-user-email').textContent = user.email || 'No email';
-            document.getElementById('quick-topup-user-balance').textContent = `£${(user.credits || 0).toFixed(2)}`;
-            
-            if (previewEl) previewEl.style.display = 'block';
-            if (notFoundEl) notFoundEl.style.display = 'none';
-          } else {
-            // User not found
-            quickTopUpUser = null;
-            if (previewEl) previewEl.style.display = 'none';
-            if (notFoundEl) notFoundEl.style.display = 'block';
-          }
-        } catch (error) {
-          console.error('Error looking up user:', error);
-          quickTopUpUser = null;
-          if (previewEl) previewEl.style.display = 'none';
-          if (notFoundEl) notFoundEl.style.display = 'block';
-        }
-      }, 300); // 300ms debounce
-    }
-    
-    // Submit Quick Top-Up
-    async function submitQuickTopUp() {
-      const userIdInput = document.getElementById('quick-topup-user-id');
-      const amountInput = document.getElementById('quick-topup-amount');
-      const formEl = document.getElementById('quick-topup-form');
-      const successEl = document.getElementById('quick-topup-success');
-      const successDetails = document.getElementById('quick-topup-success-details');
-      
-      const userId = parseInt(userIdInput.value, 10);
-      const amount = parseFloat(amountInput.value);
-      
-      // Validate User ID
-      if (!userId || isNaN(userId)) {
-        showToast('Please enter a valid User ID', 'error');
-        userIdInput.focus();
-        return;
-      }
-      
-      // Validate Amount
-      if (!amount || isNaN(amount) || amount <= 0) {
-        showToast('Please enter a valid amount', 'error');
-        amountInput.focus();
-        return;
-      }
-      
-      // If we don't have a cached user or IDs don't match, look up now
-      if (!quickTopUpUser || quickTopUpUser.id !== userId) {
-        try {
-          quickTopUpUser = await CarnageAuth.getUserById(userId);
-        } catch (e) {
-          quickTopUpUser = null;
-        }
-      }
-      
-      if (!quickTopUpUser) {
-        showToast('User not found. Please check the User ID.', 'error');
-        return;
-      }
-      
-      const currentBalance = quickTopUpUser.credits || 0;
-      const newBalance = currentBalance + amount;
-      
-      // Confirm the action
-      if (!confirm(`Add £${amount.toFixed(2)} to ${quickTopUpUser.name}'s wallet?\n\nCurrent Balance: £${currentBalance.toFixed(2)}\nNew Balance: £${newBalance.toFixed(2)}`)) {
-        return;
-      }
-      
-      try {
-        // Add the credits
-        await CarnageAuth.updateUserCredit(amount, userId);
-        
-        // Show success state
-        if (formEl) formEl.style.display = 'none';
-        if (successEl) successEl.style.display = 'block';
-        if (successDetails) {
-          successDetails.innerHTML = `
-            <strong>£${amount.toFixed(2)}</strong> added to <strong>${quickTopUpUser.name}</strong><br>
-            <span style="font-size: 0.9rem; opacity: 0.9;">New Balance: £${newBalance.toFixed(2)}</span>
-          `;
-        }
-        
-        showToast(`£${amount.toFixed(2)} credited successfully!`, 'success');
-        
-        // Refresh the admin users table
-        loadAdminUsers();
-        
-      } catch (error) {
-        console.error('Error adding credit:', error);
-        showToast('Error adding credit: ' + error.message, 'error');
-      }
-    }
-    
-    // Reset Quick Top-Up form for another entry
-    function resetQuickTopUp() {
-      const formEl = document.getElementById('quick-topup-form');
-      const successEl = document.getElementById('quick-topup-success');
-      const previewEl = document.getElementById('quick-topup-user-preview');
-      const notFoundEl = document.getElementById('quick-topup-not-found');
-      
-      // Reset form
-      document.getElementById('quick-topup-user-id').value = '';
-      document.getElementById('quick-topup-amount').value = '';
-      quickTopUpUser = null;
-      
-      // Hide preview/notfound
-      if (previewEl) previewEl.style.display = 'none';
-      if (notFoundEl) notFoundEl.style.display = 'none';
-      
-      // Show form, hide success
-      if (formEl) formEl.style.display = 'block';
-      if (successEl) successEl.style.display = 'none';
-    }
-    
-    // Expose Quick Top-Up functions globally
-    window.lookupUserById = lookupUserById;
-    window.submitQuickTopUp = submitQuickTopUp;
-    window.resetQuickTopUp = resetQuickTopUp;
     
     // ============================================
     // PRICING PAGE FUNCTIONALITY
