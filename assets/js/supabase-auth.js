@@ -208,25 +208,53 @@ window.SupabaseAuth = {
 
   // Get all users (admin only)
   async getAllUsers() {
-    const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .order('created_at', { ascending: false });
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-    if (error) throw error;
-    
-    // Detailed logging for debugging
-    if (data && data.length > 0) {
-      console.log('📊 getAllUsers returned', data.length, 'users');
-      const firstUser = data[0];
-      console.log('🔍 First user FULL object:', JSON.stringify(firstUser, null, 2));
-      console.log('💰 First user credits value:', firstUser.credits, 'type:', typeof firstUser.credits);
-      console.log('📋 All fields in first user:', Object.keys(firstUser));
-    } else {
-      console.log('⚠️  getAllUsers returned empty array');
+      if (error) {
+        console.error('❌ Error fetching users:', error);
+        throw error;
+      }
+      
+      // Detailed logging for debugging live environment issues
+      if (data && data.length > 0) {
+        console.log('📊 getAllUsers returned', data.length, 'users');
+        const firstUser = data[0];
+        console.log('🔍 First user object keys:', Object.keys(firstUser));
+        console.log('🔍 First user data:', firstUser);
+        
+        // Check if credits column exists
+        if (!('credits' in firstUser)) {
+          console.error('⚠️  WARNING: credits column NOT found in users table!');
+          console.error('Available columns:', Object.keys(firstUser).join(', '));
+        } else {
+          console.log('✅ credits column found');
+          console.log('💰 First user credits:', firstUser.credits, 'type:', typeof firstUser.credits);
+        }
+        
+        // Ensure credits is a number, not a string
+        data.forEach((user, i) => {
+          if (user.credits !== null && user.credits !== undefined) {
+            user.credits = parseFloat(user.credits);
+          } else {
+            console.log(`⚠️  User ${i} (${user.name}) has no credits value`);
+            user.credits = 0;
+          }
+        });
+        
+        console.log('📋 Credits values after processing:', data.map(u => `${u.name}: £${u.credits}`).join(', '));
+      } else {
+        console.log('⚠️  getAllUsers returned empty array');
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('💥 getAllUsers failed:', error.message);
+      throw error;
     }
-    
-    return data;
   },
 
   // Update user

@@ -7981,8 +7981,10 @@ I would like to request a quote for tuning this vehicle.`,
       const users = await CarnageAuth.getAllUsers();
       console.log('Users loaded successfully:', users ? users.length : 0, 'users');
       if (users && users.length > 0) {
-        console.log('🔍 Sample user 0:', users[0]);
+        console.log('🔍 Sample user 0:', JSON.stringify(users[0], null, 2));
         console.log('💰 User 0 credits value:', users[0].credits, 'type:', typeof users[0].credits);
+        // Log all users' credits for debugging
+        console.log('📊 All users credits:', users.map(u => ({ name: u.name, credits: u.credits })));
       }
       
       if (!users) {

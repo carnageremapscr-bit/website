@@ -13,6 +13,7 @@ function getSupabase() {
   if (window.supabase && window.supabase.createClient) {
     _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     console.log('✅ Shared Supabase client created');
+    console.log('📍 Connected to Supabase:', SUPABASE_URL);
     return _supabase;
   }
   
