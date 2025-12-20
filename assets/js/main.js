@@ -6034,43 +6034,42 @@
             updateCreditDisplay();
           }
           
-          // Show success message with auto-dismiss
+          // Show success message with auto-dismiss - PROMINENT BANNER
           const successMsg = document.createElement('div');
+          successMsg.id = 'upload-success-banner';
           successMsg.style.cssText = `
             position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #4CAF50;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
             color: white;
-            padding: 20px 30px;
-            border-radius: 8px;
-            font-size: 16px;
+            padding: 40px 50px;
+            border-radius: 12px;
+            font-size: 18px;
             font-weight: bold;
             z-index: 10000;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            animation: slideIn 0.3s ease-out;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            text-align: center;
+            border-left: 6px solid #2e7d32;
           `;
           successMsg.innerHTML = `
-            <div>✅ File uploaded successfully!</div>
-            <div style="font-size: 14px; margin-top: 8px;">📧 Admin notification email sent</div>
+            <div style="font-size: 24px; margin-bottom: 10px;">✅ FILE UPLOAD CONFIRMED</div>
+            <div style="font-size: 16px; margin: 10px 0;">📧 Email notification sent to admin</div>
+            <div style="font-size: 14px; color: #e8f5e9; margin-top: 15px;">Redirecting to Files tab...</div>
           `;
           document.body.appendChild(successMsg);
           
-          // Add animation
-          const style = document.createElement('style');
-          style.innerHTML = `
-            @keyframes slideIn {
-              from { transform: translateX(400px); opacity: 0; }
-              to { transform: translateX(0); opacity: 1; }
-            }
-          `;
-          document.head.appendChild(style);
+          console.log('🎉 SUCCESS BANNER DISPLAYED');
           
-          // Auto-dismiss after 5 seconds
+          // Auto-dismiss after 4 seconds
           setTimeout(() => {
-            successMsg.style.animation = 'slideIn 0.3s ease-out reverse';
-            setTimeout(() => successMsg.remove(), 300);
-          }, 5000);
+            if (document.getElementById('upload-success-banner')) {
+              successMsg.style.opacity = '0';
+              successMsg.style.transition = 'opacity 0.3s ease-out';
+              setTimeout(() => successMsg.remove(), 300);
+            }
+          }, 4000);
           
           // Show success
           document.getElementById('upload-success-wizard').style.display = 'block';

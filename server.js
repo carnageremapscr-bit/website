@@ -562,10 +562,10 @@ app.post('/api/notify-file-upload', express.json(), async (req, res) => {
 
     if (emailResult) {
       console.log('✅ EMAIL SENT SUCCESSFULLY - Admin notification delivered');
-      res.json({ success: true, message: 'Notification sent', email_sent: true });
+      return res.json({ success: true, message: 'Notification sent', email_sent: true });
     } else {
       console.log('⚠️ EMAIL SEND FAILED - Check server logs for details');
-      res.status(500).json({ success: false, message: 'Failed to send email notification', email_sent: false });
+      return res.status(500).json({ success: false, message: 'Failed to send email notification', email_sent: false });
     }
   } catch (error) {
     console.error('❌ Error in notification endpoint:', error.message);
