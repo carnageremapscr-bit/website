@@ -399,22 +399,47 @@ app.get('/api/health', (req, res) => {
 
 // Simple image upload endpoint for embed logo
 app.post('/api/upload-logo', upload.single('logo'), async (req, res) => {
-  console.log('🖼️ Logo upload endpoint called');
+  console.log('\n========== UPLOAD ENDPOINT HIT ==========');
+  console.log('Timestamp:', new Date().toISOString());
+  console.log('Request received');
+  console.log('File object:', req.file ? 'YES' : 'NO');
+  console.log('Files array:', req.files ? 'YES' : 'NO');
+  console.log('Body:', req.body);
+  console.log('Headers:', Object.keys(req.headers));
+  console.log('========================================\n');
+  
   if (!req.file) {
-    console.warn('❌ No file received in upload');
+    console.warn('❌ No file in request');
+    console.log('Available properties:', Object.keys(req));
     return res.status(400).json({ error: 'No file uploaded' });
   }
   
   console.log('✅ File received:', req.file.filename);
+  console.log('   Original name:', req.file.originalname);
+  console.log('   Size:', req.file.size);
+  console.log('   Path:', req.file.path);
   
   // Build public URL relative to server
   const fileUrl = `${req.protocol}://${req.get('host')}/assets/media/uploads/${req.file.filename}`;
+  console.log('📍 File URL:', fileUrl);
   
   // Send admin email notification
+  console.log('📧 Calling sendAdminEmail...');
   const emailHtml = `<h2>🖼️ Logo Uploaded</h2><p><strong>File:</strong> ${req.file.originalname}</p><p><strong>Size:</strong> ${(req.file.size / 1024).toFixed(2)} KB</p><p><strong>URL:</strong> <a href="${fileUrl}">View</a></p><p><strong>Time:</strong> ${new Date().toISOString()}</p>`;
-  const emailResult = await sendAdminEmail(`🖼️ Logo Uploaded: ${req.file.originalname}`, `Logo file uploaded: ${req.file.originalname}`, emailHtml);
-  console.log('📧 Email send result:', emailResult);
   
+  try {
+    const emailResult = await sendAdminEmail(
+      `🖼️ Logo Uploaded: ${req.file.originalname}`, 
+      `Logo file uploaded: ${req.file.originalname}`, 
+      emailHtml
+    );
+    console.log('📧 Email send result:', emailResult);
+  } catch (emailError) {
+    console.error('❌ Error in sendAdminEmail:', emailError.message);
+    console.error('Stack:', emailError.stack);
+  }
+  
+  console.log('✅ Upload response sent');
   res.json({ url: fileUrl });
 });
 
