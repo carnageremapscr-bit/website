@@ -380,7 +380,20 @@ app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'ok', 
     message: 'Carnage Remaps API Server Running',
-    stripeConfigured: stripeConfigured
+    timestamp: new Date().toISOString(),
+    email: {
+      configured: !!transporter,
+      user: process.env.EMAIL_USER || 'not set',
+      admin: process.env.ADMIN_EMAIL || 'not set',
+      passwordSet: !!process.env.EMAIL_PASSWORD,
+      passwordLength: process.env.EMAIL_PASSWORD?.length || 0,
+      passwordFirst10: process.env.EMAIL_PASSWORD ? process.env.EMAIL_PASSWORD.substring(0, 10) + '***' : 'NOT SET'
+    },
+    stripe: {
+      configured: stripeConfigured,
+      keySet: !!process.env.STRIPE_SECRET_KEY,
+      webhookSecretSet: !!process.env.STRIPE_WEBHOOK_SECRET
+    }
   });
 });
 
@@ -403,6 +416,62 @@ app.post('/api/upload-logo', upload.single('logo'), async (req, res) => {
   console.log('📧 Email send result:', emailResult);
   
   res.json({ url: fileUrl });
+});
+
+// TEST EMAIL ENDPOINT - for debugging
+app.post('/api/test-email', express.json(), async (req, res) => {
+  console.log('\n📧 TEST EMAIL ENDPOINT CALLED');
+  console.log('EMAIL_USER:', process.env.EMAIL_USER);
+  console.log('EMAIL_PASSWORD set:', !!process.env.EMAIL_PASSWORD);
+  console.log('Transporter exists:', !!transporter);
+  
+  if (!transporter) {
+    console.log('❌ Transporter is NULL - EMAIL_PASSWORD not configured');
+    return res.status(500).json({ 
+      error: 'Email not configured',
+      details: 'EMAIL_PASSWORD environment variable is not set'
+    });
+  }
+
+  try {
+    console.log('📤 Sending test email...');
+    const result = await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: process.env.ADMIN_EMAIL || 'carnageremaps@gmail.com',
+      subject: '✅ TEST EMAIL - Carnage Remaps Email System',
+      html: `
+        <h2>✅ Email System Test</h2>
+        <p><strong>Status:</strong> Email configuration is working!</p>
+        <p><strong>Sent at:</strong> ${new Date().toISOString()}</p>
+        <p><strong>From:</strong> ${process.env.EMAIL_USER}</p>
+        <p><strong>To:</strong> ${process.env.ADMIN_EMAIL}</p>
+        <p>This email confirms that your email system is properly configured.</p>
+      `
+    });
+    
+    console.log('✅ TEST EMAIL SENT SUCCESSFULLY');
+    console.log('Response:', result);
+    return res.json({ 
+      success: true, 
+      message: 'Test email sent successfully!',
+      details: {
+        messageId: result.messageId,
+        to: process.env.ADMIN_EMAIL
+      }
+    });
+  } catch (error) {
+    console.error('❌ TEST EMAIL FAILED:');
+    console.error('Error message:', error.message);
+    console.error('Error code:', error.code);
+    console.error('Full error:', error);
+    
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+      code: error.code,
+      details: 'Check server logs for full error details'
+    });
+  }
 });
 
 // Notify admin of manual top-up request
