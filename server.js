@@ -499,6 +499,50 @@ app.post('/api/test-email', express.json(), async (req, res) => {
   }
 });
 
+// Notify admin of ECU file upload
+app.post('/api/notify-file-upload', express.json(), async (req, res) => {
+  const { customer_name, customer_email, vehicle, engine, filename, stage, total_price } = req.body;
+  
+  console.log('\n📧 FILE UPLOAD NOTIFICATION ENDPOINT CALLED');
+  console.log('   Customer:', customer_name, '(' + customer_email + ')');
+  console.log('   Vehicle:', vehicle);
+  console.log('   Engine:', engine);
+  console.log('   Filename:', filename);
+  
+  if (!customer_name || !customer_email || !vehicle) {
+    console.warn('❌ Missing required fields');
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  try {
+    const emailHtml = `
+      <h2>📁 New ECU File Uploaded</h2>
+      <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 15px 0;">
+        <p><strong>Customer:</strong> ${customer_name} (${customer_email})</p>
+        <p><strong>Vehicle:</strong> ${vehicle}</p>
+        <p><strong>Engine:</strong> ${engine || 'N/A'}</p>
+        <p><strong>Stage:</strong> ${stage || 'N/A'}</p>
+        <p><strong>Price:</strong> £${(total_price || 0).toFixed(2)}</p>
+        <p><strong>Filename:</strong> ${filename}</p>
+        <p><strong>Time:</strong> ${new Date().toISOString()}</p>
+      </div>
+      <p><strong>Action Required:</strong> Review and process this file in your admin panel.</p>
+    `;
+
+    const emailResult = await sendAdminEmail(
+      `📁 New ECU File Uploaded: ${vehicle}`,
+      `New ECU file uploaded by ${customer_name}\n\nVehicle: ${vehicle}\nEngine: ${engine}\nFilename: ${filename}`,
+      emailHtml
+    );
+
+    console.log('✉️ Upload notification email sent:', emailResult);
+    res.json({ success: true, message: 'Notification sent' });
+  } catch (error) {
+    console.error('❌ Error sending notification:', error.message);
+    res.status(500).json({ error: 'Failed to send notification' });
+  }
+});
+
 // Notify admin of manual top-up request
 app.post('/api/notify-topup-request', express.json(), async (req, res) => {
   const { user_name, user_email, amount, request_id } = req.body;

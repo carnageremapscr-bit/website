@@ -7262,14 +7262,22 @@ I would like to request a quote for tuning this vehicle.`,
           const form = new FormData();
           form.append('logo', file);
           uploadLogoBtn.textContent = 'Uploading...';
+          console.log('📤 Starting file upload to /api/upload-logo');
+          console.log('   File name:', file.name);
+          console.log('   File size:', file.size);
+          console.log('   File type:', file.type);
           try {
+            console.log('📡 Sending fetch request...');
             const resp = await fetch('/api/upload-logo', {
               method: 'POST',
               body: form
             });
-            if (!resp.ok) throw new Error('Upload failed');
+            console.log('✅ Response received:', resp.status, resp.statusText);
+            if (!resp.ok) throw new Error('Upload failed: ' + resp.statusText);
             const data = await resp.json();
+            console.log('📦 Response data:', data);
             if (data.url) {
+              console.log('✅ URL received:', data.url);
               embedLogoUrl.value = data.url;
               uploadLogoBtn.textContent = '✓ Uploaded';
               setTimeout(() => uploadLogoBtn.textContent = '⬆️ Upload', 2000);
@@ -7277,7 +7285,8 @@ I would like to request a quote for tuning this vehicle.`,
               throw new Error('No URL returned');
             }
           } catch (err) {
-            console.error('Logo upload error', err);
+            console.error('❌ Logo upload error', err);
+            uploadLogoBtn.textContent = '❌ Failed';
             alert('Upload failed. Check server and try again.');
             uploadLogoBtn.textContent = '⬆️ Upload';
           }

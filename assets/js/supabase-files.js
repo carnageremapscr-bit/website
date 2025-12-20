@@ -100,6 +100,29 @@ window.SupabaseFiles = {
       const result = Array.isArray(data) ? data[0] : data;
       console.log('Supabase insert result:', result);
       
+      // Send email notification to admin
+      try {
+        console.log('📧 Sending upload notification email...');
+        const notifyResponse = await fetch('/api/notify-file-upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            customer_name: fileData.customerName,
+            customer_email: fileData.customerEmail,
+            vehicle: fileData.vehicle,
+            engine: fileData.engine,
+            filename: fileData.filename,
+            stage: fileData.stage,
+            total_price: fileData.totalPrice
+          })
+        });
+        const notifyData = await notifyResponse.json();
+        console.log('📧 Notification response:', notifyData);
+      } catch (notifyError) {
+        console.error('⚠️ Failed to send notification email:', notifyError);
+        // Don't throw - file uploaded successfully even if email fails
+      }
+      
       return result;
     } catch (error) {
       console.error('File upload error:', error);
