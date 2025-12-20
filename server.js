@@ -26,6 +26,9 @@ console.log('=== Stripe Configuration ===');
 console.log('STRIPE_SECRET_KEY set:', !!STRIPE_KEY);
 console.log('Key starts with sk_:', STRIPE_KEY?.startsWith('sk_') || false);
 console.log('STRIPE_WEBHOOK_SECRET set:', !!STRIPE_WEBHOOK_SECRET);
+console.log('Webhook secret length:', STRIPE_WEBHOOK_SECRET?.length || 0);
+console.log('Webhook secret first char code:', STRIPE_WEBHOOK_SECRET?.charCodeAt(0));
+console.log('Webhook secret last char code:', STRIPE_WEBHOOK_SECRET?.charCodeAt(STRIPE_WEBHOOK_SECRET?.length - 1));
 console.log('Stripe configured:', stripeConfigured);
 console.log('===========================');
 
@@ -87,12 +90,18 @@ async function sendAdminEmail(subject, text, html) {
 // Stripe webhook endpoint (for handling payment events)
 app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  // CRITICAL: Aggressively clean webhook secret of ALL whitespace
+  let webhookSecret = (process.env.STRIPE_WEBHOOK_SECRET || '').trim();
+  // Remove any control characters, tabs, newlines, carriage returns, etc.
+  webhookSecret = webhookSecret.replace(/[\r\n\t\v\f]/g, '');
+  // Remove any leading/trailing spaces again
+  webhookSecret = webhookSecret.trim();
 
   console.log('🔔 Webhook call received');
   console.log('📍 Event type header:', req.headers['stripe-signature'] ? 'Present' : 'Missing');
   console.log('📍 Webhook secret configured:', !!webhookSecret);
-  console.log('📍 Raw body size:', req.body?.length || 'N/A');
+  console.log('📍 Webhook secret length:', webhookSecret.length);
+  console.log('📍 Webhook secret starts with:', webhookSecret.substring(0, 6));
 
   if (!webhookSecret) {
     console.error('❌ STRIPE_WEBHOOK_SECRET not configured in environment variables');
@@ -107,8 +116,9 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
     console.error('❌ Webhook signature verification failed:', err.message);
     console.error('   This usually means:');
     console.error('   1. Webhook secret is incorrect');
-    console.error('   2. Raw body was modified before verification');
-    console.error('   3. Signature header is missing or corrupted');
+    console.error('   2. Webhook secret has extra whitespace (spaces/newlines)');
+    console.error('   3. Raw body was modified before verification');
+    console.error('   4. Signature header is missing or corrupted');
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
