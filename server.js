@@ -17,6 +17,7 @@ console.log('==============================');
 
 // Check if Stripe key is configured
 const STRIPE_KEY = process.env.STRIPE_SECRET_KEY;
+const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 const stripeConfigured = STRIPE_KEY && STRIPE_KEY.startsWith('sk_');
 const stripe = stripeConfigured ? require('stripe')(STRIPE_KEY) : null;
 
@@ -24,6 +25,7 @@ const stripe = stripeConfigured ? require('stripe')(STRIPE_KEY) : null;
 console.log('=== Stripe Configuration ===');
 console.log('STRIPE_SECRET_KEY set:', !!STRIPE_KEY);
 console.log('Key starts with sk_:', STRIPE_KEY?.startsWith('sk_') || false);
+console.log('STRIPE_WEBHOOK_SECRET set:', !!STRIPE_WEBHOOK_SECRET);
 console.log('Stripe configured:', stripeConfigured);
 console.log('===========================');
 
@@ -86,6 +88,10 @@ async function sendAdminEmail(subject, text, html) {
 app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  console.log('🔔 Webhook call received');
+  console.log('📍 Webhook secret set:', !!webhookSecret);
+  console.log('📍 Signature header present:', !!sig);
 
   let event;
 
