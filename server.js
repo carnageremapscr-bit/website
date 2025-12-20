@@ -90,18 +90,29 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
   console.log('🔔 Webhook call received');
-  console.log('📍 Webhook secret set:', !!webhookSecret);
-  console.log('📍 Signature header present:', !!sig);
+  console.log('📍 Event type header:', req.headers['stripe-signature'] ? 'Present' : 'Missing');
+  console.log('📍 Webhook secret configured:', !!webhookSecret);
+  console.log('📍 Raw body size:', req.body?.length || 'N/A');
+
+  if (!webhookSecret) {
+    console.error('❌ STRIPE_WEBHOOK_SECRET not configured in environment variables');
+    return res.status(400).send('Webhook Error: Missing webhook secret configuration');
+  }
 
   let event;
 
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
   } catch (err) {
-    console.error('Webhook signature verification failed:', err.message);
+    console.error('❌ Webhook signature verification failed:', err.message);
+    console.error('   This usually means:');
+    console.error('   1. Webhook secret is incorrect');
+    console.error('   2. Raw body was modified before verification');
+    console.error('   3. Signature header is missing or corrupted');
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
+  console.log('✅ Webhook signature verified');
   console.log('✅ Webhook received:', event.type);
 
   // Handle the event
