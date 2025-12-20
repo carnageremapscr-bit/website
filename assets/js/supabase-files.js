@@ -118,6 +118,14 @@ window.SupabaseFiles = {
         });
         const notifyData = await notifyResponse.json();
         console.log('📧 Notification response:', notifyData);
+        
+        if (notifyData.email_sent) {
+          console.log('✅ EMAIL CONFIRMED - Admin has been notified');
+        } else if (notifyData.success) {
+          console.log('⚠️ Notification endpoint responded but email may not have sent');
+        } else {
+          console.warn('❌ Notification endpoint failed:', notifyData.error);
+        }
       } catch (notifyError) {
         console.error('⚠️ Failed to send notification email:', notifyError);
         // Don't throw - file uploaded successfully even if email fails

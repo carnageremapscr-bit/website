@@ -553,17 +553,24 @@ app.post('/api/notify-file-upload', express.json(), async (req, res) => {
       <p><strong>Action Required:</strong> Review and process this file in your admin panel.</p>
     `;
 
+    console.log('📨 Calling sendAdminEmail for file upload notification...');
     const emailResult = await sendAdminEmail(
       `📁 New ECU File Uploaded: ${vehicle}`,
       `New ECU file uploaded by ${customer_name}\n\nVehicle: ${vehicle}\nEngine: ${engine}\nFilename: ${filename}`,
       emailHtml
     );
 
-    console.log('✉️ Upload notification email sent:', emailResult);
-    res.json({ success: true, message: 'Notification sent' });
+    if (emailResult) {
+      console.log('✅ EMAIL SENT SUCCESSFULLY - Admin notification delivered');
+      res.json({ success: true, message: 'Notification sent', email_sent: true });
+    } else {
+      console.log('⚠️ EMAIL SEND FAILED - Check server logs for details');
+      res.status(500).json({ success: false, message: 'Failed to send email notification', email_sent: false });
+    }
   } catch (error) {
-    console.error('❌ Error sending notification:', error.message);
-    res.status(500).json({ error: 'Failed to send notification' });
+    console.error('❌ Error in notification endpoint:', error.message);
+    console.error('   Full error:', error);
+    res.status(500).json({ error: 'Failed to send notification', details: error.message });
   }
 });
 

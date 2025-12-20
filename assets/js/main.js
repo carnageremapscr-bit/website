@@ -6002,6 +6002,8 @@
         
         await SupabaseFiles.uploadFile(fileMetadata, uploadedFile);
           
+          console.log('✅ FILE UPLOADED SUCCESSFULLY TO SUPABASE');
+          
           // Deduct the total price from user's credit balance
           await CarnageAuth.updateUserCredit(-totalPrice);
           
@@ -6032,6 +6034,44 @@
             updateCreditDisplay();
           }
           
+          // Show success message with auto-dismiss
+          const successMsg = document.createElement('div');
+          successMsg.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 20px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            z-index: 10000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease-out;
+          `;
+          successMsg.innerHTML = `
+            <div>✅ File uploaded successfully!</div>
+            <div style="font-size: 14px; margin-top: 8px;">📧 Admin notification email sent</div>
+          `;
+          document.body.appendChild(successMsg);
+          
+          // Add animation
+          const style = document.createElement('style');
+          style.innerHTML = `
+            @keyframes slideIn {
+              from { transform: translateX(400px); opacity: 0; }
+              to { transform: translateX(0); opacity: 1; }
+            }
+          `;
+          document.head.appendChild(style);
+          
+          // Auto-dismiss after 5 seconds
+          setTimeout(() => {
+            successMsg.style.animation = 'slideIn 0.3s ease-out reverse';
+            setTimeout(() => successMsg.remove(), 300);
+          }, 5000);
+          
           // Show success
           document.getElementById('upload-success-wizard').style.display = 'block';
           
@@ -6045,8 +6085,16 @@
           document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
           document.querySelector('[data-step="1"]').classList.add('active');
           
-          // Update dashboard
+          // Update dashboard and auto-navigate to files tab after 3 seconds
           updateDashboardStats();
+          console.log('📄 Navigating to Files tab in 3 seconds...');
+          setTimeout(() => {
+            const filesTab = document.querySelector('[data-tab="files"]');
+            if (filesTab) {
+              filesTab.click();
+              console.log('🔄 Navigated to Files tab');
+            }
+          }, 3000);
           
         } catch (error) {
           console.error('Upload error:', error);
