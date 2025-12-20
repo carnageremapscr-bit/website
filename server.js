@@ -96,12 +96,36 @@ async function sendAdminEmail(subject, text, html) {
   }
   try {
     console.log('📤 Attempting to send email to:', ADMIN_EMAIL);
-    await transporter.sendMail({ from: EMAIL_USER, to: ADMIN_EMAIL, subject, text, html: html || `<pre>${text}</pre>` });
+    console.log('   From:', EMAIL_USER);
+    console.log('   Subject:', subject);
+    
+    // Create promise with timeout
+    const sendPromise = transporter.sendMail({ 
+      from: EMAIL_USER, 
+      to: ADMIN_EMAIL, 
+      subject, 
+      text, 
+      html: html || `<pre>${text}</pre>` 
+    });
+    
+    // Set 10 second timeout
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Email send timeout after 10 seconds')), 10000)
+    );
+    
+    const result = await Promise.race([sendPromise, timeoutPromise]);
     console.log('✉️ Admin email sent successfully:', subject);
+    console.log('   Result:', result);
     return true;
   } catch (err) { 
     console.error('❌ Email send failed:', err.message);
-    console.error('   Error details:', err);
+    console.error('   Full error:', {
+      name: err.name,
+      code: err.code,
+      command: err.command,
+      responseCode: err.responseCode,
+      response: err.response
+    });
     return false;
   }
 }
