@@ -943,7 +943,68 @@ app.post('/api/upload-logo', upload.single('logo'), async (req, res) => {
   res.json({ url: fileUrl });
 });
 
-// TEST EMAIL ENDPOINT - for debugging
+// TEST EMAIL ENDPOINT - for debugging (GET for browser, POST for API)
+app.get('/api/test-email', async (req, res) => {
+  console.log('\n📧 TEST EMAIL ENDPOINT CALLED (GET)');
+  console.log('EMAIL_USER:', process.env.EMAIL_USER);
+  console.log('EMAIL_PASSWORD set:', !!process.env.EMAIL_PASSWORD);
+  console.log('EMAIL_PASSWORD length:', (process.env.EMAIL_PASSWORD || '').length);
+  console.log('Transporter exists:', !!transporter);
+  
+  if (!transporter) {
+    console.log('❌ Transporter is NULL - EMAIL_PASSWORD not configured');
+    return res.status(500).json({ 
+      error: 'Email not configured',
+      email_user: process.env.EMAIL_USER || 'NOT SET',
+      email_password_set: !!process.env.EMAIL_PASSWORD,
+      email_password_length: (process.env.EMAIL_PASSWORD || '').length,
+      admin_email: process.env.ADMIN_EMAIL || 'NOT SET',
+      details: 'EMAIL_PASSWORD environment variable is not set or invalid'
+    });
+  }
+
+  try {
+    console.log('📤 Sending test email to:', process.env.ADMIN_EMAIL);
+    const result = await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: process.env.ADMIN_EMAIL || 'carnageremaps@gmail.com',
+      subject: '✅ TEST EMAIL - Carnage Remaps Email System',
+      html: `
+        <h2>✅ Email System Test</h2>
+        <p><strong>Status:</strong> Email configuration is working!</p>
+        <p><strong>Sent at:</strong> ${new Date().toISOString()}</p>
+        <p><strong>From:</strong> ${process.env.EMAIL_USER}</p>
+        <p><strong>To:</strong> ${process.env.ADMIN_EMAIL}</p>
+        <p>This email confirms that your email system is properly configured.</p>
+      `
+    });
+    
+    console.log('✅ TEST EMAIL SENT SUCCESSFULLY');
+    console.log('Response:', result);
+    return res.json({ 
+      success: true, 
+      message: 'Test email sent successfully! Check your inbox.',
+      details: {
+        messageId: result.messageId,
+        to: process.env.ADMIN_EMAIL
+      }
+    });
+  } catch (error) {
+    console.error('❌ TEST EMAIL FAILED:');
+    console.error('Error message:', error.message);
+    console.error('Error code:', error.code);
+    
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+      code: error.code,
+      email_user: process.env.EMAIL_USER,
+      admin_email: process.env.ADMIN_EMAIL,
+      details: 'Check server logs for full error details'
+    });
+  }
+});
+
 app.post('/api/test-email', express.json(), async (req, res) => {
   console.log('\n📧 TEST EMAIL ENDPOINT CALLED');
   console.log('EMAIL_USER:', process.env.EMAIL_USER);
