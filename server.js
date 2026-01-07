@@ -1686,8 +1686,8 @@ app.post('/api/admin/activate-subscription', async (req, res) => {
     
     console.log('✅ Subscription manually activated for:', email);
     
-    // Send email notification to customer
-    if (resend && email) {
+    // Send email notification to customer using Resend API
+    if (RESEND_API_KEY && email) {
       try {
         const customerEmailHtml = `
           <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#1a1a1a;color:#fff;padding:40px;border-radius:12px">
@@ -1712,13 +1712,26 @@ app.post('/api/admin/activate-subscription', async (req, res) => {
           </div>
         `;
         
-        await resend.emails.send({
-          from: 'Carnage Remaps <onboarding@resend.dev>',
-          to: email,
-          subject: '🎉 Your subscription is now active - Carnage Remaps',
-          html: customerEmailHtml
+        const emailResponse = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${RESEND_API_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            from: 'Carnage Remaps <onboarding@resend.dev>',
+            to: email,
+            subject: '🎉 Your subscription is now active - Carnage Remaps',
+            html: customerEmailHtml
+          })
         });
-        console.log('✅ Activation email sent to:', email);
+        
+        const emailData = await emailResponse.json();
+        if (emailData.id) {
+          console.log('✅ Activation email sent to:', email, 'ID:', emailData.id);
+        } else {
+          console.error('Email API error:', emailData);
+        }
       } catch (emailErr) {
         console.error('Failed to send activation email:', emailErr.message);
       }
