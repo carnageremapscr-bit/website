@@ -1687,7 +1687,7 @@ app.post('/api/admin/activate-subscription', async (req, res) => {
     console.log('✅ Subscription manually activated for:', email);
     
     // Send email notification to customer
-    if (resendConfigured && email) {
+    if (resend && email) {
       try {
         const customerEmailHtml = `
           <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#1a1a1a;color:#fff;padding:40px;border-radius:12px">
