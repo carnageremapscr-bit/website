@@ -1843,6 +1843,17 @@ app.post('/api/admin/update-subscription-status', async (req, res) => {
     }
     
     console.log(`✅ Subscription status updated for ${email} to ${status}`);
+    
+    // Add admin notification
+    addAdminNotification({
+      type: 'subscription',
+      icon: status === 'active' ? '✅' : '❌',
+      title: `Subscription ${status === 'active' ? 'Activated' : 'Deactivated'}`,
+      message: `Subscription status changed to ${status} for ${email}`,
+      user: email,
+      badge: status
+    });
+    
     res.json({ success: true, message: `Subscription ${status}`, subscription: data?.[0] });
   } catch (err) {
     console.error('Error:', err);
@@ -1899,6 +1910,17 @@ app.post('/api/admin/extend-subscription', async (req, res) => {
     }
     
     console.log(`✅ Subscription extended for ${email} to ${newPeriodEnd.toISOString()}`);
+    
+    // Add admin notification
+    addAdminNotification({
+      type: 'subscription',
+      icon: '🔄',
+      title: 'Subscription Extended',
+      message: `Extended subscription for ${email} by ${extensionDays} days`,
+      user: email,
+      badge: 'extended'
+    });
+    
     res.json({ 
       success: true, 
       message: `Subscription extended by ${extensionDays} days`,
