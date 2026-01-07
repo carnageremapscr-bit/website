@@ -340,7 +340,10 @@ window.SupabaseAuth = {
       // Get current user if no userId provided
       if (!userId) {
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return [];
+        if (!user) {
+          console.log('❌ No user logged in');
+          return [];
+        }
         userId = user.id;
       }
       
@@ -361,9 +364,13 @@ window.SupabaseAuth = {
           .eq('email', userEmail)
           .eq('status', 'active');
         
-        if (!emailError && emailSubs) {
-          allSubscriptions = [...emailSubs];
-          console.log('📧 Found by email:', emailSubs.length);
+        if (emailError) {
+          console.error('❌ Email query error:', emailError);
+        } else {
+          console.log('📧 Found by email:', emailSubs?.length || 0, emailSubs);
+          if (emailSubs) {
+            allSubscriptions = [...emailSubs];
+          }
         }
       }
       
@@ -375,18 +382,22 @@ window.SupabaseAuth = {
           .eq('user_id', userId)
           .eq('status', 'active');
         
-        if (!userIdError && userIdSubs) {
-          // Add any that aren't already in the list
-          for (const sub of userIdSubs) {
-            if (!allSubscriptions.find(s => s.id === sub.id)) {
-              allSubscriptions.push(sub);
+        if (userIdError) {
+          console.error('❌ User ID query error:', userIdError);
+        } else {
+          console.log('👤 Found by user_id:', userIdSubs?.length || 0);
+          if (userIdSubs) {
+            // Add any that aren't already in the list
+            for (const sub of userIdSubs) {
+              if (!allSubscriptions.find(s => s.id === sub.id)) {
+                allSubscriptions.push(sub);
+              }
             }
           }
-          console.log('👤 Found by user_id:', userIdSubs.length);
         }
       }
       
-      console.log('✅ Total active subscriptions found:', allSubscriptions.length);
+      console.log('✅ Total active subscriptions found:', allSubscriptions.length, allSubscriptions);
       // Map Supabase fields to client UI fields
       const mappedSubscriptions = allSubscriptions.map(sub => ({
         id: sub.id,
