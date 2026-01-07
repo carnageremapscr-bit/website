@@ -7,6 +7,9 @@
   const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:3002'
     : 'https://web-production-df12d.up.railway.app'; // Your Railway backend URL
+  
+  // Expose API_URL globally for other modules
+  window.CARNAGE_API_URL = API_URL;
 
   const DB_NAME = 'CarnageRemapsDB';
   const DB_VERSION = 2;

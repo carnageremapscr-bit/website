@@ -105,7 +105,10 @@ window.SupabaseFiles = {
       // Send email notification to admin
       try {
         console.log('📧 Sending upload notification email...');
-        const notifyResponse = await fetch('/api/notify-file-upload', {
+        // Use global API URL from main.js
+        const apiUrl = window.CARNAGE_API_URL || 'https://web-production-df12d.up.railway.app';
+        console.log('📧 Using API URL:', apiUrl);
+        const notifyResponse = await fetch(`${apiUrl}/api/notify-file-upload`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

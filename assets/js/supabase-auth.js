@@ -308,7 +308,15 @@ window.SupabaseAuth = {
     }
     
     const user = await this.getUserById(userId);
-    const newCredits = (parseFloat(user.credits) || 0) + amount;
+    const currentCredits = parseFloat(user.credits) || 0;
+    const newCredits = currentCredits + amount;
+    
+    // PREVENT NEGATIVE BALANCE
+    if (newCredits < 0) {
+      console.error('❌ Cannot go into negative balance!');
+      console.error(`   Current: £${currentCredits.toFixed(2)}, Attempted deduction: £${Math.abs(amount).toFixed(2)}`);
+      throw new Error(`Insufficient credit! You have £${currentCredits.toFixed(2)} but need £${Math.abs(amount).toFixed(2)}.`);
+    }
 
     const { data, error } = await supabase
       .from('users')
@@ -317,7 +325,12 @@ window.SupabaseAuth = {
       .select();
 
     if (error) throw error;
+    
+    // Update session storage
+    sessionStorage.setItem('userCredits', newCredits.toString());
+    
     const result = Array.isArray(data) ? data[0] : data;
+    console.log(`💰 Credit updated: £${currentCredits.toFixed(2)} → £${newCredits.toFixed(2)}`);
     return result ? result.credits : newCredits;
   },
 
