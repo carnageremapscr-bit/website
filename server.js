@@ -434,7 +434,7 @@ app.use(helmet({
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:", "https:", "blob:"],
-      connectSrc: ["'self'", "https://*.supabase.co", "https://api.stripe.com", "wss://*.supabase.co"],
+      connectSrc: ["'self'", "https://*.supabase.co", "https://api.stripe.com", "wss://*.supabase.co", "https://cdn.jsdelivr.net"],
       frameSrc: ["https://js.stripe.com", "https://hooks.stripe.com"],
     },
   },
