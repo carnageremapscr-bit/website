@@ -441,6 +441,17 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false, // Allow embedding for widget
 }));
 
+// Explicit routes for Supabase JS modules (bypass potential static middleware issues)
+const supabaseJsFiles = ['supabase-client.js', 'supabase-auth.js', 'supabase-files.js', 'supabase-support.js', 'supabase-compat.js', 'supabase-config.js'];
+supabaseJsFiles.forEach(filename => {
+  app.get(`/assets/js/${filename}`, (req, res) => {
+    const filePath = path.join(__dirname, 'assets', 'js', filename);
+    res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.sendFile(filePath);
+  });
+});
+
 app.use(express.static(__dirname, {
   setHeaders: (res, filePath) => {
     try {
