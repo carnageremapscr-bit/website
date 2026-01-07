@@ -473,6 +473,23 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Debug file paths endpoint
+app.get('/api/debug-files', (req, res) => {
+  const jsPath = path.join(__dirname, 'assets', 'js');
+  let files = [];
+  try {
+    files = fs.readdirSync(jsPath);
+  } catch (e) {
+    files = ['ERROR: ' + e.message];
+  }
+  res.json({
+    __dirname,
+    jsPath,
+    jsFilesExist: files,
+    cwd: process.cwd()
+  });
+});
+
 // Debug endpoint - only available in development mode
 if (process.env.NODE_ENV !== 'production') {
   app.get('/api/debug-config', (req, res) => {
