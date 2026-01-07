@@ -41,6 +41,10 @@ console.log('===========================');
 const app = express();
 const PORT = process.env.PORT || 3002;
 
+// Trust proxy - REQUIRED for Railway/Heroku/etc that use reverse proxies
+// This fixes the X-Forwarded-For header issue with express-rate-limit
+app.set('trust proxy', 1);
+
 const path = require('path');
 const fs = require('fs');
 // Multer for handling file uploads
@@ -400,22 +404,47 @@ const authLimiter = rateLimit({
 app.use('/api/', generalLimiter);
 app.use('/api/auth', authLimiter);
 
-// CORS configuration - restrict to known origins in production
-const allowedOrigins = process.env.ALLOWED_ORIGINS 
-  ? process.env.ALLOWED_ORIGINS.split(',') 
-  : ['http://localhost:3000', 'http://localhost:3002', 'http://127.0.0.1:3000'];
+// CORS configuration - allow Railway production domain
+const allowedOrigins = [
+  'http://localhost:3000', 
+  'http://localhost:3002', 
+  'http://127.0.0.1:3000',
+  'https://web-production-df12d.up.railway.app'
+];
+
+// Add any additional origins from environment
+if (process.env.ALLOWED_ORIGINS) {
+  process.env.ALLOWED_ORIGINS.split(',').forEach(origin => {
+    const trimmed = origin.trim();
+    if (trimmed && !allowedOrigins.includes(trimmed)) {
+      allowedOrigins.push(trimmed);
+    }
+  });
+}
+
+console.log('Allowed CORS origins:', allowedOrigins);
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, curl, etc.) in development
-    if (!origin && process.env.NODE_ENV !== 'production') {
+    // Allow requests with no origin (same-origin requests, mobile apps, curl)
+    if (!origin) {
       return callback(null, true);
     }
-    if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+    // Allow if origin is in the list
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
     }
+    // Allow Railway subdomains
+    if (origin.endsWith('.up.railway.app')) {
+      return callback(null, true);
+    }
+    // In development, allow all
+    if (process.env.NODE_ENV !== 'production') {
+      return callback(null, true);
+    }
+    // Reject others
+    console.warn('CORS blocked origin:', origin);
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
