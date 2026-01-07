@@ -1634,26 +1634,50 @@ app.post('/api/admin/activate-subscription', async (req, res) => {
     
     console.log('🔧 Manually activating subscription for:', email, 'Type:', subscriptionType, 'Days:', subscriptionDays);
     
-    // Generate a manual subscription ID
-    const manualSubId = 'manual_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    
-    const { data, error } = await supabase
+    // Check if subscription already exists for this email
+    const { data: existing } = await supabase
       .from('subscriptions')
-      .upsert({
-        user_id: userId || null,
-        email: email,
-        stripe_subscription_id: manualSubId,
-        type: subscriptionType,
-        status: 'active',
-        price_amount: 999,
-        currency: 'gbp',
-        current_period_start: new Date().toISOString(),
-        current_period_end: new Date(Date.now() + subscriptionDays * 24 * 60 * 60 * 1000).toISOString(),
-        updated_at: new Date().toISOString()
-      }, {
-        onConflict: 'email'
-      })
-      .select();
+      .select('*')
+      .eq('email', email)
+      .single();
+    
+    let data, error;
+    
+    if (existing) {
+      // Update existing subscription
+      const result = await supabase
+        .from('subscriptions')
+        .update({
+          type: subscriptionType,
+          status: 'active',
+          current_period_start: new Date().toISOString(),
+          current_period_end: new Date(Date.now() + subscriptionDays * 24 * 60 * 60 * 1000).toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .eq('email', email)
+        .select();
+      data = result.data;
+      error = result.error;
+    } else {
+      // Insert new subscription
+      const manualSubId = 'manual_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      const result = await supabase
+        .from('subscriptions')
+        .insert({
+          user_id: userId || null,
+          email: email,
+          stripe_subscription_id: manualSubId,
+          type: subscriptionType,
+          status: 'active',
+          price_amount: 999,
+          currency: 'gbp',
+          current_period_start: new Date().toISOString(),
+          current_period_end: new Date(Date.now() + subscriptionDays * 24 * 60 * 60 * 1000).toISOString()
+        })
+        .select();
+      data = result.data;
+      error = result.error;
+    }
     
     if (error) {
       console.error('Error activating subscription:', error);
