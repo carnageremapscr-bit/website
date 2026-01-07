@@ -8475,51 +8475,6 @@ I would like to request a quote for tuning this vehicle.`,
     // Call the new server-based notification loader
     await loadRecentNotifications();
   }
-      container.innerHTML = `
-        <div style="max-width: 1200px; margin: 0 auto;">
-          ${recentNotifications.map(notif => `
-            <div class="notification-item" data-type="${notif.type}" style="display: flex; align-items: center; padding: 1rem; border-bottom: 1px solid #e5e7eb; background: white; margin-bottom: 0.5rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-              <div style="font-size: 2rem; margin-right: 1rem;">${notif.icon}</div>
-              <div style="flex: 1;">
-                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
-                  <strong style="color: #1e293b;">${notif.title}</strong>
-                  <span class="badge" style="background: ${getBadgeColor(notif.badge)}; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem;">${notif.badge}</span>
-                </div>
-                <div style="color: #64748b; font-size: 0.875rem;">${notif.message}</div>
-                <div style="color: #94a3b8; font-size: 0.75rem; margin-top: 0.25rem;">${formatNotificationTime(notif.timestamp)}</div>
-              </div>
-              <div style="color: #64748b; font-size: 0.875rem; min-width: 120px; text-align: right;">
-                ${notif.user}
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      `;
-      
-      // Add filter functionality
-      const filterBtns = document.querySelectorAll('[data-notification-filter]');
-      filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          const filter = btn.dataset.notificationFilter;
-          filterBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          
-          const items = container.querySelectorAll('.notification-item');
-          items.forEach(item => {
-            if (filter === 'all' || item.dataset.type === filter) {
-              item.style.display = 'flex';
-            } else {
-              item.style.display = 'none';
-            }
-          });
-        });
-      });
-      
-    } catch (error) {
-      console.error('Error loading notifications:', error);
-      container.innerHTML = '<div style="padding: 2rem; text-align: center; color: #ef4444;">Error loading notifications</div>';
-    }
-  }
   
   // Helper function for notification time formatting
   function formatNotificationTime(date) {
