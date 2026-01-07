@@ -337,66 +337,31 @@ window.SupabaseAuth = {
   // Get active subscriptions for current user
   async getActiveSubscriptions(userId) {
     try {
-      // Get current user if no userId provided
-      if (!userId) {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-          console.log('❌ No user logged in');
-          return [];
-        }
-        userId = user.id;
+      // Get current user from sessionStorage (not Supabase auth)
+      const userEmail = sessionStorage.getItem('userEmail');
+      
+      if (!userEmail) {
+        console.log('❌ No user logged in (no userEmail in sessionStorage)');
+        return [];
       }
       
-      // Get user's email for fallback lookup
-      const { data: { user } } = await supabase.auth.getUser();
-      const userEmail = user?.email;
+      console.log('🔍 Checking subscriptions for email:', userEmail);
       
-      console.log('🔍 Checking subscriptions for userId:', userId, 'email:', userEmail);
+      // Query subscriptions by email
+      const { data: emailSubs, error: emailError } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('email', userEmail)
+        .eq('status', 'active');
       
-      // Query subscriptions - check by user_id OR email (email is more reliable for manual activations)
-      let allSubscriptions = [];
-      
-      // First, try to find by email (most reliable for manual activations)
-      if (userEmail) {
-        const { data: emailSubs, error: emailError } = await supabase
-          .from('subscriptions')
-          .select('*')
-          .eq('email', userEmail)
-          .eq('status', 'active');
-        
-        if (emailError) {
-          console.error('❌ Email query error:', emailError);
-        } else {
-          console.log('📧 Found by email:', emailSubs?.length || 0, emailSubs);
-          if (emailSubs) {
-            allSubscriptions = [...emailSubs];
-          }
-        }
+      if (emailError) {
+        console.error('❌ Email query error:', emailError);
+        return [];
       }
       
-      // Also check by user_id if we have one
-      if (userId) {
-        const { data: userIdSubs, error: userIdError } = await supabase
-          .from('subscriptions')
-          .select('*')
-          .eq('user_id', userId)
-          .eq('status', 'active');
-        
-        if (userIdError) {
-          console.error('❌ User ID query error:', userIdError);
-        } else {
-          console.log('👤 Found by user_id:', userIdSubs?.length || 0);
-          if (userIdSubs) {
-            // Add any that aren't already in the list
-            for (const sub of userIdSubs) {
-              if (!allSubscriptions.find(s => s.id === sub.id)) {
-                allSubscriptions.push(sub);
-              }
-            }
-          }
-        }
-      }
+      console.log('📧 Found by email:', emailSubs?.length || 0, emailSubs);
       
+      const allSubscriptions = emailSubs || [];
       console.log('✅ Total active subscriptions found:', allSubscriptions.length, allSubscriptions);
       // Map Supabase fields to client UI fields
       const mappedSubscriptions = allSubscriptions.map(sub => ({
