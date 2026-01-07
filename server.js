@@ -102,21 +102,34 @@ console.log('Using Resend API:', !!RESEND_API_KEY);
 console.log('===========================');
 
 // In-memory admin notification log (last 50 notifications)
-const adminNotifications = [];
-const MAX_NOTIFICATIONS = 50;
-
-function addAdminNotification(notification) {
+// Save notifications to Supabase for persistence
+async function addAdminNotification(notification) {
   const notif = {
-    id: Date.now(),
-    timestamp: new Date().toISOString(),
-    ...notification
+    type: notification.type,
+    icon: notification.icon,
+    title: notification.title,
+    message: notification.message,
+    user_email: notification.user || null,
+    badge: notification.badge || null
   };
-  adminNotifications.unshift(notif);
-  if (adminNotifications.length > MAX_NOTIFICATIONS) {
-    adminNotifications.pop();
+  
+  try {
+    const { data, error } = await supabase
+      .from('admin_notifications')
+      .insert([notif])
+      .select();
+    
+    if (error) {
+      console.error('❌ Failed to save notification to Supabase:', error);
+      return null;
+    }
+    
+    console.log('📝 Admin notification saved:', notif.title);
+    return data[0];
+  } catch (err) {
+    console.error('❌ Exception saving notification:', err);
+    return null;
   }
-  console.log('📝 Admin notification added:', notif.title);
-  return notif;
 }
 
 // ============================================
@@ -636,6 +649,16 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
               } else {
                 console.log(`✅ Wallet topped up: £${amount} for user ${userId} (${email}). New balance: £${newCredits}`);
                 
+                // Add admin notification
+                addAdminNotification({
+                  type: 'payment',
+                  icon: '💳',
+                  title: 'Wallet Top-Up',
+                  message: `${email} topped up £${amount} - New balance: £${newCredits}`,
+                  user: email,
+                  badge: 'completed'
+                });
+                
                 // Send admin email notification
                 const emailHtml = `<h2>💳 Wallet Top-Up Received</h2><p><strong>User:</strong> ${email}</p><p><strong>Amount:</strong> £${amount}</p><p><strong>New Balance:</strong> £${newCredits}</p><p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>`;
                 sendAdminEmail(`💳 Wallet Top-Up: £${amount} from ${email}`, `Wallet topped up by £${amount} for ${email}. New balance: £${newCredits}`, emailHtml);
@@ -701,6 +724,16 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
             console.log('   - Customer ID:', customerId);
             console.log('   - Type:', session.metadata?.type || 'embed');
             console.log('   - Amount:', session.amount_total / 100);
+            
+            // Add admin notification
+            addAdminNotification({
+              type: 'subscription',
+              icon: '✅',
+              title: 'New Subscription',
+              message: `${email} subscribed via Stripe - £${(session.amount_total / 100).toFixed(2)}/month`,
+              user: email,
+              badge: 'active'
+            });
             
             // Send admin email notification
             const adminEmailHtml = `
@@ -1035,12 +1068,40 @@ app.get('/api/health', (req, res) => {
 });
 
 // Get admin notifications endpoint
-app.get('/api/admin/notifications', (req, res) => {
-  res.json({ 
-    success: true, 
-    notifications: adminNotifications,
-    count: adminNotifications.length
-  });
+app.get('/api/admin/notifications', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('admin_notifications')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(50);
+    
+    if (error) {
+      console.error('Failed to fetch notifications:', error);
+      return res.status(500).json({ error: 'Failed to fetch notifications' });
+    }
+    
+    // Transform to match frontend format
+    const notifications = data.map(n => ({
+      id: n.id,
+      type: n.type,
+      icon: n.icon,
+      title: n.title,
+      message: n.message,
+      user: n.user_email,
+      badge: n.badge,
+      timestamp: n.created_at
+    }));
+    
+    res.json({ 
+      success: true, 
+      notifications: notifications,
+      count: notifications.length
+    });
+  } catch (err) {
+    console.error('Exception fetching notifications:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // Debug file paths endpoint
@@ -1276,6 +1337,16 @@ app.post('/api/notify-file-upload', express.json(), async (req, res) => {
   }
 
   try {
+    // Add admin notification
+    addAdminNotification({
+      type: 'file',
+      icon: '📁',
+      title: 'File Upload',
+      message: `${customer_name} uploaded ${filename} for ${vehicle}`,
+      user: customer_name,
+      badge: stage || 'pending'
+    });
+    
     // Use unified notification (Email + WhatsApp)
     const result = await notifyAdmin(
       '📁 NEW FILE',
@@ -1305,6 +1376,16 @@ app.post('/api/notify-topup-request', express.json(), async (req, res) => {
   }
   
   try {
+    // Add admin notification
+    addAdminNotification({
+      type: 'payment',
+      icon: '💰',
+      title: 'Top-Up Request',
+      message: `${user_name} requested £${amount.toFixed(2)} credit top-up`,
+      user: user_name,
+      badge: 'pending'
+    });
+    
     // Use unified notification (Email + WhatsApp)
     const result = await notifyAdmin(
       '💰 TOP-UP REQUEST',
@@ -1328,6 +1409,16 @@ app.post('/api/notify-new-user', express.json(), async (req, res) => {
   }
   
   try {
+    // Add admin notification
+    addAdminNotification({
+      type: 'user',
+      icon: '👤',
+      title: 'New User',
+      message: `${user_name} registered an account`,
+      user: user_name,
+      badge: 'new'
+    });
+    
     // Use unified notification (Email + WhatsApp)
     const result = await notifyAdmin(
       '👤 NEW USER',

@@ -122,3 +122,35 @@ CREATE INDEX idx_transactions_user_id ON transactions(user_id);
 CREATE INDEX idx_transactions_email ON transactions(email);
 CREATE INDEX idx_transactions_type ON transactions(type);
 CREATE INDEX idx_transactions_created_at ON transactions(created_at DESC);
+
+-- ============================================
+-- Migration: Admin Notifications table
+-- Stores all admin activity notifications
+-- ============================================
+
+CREATE TABLE IF NOT EXISTS admin_notifications (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  type TEXT NOT NULL CHECK (type IN ('subscription', 'payment', 'upload', 'topup', 'user', 'support')),
+  icon TEXT NOT NULL,
+  title TEXT NOT NULL,
+  message TEXT NOT NULL,
+  user_email TEXT,
+  badge TEXT CHECK (badge IN ('active', 'pending', 'completed', 'cancelled', 'new')),
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Enable RLS
+ALTER TABLE admin_notifications ENABLE ROW LEVEL SECURITY;
+
+-- Only admins can view notifications
+CREATE POLICY "Admins can view notifications" ON admin_notifications
+  FOR SELECT USING (auth.uid() IN (SELECT id FROM users WHERE role = 'admin'));
+
+-- Service can insert notifications (for server-side webhook events)
+CREATE POLICY "Service can insert notifications" ON admin_notifications
+  FOR INSERT WITH CHECK (true);
+
+-- Create indexes for faster queries
+CREATE INDEX idx_admin_notifications_type ON admin_notifications(type);
+CREATE INDEX idx_admin_notifications_created_at ON admin_notifications(created_at DESC);
+CREATE INDEX idx_admin_notifications_user_email ON admin_notifications(user_email);
