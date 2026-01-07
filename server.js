@@ -443,17 +443,23 @@ app.use(helmet({
 
 app.use(express.static(__dirname, {
   setHeaders: (res, filePath) => {
-    if (filePath.endsWith('.html')) {
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-    } else if (filePath.endsWith('.js')) {
-      res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-      res.setHeader('Cache-Control', 'no-cache');
-    } else if (filePath.endsWith('.avif')) {
-      res.setHeader('Content-Type', 'image/avif');
-      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-    } else if (filePath.match(/\.(css|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)$/)) {
-      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    try {
+      const ext = path.extname(filePath).toLowerCase();
+      if (ext === '.html') {
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      } else if (ext === '.js') {
+        res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-cache');
+      } else if (ext === '.css') {
+        res.setHeader('Content-Type', 'text/css; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-cache');
+      } else if (ext === '.avif') {
+        res.setHeader('Content-Type', 'image/avif');
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      }
+    } catch (e) {
+      console.error('Error setting headers for:', filePath, e);
     }
   }
 })); // Serve static files from project directory
@@ -488,6 +494,22 @@ app.get('/api/debug-files', (req, res) => {
     jsFilesExist: files,
     cwd: process.cwd()
   });
+});
+
+// Direct file test endpoint
+app.get('/api/test-js/:filename', (req, res) => {
+  const filePath = path.join(__dirname, 'assets', 'js', req.params.filename);
+  try {
+    if (fs.existsSync(filePath)) {
+      const content = fs.readFileSync(filePath, 'utf8');
+      res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+      res.send(content);
+    } else {
+      res.status(404).json({ error: 'File not found', path: filePath });
+    }
+  } catch (e) {
+    res.status(500).json({ error: e.message, path: filePath });
+  }
 });
 
 // Debug endpoint - only available in development mode
