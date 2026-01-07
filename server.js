@@ -1898,6 +1898,40 @@ app.get('/api/admin/subscriptions', async (req, res) => {
   }
 });
 
+// Test endpoint to check subscriptions for an email
+app.get('/api/check-subscription/:email', async (req, res) => {
+  try {
+    if (!supabase) {
+      return res.status(500).json({ error: 'Database not configured' });
+    }
+    
+    const email = decodeURIComponent(req.params.email);
+    console.log('🔍 Checking subscriptions for:', email);
+    
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .eq('email', email)
+      .eq('status', 'active');
+    
+    if (error) {
+      console.error('Error checking subscription:', error);
+      return res.status(500).json({ error: error.message });
+    }
+    
+    console.log('📋 Found subscriptions:', data?.length || 0);
+    res.json({ 
+      success: true, 
+      email: email,
+      hasActiveSubscription: (data && data.length > 0),
+      subscriptions: data || [] 
+    });
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Input validation helper
 const validateRequest = (req, res, next) => {
   const errors = validationResult(req);
