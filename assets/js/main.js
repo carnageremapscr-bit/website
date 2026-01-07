@@ -13321,6 +13321,39 @@ Thank you for choosing Carnage Remaps!
     window.resetECUSearch = resetECUSearch;
     window.updateSearchProgress = updateSearchProgress;
     
+    // Clear all ECU Database filters
+    function clearECUDatabaseFilters() {
+      // Clear search input
+      const searchInput = document.getElementById('ecu-search-input');
+      if (searchInput) searchInput.value = '';
+      
+      // Reset all filter dropdowns
+      const brandFilter = document.getElementById('ecu-filter-brand');
+      const typeFilter = document.getElementById('ecu-filter-type');
+      const toolFilter = document.getElementById('ecu-filter-tool');
+      const sortBy = document.getElementById('ecu-sort-by');
+      
+      if (brandFilter) brandFilter.value = '';
+      if (typeFilter) typeFilter.value = '';
+      if (toolFilter) toolFilter.value = '';
+      if (sortBy) sortBy.value = 'model';
+      
+      // Hide results and show empty state
+      const searchResults = document.getElementById('ecu-search-results');
+      const resultsSummary = document.getElementById('ecu-results-summary');
+      
+      if (searchResults) searchResults.style.display = 'none';
+      if (resultsSummary) resultsSummary.style.display = 'none';
+      
+      // Reset compare mode count
+      const compareCount = document.getElementById('compare-count');
+      if (compareCount) compareCount.textContent = '(0)';
+      
+      // Show confirmation
+      console.log('✅ ECU Database filters cleared');
+    }
+    window.clearECUDatabaseFilters = clearECUDatabaseFilters;
+    
     // ============================================
     // PRICING PAGE FUNCTIONALITY
     // ============================================
