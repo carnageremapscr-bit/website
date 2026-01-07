@@ -675,11 +675,84 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
           
           if (error) {
             console.error('Failed to save subscription:', error);
+            console.error('Subscription data that failed:', { userId, email, subscriptionId, customerId });
           } else {
             console.log('✅ Subscription saved for:', email);
+            console.log('   - User ID:', userId);
+            console.log('   - Subscription ID:', subscriptionId);
+            console.log('   - Customer ID:', customerId);
+            console.log('   - Type:', session.metadata?.type || 'embed');
+            console.log('   - Amount:', session.amount_total / 100);
+            
             // Send admin email notification
-            const emailHtml = `<h2>✅ New Subscription</h2><p><strong>User:</strong> ${email}</p><p><strong>Type:</strong> ${session.metadata?.type || 'embed'}</p><p><strong>Amount:</strong> £${(session.amount_total / 100).toFixed(2)}</p><p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>`;
-            sendAdminEmail(`✅ New Subscription: ${email}`, `New subscription from ${email}`, emailHtml);
+            const adminEmailHtml = `
+              <h2 style="color:#16a34a">✅ New Subscription Activated</h2>
+              <div style="background:#f3f4f6;padding:20px;border-radius:8px;margin:20px 0">
+                <p><strong>Customer Email:</strong> ${email}</p>
+                <p><strong>User ID:</strong> ${userId || 'Not provided'}</p>
+                <p><strong>Subscription Type:</strong> ${session.metadata?.type || 'embed'}</p>
+                <p><strong>Amount:</strong> £${(session.amount_total / 100).toFixed(2)}/month</p>
+                <p><strong>Stripe Customer ID:</strong> ${customerId}</p>
+                <p><strong>Stripe Subscription ID:</strong> ${subscriptionId}</p>
+                <p><strong>Period End:</strong> ${new Date(subscription.current_period_end * 1000).toLocaleDateString()}</p>
+                <p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
+              </div>
+              <p style="color:#6b7280;font-size:14px">This subscription was activated via Stripe webhook.</p>
+            `;
+            sendAdminEmail(`✅ New Subscription: ${email}`, `New subscription from ${email} - £${(session.amount_total / 100).toFixed(2)}/month`, adminEmailHtml);
+            
+            // Send customer confirmation email
+            if (resendConfigured && email) {
+              try {
+                const customerEmailHtml = `
+                  <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#1a1a1a;color:#fff;padding:40px;border-radius:12px">
+                    <div style="text-align:center;margin-bottom:30px">
+                      <h1 style="color:#eab308;margin:0">🎉 Subscription Activated!</h1>
+                      <p style="color:#9ca3af;margin-top:10px">Thank you for subscribing to Carnage Remaps</p>
+                    </div>
+                    
+                    <div style="background:#262626;padding:20px;border-radius:8px;margin:20px 0">
+                      <h3 style="color:#eab308;margin-top:0">Subscription Details</h3>
+                      <p><strong>Plan:</strong> Embed Widget Access</p>
+                      <p><strong>Amount:</strong> £${(session.amount_total / 100).toFixed(2)}/month</p>
+                      <p><strong>Next billing date:</strong> ${new Date(subscription.current_period_end * 1000).toLocaleDateString()}</p>
+                    </div>
+                    
+                    <div style="background:#262626;padding:20px;border-radius:8px;margin:20px 0">
+                      <h3 style="color:#eab308;margin-top:0">What's included</h3>
+                      <ul style="color:#d1d5db;padding-left:20px">
+                        <li>Embed vehicle lookup widget on your website</li>
+                        <li>Customizable colors and branding</li>
+                        <li>Real-time vehicle data lookup</li>
+                        <li>Automatic monthly renewal</li>
+                        <li>Cancel anytime from your dashboard</li>
+                      </ul>
+                    </div>
+                    
+                    <div style="text-align:center;margin-top:30px">
+                      <a href="https://web-production-df12d.up.railway.app" 
+                         style="display:inline-block;background:#eab308;color:#000;text-decoration:none;padding:15px 30px;border-radius:8px;font-weight:bold">
+                        Go to Dashboard
+                      </a>
+                    </div>
+                    
+                    <p style="color:#6b7280;font-size:12px;text-align:center;margin-top:30px">
+                      If you have any questions, reply to this email or contact support.
+                    </p>
+                  </div>
+                `;
+                
+                await resend.emails.send({
+                  from: 'Carnage Remaps <onboarding@resend.dev>',
+                  to: email,
+                  subject: '🎉 Your subscription is now active - Carnage Remaps',
+                  html: customerEmailHtml
+                });
+                console.log('✅ Customer confirmation email sent to:', email);
+              } catch (emailErr) {
+                console.error('Failed to send customer email:', emailErr.message);
+              }
+            }
           }
         } catch (err) {
           console.error('Error processing checkout:', err);
@@ -1487,6 +1560,111 @@ app.get('/api/vehicles', (req, res) => {
   });
 });
 
+// Admin endpoint to fix subscription types
+app.post('/api/admin/fix-subscription-types', async (req, res) => {
+  try {
+    if (!supabase) {
+      return res.status(500).json({ error: 'Database not configured' });
+    }
+    
+    console.log('🔧 Fixing subscription types...');
+    
+    // Update all subscriptions with type 'subscription' to 'embed'
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .update({ type: 'embed' })
+      .or('type.eq.subscription,type.is.null')
+      .select();
+    
+    if (error) {
+      console.error('Error fixing subscriptions:', error);
+      return res.status(500).json({ error: error.message });
+    }
+    
+    console.log('✅ Fixed', data?.length || 0, 'subscriptions');
+    res.json({ success: true, fixed: data?.length || 0, subscriptions: data });
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Admin endpoint to check subscription status for a user
+app.get('/api/admin/check-subscription/:email', async (req, res) => {
+  try {
+    if (!supabase) {
+      return res.status(500).json({ error: 'Database not configured' });
+    }
+    
+    const email = decodeURIComponent(req.params.email);
+    console.log('🔍 Checking subscription for:', email);
+    
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .eq('email', email);
+    
+    if (error) {
+      console.error('Error checking subscription:', error);
+      return res.status(500).json({ error: error.message });
+    }
+    
+    res.json({ email, subscriptions: data || [] });
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Admin endpoint to manually activate subscription
+app.post('/api/admin/activate-subscription', async (req, res) => {
+  try {
+    if (!supabase) {
+      return res.status(500).json({ error: 'Database not configured' });
+    }
+    
+    const { email, userId } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({ error: 'Email required' });
+    }
+    
+    console.log('🔧 Manually activating subscription for:', email);
+    
+    // Generate a manual subscription ID
+    const manualSubId = 'manual_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .upsert({
+        user_id: userId || null,
+        email: email,
+        stripe_subscription_id: manualSubId,
+        type: 'embed',
+        status: 'active',
+        price_amount: 999,
+        currency: 'gbp',
+        current_period_start: new Date().toISOString(),
+        current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'email'
+      })
+      .select();
+    
+    if (error) {
+      console.error('Error activating subscription:', error);
+      return res.status(500).json({ error: error.message });
+    }
+    
+    console.log('✅ Subscription manually activated for:', email);
+    res.json({ success: true, message: 'Subscription activated', subscription: data?.[0] });
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Input validation helper
 const validateRequest = (req, res, next) => {
   const errors = validationResult(req);
@@ -1624,7 +1802,7 @@ app.post('/api/create-subscription-session', async (req, res) => {
       customer_email: userEmail,
       metadata: {
         userId: userId?.toString() || '',
-        type: 'subscription',
+        type: 'embed',
         plan: plan || 'embed-widget',
       },
     });
