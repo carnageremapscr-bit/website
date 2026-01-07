@@ -15287,6 +15287,119 @@ Thank you for choosing Carnage Remaps!
       const data = await response.json();
       console.log('📧 Test notification response:', data);
       
+      // Reload notifications to show the new one
+      await loadRecentNotifications();
+      
+      // Show result alert
+      if (data.success) {
+        alert('✅ Test notification sent! Check your email/WhatsApp.');
+      } else {
+        alert('❌ Notification failed: ' + data.message);
+      }
+      
+    } catch (error) {
+      console.error('Test notification error:', error);
+      alert('❌ Error sending test notification: ' + error.message);
+    } finally {
+      if (testBtn) {
+        testBtn.disabled = false;
+        testBtn.innerHTML = '📤 Send Test';
+      }
+    }
+  };
+
+  // Load recent admin notifications from server
+  async function loadRecentNotifications() {
+    const logContainer = document.getElementById('notification-log');
+    if (!logContainer) return;
+    
+    try {
+      const apiUrl = window.CARNAGE_API_URL || '';
+      const response = await fetch(`${apiUrl}/api/admin/notifications`);
+      const data = await response.json();
+      
+      if (data.success && data.notifications && data.notifications.length > 0) {
+        // Clear placeholder
+        logContainer.innerHTML = '';
+        
+        // Display each notification
+        data.notifications.forEach(notif => {
+          const timestamp = new Date(notif.timestamp).toLocaleString('en-GB');
+          const logEntry = document.createElement('div');
+          logEntry.style.cssText = `
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border-left: 4px solid #eab308;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+          `;
+          logEntry.innerHTML = `
+            <span style="font-size: 1.5rem;">${notif.icon || '📋'}</span>
+            <div style="flex: 1;">
+              <div style="font-weight: 600; color: #fff;">${notif.title}</div>
+              <div style="font-size: 0.875rem; color: #9ca3af;">${notif.message}</div>
+              ${notif.user ? `<div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.25rem;">👤 ${notif.user}</div>` : ''}
+            </div>
+            <div style="font-size: 0.8rem; color: #666;">${timestamp}</div>
+          `;
+          logContainer.appendChild(logEntry);
+        });
+      } else {
+        // Show placeholder
+        logContainer.innerHTML = `
+          <div style="padding:2rem;text-align:center;color:#6b7280">
+            <div style="font-size:3rem;margin-bottom:1rem">📬</div>
+            <p style="margin-top:0.5rem">No recent notifications</p>
+          </div>
+        `;
+      }
+    } catch (error) {
+      console.error('Error loading notifications:', error);
+      logContainer.innerHTML = `
+        <div style="padding:2rem;text-align:center;color:#ef4444">
+          <div style="font-size:3rem;margin-bottom:1rem">❌</div>
+          <p>Failed to load notifications</p>
+        </div>
+      `;
+    }
+  }
+
+  // Load notifications when admin panel opens
+  document.addEventListener('DOMContentLoaded', () => {
+    // Listen for tab changes to notifications tab
+    const tabLinks = document.querySelectorAll('[data-tab]');
+    tabLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        if (e.target.dataset.tab === 'notifications') {
+          setTimeout(() => loadRecentNotifications(), 100);
+        }
+      });
+    });
+  });
+
+  // Test admin notification (keep old version for compatibility)
+  window.testAdminNotificationOld = async function() {
+    const logContainer = document.getElementById('notification-log');
+    const testBtn = document.querySelector('[onclick="testAdminNotification()"]');
+    
+    if (testBtn) {
+      testBtn.disabled = true;
+      testBtn.innerHTML = '⏳ Sending...';
+    }
+    
+    try {
+      const apiUrl = window.CARNAGE_API_URL || '';
+      const response = await fetch(`${apiUrl}/api/test-notification`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      const data = await response.json();
+      console.log('📧 Test notification response:', data);
+      
       // Add to log
       if (logContainer) {
         const timestamp = new Date().toLocaleString('en-GB');

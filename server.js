@@ -101,6 +101,24 @@ console.log('Nodemailer transporter created:', !!transporter);
 console.log('Using Resend API:', !!RESEND_API_KEY);
 console.log('===========================');
 
+// In-memory admin notification log (last 50 notifications)
+const adminNotifications = [];
+const MAX_NOTIFICATIONS = 50;
+
+function addAdminNotification(notification) {
+  const notif = {
+    id: Date.now(),
+    timestamp: new Date().toISOString(),
+    ...notification
+  };
+  adminNotifications.unshift(notif);
+  if (adminNotifications.length > MAX_NOTIFICATIONS) {
+    adminNotifications.pop();
+  }
+  console.log('📝 Admin notification added:', notif.title);
+  return notif;
+}
+
 // ============================================
 // WHATSAPP CONFIGURATION (using CallMeBot free API)
 // ============================================
@@ -1016,6 +1034,15 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Get admin notifications endpoint
+app.get('/api/admin/notifications', (req, res) => {
+  res.json({ 
+    success: true, 
+    notifications: adminNotifications,
+    count: adminNotifications.length
+  });
+});
+
 // Debug file paths endpoint
 app.get('/api/debug-files', (req, res) => {
   const jsPath = path.join(__dirname, 'assets', 'js');
@@ -1739,7 +1766,17 @@ app.post('/api/admin/activate-subscription', async (req, res) => {
       console.warn('⚠️ Email not sent - RESEND_API_KEY:', !!RESEND_API_KEY, 'email:', !!email);
     }
     
-    // Send admin notification
+    // Add admin notification
+    addAdminNotification({
+      type: 'subscription',
+      icon: '✅',
+      title: 'Subscription Activated',
+      message: `Manually activated subscription for ${email} (${type}, ${days} days)`,
+      user: email,
+      badge: 'active'
+    });
+    
+    // Send admin notification email
     try {
       const adminEmailHtml = `
         <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#111;color:#fff;padding:30px;border-radius:8px">
