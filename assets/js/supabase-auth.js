@@ -387,7 +387,18 @@ window.SupabaseAuth = {
       }
       
       console.log('✅ Total active subscriptions found:', allSubscriptions.length);
-      return allSubscriptions;
+      // Map Supabase fields to client UI fields
+      return allSubscriptions.map(sub => ({
+        id: sub.id,
+        type: sub.type,
+        status: sub.status,
+        name: sub.type === 'embed' ? 'Embed Widget Access' : (sub.type || 'Subscription'),
+        price: (sub.price_amount ? sub.price_amount / 100 : 9.99),
+        currency: sub.currency || 'gbp',
+        startDate: sub.current_period_start ? new Date(sub.current_period_start) : new Date(sub.created_at),
+        nextBillingDate: sub.current_period_end ? new Date(sub.current_period_end) : null,
+        // Add any other fields needed by UI
+      }));
     } catch (err) {
       console.error('Error in getActiveSubscriptions:', err);
       return [];
