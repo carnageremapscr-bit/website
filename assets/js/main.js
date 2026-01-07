@@ -8472,62 +8472,9 @@ I would like to request a quote for tuning this vehicle.`,
 
   // Load admin notifications
   async function loadAdminNotifications() {
-    const container = document.getElementById('admin-notifications-list');
-    if (!container) return;
-    
-    try {
-      container.innerHTML = '<div style="padding: 2rem; text-align: center; color: #9ca3af;">Loading notifications...</div>';
-      
-      // Get all files, users, and tickets for notifications
-      const [files, users, tickets] = await Promise.all([
-        getAllFiles(),
-        CarnageAuth.getAllUsers(),
-        CarnageSupport.getAllTickets()
-      ]);
-      
-      // Create notification events
-      const notifications = [];
-      
-      // File upload notifications
-      files.forEach(file => {
-        const user = users.find(u => u.email === file.customerEmail);
-        notifications.push({
-          type: 'file',
-          timestamp: new Date(file.uploadDate),
-          icon: '📁',
-          title: 'File Upload',
-          message: `${user?.name || 'User'} uploaded ${file.name}`,
-          user: user?.name || file.customerEmail,
-          badge: file.status
-        });
-      });
-      
-      // Ticket notifications
-      tickets.forEach(ticket => {
-        const user = users.find(u => u.id === ticket.userId);
-        notifications.push({
-          type: 'ticket',
-          timestamp: new Date(ticket.createdAt),
-          icon: '🎫',
-          title: 'Support Ticket',
-          message: `${user?.name || 'User'} created ticket: ${ticket.subject}`,
-          user: user?.name || 'Unknown',
-          badge: ticket.status
-        });
-      });
-      
-      // Sort by most recent
-      notifications.sort((a, b) => b.timestamp - a.timestamp);
-      
-      // Limit to 50 most recent
-      const recentNotifications = notifications.slice(0, 50);
-      
-      if (recentNotifications.length === 0) {
-        container.innerHTML = '<div class="notification-empty" style="padding: 3rem; text-align: center; color: #9ca3af;">No notifications yet. Activity will appear here when users upload files, request top-ups, or subscribe.</div>';
-        return;
-      }
-      
-      // Render notifications
+    // Call the new server-based notification loader
+    await loadRecentNotifications();
+  }
       container.innerHTML = `
         <div style="max-width: 1200px; margin: 0 auto;">
           ${recentNotifications.map(notif => `
@@ -15310,13 +15257,18 @@ Thank you for choosing Carnage Remaps!
 
   // Load recent admin notifications from server
   async function loadRecentNotifications() {
-    const logContainer = document.getElementById('notification-log');
-    if (!logContainer) return;
+    const logContainer = document.getElementById('notification-log') || document.getElementById('admin-notifications-list');
+    if (!logContainer) {
+      console.warn('⚠️ Notification container not found');
+      return;
+    }
     
     try {
       const apiUrl = window.CARNAGE_API_URL || '';
       const response = await fetch(`${apiUrl}/api/admin/notifications`);
       const data = await response.json();
+      
+      console.log('📋 Loaded notifications:', data);
       
       if (data.success && data.notifications && data.notifications.length > 0) {
         // Clear placeholder
@@ -15350,17 +15302,17 @@ Thank you for choosing Carnage Remaps!
       } else {
         // Show placeholder
         logContainer.innerHTML = `
-          <div style="padding:2rem;text-align:center;color:#6b7280">
-            <div style="font-size:3rem;margin-bottom:1rem">📬</div>
-            <p style="margin-top:0.5rem">No recent notifications</p>
+          <div class="empty-state">
+            <span>📭</span>
+            <p>No recent activity</p>
           </div>
         `;
       }
     } catch (error) {
       console.error('Error loading notifications:', error);
       logContainer.innerHTML = `
-        <div style="padding:2rem;text-align:center;color:#ef4444">
-          <div style="font-size:3rem;margin-bottom:1rem">❌</div>
+        <div class="empty-state">
+          <span>❌</span>
           <p>Failed to load notifications</p>
         </div>
       `;
