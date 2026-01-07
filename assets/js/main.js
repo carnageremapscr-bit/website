@@ -9748,14 +9748,24 @@ I would like to request a quote for tuning this vehicle.`,
     console.log('Carnage Remaps Portal - Initializing...');
     
     try {
-      // Wait for Supabase modules to load
+      // Wait for Supabase modules to load (increased timeout for module loading)
       let attempts = 0;
-      while (!window.CarnageAuth && attempts < 20) {
+      while (!window.CarnageAuth && attempts < 50) {
         await new Promise(resolve => setTimeout(resolve, 100));
         attempts++;
+        if (attempts % 10 === 0) {
+          console.log('Waiting for Supabase modules...', attempts * 100, 'ms');
+        }
       }
       
       if (!window.CarnageAuth) {
+        console.error('CarnageAuth not found after 5 seconds');
+        console.log('Available globals:', {
+          SupabaseAuth: !!window.SupabaseAuth,
+          CarnageAuth: !!window.CarnageAuth,
+          supabase: !!window.supabase,
+          supabaseClient: !!window.supabaseClient
+        });
         throw new Error('Supabase modules failed to load');
       }
       

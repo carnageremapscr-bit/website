@@ -4,9 +4,8 @@
 
 // Load config from a separate config file or meta tags (avoid hardcoding in production)
 const SUPABASE_CONFIG = {
-  // These will be overwritten by supabase-config.js if it exists
   url: window.SUPABASE_URL || 'https://iffsmbsxwhxehsigtqoe.supabase.co',
-  anonKey: window.SUPABASE_ANON_KEY || ''
+  anonKey: window.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmZnNtYnN4d2h4ZWhzaWd0cW9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyNDU1OTcsImV4cCI6MjA3NzgyMTU5N30.l77PNiP6VBtOeF6ZHe8uKzOo7K9dOxd83cxUziQysNk'
 };
 
 // Warn in development if using default keys
