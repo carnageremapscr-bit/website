@@ -20,7 +20,7 @@ console.log('Supabase configured:', supabaseConfigured);
 console.log('==============================');
 
 // Check if Stripe key is configured
-const STRIPE_KEY = process.env.STRIPE_SECRET_KEY;
+const STRIPE_KEY = (process.env.STRIPE_SECRET_KEY || '').trim();
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 const stripeConfigured = STRIPE_KEY && STRIPE_KEY.startsWith('sk_');
 const stripe = stripeConfigured ? require('stripe')(STRIPE_KEY) : null;
@@ -28,12 +28,14 @@ const stripe = stripeConfigured ? require('stripe')(STRIPE_KEY) : null;
 // Log configuration status on startup
 console.log('=== Stripe Configuration ===');
 console.log('STRIPE_SECRET_KEY set:', !!STRIPE_KEY);
+console.log('STRIPE_SECRET_KEY length:', STRIPE_KEY?.length || 0);
 console.log('Key starts with sk_:', STRIPE_KEY?.startsWith('sk_') || false);
+console.log('Key first 7 chars:', STRIPE_KEY?.substring(0, 7) || 'N/A');
 console.log('STRIPE_WEBHOOK_SECRET set:', !!STRIPE_WEBHOOK_SECRET);
-console.log('Webhook secret length:', STRIPE_WEBHOOK_SECRET?.length || 0);
-console.log('Webhook secret first char code:', STRIPE_WEBHOOK_SECRET?.charCodeAt(0));
-console.log('Webhook secret last char code:', STRIPE_WEBHOOK_SECRET?.charCodeAt(STRIPE_WEBHOOK_SECRET?.length - 1));
 console.log('Stripe configured:', stripeConfigured);
+if (!stripeConfigured && STRIPE_KEY) {
+  console.log('⚠️ STRIPE_SECRET_KEY is set but does not start with sk_ - key prefix:', STRIPE_KEY?.substring(0, 3));
+}
 console.log('===========================');
 
 const app = express();
