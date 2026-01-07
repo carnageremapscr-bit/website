@@ -440,13 +440,14 @@ app.use((req, res, next) => {
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://js.stripe.com"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.jsdelivr.net", "https://js.stripe.com"],
+        scriptSrcAttr: ["'unsafe-inline'"], // Allow inline onclick handlers
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
         imgSrc: ["'self'", "data:", "https:", "blob:"],
         connectSrc: ["'self'", "https://*.supabase.co", "https://api.stripe.com", "wss://*.supabase.co", "https://cdn.jsdelivr.net"],
         frameSrc: ["https://js.stripe.com", "https://hooks.stripe.com"],
-        frameAncestors: ["'self'"], // Allow framing only for main site
+        frameAncestors: ["'self'"],
       },
     },
     crossOriginEmbedderPolicy: false,
