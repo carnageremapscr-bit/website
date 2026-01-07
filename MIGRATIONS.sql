@@ -35,3 +35,90 @@ CREATE POLICY "Users can request top-ups" ON top_up_requests
 CREATE INDEX idx_top_up_requests_status ON top_up_requests(status);
 CREATE INDEX idx_top_up_requests_user_id ON top_up_requests(user_id);
 CREATE INDEX idx_top_up_requests_requested_at ON top_up_requests(requested_at DESC);
+
+-- ============================================
+-- Migration: Subscriptions table for Stripe subscriptions
+-- Run this in Supabase SQL Editor
+-- ============================================
+
+CREATE TABLE IF NOT EXISTS subscriptions (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  email TEXT NOT NULL,
+  stripe_customer_id TEXT,
+  stripe_subscription_id TEXT UNIQUE,
+  type TEXT NOT NULL DEFAULT 'embed',
+  status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'past_due', 'cancelled', 'inactive')),
+  price_amount INTEGER DEFAULT 999,
+  currency TEXT DEFAULT 'gbp',
+  current_period_start TIMESTAMPTZ,
+  current_period_end TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Enable RLS
+ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
+
+-- Allow users to view their own subscriptions
+CREATE POLICY "Users can view own subscriptions" ON subscriptions
+  FOR SELECT USING (
+    auth.uid() = user_id 
+    OR email = (SELECT email FROM auth.users WHERE id = auth.uid())
+    OR (auth.uid() IN (SELECT id FROM users WHERE role = 'admin'))
+  );
+
+-- Allow admins to manage all subscriptions
+CREATE POLICY "Admins can manage subscriptions" ON subscriptions
+  FOR ALL USING (auth.uid() IN (SELECT id FROM users WHERE role = 'admin'));
+
+-- Allow inserts from service role (for webhooks)
+CREATE POLICY "Service can insert subscriptions" ON subscriptions
+  FOR INSERT WITH CHECK (true);
+
+-- Allow updates from service role
+CREATE POLICY "Service can update subscriptions" ON subscriptions
+  FOR UPDATE USING (true);
+
+-- Create indexes for faster queries
+CREATE INDEX idx_subscriptions_email ON subscriptions(email);
+CREATE INDEX idx_subscriptions_user_id ON subscriptions(user_id);
+CREATE INDEX idx_subscriptions_status ON subscriptions(status);
+CREATE INDEX idx_subscriptions_stripe_sub_id ON subscriptions(stripe_subscription_id);
+
+-- ============================================
+-- Migration: Transactions table for payment history
+-- ============================================
+
+CREATE TABLE IF NOT EXISTS transactions (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  email TEXT,
+  type TEXT NOT NULL CHECK (type IN ('topup', 'subscription', 'file_service', 'refund')),
+  amount DECIMAL(10,2) NOT NULL,
+  status TEXT NOT NULL DEFAULT 'completed' CHECK (status IN ('pending', 'completed', 'failed', 'refunded')),
+  stripe_session_id TEXT,
+  stripe_payment_intent_id TEXT,
+  description TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Enable RLS
+ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
+
+-- Allow users to view their own transactions
+CREATE POLICY "Users can view own transactions" ON transactions
+  FOR SELECT USING (
+    auth.uid() = user_id 
+    OR (auth.uid() IN (SELECT id FROM users WHERE role = 'admin'))
+  );
+
+-- Allow service to insert transactions
+CREATE POLICY "Service can insert transactions" ON transactions
+  FOR INSERT WITH CHECK (true);
+
+-- Create indexes
+CREATE INDEX idx_transactions_user_id ON transactions(user_id);
+CREATE INDEX idx_transactions_email ON transactions(email);
+CREATE INDEX idx_transactions_type ON transactions(type);
+CREATE INDEX idx_transactions_created_at ON transactions(created_at DESC);
