@@ -348,19 +348,46 @@ window.SupabaseAuth = {
       const { data: { user } } = await supabase.auth.getUser();
       const userEmail = user?.email;
       
-      // Query subscriptions - check by user_id OR email
-      const { data, error } = await supabase
-        .from('subscriptions')
-        .select('*')
-        .or(`user_id.eq.${userId},email.eq.${userEmail}`)
-        .eq('status', 'active');
+      console.log('🔍 Checking subscriptions for userId:', userId, 'email:', userEmail);
       
-      if (error) {
-        console.error('Error fetching subscriptions:', error);
-        return [];
+      // Query subscriptions - check by user_id OR email (email is more reliable for manual activations)
+      let allSubscriptions = [];
+      
+      // First, try to find by email (most reliable for manual activations)
+      if (userEmail) {
+        const { data: emailSubs, error: emailError } = await supabase
+          .from('subscriptions')
+          .select('*')
+          .eq('email', userEmail)
+          .eq('status', 'active');
+        
+        if (!emailError && emailSubs) {
+          allSubscriptions = [...emailSubs];
+          console.log('📧 Found by email:', emailSubs.length);
+        }
       }
       
-      return data || [];
+      // Also check by user_id if we have one
+      if (userId) {
+        const { data: userIdSubs, error: userIdError } = await supabase
+          .from('subscriptions')
+          .select('*')
+          .eq('user_id', userId)
+          .eq('status', 'active');
+        
+        if (!userIdError && userIdSubs) {
+          // Add any that aren't already in the list
+          for (const sub of userIdSubs) {
+            if (!allSubscriptions.find(s => s.id === sub.id)) {
+              allSubscriptions.push(sub);
+            }
+          }
+          console.log('👤 Found by user_id:', userIdSubs.length);
+        }
+      }
+      
+      console.log('✅ Total active subscriptions found:', allSubscriptions.length);
+      return allSubscriptions;
     } catch (err) {
       console.error('Error in getActiveSubscriptions:', err);
       return [];
