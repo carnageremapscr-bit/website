@@ -12095,12 +12095,29 @@ Thank you for choosing Carnage Remaps!
     const STRIPE_PUBLISHABLE_KEY = 'pk_live_51R5Q5XRlB9jtRSJmkKFR9qMlMxHoCUELHbsvg3wNbf4OTevs38IDMHL0orMt3PhtBFVgPdjEfs8VNwhNQeOgcZBt00wxwQYHdo'; // Your Stripe publishable key
     let stripe = null;
     
-    // Initialize Stripe
-    if (STRIPE_ENABLED && typeof Stripe !== 'undefined') {
-      stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
-      console.log('✅ Stripe initialized - All payments will go to your account');
-    } else {
-      console.warn('⚠️ Stripe not initialized - Payment system disabled');
+    // Initialize Stripe with retry mechanism (waits for deferred script to load)
+    function initStripe() {
+      if (STRIPE_ENABLED && typeof Stripe !== 'undefined') {
+        stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+        console.log('✅ Stripe initialized - All payments will go to your account');
+        return true;
+      }
+      return false;
+    }
+    
+    // Try to init immediately
+    if (!initStripe()) {
+      // If Stripe not loaded yet, wait for it
+      console.log('⏳ Waiting for Stripe library to load...');
+      let stripeRetries = 0;
+      const stripeCheckInterval = setInterval(() => {
+        if (initStripe()) {
+          clearInterval(stripeCheckInterval);
+        } else if (stripeRetries++ > 50) {
+          clearInterval(stripeCheckInterval);
+          console.warn('⚠️ Stripe not initialized after 5s - Payment system disabled');
+        }
+      }, 100);
     }
     
     // Helper function to generate unique IDs
