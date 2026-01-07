@@ -111,7 +111,12 @@
   }
 
   // Create default admin account on first run
+  // SECURITY: In production, this should be disabled and admin created through secure setup process
   async function createDefaultAdmin() {
+    // Check if we're in a production environment
+    const isProduction = window.location.hostname !== 'localhost' && 
+                         window.location.hostname !== '127.0.0.1';
+    
     const transaction = authDB.transaction([USERS_STORE], 'readonly');
     const store = transaction.objectStore(USERS_STORE);
     const countRequest = store.count();
@@ -119,8 +124,16 @@
     return new Promise((resolve) => {
       countRequest.onsuccess = async () => {
         if (countRequest.result === 0) {
-          // Create default admin
-          const adminPassword = await hashPassword('admin123');
+          // Generate a cryptographically secure random password for production
+          const randomBytes = new Uint8Array(16);
+          crypto.getRandomValues(randomBytes);
+          const generatedPassword = Array.from(randomBytes, b => b.toString(16).padStart(2, '0')).join('');
+          
+          // In production, use a secure generated password
+          // In development, use a known password for convenience
+          const defaultPassword = isProduction ? generatedPassword : 'DevAdmin2026!';
+          
+          const adminPassword = await hashPassword(defaultPassword);
           await createUser({
             email: 'admin@carnageremaps.com',
             name: 'Admin',
@@ -130,10 +143,19 @@
             createdAt: new Date().toISOString(),
             isActive: true,
             creditBalance: 10000, // Admin starts with £10000 credit
+            credits: 10000, // Dual field for compatibility
             transactions: [],
-            activeSubscriptions: []
+            activeSubscriptions: [],
+            mustChangePassword: isProduction // Force password change in production
           });
-          console.log('Default admin created: admin@carnageremaps.com / admin123');
+          
+          if (isProduction) {
+            console.warn('⚠️ SECURITY: Default admin created with random password.');
+            console.warn('⚠️ Use the Supabase dashboard to reset the admin password.');
+            console.warn('⚠️ Email: admin@carnageremaps.com');
+          } else {
+            console.log('🔧 DEV MODE: Default admin created: admin@carnageremaps.com / DevAdmin2026!');
+          }
         }
         resolve();
       };

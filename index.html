@@ -2,31 +2,53 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#c81010">
+  <meta name="description" content="Carnage Remaps Dealer Portal - Professional ECU tuning and remapping services">
+  <meta name="robots" content="noindex, nofollow">
+  
+  <!-- Security Headers via Meta Tags (server headers are preferred) -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  
   <title>Carnage Remaps - Dealer Portal</title>
-  <link rel="icon" href="assets/media/logo.avif" />
+  <link rel="icon" href="assets/media/logo.avif" type="image/avif">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://js.stripe.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  
+  <!-- Critical CSS inline for faster load -->
+  <style>
+    /* Critical CSS - Login screen only */
+    body { font-family: system-ui, sans-serif; margin: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .login-box { background: #fff; border-radius: 16px; padding: 2.5rem; max-width: 440px; width: 90%; }
+  </style>
+  
   <link rel="stylesheet" href="assets/css/carnage.css">
-  <!-- Supabase UMD bundle (fallback) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
-  <!-- Stripe.js -->
-  <script src="https://js.stripe.com/v3/"></script>
-  <!-- Chart.js for graphs -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  
+  <!-- External Scripts - deferred for performance -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.47.0/dist/umd/supabase.min.js" defer></script>
+  <script src="https://js.stripe.com/v3/" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
 </head>
 <body class="not-authenticated">
+  <!-- Skip to content link for accessibility -->
+  <a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">Skip to main content</a>
   
   <!-- Login Screen -->
-  <div id="login-screen" class="login-screen">
+  <div id="login-screen" class="login-screen" role="main">
     <div class="login-container">
       <div class="login-box">
-        <img src="assets/media/logo.avif" alt="Carnage Remaps" class="login-logo" onerror="this.style.display='none'"/>
+        <img src="assets/media/logo.avif" alt="Carnage Remaps" class="login-logo" width="200" height="60" loading="eager" decoding="async" onerror="this.style.display='none'"/>
         <h1>Carnage Remaps Portal</h1>
         <p class="muted">Sign in to continue</p>
         
-        <div id="login-tabs" class="login-tabs">
-          <button class="login-tab active" data-form="signin">Sign In</button>
-          <button class="login-tab" data-form="register">Register</button>
-          <button class="login-tab" data-form="vehicle-search">🔍 Vehicle Search</button>
+        <div id="login-tabs" class="login-tabs" role="tablist" aria-label="Login options">
+          <button class="login-tab active" data-form="signin" role="tab" aria-selected="true" aria-controls="signin-form">Sign In</button>
+          <button class="login-tab" data-form="register" role="tab" aria-selected="false" aria-controls="register-form">Register</button>
+          <button class="login-tab" data-form="vehicle-search" role="tab" aria-selected="false" aria-controls="vehicle-search-form">🔍 Vehicle Search</button>
         </div>
         
         <!-- Sign In Form -->

@@ -1,6 +1,10 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const compression = require('compression');
+const rateLimit = require('express-rate-limit');
+const { body, validationResult } = require('express-validator');
 const { createClient } = require('@supabase/supabase-js');
 
 // Initialize Supabase client (use service role for webhook access)
@@ -373,17 +377,69 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
 });
 
 // Middleware (AFTER webhook route)
-app.use(cors({
-  origin: true, // Allow all origins (or specify your frontend domain)
-  credentials: true
-}));
-app.use(express.json());
-
-// Security and performance headers
-app.use((req, res, next) => {
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  next();
+// Security: Rate limiting to prevent brute force attacks
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: { error: 'Too many requests, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // Limit auth attempts to 10 per 15 minutes
+  message: { error: 'Too many authentication attempts, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply rate limiting
+app.use('/api/', generalLimiter);
+app.use('/api/auth', authLimiter);
+
+// CORS configuration - restrict to known origins in production
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',') 
+  : ['http://localhost:3000', 'http://localhost:3002', 'http://127.0.0.1:3000'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, curl, etc.) in development
+    if (!origin && process.env.NODE_ENV !== 'production') {
+      return callback(null, true);
+    }
+    if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'stripe-signature']
+}));
+
+app.use(express.json({ limit: '10mb' }));
+
+// Compression for better performance
+app.use(compression());
+
+// Security headers with Helmet
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://js.stripe.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "https:", "blob:"],
+      connectSrc: ["'self'", "https://*.supabase.co", "https://api.stripe.com", "wss://*.supabase.co"],
+      frameSrc: ["https://js.stripe.com", "https://hooks.stripe.com"],
+    },
+  },
+  crossOriginEmbedderPolicy: false, // Allow embedding for widget
+}));
 
 app.use(express.static('.', {
   setHeaders: (res, path) => {
@@ -399,27 +455,41 @@ app.use(express.static('.', {
   }
 })); // Serve static files from current directory
 
-// Health check endpoint
+// Health check endpoint - SECURE: No sensitive data exposed
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'ok', 
     message: 'Carnage Remaps API Server Running',
+    version: '2.0.0',
     timestamp: new Date().toISOString(),
-    email: {
-      configured: !!transporter,
-      user: process.env.EMAIL_USER || 'not set',
-      admin: process.env.ADMIN_EMAIL || 'not set',
-      passwordSet: !!process.env.EMAIL_PASSWORD,
-      passwordLength: process.env.EMAIL_PASSWORD?.length || 0,
-      passwordFirst10: process.env.EMAIL_PASSWORD ? process.env.EMAIL_PASSWORD.substring(0, 10) + '***' : 'NOT SET'
-    },
-    stripe: {
-      configured: stripeConfigured,
-      keySet: !!process.env.STRIPE_SECRET_KEY,
-      webhookSecretSet: !!process.env.STRIPE_WEBHOOK_SECRET
+    services: {
+      email: !!transporter ? 'configured' : 'not configured',
+      stripe: stripeConfigured ? 'configured' : 'not configured',
+      database: supabaseConfigured ? 'configured' : 'not configured'
     }
   });
 });
+
+// Debug endpoint - only available in development mode
+if (process.env.NODE_ENV !== 'production') {
+  app.get('/api/debug-config', (req, res) => {
+    res.json({ 
+      email: {
+        configured: !!transporter,
+        userSet: !!process.env.EMAIL_USER,
+        passwordSet: !!process.env.EMAIL_PASSWORD,
+      },
+      stripe: {
+        configured: stripeConfigured,
+        keySet: !!process.env.STRIPE_SECRET_KEY,
+        webhookSecretSet: !!process.env.STRIPE_WEBHOOK_SECRET
+      },
+      database: {
+        configured: supabaseConfigured
+      }
+    });
+  });
+}
 
 // Simple image upload endpoint for embed logo
 app.post('/api/upload-logo', upload.single('logo'), async (req, res) => {
@@ -818,20 +888,41 @@ app.get('/api/vehicles', (req, res) => {
   });
 });
 
-// Create Stripe checkout session for top-ups
-app.post('/api/create-checkout-session', async (req, res) => {
+// Input validation helper
+const validateRequest = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ 
+      error: 'Validation failed', 
+      details: errors.array().map(e => ({ field: e.path, message: e.msg }))
+    });
+  }
+  next();
+};
+
+// Create Stripe checkout session for top-ups with input validation
+app.post('/api/create-checkout-session', 
+  [
+    body('amount').isFloat({ min: 1, max: 10000 }).withMessage('Amount must be between £1 and £10,000'),
+    body('userEmail').optional().isEmail().normalizeEmail().withMessage('Invalid email format'),
+    body('userId').optional().isString().trim().escape()
+  ],
+  validateRequest,
+  async (req, res) => {
   try {
     if (!stripeConfigured) {
       console.error('Stripe not configured - STRIPE_SECRET_KEY missing or invalid');
       return res.status(500).json({ 
-        error: 'Stripe not configured. Please set STRIPE_SECRET_KEY environment variable with a valid Stripe secret key (starts with sk_)' 
+        error: 'Payment system temporarily unavailable' 
       });
     }
 
     const { amount, userId, userEmail } = req.body;
 
-    if (!amount || amount <= 0) {
-      return res.status(400).json({ error: 'Invalid amount' });
+    // Additional server-side validation
+    const sanitizedAmount = parseFloat(amount);
+    if (isNaN(sanitizedAmount) || sanitizedAmount <= 0 || sanitizedAmount > 10000) {
+      return res.status(400).json({ error: 'Invalid amount. Must be between £1 and £10,000' });
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -842,10 +933,9 @@ app.post('/api/create-checkout-session', async (req, res) => {
             currency: 'gbp',
             product_data: {
               name: 'Carnage Remaps Credit Top-Up',
-              description: `Add £${amount.toFixed(2)} to your account`,
-              images: ['https://your-domain.com/logo.png'], // Optional: Add your logo URL
+              description: `Add £${sanitizedAmount.toFixed(2)} to your account`,
             },
-            unit_amount: Math.round(amount * 100), // Convert to pence
+            unit_amount: Math.round(sanitizedAmount * 100), // Convert to pence
           },
           quantity: 1,
         },
