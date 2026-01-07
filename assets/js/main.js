@@ -7895,13 +7895,19 @@ I would like to request a quote for tuning this vehicle.`,
           if (!isLoadingAdminUsers) loadAdminUsers(); // Load users for credit management
         }
         if (tabName === 'topups') loadTopUpRequests();
-        if (tabName === 'overview') loadAdminOverview(); // Only load when overview tab is clicked
+        if (tabName === 'overview') {
+          loadAdminOverview(); // Only load when overview tab is clicked
+          loadAdminNotifications(); // Load recent activity
+        }
         if (tabName === 'subscriptions') loadAdminSubscriptions();
       });
     });
     
     // Load overview stats in background (non-blocking)
-    setTimeout(() => loadAdminOverview(), 0);
+    setTimeout(() => {
+      loadAdminOverview();
+      loadAdminNotifications(); // Load recent activity on initial load
+    }, 0);
   }
   
   // Load admin subscriptions
