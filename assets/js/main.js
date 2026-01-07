@@ -6389,35 +6389,36 @@
       const registration = file.registration || 'N/A';
         
         let modalContent = `
-          <div class="modal-overlay" id="file-details-modal">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h2>File Details</h2>
-                <button class="modal-close" onclick="document.getElementById('file-details-modal').remove()">&times;</button>
-              </div>
-              <div class="modal-body">
-                <h3>Vehicle Information</h3>
-                <div class="info-grid">
-                  <div class="info-item">
-                    <label>Manufacturer:</label>
-                    <span>${escapeHtml(manufacturer)}</span>
-                  </div>
-                  <div class="info-item">
-                    <label>Model:</label>
-                    <span>${escapeHtml(model)}</span>
-                  </div>
-                  <div class="info-item">
-                    <label>Year:</label>
-                    <span>${escapeHtml(year)}</span>
-                  </div>
-                  <div class="info-item">
-                    <label>Engine:</label>
-                    <span>${escapeHtml(engine)}</span>
-                  </div>
-                  <div class="info-item">
-                    <label>Registration:</label>
-                    <span>${escapeHtml(registration)}</span>
-                  </div>
+          <div class="modal-overlay" id="file-details-modal" onclick="if(event.target === this) this.remove()">
+            <div class="modal">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h2>File Details</h2>
+                  <button class="modal-close" onclick="document.getElementById('file-details-modal').remove()">&times;</button>
+                </div>
+                <div class="modal-body">
+                  <h3>Vehicle Information</h3>
+                  <div class="info-grid">
+                    <div class="info-item">
+                      <label>Manufacturer:</label>
+                      <span>${escapeHtml(manufacturer)}</span>
+                    </div>
+                    <div class="info-item">
+                      <label>Model:</label>
+                      <span>${escapeHtml(model)}</span>
+                    </div>
+                    <div class="info-item">
+                      <label>Year:</label>
+                      <span>${escapeHtml(year)}</span>
+                    </div>
+                    <div class="info-item">
+                      <label>Engine:</label>
+                      <span>${escapeHtml(engine)}</span>
+                    </div>
+                    <div class="info-item">
+                      <label>Registration:</label>
+                      <span>${escapeHtml(registration)}</span>
+                    </div>
                 </div>
         `;
         
@@ -6586,6 +6587,7 @@
               </div>
             </div>
           </div>
+        </div>
         `;
         
         document.body.insertAdjacentHTML('beforeend', modalContent);
