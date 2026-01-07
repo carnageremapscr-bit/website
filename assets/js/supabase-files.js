@@ -1,7 +1,8 @@
 // Supabase Files Adapter
 // Handles file uploads and management with Supabase
 
-import { supabase } from './supabase-client.js';
+// Use global supabaseClient instead of import
+const supabase = window.supabaseClient;
 
 // Storage bucket validation and setup
 async function ensureStorageBucket() {

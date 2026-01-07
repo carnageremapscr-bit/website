@@ -1,7 +1,8 @@
 // Supabase Authentication Adapter
 // Replaces IndexedDB auth with Supabase
 
-import { supabase } from './supabase-client.js';
+// Use global supabaseClient instead of import
+const supabase = window.supabaseClient;
 
 // Fallback SHA-256 implementation for non-HTTPS contexts
 async function hashPassword(password) {

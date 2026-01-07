@@ -1,7 +1,8 @@
 // Supabase Support Adapter
 // Handles support tickets and messages with Supabase
 
-import { supabase } from './supabase-client.js';
+// Use global supabaseClient instead of import
+const supabase = window.supabaseClient;
 
 window.SupabaseSupport = {
   async init() {

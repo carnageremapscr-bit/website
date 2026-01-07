@@ -86,8 +86,10 @@ const supabase = new Proxy({}, {
   }
 });
 
-// Also expose as global for non-module scripts
+// Expose as globals for non-module scripts
 window.supabaseClient = supabase;
+window.SUPABASE_CONFIG = SUPABASE_CONFIG;
+window.getSupabase = getSupabase;
+window.initSupabase = initSupabase;
 
-// Export for ES modules
-export { supabase, SUPABASE_CONFIG, getSupabase, initSupabase };
+console.log('✅ Supabase client module loaded');
