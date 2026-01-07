@@ -425,21 +425,41 @@ app.use(express.json({ limit: '10mb' }));
 // Compression for better performance
 app.use(compression());
 
-// Security headers with Helmet
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://js.stripe.com"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "https:", "blob:"],
-      connectSrc: ["'self'", "https://*.supabase.co", "https://api.stripe.com", "wss://*.supabase.co", "https://cdn.jsdelivr.net"],
-      frameSrc: ["https://js.stripe.com", "https://hooks.stripe.com"],
+// Security headers with Helmet (EXCLUDING embed.html which needs to be embeddable)
+app.use((req, res, next) => {
+  // Skip helmet's frame restrictions for embed.html
+  if (req.path === '/embed.html') {
+    // Allow embed.html to be framed anywhere
+    res.setHeader('X-Frame-Options', 'ALLOWALL');
+    res.removeHeader('Content-Security-Policy');
+    return next();
+  }
+  
+  // Apply helmet for all other routes
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://js.stripe.com"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        imgSrc: ["'self'", "data:", "https:", "blob:"],
+        connectSrc: ["'self'", "https://*.supabase.co", "https://api.stripe.com", "wss://*.supabase.co", "https://cdn.jsdelivr.net"],
+        frameSrc: ["https://js.stripe.com", "https://hooks.stripe.com"],
+        frameAncestors: ["'self'"], // Allow framing only for main site
+      },
     },
-  },
-  crossOriginEmbedderPolicy: false, // Allow embedding for widget
-}));
+    crossOriginEmbedderPolicy: false,
+  })(req, res, next);
+});
+
+// Special route for embed.html to ensure it's embeddable
+app.get('/embed.html', (req, res) => {
+  res.setHeader('X-Frame-Options', 'ALLOWALL');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Content-Security-Policy', "frame-ancestors *");
+  res.sendFile(path.join(__dirname, 'embed.html'));
+});
 
 // Explicit routes for Supabase JS modules (bypass potential static middleware issues)
 const supabaseJsFiles = ['supabase-client.js', 'supabase-auth.js', 'supabase-files.js', 'supabase-support.js', 'supabase-compat.js', 'supabase-config.js'];
