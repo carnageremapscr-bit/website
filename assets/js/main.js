@@ -13110,6 +13110,118 @@ Thank you for choosing Carnage Remaps!
     window.modalDeleteUser = modalDeleteUser;
     
     // ============================================
+    // FILE TYPE SELECTION (ECU vs Transmission)
+    // ============================================
+    
+    // Current selected file type
+    let selectedFileType = 'ecu';
+    
+    // Function to select file type
+    function selectFileType(type) {
+      console.log('Selecting file type:', type);
+      selectedFileType = type;
+      
+      // Update button states
+      const ecuBtn = document.getElementById('file-type-ecu');
+      const transBtn = document.getElementById('file-type-transmission');
+      
+      if (ecuBtn && transBtn) {
+        if (type === 'ecu') {
+          ecuBtn.classList.add('active');
+          transBtn.classList.remove('active');
+        } else {
+          ecuBtn.classList.remove('active');
+          transBtn.classList.add('active');
+        }
+      }
+      
+      // Store the selection for upload
+      window.currentFileType = type;
+      console.log('File type set to:', type);
+    }
+    
+    // Expose function globally
+    window.selectFileType = selectFileType;
+    window.currentFileType = 'ecu';
+    
+    // ============================================
+    // ECU LOOKUP ENHANCED FUNCTIONS
+    // ============================================
+    
+    // Quick select manufacturer from filter buttons
+    function quickSelectManufacturer(manufacturer) {
+      console.log('Quick selecting manufacturer:', manufacturer);
+      const select = document.getElementById('search-manufacturer');
+      if (select) {
+        select.value = manufacturer;
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        
+        // Update quick filter button states
+        document.querySelectorAll('.quick-filter-btn').forEach(btn => {
+          btn.classList.remove('active');
+          if (btn.dataset.manufacturer === manufacturer) {
+            btn.classList.add('active');
+          }
+        });
+        
+        // Update progress steps
+        updateSearchProgress(1);
+      }
+    }
+    
+    // Reset ECU search form
+    function resetECUSearch() {
+      console.log('Resetting ECU search');
+      const manufacturer = document.getElementById('search-manufacturer');
+      const model = document.getElementById('search-model');
+      const year = document.getElementById('search-year');
+      const engine = document.getElementById('search-engine');
+      const results = document.getElementById('search-results');
+      const emptyState = document.getElementById('search-empty-state');
+      const searchBtn = document.getElementById('search-vehicle-btn');
+      
+      if (manufacturer) manufacturer.value = '';
+      if (model) {
+        model.innerHTML = '<option value="">Select Model</option>';
+        model.disabled = true;
+      }
+      if (year) {
+        year.innerHTML = '<option value="">Select Year Range</option>';
+        year.disabled = true;
+      }
+      if (engine) {
+        engine.innerHTML = '<option value="">Select Engine</option>';
+        engine.disabled = true;
+      }
+      if (results) results.style.display = 'none';
+      if (emptyState) emptyState.style.display = 'block';
+      if (searchBtn) searchBtn.disabled = true;
+      
+      // Reset quick filter buttons
+      document.querySelectorAll('.quick-filter-btn').forEach(btn => btn.classList.remove('active'));
+      
+      // Reset progress steps
+      updateSearchProgress(0);
+    }
+    
+    // Update search progress indicator
+    function updateSearchProgress(step) {
+      document.querySelectorAll('.progress-step').forEach((el, index) => {
+        el.classList.remove('active', 'completed');
+        if (index < step) {
+          el.classList.add('completed');
+        } else if (index === step) {
+          el.classList.add('active');
+        }
+      });
+    }
+    
+    // Expose ECU lookup functions globally
+    window.quickSelectManufacturer = quickSelectManufacturer;
+    window.resetECUSearch = resetECUSearch;
+    window.updateSearchProgress = updateSearchProgress;
+    
+    // ============================================
     // PRICING PAGE FUNCTIONALITY
     // ============================================
     

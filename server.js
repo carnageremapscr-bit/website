@@ -1033,6 +1033,7 @@ app.post('/api/create-checkout-session',
 });
 
 // Create Stripe subscription session
+// Supports both direct priceId and dynamic price_data creation
 app.post('/api/create-subscription-session', async (req, res) => {
   try {
     if (!stripeConfigured) {
@@ -1042,20 +1043,56 @@ app.post('/api/create-subscription-session', async (req, res) => {
       });
     }
 
-    const { priceId, userId, userEmail } = req.body;
+    const { priceId, userId, userEmail, plan, amount, currency, interval, description } = req.body;
+    
+    console.log('Creating subscription session:', { priceId, userId, userEmail, plan, amount, currency, interval });
 
-    if (!priceId) {
-      return res.status(400).json({ error: 'Price ID required' });
+    // Build line items - either from priceId or dynamically from amount
+    let lineItems;
+    
+    if (priceId) {
+      // Use existing Stripe Price ID
+      lineItems = [{
+        price: priceId,
+        quantity: 1,
+      }];
+    } else if (amount && currency && interval) {
+      // Create price dynamically using price_data
+      lineItems = [{
+        price_data: {
+          currency: currency || 'gbp',
+          product_data: {
+            name: description || 'Vehicle Stats Widget Subscription',
+            description: 'Monthly access to embed vehicle lookup widget on your website',
+          },
+          unit_amount: Math.round((amount || 9.99) * 100), // Convert to pence
+          recurring: {
+            interval: interval || 'month',
+          },
+        },
+        quantity: 1,
+      }];
+    } else {
+      // Default to £9.99/month embed widget subscription
+      lineItems = [{
+        price_data: {
+          currency: 'gbp',
+          product_data: {
+            name: 'Vehicle Stats Widget - Monthly Subscription',
+            description: 'Embed the vehicle lookup widget on your dealer website',
+          },
+          unit_amount: 999, // £9.99 in pence
+          recurring: {
+            interval: 'month',
+          },
+        },
+        quantity: 1,
+      }];
     }
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      line_items: [
-        {
-          price: priceId, // Use your Stripe price ID for the subscription
-          quantity: 1,
-        },
-      ],
+      line_items: lineItems,
       mode: 'subscription',
       success_url: `${req.headers.origin || 'http://localhost:3000'}?subscription=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.origin || 'http://localhost:3000'}?subscription=cancelled`,
@@ -1063,9 +1100,11 @@ app.post('/api/create-subscription-session', async (req, res) => {
       metadata: {
         userId: userId?.toString() || '',
         type: 'subscription',
+        plan: plan || 'embed-widget',
       },
     });
 
+    console.log('Subscription session created:', session.id);
     res.json({ sessionId: session.id, url: session.url });
   } catch (error) {
     console.error('Stripe subscription error:', error);

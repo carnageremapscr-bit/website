@@ -611,11 +611,11 @@
               <div class="card-content">
                 <div class="file-type-selection">
                   <div class="file-type-buttons">
-                    <button class="file-type-btn active" data-type="ecu">
+                    <button class="file-type-btn active" data-type="ecu" id="file-type-ecu" onclick="selectFileType('ecu')">
                       <span class="btn-icon">💾</span>
                       <span>ECU File</span>
                     </button>
-                    <button class="file-type-btn" data-type="transmission">
+                    <button class="file-type-btn" data-type="transmission" id="file-type-transmission" onclick="selectFileType('transmission')">
                       <span class="btn-icon">⚙️</span>
                       <span>Transmission File</span>
                     </button>
@@ -1001,91 +1001,201 @@
       </div>
     </section>
 
-    <!-- Vehicle Search Tab -->
+    <!-- Vehicle Search Tab - ENHANCED ECU LOOKUP 2026 -->
     <section id="vehicle-search-tab" class="cr-tab">
-      <h2>🔍 Vehicle Search</h2>
-      <p class="muted">Search our database for detailed vehicle information, ECU compatibility, and performance gains</p>
-      
+      <!-- Hero Header -->
+      <div class="ecu-lookup-hero">
+        <div class="hero-content">
+          <h2 class="hero-title">
+            <span class="hero-icon">🔍</span>
+            ECU Database Lookup
+          </h2>
+          <p class="hero-subtitle">Search 50,000+ vehicles • Real-time ECU compatibility • Instant performance estimates</p>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-pill">
+            <span class="stat-number">50K+</span>
+            <span class="stat-label">Vehicles</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-number">200+</span>
+            <span class="stat-label">ECU Types</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-number">99%</span>
+            <span class="stat-label">Coverage</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Filter Buttons -->
+      <div class="quick-filters">
+        <h4 class="filter-title">🚀 Quick Select Popular Brands</h4>
+        <div class="filter-buttons">
+          <button class="quick-filter-btn" data-manufacturer="audi" onclick="quickSelectManufacturer('audi')">
+            <span class="brand-icon">🔵</span> Audi
+          </button>
+          <button class="quick-filter-btn" data-manufacturer="bmw" onclick="quickSelectManufacturer('bmw')">
+            <span class="brand-icon">⚪</span> BMW
+          </button>
+          <button class="quick-filter-btn" data-manufacturer="mercedes" onclick="quickSelectManufacturer('mercedes')">
+            <span class="brand-icon">⭐</span> Mercedes
+          </button>
+          <button class="quick-filter-btn" data-manufacturer="volkswagen" onclick="quickSelectManufacturer('volkswagen')">
+            <span class="brand-icon">🔷</span> VW
+          </button>
+          <button class="quick-filter-btn" data-manufacturer="ford" onclick="quickSelectManufacturer('ford')">
+            <span class="brand-icon">🔵</span> Ford
+          </button>
+          <button class="quick-filter-btn" data-manufacturer="vauxhall" onclick="quickSelectManufacturer('vauxhall')">
+            <span class="brand-icon">🔴</span> Vauxhall
+          </button>
+          <button class="quick-filter-btn" data-manufacturer="land-rover" onclick="quickSelectManufacturer('land-rover')">
+            <span class="brand-icon">🟢</span> Land Rover
+          </button>
+          <button class="quick-filter-btn" data-manufacturer="porsche" onclick="quickSelectManufacturer('porsche')">
+            <span class="brand-icon">🔴</span> Porsche
+          </button>
+        </div>
+      </div>
+
       <div class="vehicle-search-container">
-        <div class="search-form-card card">
-          <h3>Search Vehicle</h3>
-          <div class="search-form">
-            <div class="form-row">
-              <div class="form-group">
-                <label for="search-manufacturer">Manufacturer</label>
-                <select id="search-manufacturer" class="form-control">
+        <!-- Enhanced Search Form Card -->
+        <div class="search-form-card card ecu-search-card">
+          <div class="card-header-enhanced">
+            <div class="header-icon">🚗</div>
+            <div class="header-text">
+              <h3>Find Your Vehicle</h3>
+              <p>Select each option to narrow down your search</p>
+            </div>
+          </div>
+          
+          <div class="search-form enhanced-search-form">
+            <!-- Step Progress Indicator -->
+            <div class="search-progress">
+              <div class="progress-step active" data-step="1">
+                <div class="step-dot">1</div>
+                <span>Brand</span>
+              </div>
+              <div class="progress-line"></div>
+              <div class="progress-step" data-step="2">
+                <div class="step-dot">2</div>
+                <span>Model</span>
+              </div>
+              <div class="progress-line"></div>
+              <div class="progress-step" data-step="3">
+                <div class="step-dot">3</div>
+                <span>Year</span>
+              </div>
+              <div class="progress-line"></div>
+              <div class="progress-step" data-step="4">
+                <div class="step-dot">4</div>
+                <span>Engine</span>
+              </div>
+            </div>
+
+            <div class="form-row enhanced-form-row">
+              <div class="form-group enhanced-form-group">
+                <label for="search-manufacturer">
+                  <span class="label-icon">🏭</span> Manufacturer
+                </label>
+                <select id="search-manufacturer" class="form-control enhanced-select">
                   <option value="">Select Manufacturer</option>
-                  <option value="audi">Audi</option>
-                  <option value="bmw">BMW</option>
-                  <option value="mercedes">Mercedes-Benz</option>
-                  <option value="volkswagen">Volkswagen</option>
-                  <option value="ford">Ford</option>
-                  <option value="vauxhall">Vauxhall / Opel</option>
-                  <option value="land-rover">Land Rover</option>
-                  <option value="nissan">Nissan</option>
-                  <option value="toyota">Toyota</option>
-                  <option value="peugeot">Peugeot</option>
-                  <option value="renault">Renault</option>
-                  <option value="citroen">Citroën</option>
-                  <option value="seat">Seat</option>
-                  <option value="skoda">Škoda</option>
-                  <option value="volvo">Volvo</option>
-                  <option value="mazda">Mazda</option>
-                  <option value="honda">Honda</option>
-                  <option value="hyundai">Hyundai</option>
-                  <option value="kia">Kia</option>
-                  <option value="fiat">Fiat</option>
-                  <option value="alfa-romeo">Alfa Romeo</option>
-                  <option value="jeep">Jeep</option>
-                  <option value="mini">Mini</option>
-                  <option value="porsche">Porsche</option>
-                  <option value="lexus">Lexus</option>
-                  <option value="jaguar">Jaguar</option>
-                  <option value="dacia">Dacia</option>
-                  <option value="suzuki">Suzuki</option>
-                  <option value="subaru">Subaru</option>
-                  <option value="mitsubishi">Mitsubishi</option>
-                  <option value="tesla">Tesla</option>
-                  <option value="bentley">Bentley</option>
-                  <option value="maserati">Maserati</option>
                   <option value="abarth">Abarth</option>
-                  <option value="ds">DS</option>
-                  <option value="smart">Smart</option>
-                  <option value="ssangyong">SsangYong</option>
-                  <option value="infiniti">Infiniti</option>
-                  <option value="iveco">Iveco</option>
-                  <option value="dodge">Dodge</option>
+                  <option value="alfa-romeo">Alfa Romeo</option>
+                  <option value="audi">Audi</option>
+                  <option value="bentley">Bentley</option>
+                  <option value="bmw">BMW</option>
                   <option value="chevrolet">Chevrolet</option>
                   <option value="chrysler">Chrysler</option>
+                  <option value="citroen">Citroën</option>
+                  <option value="cupra">Cupra</option>
+                  <option value="dacia">Dacia</option>
+                  <option value="dodge">Dodge</option>
+                  <option value="ds">DS Automobiles</option>
+                  <option value="ferrari">Ferrari</option>
+                  <option value="fiat">Fiat</option>
+                  <option value="ford">Ford</option>
+                  <option value="genesis">Genesis</option>
+                  <option value="honda">Honda</option>
+                  <option value="hyundai">Hyundai</option>
+                  <option value="infiniti">Infiniti</option>
+                  <option value="iveco">Iveco</option>
+                  <option value="jaguar">Jaguar</option>
+                  <option value="jeep">Jeep</option>
+                  <option value="kia">Kia</option>
+                  <option value="lamborghini">Lamborghini</option>
+                  <option value="land-rover">Land Rover</option>
+                  <option value="lexus">Lexus</option>
+                  <option value="maserati">Maserati</option>
+                  <option value="mazda">Mazda</option>
+                  <option value="mclaren">McLaren</option>
+                  <option value="mercedes">Mercedes-Benz</option>
+                  <option value="mg">MG</option>
+                  <option value="mini">Mini</option>
+                  <option value="mitsubishi">Mitsubishi</option>
+                  <option value="nissan">Nissan</option>
                   <option value="opel">Opel</option>
+                  <option value="peugeot">Peugeot</option>
+                  <option value="polestar">Polestar</option>
+                  <option value="porsche">Porsche</option>
+                  <option value="renault">Renault</option>
+                  <option value="seat">Seat</option>
+                  <option value="skoda">Škoda</option>
+                  <option value="smart">Smart</option>
+                  <option value="ssangyong">SsangYong</option>
+                  <option value="subaru">Subaru</option>
+                  <option value="suzuki">Suzuki</option>
+                  <option value="tesla">Tesla</option>
+                  <option value="toyota">Toyota</option>
+                  <option value="vauxhall">Vauxhall</option>
+                  <option value="volkswagen">Volkswagen</option>
+                  <option value="volvo">Volvo</option>
                 </select>
+                <div class="select-hint">Choose your vehicle brand</div>
               </div>
               
-              <div class="form-group">
-                <label for="search-model">Model</label>
-                <select id="search-model" class="form-control">
+              <div class="form-group enhanced-form-group">
+                <label for="search-model">
+                  <span class="label-icon">🚙</span> Model
+                </label>
+                <select id="search-model" class="form-control enhanced-select" disabled>
                   <option value="">Select Model</option>
                 </select>
+                <div class="select-hint">Available after selecting brand</div>
               </div>
               
-              <div class="form-group">
-                <label for="search-year">Year Range</label>
-                <select id="search-year" class="form-control">
+              <div class="form-group enhanced-form-group">
+                <label for="search-year">
+                  <span class="label-icon">📅</span> Year Range
+                </label>
+                <select id="search-year" class="form-control enhanced-select" disabled>
                   <option value="">Select Year Range</option>
                 </select>
+                <div class="select-hint">Production year range</div>
               </div>
               
-              <div class="form-group">
-                <label for="search-engine">Engine</label>
-                <select id="search-engine" class="form-control">
+              <div class="form-group enhanced-form-group">
+                <label for="search-engine">
+                  <span class="label-icon">⚡</span> Engine
+                </label>
+                <select id="search-engine" class="form-control enhanced-select" disabled>
                   <option value="">Select Engine</option>
                 </select>
+                <div class="select-hint">Engine size & power</div>
               </div>
             </div>
             
-            <button class="btn primary btn-search" id="search-vehicle-btn">
-              <span>🔍 Search Vehicle</span>
-            </button>
+            <div class="search-actions">
+              <button class="btn secondary btn-reset" id="reset-search-btn" onclick="resetECUSearch()">
+                <span>🔄</span> Reset
+              </button>
+              <button class="btn primary btn-search enhanced-search-btn" id="search-vehicle-btn" disabled>
+                <span class="btn-icon">🔍</span>
+                <span class="btn-text">Search ECU Database</span>
+                <span class="btn-loader" style="display:none;">⏳</span>
+              </button>
+            </div>
           </div>
         </div>
         
@@ -1371,11 +1481,44 @@
           </div>
         </div>
         
-        <!-- Empty State -->
-        <div id="search-empty-state" class="empty-state-search">
-          <div class="empty-icon">🔍</div>
-          <h3>Search for a Vehicle</h3>
-          <p>Select a manufacturer, model, and engine to view detailed specifications and performance gains</p>
+        <!-- Enhanced Empty State -->
+        <div id="search-empty-state" class="empty-state-search enhanced-empty-state">
+          <div class="empty-state-content">
+            <div class="empty-icon-container">
+              <div class="empty-icon-bg"></div>
+              <div class="empty-icon">🔍</div>
+            </div>
+            <h3>Search Our ECU Database</h3>
+            <p>Select your vehicle details above to discover:</p>
+            <div class="empty-features">
+              <div class="empty-feature">
+                <span class="feature-icon">⚡</span>
+                <span>Performance gains for Stage 1, 2 & 3</span>
+              </div>
+              <div class="empty-feature">
+                <span class="feature-icon">💾</span>
+                <span>Compatible ECU types & read methods</span>
+              </div>
+              <div class="empty-feature">
+                <span class="feature-icon">🔧</span>
+                <span>Available tuning options</span>
+              </div>
+              <div class="empty-feature">
+                <span class="feature-icon">📊</span>
+                <span>Power & torque comparisons</span>
+              </div>
+            </div>
+            <div class="popular-searches">
+              <h4>🔥 Popular Searches</h4>
+              <div class="popular-tags">
+                <button class="popular-tag" onclick="quickSelectManufacturer('bmw')">BMW 3 Series</button>
+                <button class="popular-tag" onclick="quickSelectManufacturer('audi')">Audi A4</button>
+                <button class="popular-tag" onclick="quickSelectManufacturer('volkswagen')">VW Golf</button>
+                <button class="popular-tag" onclick="quickSelectManufacturer('mercedes')">Mercedes C-Class</button>
+                <button class="popular-tag" onclick="quickSelectManufacturer('ford')">Ford Focus ST</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
