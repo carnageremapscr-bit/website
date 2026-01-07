@@ -441,19 +441,22 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false, // Allow embedding for widget
 }));
 
-app.use(express.static('.', {
-  setHeaders: (res, path) => {
-    if (path.endsWith('.html')) {
+app.use(express.static(__dirname, {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-    } else if (path.endsWith('.avif')) {
+    } else if (filePath.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-cache');
+    } else if (filePath.endsWith('.avif')) {
       res.setHeader('Content-Type', 'image/avif');
       res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-    } else if (path.match(/\.(css|js|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)$/)) {
+    } else if (filePath.match(/\.(css|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)$/)) {
       res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
     }
   }
-})); // Serve static files from current directory
+})); // Serve static files from project directory
 
 // Health check endpoint - SECURE: No sensitive data exposed
 app.get('/api/health', (req, res) => {
@@ -1098,6 +1101,14 @@ app.post('/api/verify-payment', async (req, res) => {
     console.error('Payment verification error:', error);
     res.status(500).json({ error: error.message || 'Failed to verify payment' });
   }
+});
+
+// Global error handler - catch all unhandled errors
+app.use((err, req, res, next) => {
+  console.error('🔥 Unhandled error:', err);
+  console.error('   Request:', req.method, req.url);
+  console.error('   Stack:', err.stack);
+  res.status(500).json({ error: 'Internal server error', message: err.message });
 });
 
 // Start server
