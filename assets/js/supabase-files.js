@@ -1,7 +1,8 @@
 // Supabase Files Adapter
 // Handles file uploads and management with Supabase
 
-// Use global supabaseClient instead of import
+// Use global supabaseClient
+(function() {
 const supabase = window.supabaseClient;
 
 // Storage bucket validation and setup
@@ -374,3 +375,4 @@ window.SupabaseFiles = {
 };
 
 console.log('✅ Supabase Files module loaded');
+})(); // End IIFE

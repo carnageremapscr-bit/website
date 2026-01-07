@@ -8,9 +8,9 @@ const SUPABASE_CONFIG = {
   anonKey: window.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmZnNtYnN4d2h4ZWhzaWd0cW9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyNDU1OTcsImV4cCI6MjA3NzgyMTU5N30.l77PNiP6VBtOeF6ZHe8uKzOo7K9dOxd83cxUziQysNk'
 };
 
-// Warn in development if using default keys
-if (!window.SUPABASE_URL && process?.env?.NODE_ENV !== 'production') {
-  console.warn('⚠️ Supabase credentials should be configured via environment variables for production');
+// Warn if using default keys (optional)
+if (!window.SUPABASE_URL) {
+  console.log('ℹ️ Using default Supabase configuration');
 }
 
 let _supabase = null;

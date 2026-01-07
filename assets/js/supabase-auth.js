@@ -1,7 +1,8 @@
 // Supabase Authentication Adapter
 // Replaces IndexedDB auth with Supabase
 
-// Use global supabaseClient instead of import
+// Use global supabaseClient
+(function() {
 const supabase = window.supabaseClient;
 
 // Fallback SHA-256 implementation for non-HTTPS contexts
@@ -388,3 +389,4 @@ window.SupabaseAuth = {
 };
 
 console.log('✅ Supabase Auth module loaded');
+})(); // End IIFE

@@ -1,7 +1,8 @@
 // Supabase Support Adapter
 // Handles support tickets and messages with Supabase
 
-// Use global supabaseClient instead of import
+// Use global supabaseClient
+(function() {
 const supabase = window.supabaseClient;
 
 window.SupabaseSupport = {
@@ -164,3 +165,4 @@ window.SupabaseSupport = {
 };
 
 console.log('✅ Supabase Support module loaded');
+})(); // End IIFE
