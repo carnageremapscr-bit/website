@@ -8478,8 +8478,8 @@ I would like to request a quote for tuning this vehicle.`,
 
   // Load admin notifications
   async function loadAdminNotifications() {
-    // Call the new server-based notification loader
-    await loadRecentNotifications();
+    // Call the notification loader specifically for the overview container
+    await loadRecentNotifications('admin-notifications-list');
   }
   
   // Helper function for notification time formatting
@@ -15217,8 +15217,11 @@ Thank you for choosing Carnage Remaps!
   };
 
   // Load recent admin notifications from server
-  async function loadRecentNotifications() {
-    const logContainer = document.getElementById('notification-log') || document.getElementById('admin-notifications-list');
+  async function loadRecentNotifications(containerId = null) {
+    const logContainer = containerId 
+      ? document.getElementById(containerId)
+      : (document.getElementById('notification-log') || document.getElementById('admin-notifications-list'));
+    
     if (!logContainer) {
       console.warn('⚠️ Notification container not found');
       return;
