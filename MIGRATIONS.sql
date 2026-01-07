@@ -142,13 +142,9 @@ CREATE TABLE IF NOT EXISTS admin_notifications (
 -- Enable RLS
 ALTER TABLE admin_notifications ENABLE ROW LEVEL SECURITY;
 
--- Only admins can view notifications
-CREATE POLICY "Admins can view notifications" ON admin_notifications
-  FOR SELECT USING (auth.uid() IN (SELECT id FROM users WHERE role = 'admin'));
-
--- Service can insert notifications (for server-side webhook events)
-CREATE POLICY "Service can insert notifications" ON admin_notifications
-  FOR INSERT WITH CHECK (true);
+-- Allow service role to manage notifications (server handles auth via sessions)
+CREATE POLICY "Service can manage notifications" ON admin_notifications
+  FOR ALL USING (true);
 
 -- Create indexes for faster queries
 CREATE INDEX idx_admin_notifications_type ON admin_notifications(type);

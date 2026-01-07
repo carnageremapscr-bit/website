@@ -15226,10 +15226,18 @@ Thank you for choosing Carnage Remaps!
     
     try {
       const apiUrl = window.CARNAGE_API_URL || '';
+      console.log('🔍 Fetching notifications from:', `${apiUrl}/api/admin/notifications`);
       const response = await fetch(`${apiUrl}/api/admin/notifications`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
       const data = await response.json();
       
       console.log('📋 Loaded notifications:', data);
+      console.log('📋 Notification count:', data.count);
+      console.log('📋 Notifications array:', data.notifications);
       
       if (data.success && data.notifications && data.notifications.length > 0) {
         // Clear placeholder

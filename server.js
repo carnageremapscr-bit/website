@@ -401,6 +401,34 @@ app.post('/api/test-notification', express.json(), async (req, res) => {
 });
 
 // ============================================
+// TEST NOTIFICATION ENDPOINT - Create sample notification
+// ============================================
+app.post('/api/admin/test-notification', express.json(), async (req, res) => {
+  try {
+    const notification = await addAdminNotification({
+      type: 'user',
+      icon: '🧪',
+      title: 'Test Notification',
+      message: 'This is a test notification to verify the system is working',
+      user: 'admin@test.com',
+      badge: 'new'
+    });
+    
+    res.json({
+      success: true,
+      notification: notification,
+      message: 'Test notification created successfully'
+    });
+  } catch (error) {
+    console.error('Test notification error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// ============================================
 // PAYMENT VERIFICATION ENDPOINT - Fallback tracking
 // Call this after successful payment redirect to ensure tracking
 // ============================================
