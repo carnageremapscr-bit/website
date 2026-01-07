@@ -124,12 +124,14 @@ window.SupabaseFiles = {
         const notifyData = await notifyResponse.json();
         console.log('📧 Notification response:', notifyData);
         
-        if (notifyData.email_sent) {
+        if (notifyData.emailSent || notifyData.email_sent) {
           console.log('✅ EMAIL CONFIRMED - Admin has been notified');
+        } else if (notifyData.whatsAppSent) {
+          console.log('✅ WHATSAPP CONFIRMED - Admin has been notified via WhatsApp');
         } else if (notifyData.success) {
           console.log('⚠️ Notification endpoint responded but email may not have sent');
         } else {
-          console.warn('❌ Notification endpoint failed:', notifyData.error);
+          console.warn('❌ Notification endpoint failed:', notifyData.error || notifyData.message);
         }
       } catch (notifyError) {
         console.error('⚠️ Failed to send notification email:', notifyError);

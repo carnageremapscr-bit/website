@@ -7890,7 +7890,7 @@ I would like to request a quote for tuning this vehicle.`,
           loadAdminTickets();
         }
         if (tabName === 'files') loadAdminFiles();
-        if (tabName === 'notifications') loadAdminNotifications();
+        if (tabName === 'notifications') loadNotificationSettings();
         if (tabName === 'credit') {
           if (!isLoadingAdminUsers) loadAdminUsers(); // Load users for credit management
         }
@@ -14165,6 +14165,125 @@ Thank you for choosing Carnage Remaps!
     } else {
       console.error('❌ SupabaseFiles module not loaded');
       return false;
+    }
+  };
+
+  // ============================================
+  // NOTIFICATION SETTINGS PANEL
+  // ============================================
+  
+  // Load notification settings and status
+  async function loadNotificationSettings() {
+    const emailStatus = document.getElementById('email-status');
+    const whatsappStatus = document.getElementById('whatsapp-status');
+    
+    if (!emailStatus && !whatsappStatus) return;
+    
+    try {
+      const apiUrl = window.CARNAGE_API_URL || '';
+      const response = await fetch(`${apiUrl}/api/notification-status`);
+      const data = await response.json();
+      
+      // Update email status
+      if (emailStatus) {
+        if (data.email.configured) {
+          emailStatus.innerHTML = `✅ Configured<br><small>Sending to: ${data.email.admin}</small>`;
+        } else {
+          emailStatus.innerHTML = `❌ Not Configured<br><small>EMAIL_PASSWORD not set</small>`;
+        }
+      }
+      
+      // Update WhatsApp status
+      if (whatsappStatus) {
+        if (data.whatsapp.configured) {
+          const method = data.whatsapp.twilio ? 'Twilio' : 'CallMeBot';
+          whatsappStatus.innerHTML = `✅ Configured via ${method}`;
+        } else {
+          whatsappStatus.innerHTML = `⚠️ Not Configured<br><small>Add WHATSAPP_PHONE + API key</small>`;
+        }
+      }
+      
+      console.log('📊 Notification status loaded:', data);
+    } catch (error) {
+      console.error('Error loading notification status:', error);
+      if (emailStatus) emailStatus.innerHTML = '⚠️ Error checking status';
+      if (whatsappStatus) whatsappStatus.innerHTML = '⚠️ Error checking status';
+    }
+  }
+  
+  // Test admin notification
+  window.testAdminNotification = async function() {
+    const logContainer = document.getElementById('notification-log');
+    const testBtn = document.querySelector('[onclick="testAdminNotification()"]');
+    
+    if (testBtn) {
+      testBtn.disabled = true;
+      testBtn.innerHTML = '⏳ Sending...';
+    }
+    
+    try {
+      const apiUrl = window.CARNAGE_API_URL || '';
+      const response = await fetch(`${apiUrl}/api/test-notification`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      const data = await response.json();
+      console.log('📧 Test notification response:', data);
+      
+      // Add to log
+      if (logContainer) {
+        const timestamp = new Date().toLocaleString('en-GB');
+        const statusClass = data.success ? 'success' : 'error';
+        const statusIcon = data.success ? '✅' : '❌';
+        
+        const logEntry = document.createElement('div');
+        logEntry.style.cssText = `
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding: 1rem;
+          background: ${data.success ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)'};
+          border-left: 4px solid ${data.success ? '#22c55e' : '#ef4444'};
+          border-radius: 8px;
+          margin-bottom: 0.5rem;
+        `;
+        logEntry.innerHTML = `
+          <span style="font-size: 1.5rem;">${statusIcon}</span>
+          <div style="flex: 1;">
+            <div style="font-weight: 600; color: #fff;">Test Notification</div>
+            <div style="font-size: 0.85rem; color: #888;">
+              Email: ${data.emailSent ? '✅ Sent' : '❌ Failed'} | 
+              WhatsApp: ${data.whatsAppSent ? '✅ Sent' : '❌ Failed'}
+            </div>
+          </div>
+          <div style="font-size: 0.8rem; color: #666;">${timestamp}</div>
+        `;
+        
+        // Clear placeholder if it exists
+        const placeholder = logContainer.querySelector('div[style*="text-align:center"]');
+        if (placeholder && placeholder.textContent.includes('Notification log')) {
+          logContainer.innerHTML = '';
+        }
+        
+        logContainer.insertBefore(logEntry, logContainer.firstChild);
+      }
+      
+      // Show result alert
+      if (data.success) {
+        alert('✅ Test notification sent! Check your email/WhatsApp.');
+      } else {
+        alert('❌ Notification failed: ' + data.message);
+      }
+      
+    } catch (error) {
+      console.error('Test notification error:', error);
+      alert('❌ Error sending test notification: ' + error.message);
+    } finally {
+      if (testBtn) {
+        testBtn.disabled = false;
+        testBtn.innerHTML = '📧 Send Test Notification';
+      }
     }
   };
 

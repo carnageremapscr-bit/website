@@ -270,6 +270,64 @@ app.get('/api/webhook-status', (req, res) => {
 });
 
 // ============================================
+// NOTIFICATION STATUS ENDPOINT - Check notification config
+// ============================================
+app.get('/api/notification-status', (req, res) => {
+  const emailConfigured = !!transporter;
+  const whatsappConfigured = !!(WHATSAPP_PHONE && WHATSAPP_API_KEY) || !!(TWILIO_SID && TWILIO_AUTH);
+  
+  res.json({
+    email: {
+      configured: emailConfigured,
+      user: EMAIL_USER || 'Not set',
+      admin: ADMIN_EMAIL || 'Not set',
+      passwordSet: !!EMAIL_PASSWORD
+    },
+    whatsapp: {
+      configured: whatsappConfigured,
+      callmebot: !!(WHATSAPP_PHONE && WHATSAPP_API_KEY),
+      twilio: !!(TWILIO_SID && TWILIO_AUTH),
+      phoneSet: !!WHATSAPP_PHONE
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
+// ============================================
+// SEND TEST NOTIFICATION - Admin test
+// ============================================
+app.post('/api/test-notification', express.json(), async (req, res) => {
+  console.log('\n🔔 TEST NOTIFICATION ENDPOINT CALLED');
+  
+  try {
+    const result = await notifyAdmin(
+      '🧪 TEST',
+      'Test Notification from Admin Panel',
+      `This is a test notification.\nSent at: ${new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' })}\nIf you received this, notifications are working!`
+    );
+    
+    console.log('Test notification result:', result);
+    
+    res.json({
+      success: result.emailSent || result.whatsAppSent,
+      emailSent: result.emailSent,
+      whatsAppSent: result.whatsAppSent,
+      timestamp: new Date().toISOString(),
+      message: result.emailSent ? '✅ Email sent successfully!' : 
+               result.whatsAppSent ? '✅ WhatsApp sent successfully!' :
+               '❌ Both email and WhatsApp failed'
+    });
+  } catch (error) {
+    console.error('Test notification error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// ============================================
 // PAYMENT VERIFICATION ENDPOINT - Fallback tracking
 // Call this after successful payment redirect to ensure tracking
 // ============================================
