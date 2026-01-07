@@ -74,26 +74,31 @@ const upload = multer({
   }
 });
 
-// Email notifications setup (nodemailer)
+// Email notifications setup
+// Supports: Resend API (recommended for Railway), or Nodemailer with Gmail
 const nodemailer = require('nodemailer');
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'carnageremaps@gmail.com';
 const EMAIL_USER = process.env.EMAIL_USER || 'carnageremaps@gmail.com';
 const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD || '';
+const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 
 console.log('=== Email Configuration ===');
 console.log('ADMIN_EMAIL:', ADMIN_EMAIL);
 console.log('EMAIL_USER:', EMAIL_USER);
 console.log('EMAIL_PASSWORD set:', !!EMAIL_PASSWORD);
-console.log('EMAIL_PASSWORD length:', EMAIL_PASSWORD?.length || 0);
-console.log('EMAIL_PASSWORD (first 10 chars):', EMAIL_PASSWORD ? EMAIL_PASSWORD.substring(0, 10) + '***' : 'NOT SET');
+console.log('RESEND_API_KEY set:', !!RESEND_API_KEY);
 
-// Create transporter
+// Create nodemailer transporter (fallback)
 const transporter = EMAIL_PASSWORD ? nodemailer.createTransport({
   service: 'gmail',
-  auth: { user: EMAIL_USER, pass: EMAIL_PASSWORD }
+  auth: { user: EMAIL_USER, pass: EMAIL_PASSWORD },
+  connectionTimeout: 10000,
+  greetingTimeout: 5000,
+  socketTimeout: 10000
 }) : null;
 
-console.log('Transporter created:', !!transporter);
+console.log('Nodemailer transporter created:', !!transporter);
+console.log('Using Resend API:', !!RESEND_API_KEY);
 console.log('===========================');
 
 // ============================================
@@ -208,16 +213,52 @@ async function notifyAdmin(type, subject, details) {
   return { emailSent, whatsAppSent };
 }
 
-// Helper to send admin emails
+// Helper to send admin emails - tries Resend API first, then Nodemailer
 async function sendAdminEmail(subject, text, html) {
   console.log('📧 sendAdminEmail called for:', subject);
+  
+  // Try Resend API first (works on Railway)
+  if (RESEND_API_KEY) {
+    try {
+      console.log('📤 Attempting to send via Resend API to:', ADMIN_EMAIL);
+      
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${RESEND_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: 'Carnage Remaps <onboarding@resend.dev>',
+          to: [ADMIN_EMAIL],
+          subject: subject,
+          html: html || `<pre>${text}</pre>`,
+          text: text
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        console.log('✉️ Email sent via Resend:', data.id);
+        return true;
+      } else {
+        console.error('❌ Resend API error:', data);
+        // Fall through to nodemailer
+      }
+    } catch (err) {
+      console.error('❌ Resend API failed:', err.message);
+      // Fall through to nodemailer
+    }
+  }
+  
+  // Fallback to Nodemailer
   if (!transporter) { 
-    console.warn('⚠️ Email not configured (transporter is null):', subject);
-    console.warn('   EMAIL_PASSWORD must be set in environment variables');
+    console.warn('⚠️ Email not configured (no Resend API key and no nodemailer)');
     return false;
   }
   try {
-    console.log('📤 Attempting to send email to:', ADMIN_EMAIL);
+    console.log('📤 Attempting to send via Nodemailer to:', ADMIN_EMAIL);
     console.log('   From:', EMAIL_USER);
     console.log('   Subject:', subject);
     
@@ -273,15 +314,16 @@ app.get('/api/webhook-status', (req, res) => {
 // NOTIFICATION STATUS ENDPOINT - Check notification config
 // ============================================
 app.get('/api/notification-status', (req, res) => {
-  const emailConfigured = !!transporter;
+  const emailConfigured = !!RESEND_API_KEY || !!transporter;
   const whatsappConfigured = !!(WHATSAPP_PHONE && WHATSAPP_API_KEY) || !!(TWILIO_SID && TWILIO_AUTH);
   
   res.json({
     email: {
       configured: emailConfigured,
-      user: EMAIL_USER || 'Not set',
+      method: RESEND_API_KEY ? 'Resend API' : (transporter ? 'Gmail SMTP' : 'Not configured'),
       admin: ADMIN_EMAIL || 'Not set',
-      passwordSet: !!EMAIL_PASSWORD
+      resendConfigured: !!RESEND_API_KEY,
+      nodemailerConfigured: !!transporter
     },
     whatsapp: {
       configured: whatsappConfigured,
