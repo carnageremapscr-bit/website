@@ -12453,25 +12453,54 @@ Thank you for choosing Carnage Remaps!
     // Handle successful Stripe payment (called from success page or webhook)
     async function handleStripeSuccess(sessionId) {
       try {
-        // Verify payment with backend
-        const response = await fetch('/api/verify-payment', {
+        console.log('🔍 Verifying payment session:', sessionId);
+        
+        // Verify and track payment with backend (this ensures payment is tracked even if webhook fails)
+        const response = await fetch(`${API_URL}/api/verify-and-track-payment`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ sessionId })
         });
         
         if (!response.ok) {
-          throw new Error('Payment verification failed');
+          // Fallback to legacy verify endpoint
+          const legacyResponse = await fetch(`${API_URL}/api/verify-payment`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId })
+          });
+          
+          if (!legacyResponse.ok) {
+            throw new Error('Payment verification failed');
+          }
+          
+          const data = await legacyResponse.json();
+          clearCreditCache();
+          await updateCreditDisplay();
+          await loadCreditBalance();
+          alert(`✅ Payment successful!\n\n£${data.amount?.toFixed(2) || 'Your top-up'} has been added to your account.`);
+          return true;
         }
         
         const data = await response.json();
+        console.log('✅ Payment verified:', data);
         
-        // Credit was already added by webhook, just refresh display
+        // Refresh credit display
         clearCreditCache();
         await updateCreditDisplay();
         await loadCreditBalance();
         
-        alert(`✅ Payment successful!\n\n£${data.amount.toFixed(2)} has been added to your account.`);
+        if (data.type === 'topup') {
+          alert(`✅ Payment successful!\n\n£${data.amount?.toFixed(2)} has been added to your account.\nNew balance: £${data.newBalance?.toFixed(2) || 'Updated'}`);
+        } else if (data.type === 'subscription') {
+          alert(`🎉 Subscription activated!\n\nYou now have access to the embed widget.\nAmount: £${data.amount?.toFixed(2)}/month`);
+          // Refresh subscription status
+          if (typeof initSettings === 'function') {
+            await initSettings();
+          }
+        } else {
+          alert(`✅ Payment successful!`);
+        }
         
         return true;
       } catch (error) {
@@ -12489,20 +12518,28 @@ Thank you for choosing Carnage Remaps!
       const canceled = urlParams.get('canceled');
       const subscriptionSuccess = urlParams.get('subscription');
       const subscriptionType = urlParams.get('type');
+      const paymentSuccess = urlParams.get('payment');
+      
+      console.log('🔍 Checking Stripe callback params:', { sessionId, success, canceled, subscriptionSuccess, subscriptionType, paymentSuccess });
       
       if (success === 'true' && sessionId) {
         // One-time payment successful (wallet top-up)
         handleStripeSuccess(sessionId);
         // Clean URL
         window.history.replaceState({}, document.title, window.location.pathname);
-      } else if (canceled === 'true') {
-        // Payment canceled
-        alert('Payment was canceled. Your credit has not been charged.');
+      } else if (paymentSuccess === 'success' && sessionId) {
+        // Payment success with session ID (new format)
+        handleStripeSuccess(sessionId);
         // Clean URL
         window.history.replaceState({}, document.title, window.location.pathname);
-      } else if (subscriptionSuccess === 'success' && subscriptionType) {
-        // Subscription activated successfully
-        handleSubscriptionSuccess(subscriptionType);
+      } else if (canceled === 'true' || paymentSuccess === 'cancelled') {
+        // Payment canceled
+        alert('Payment was canceled. Your card has not been charged.');
+        // Clean URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } else if (subscriptionSuccess === 'success') {
+        // Subscription activated successfully - pass session ID for verification
+        handleSubscriptionSuccess(subscriptionType || 'embed', sessionId);
         // Clean URL
         window.history.replaceState({}, document.title, window.location.pathname);
       } else if (subscriptionSuccess === 'cancelled') {
@@ -12514,11 +12551,43 @@ Thank you for choosing Carnage Remaps!
     }
     
     // Handle successful subscription activation
-    async function handleSubscriptionSuccess(subscriptionType) {
+    async function handleSubscriptionSuccess(subscriptionType, sessionId) {
       try {
-        // Create local subscription record
-        // Note: In production, this would be handled by Stripe webhook
-        // The webhook would verify payment and activate the subscription
+        console.log('🔍 Verifying subscription:', subscriptionType, sessionId);
+        
+        // If we have a session ID, verify with backend first
+        if (sessionId) {
+          try {
+            const response = await fetch(`${API_URL}/api/verify-and-track-payment`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ sessionId })
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              console.log('✅ Subscription verified via API:', data);
+              
+              alert('🎉 Subscription activated successfully!\n\nYou now have access to the embed widget feature.\n\nYour card will be charged £9.99 monthly. You can cancel anytime from the Billing tab.');
+              
+              // Refresh subscription display
+              if (typeof loadSubscriptions === 'function') {
+                loadSubscriptions();
+              }
+              
+              // Reload settings to unlock embed section
+              if (typeof initSettings === 'function') {
+                await initSettings();
+              }
+              
+              return;
+            }
+          } catch (verifyError) {
+            console.warn('API verification failed, falling back to local:', verifyError);
+          }
+        }
+        
+        // Fallback: Create local subscription record
         const subscription = {
           id: generateId(),
           userId: sessionStorage.getItem('userId'),

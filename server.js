@@ -140,6 +140,195 @@ async function sendAdminEmail(subject, text, html) {
   }
 }
 
+// ============================================
+// WEBHOOK TEST ENDPOINT - Check if webhook is configured
+// ============================================
+app.get('/api/webhook-status', (req, res) => {
+  const webhookSecret = (process.env.STRIPE_WEBHOOK_SECRET || '').trim();
+  const isConfigured = webhookSecret && webhookSecret.startsWith('whsec_');
+  
+  res.json({
+    webhookConfigured: isConfigured,
+    webhookSecretSet: !!webhookSecret,
+    webhookSecretLength: webhookSecret.length,
+    webhookSecretPrefix: webhookSecret.substring(0, 6) || 'N/A',
+    stripeConfigured: stripeConfigured,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// ============================================
+// PAYMENT VERIFICATION ENDPOINT - Fallback tracking
+// Call this after successful payment redirect to ensure tracking
+// ============================================
+app.post('/api/verify-and-track-payment', async (req, res) => {
+  try {
+    if (!stripeConfigured) {
+      return res.status(500).json({ error: 'Stripe not configured' });
+    }
+    
+    const { sessionId } = req.body;
+    
+    if (!sessionId) {
+      return res.status(400).json({ error: 'Session ID required' });
+    }
+    
+    console.log('🔍 Verifying payment session:', sessionId);
+    
+    // Retrieve the session from Stripe
+    const session = await stripe.checkout.sessions.retrieve(sessionId, {
+      expand: ['subscription', 'payment_intent']
+    });
+    
+    console.log('📋 Session status:', session.payment_status);
+    console.log('📋 Session mode:', session.mode);
+    
+    if (session.payment_status !== 'paid') {
+      return res.json({ 
+        success: false, 
+        status: session.payment_status,
+        message: 'Payment not completed'
+      });
+    }
+    
+    const email = session.customer_email || session.customer_details?.email;
+    const userId = session.metadata?.userId;
+    
+    // Handle based on payment type
+    if (session.mode === 'subscription') {
+      // Subscription payment
+      console.log('✅ Subscription payment verified for:', email);
+      
+      if (supabase) {
+        const subscriptionId = session.subscription?.id || session.subscription;
+        let subscription = session.subscription;
+        
+        // If subscription is just an ID, retrieve full details
+        if (typeof subscription === 'string') {
+          subscription = await stripe.subscriptions.retrieve(subscription);
+        }
+        
+        const { error } = await supabase
+          .from('subscriptions')
+          .upsert({
+            user_id: userId || null,
+            email: email,
+            stripe_customer_id: session.customer,
+            stripe_subscription_id: subscriptionId,
+            type: session.metadata?.plan || 'embed',
+            status: 'active',
+            price_amount: session.amount_total,
+            currency: session.currency,
+            current_period_start: subscription?.current_period_start 
+              ? new Date(subscription.current_period_start * 1000).toISOString()
+              : new Date().toISOString(),
+            current_period_end: subscription?.current_period_end
+              ? new Date(subscription.current_period_end * 1000).toISOString()
+              : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+            updated_at: new Date().toISOString()
+          }, {
+            onConflict: 'stripe_subscription_id'
+          });
+        
+        if (error) {
+          console.error('Failed to save subscription:', error);
+        } else {
+          console.log('✅ Subscription tracked in database for:', email);
+          
+          // Send admin notification
+          const emailHtml = `<h2>✅ New Subscription (Verified)</h2>
+            <p><strong>User:</strong> ${email}</p>
+            <p><strong>Type:</strong> ${session.metadata?.plan || 'embed'}</p>
+            <p><strong>Amount:</strong> £${(session.amount_total / 100).toFixed(2)}</p>
+            <p><strong>Session ID:</strong> ${sessionId}</p>
+            <p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>`;
+          sendAdminEmail(`✅ Subscription Verified: ${email}`, `Subscription verified for ${email}`, emailHtml);
+        }
+      }
+      
+      return res.json({
+        success: true,
+        type: 'subscription',
+        email: email,
+        amount: session.amount_total / 100,
+        message: 'Subscription activated successfully'
+      });
+      
+    } else if (session.mode === 'payment') {
+      // One-time payment (top-up)
+      const amount = parseFloat(session.metadata?.amount) || (session.amount_total / 100);
+      console.log('✅ Top-up payment verified:', amount, 'for:', email);
+      
+      if (supabase && userId) {
+        // Get current credits
+        const { data: userData, error: fetchError } = await supabase
+          .from('users')
+          .select('credits')
+          .eq('id', userId)
+          .single();
+        
+        if (!fetchError) {
+          const currentCredits = userData?.credits || 0;
+          const newCredits = currentCredits + amount;
+          
+          // Update credits
+          const { error: updateError } = await supabase
+            .from('users')
+            .update({ credits: newCredits })
+            .eq('id', userId);
+          
+          if (!updateError) {
+            console.log('✅ Credits updated:', currentCredits, '→', newCredits);
+            
+            // Record transaction
+            await supabase.from('transactions').insert({
+              user_id: userId,
+              email: email,
+              type: 'topup',
+              amount: amount,
+              status: 'completed',
+              stripe_session_id: sessionId,
+              description: 'Wallet top-up via Stripe (verified)',
+              created_at: new Date().toISOString()
+            });
+            
+            // Send admin notification
+            const emailHtml = `<h2>💳 Wallet Top-Up (Verified)</h2>
+              <p><strong>User:</strong> ${email}</p>
+              <p><strong>Amount:</strong> £${amount}</p>
+              <p><strong>New Balance:</strong> £${newCredits}</p>
+              <p><strong>Session ID:</strong> ${sessionId}</p>`;
+            sendAdminEmail(`💳 Top-Up Verified: £${amount} from ${email}`, `Top-up verified`, emailHtml);
+            
+            return res.json({
+              success: true,
+              type: 'topup',
+              email: email,
+              amount: amount,
+              newBalance: newCredits,
+              message: 'Credits added successfully'
+            });
+          }
+        }
+      }
+      
+      return res.json({
+        success: true,
+        type: 'topup',
+        email: email,
+        amount: amount,
+        message: 'Payment verified (manual credit update may be needed)'
+      });
+    }
+    
+    res.json({ success: true, message: 'Payment verified' });
+    
+  } catch (error) {
+    console.error('Payment verification error:', error);
+    res.status(500).json({ error: error.message || 'Verification failed' });
+  }
+});
+
 // IMPORTANT: Webhook route MUST be defined BEFORE any body-parsing middleware
 // Stripe webhook endpoint (for handling payment events)
 app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
