@@ -388,7 +388,7 @@ window.SupabaseAuth = {
       
       console.log('✅ Total active subscriptions found:', allSubscriptions.length);
       // Map Supabase fields to client UI fields
-      return allSubscriptions.map(sub => ({
+      const mappedSubscriptions = allSubscriptions.map(sub => ({
         id: sub.id,
         type: sub.type,
         status: sub.status,
@@ -399,6 +399,8 @@ window.SupabaseAuth = {
         nextBillingDate: sub.current_period_end ? new Date(sub.current_period_end) : null,
         // Add any other fields needed by UI
       }));
+      console.log('📦 Mapped subscriptions:', JSON.stringify(mappedSubscriptions, null, 2));
+      return mappedSubscriptions;
     } catch (err) {
       console.error('Error in getActiveSubscriptions:', err);
       return [];

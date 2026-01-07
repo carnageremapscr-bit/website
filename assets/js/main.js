@@ -12961,17 +12961,26 @@ Thank you for choosing Carnage Remaps!
     // Check if user has active embed subscription
     async function hasActiveEmbedSubscription() {
       try {
+        console.log('🔎 hasActiveEmbedSubscription called');
         const subscriptions = await CarnageAuth.getActiveSubscriptions();
+        console.log('📋 Raw subscriptions received:', subscriptions);
         // Accept 'embed', 'embed-widget', 'embed_widget', or 'subscription' types for embed access
         const validTypes = ['embed', 'embed-widget', 'embed_widget', 'subscription'];
         const hasValid = subscriptions.some(sub => {
           const typeMatch = validTypes.includes(sub.type) || (sub.type && sub.type.includes('embed'));
+          console.log('🔍 Checking subscription:', {
+            id: sub.id,
+            type: sub.type,
+            status: sub.status,
+            typeMatch: typeMatch,
+            statusActive: sub.status === 'active'
+          });
           return typeMatch && sub.status === 'active';
         });
-        console.log('🔍 Subscription check:', subscriptions.length, 'found, hasValid:', hasValid);
+        console.log('✅ Subscription check result:', subscriptions.length, 'found, hasValid:', hasValid);
         return hasValid;
       } catch (error) {
-        console.error('Error checking subscription:', error);
+        console.error('❌ Error checking subscription:', error);
         return false;
       }
     }

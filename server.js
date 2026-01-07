@@ -1009,7 +1009,7 @@ app.get('/api/health', (req, res) => {
     version: '2.0.0',
     timestamp: new Date().toISOString(),
     services: {
-      email: !!transporter ? 'configured' : 'not configured',
+      email: RESEND_API_KEY ? 'Resend API configured' : (transporter ? 'SMTP configured' : 'not configured'),
       stripe: stripeConfigured ? 'configured' : 'not configured',
       database: supabaseConfigured ? 'configured' : 'not configured'
     }
@@ -1730,11 +1730,36 @@ app.post('/api/admin/activate-subscription', async (req, res) => {
         if (emailData.id) {
           console.log('✅ Activation email sent to:', email, 'ID:', emailData.id);
         } else {
-          console.error('Email API error:', emailData);
+          console.error('❌ Email API error:', emailData);
         }
       } catch (emailErr) {
-        console.error('Failed to send activation email:', emailErr.message);
+        console.error('❌ Failed to send activation email:', emailErr.message);
       }
+    } else {
+      console.warn('⚠️ Email not sent - RESEND_API_KEY:', !!RESEND_API_KEY, 'email:', !!email);
+    }
+    
+    // Send admin notification
+    try {
+      const adminEmailHtml = `
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#111;color:#fff;padding:30px;border-radius:8px">
+          <h2 style="color:#eab308;margin-top:0">✅ Subscription Manually Activated</h2>
+          <div style="background:#1a1a1a;padding:20px;border-radius:6px;margin:20px 0">
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Type:</strong> ${type}</p>
+            <p><strong>Duration:</strong> ${days} days</p>
+            <p><strong>Expires:</strong> ${expirationDate.toLocaleDateString()}</p>
+          </div>
+          <p style="color:#9ca3af;font-size:0.875rem">Customer has been notified via email.</p>
+        </div>
+      `;
+      await sendAdminEmail(
+        `✅ Subscription Activated: ${email}`,
+        `Subscription manually activated for ${email} (${type}, ${days} days)`,
+        adminEmailHtml
+      );
+    } catch (adminEmailErr) {
+      console.error('❌ Failed to send admin notification:', adminEmailErr.message);
     }
     
     res.json({ success: true, message: 'Subscription activated', subscription: data?.[0] });
