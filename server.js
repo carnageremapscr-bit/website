@@ -8,7 +8,7 @@ const { body, validationResult } = require('express-validator');
 const { createClient } = require('@supabase/supabase-js');
 
 // Initialize Supabase client (use service role for webhook access)
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://jvjyqpesanfugsysdnku.supabase.co';
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://iffsmbsxwhxehsigtqoe.supabase.co';
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabaseConfigured = SUPABASE_URL && SUPABASE_SERVICE_KEY;
 const supabase = supabaseConfigured ? createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY) : null;
