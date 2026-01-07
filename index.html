@@ -26,7 +26,7 @@
     .login-box { background: var(--cr-bg-card, #111); border-radius: 16px; padding: 2.5rem; max-width: 440px; width: 90%; }
   </style>
   
-  <link rel="stylesheet" href="assets/css/carnage.css?v=1233">
+  <link rel="stylesheet" href="assets/css/carnage.css?v=1234">
   
   <!-- External Scripts - deferred for performance -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.47.0/dist/umd/supabase.min.js" defer></script>
@@ -55,7 +55,7 @@
         <form id="signin-form" class="auth-form active">
           <div class="form-group">
             <label for="signin-email">Email</label>
-            <input type="email" id="signin-email" required placeholder="Enter your email">
+            <input type="email" id="signin-email" required placeholder="Enter your email" autocomplete="username">
           </div>
           <div class="form-group">
             <label for="signin-password">Password</label>
@@ -69,11 +69,11 @@
         <form id="register-form" class="auth-form">
           <div class="form-group">
             <label for="register-name">Full Name</label>
-            <input type="text" id="register-name" required placeholder="Enter your full name">
+            <input type="text" id="register-name" required placeholder="Enter your full name" autocomplete="name">
           </div>
           <div class="form-group">
             <label for="register-email">Email</label>
-            <input type="email" id="register-email" required placeholder="Enter your email">
+            <input type="email" id="register-email" required placeholder="Enter your email" autocomplete="username">
           </div>
           <div class="form-group">
             <label for="register-password">Password</label>
@@ -2614,15 +2614,15 @@
     </div>
   </div>
 
-  <!-- Load Supabase modules (as regular scripts, not ES6 modules) - cache bust v1233 -->
-  <script src="assets/js/supabase-client.js?v=1233"></script>
-  <script src="assets/js/supabase-auth.js?v=1233"></script>
-  <script src="assets/js/supabase-files.js?v=1233"></script>
-  <script src="assets/js/supabase-support.js?v=1233"></script>
-  <script src="assets/js/supabase-compat.js?v=1233"></script>
+  <!-- Load Supabase modules (as regular scripts, not ES6 modules) - cache bust v1234 -->
+  <script src="assets/js/supabase-client.js?v=1234"></script>
+  <script src="assets/js/supabase-auth.js?v=1234"></script>
+  <script src="assets/js/supabase-files.js?v=1234"></script>
+  <script src="assets/js/supabase-support.js?v=1234"></script>
+  <script src="assets/js/supabase-compat.js?v=1234"></script>
   
   <!-- Legacy modules (compatibility maintained) -->
-  <script src="assets/js/support.js?v=1233"></script>
-  <script src="assets/js/main.js?v=1233"></script>
+  <script src="assets/js/support.js?v=1234"></script>
+  <script src="assets/js/main.js?v=1234"></script>
 </body>
 </html>

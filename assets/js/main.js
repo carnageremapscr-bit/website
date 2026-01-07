@@ -12616,7 +12616,66 @@ Thank you for choosing Carnage Remaps!
         const existing = document.getElementById('stripe-loading');
         if (existing) existing.remove();
         console.error('Error creating subscription:', error);
-        alert('Error setting up subscription. Please try again or contact support.\n\nNote: A backend API is required for Stripe subscriptions.');
+        
+        // Offer wallet payment as fallback
+        const useWallet = confirm('Stripe checkout unavailable.\n\nWould you like to pay from your wallet balance instead?\n\n💳 Wallet subscription: £9.99/month\n💰 Your current balance: £' + (sessionStorage.getItem('userCredits') || '0') + '\n\n(Wallet subscriptions must be manually renewed monthly)');
+        
+        if (useWallet) {
+          await createWalletSubscription();
+        }
+      }
+    }
+    
+    // Create subscription using wallet balance
+    async function createWalletSubscription() {
+      try {
+        const userId = sessionStorage.getItem('userId');
+        const userEmail = sessionStorage.getItem('userEmail');
+        const userName = sessionStorage.getItem('userName');
+        const currentCredits = parseFloat(sessionStorage.getItem('userCredits') || '0');
+        const subscriptionPrice = 9.99;
+        
+        if (currentCredits < subscriptionPrice) {
+          alert(`Insufficient wallet balance.\n\nRequired: £${subscriptionPrice.toFixed(2)}\nYour balance: £${currentCredits.toFixed(2)}\n\nPlease top up your wallet first.`);
+          return;
+        }
+        
+        // Deduct from wallet
+        const newBalance = currentCredits - subscriptionPrice;
+        await CarnageAuth.updateCredits(parseInt(userId), -subscriptionPrice);
+        sessionStorage.setItem('userCredits', newBalance.toString());
+        updateCreditDisplay(newBalance);
+        
+        // Create subscription via wallet API
+        const response = await fetch(`${API_URL}/api/wallet-subscription`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: userId,
+            email: userEmail,
+            userName: userName,
+            type: 'embed',
+            amount: subscriptionPrice,
+            periodStart: new Date().toISOString(),
+            periodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to create wallet subscription');
+        }
+        
+        alert(`✅ Subscription activated!\n\n£${subscriptionPrice.toFixed(2)} deducted from your wallet.\nNew balance: £${newBalance.toFixed(2)}\n\n⚠️ Note: Wallet subscriptions must be manually renewed each month.`);
+        
+        // Refresh the page to update subscription status
+        loadSubscriptions();
+        if (typeof initSettings === 'function') {
+          await initSettings();
+        }
+        
+      } catch (error) {
+        console.error('Error creating wallet subscription:', error);
+        alert('Failed to create subscription. Please try again or contact support.');
       }
     }
     
