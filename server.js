@@ -1623,13 +1623,16 @@ app.post('/api/admin/activate-subscription', async (req, res) => {
       return res.status(500).json({ error: 'Database not configured' });
     }
     
-    const { email, userId } = req.body;
+    const { email, userId, type, days } = req.body;
     
     if (!email) {
       return res.status(400).json({ error: 'Email required' });
     }
     
-    console.log('🔧 Manually activating subscription for:', email);
+    const subscriptionType = type || 'embed';
+    const subscriptionDays = parseInt(days) || 30;
+    
+    console.log('🔧 Manually activating subscription for:', email, 'Type:', subscriptionType, 'Days:', subscriptionDays);
     
     // Generate a manual subscription ID
     const manualSubId = 'manual_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
@@ -1640,12 +1643,12 @@ app.post('/api/admin/activate-subscription', async (req, res) => {
         user_id: userId || null,
         email: email,
         stripe_subscription_id: manualSubId,
-        type: 'embed',
+        type: subscriptionType,
         status: 'active',
         price_amount: 999,
         currency: 'gbp',
         current_period_start: new Date().toISOString(),
-        current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        current_period_end: new Date(Date.now() + subscriptionDays * 24 * 60 * 60 * 1000).toISOString(),
         updated_at: new Date().toISOString()
       }, {
         onConflict: 'email'
@@ -1658,7 +1661,175 @@ app.post('/api/admin/activate-subscription', async (req, res) => {
     }
     
     console.log('✅ Subscription manually activated for:', email);
+    
+    // Send email notification to customer
+    if (resendConfigured && email) {
+      try {
+        const customerEmailHtml = `
+          <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#1a1a1a;color:#fff;padding:40px;border-radius:12px">
+            <div style="text-align:center;margin-bottom:30px">
+              <h1 style="color:#eab308;margin:0">🎉 Subscription Activated!</h1>
+              <p style="color:#9ca3af;margin-top:10px">Your subscription has been manually activated by an admin</p>
+            </div>
+            <div style="background:#262626;padding:20px;border-radius:8px;margin:20px 0">
+              <h3 style="color:#eab308;margin-top:0">You now have access to:</h3>
+              <ul style="color:#d1d5db;padding-left:20px">
+                <li>Embed vehicle lookup widget on your website</li>
+                <li>Customizable colors and branding</li>
+                <li>Real-time vehicle data lookup</li>
+              </ul>
+            </div>
+            <div style="text-align:center;margin-top:30px">
+              <a href="https://web-production-df12d.up.railway.app" 
+                 style="display:inline-block;background:#eab308;color:#000;text-decoration:none;padding:15px 30px;border-radius:8px;font-weight:bold">
+                Go to Dashboard
+              </a>
+            </div>
+          </div>
+        `;
+        
+        await resend.emails.send({
+          from: 'Carnage Remaps <onboarding@resend.dev>',
+          to: email,
+          subject: '🎉 Your subscription is now active - Carnage Remaps',
+          html: customerEmailHtml
+        });
+        console.log('✅ Activation email sent to:', email);
+      } catch (emailErr) {
+        console.error('Failed to send activation email:', emailErr.message);
+      }
+    }
+    
     res.json({ success: true, message: 'Subscription activated', subscription: data?.[0] });
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Admin endpoint to update subscription status (activate/deactivate)
+app.post('/api/admin/update-subscription-status', async (req, res) => {
+  try {
+    if (!supabase) {
+      return res.status(500).json({ error: 'Database not configured' });
+    }
+    
+    const { email, status } = req.body;
+    
+    if (!email || !status) {
+      return res.status(400).json({ error: 'Email and status required' });
+    }
+    
+    console.log(`🔧 Updating subscription status for ${email} to ${status}`);
+    
+    const updateData = {
+      status: status,
+      updated_at: new Date().toISOString()
+    };
+    
+    // If activating, extend the period
+    if (status === 'active') {
+      updateData.current_period_end = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    }
+    
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .update(updateData)
+      .eq('email', email)
+      .select();
+    
+    if (error) {
+      console.error('Error updating subscription:', error);
+      return res.status(500).json({ error: error.message });
+    }
+    
+    console.log(`✅ Subscription status updated for ${email} to ${status}`);
+    res.json({ success: true, message: `Subscription ${status}`, subscription: data?.[0] });
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Admin endpoint to extend subscription
+app.post('/api/admin/extend-subscription', async (req, res) => {
+  try {
+    if (!supabase) {
+      return res.status(500).json({ error: 'Database not configured' });
+    }
+    
+    const { email, days } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({ error: 'Email required' });
+    }
+    
+    const extensionDays = parseInt(days) || 30;
+    
+    console.log(`🔧 Extending subscription for ${email} by ${extensionDays} days`);
+    
+    // Get current subscription
+    const { data: current, error: fetchError } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .eq('email', email)
+      .single();
+    
+    if (fetchError || !current) {
+      return res.status(404).json({ error: 'Subscription not found' });
+    }
+    
+    // Calculate new end date
+    const currentEnd = current.current_period_end ? new Date(current.current_period_end) : new Date();
+    const baseDate = currentEnd > new Date() ? currentEnd : new Date();
+    const newPeriodEnd = new Date(baseDate.getTime() + extensionDays * 24 * 60 * 60 * 1000);
+    
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .update({
+        status: 'active',
+        current_period_end: newPeriodEnd.toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .eq('email', email)
+      .select();
+    
+    if (error) {
+      console.error('Error extending subscription:', error);
+      return res.status(500).json({ error: error.message });
+    }
+    
+    console.log(`✅ Subscription extended for ${email} to ${newPeriodEnd.toISOString()}`);
+    res.json({ 
+      success: true, 
+      message: `Subscription extended by ${extensionDays} days`,
+      newPeriodEnd: newPeriodEnd.toISOString(),
+      subscription: data?.[0] 
+    });
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Admin endpoint to get all subscriptions
+app.get('/api/admin/subscriptions', async (req, res) => {
+  try {
+    if (!supabase) {
+      return res.status(500).json({ error: 'Database not configured' });
+    }
+    
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching subscriptions:', error);
+      return res.status(500).json({ error: error.message });
+    }
+    
+    res.json({ success: true, subscriptions: data || [] });
   } catch (err) {
     console.error('Error:', err);
     res.status(500).json({ error: err.message });

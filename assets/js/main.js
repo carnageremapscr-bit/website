@@ -7939,25 +7939,42 @@ I would like to request a quote for tuning this vehicle.`,
         const statusColors = {
           'active': '#10b981',
           'past_due': '#f59e0b',
-          'cancelled': '#ef4444'
+          'cancelled': '#ef4444',
+          'inactive': '#6b7280'
         };
         const statusColor = statusColors[sub.status] || '#6b7280';
         const amount = sub.price_amount ? '£' + (sub.price_amount / 100).toFixed(2) : '£9.99';
         const periodEnd = sub.current_period_end ? new Date(sub.current_period_end).toLocaleDateString() : '-';
         const created = sub.created_at ? new Date(sub.created_at).toLocaleDateString() : '-';
+        const isActive = sub.status === 'active';
         
         return `
-          <tr style="border-bottom: 1px solid #e5e7eb;">
-            <td style="padding: 12px;">${sub.email || 'Unknown'}</td>
+          <tr style="border-bottom: 1px solid #333;">
+            <td style="padding: 12px; color: #fff;">${sub.email || 'Unknown'}</td>
             <td style="padding: 12px; text-align: center;">
               <span style="background: ${statusColor}20; color: ${statusColor}; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">
                 ${sub.status}
               </span>
             </td>
-            <td style="padding: 12px; text-align: center;">${sub.type || 'embed'}</td>
-            <td style="padding: 12px; text-align: right; font-weight: 600;">${amount}/mo</td>
-            <td style="padding: 12px; text-align: center;">${periodEnd}</td>
-            <td style="padding: 12px; text-align: center; color: #6b7280;">${created}</td>
+            <td style="padding: 12px; text-align: center; color: #9ca3af;">${sub.type || 'embed'}</td>
+            <td style="padding: 12px; text-align: right; font-weight: 600; color: #fff;">${amount}/mo</td>
+            <td style="padding: 12px; text-align: center; color: #9ca3af;">${periodEnd}</td>
+            <td style="padding: 12px; text-align: center;">
+              <div style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
+                ${isActive ? `
+                  <button onclick="toggleSubscriptionStatus('${sub.email}', 'cancelled')" style="background:#ef4444;color:#fff;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:600;">
+                    ❌ Deactivate
+                  </button>
+                ` : `
+                  <button onclick="toggleSubscriptionStatus('${sub.email}', 'active')" style="background:#22c55e;color:#fff;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:600;">
+                    ✅ Activate
+                  </button>
+                `}
+                <button onclick="extendSubscription('${sub.email}')" style="background:#3b82f6;color:#fff;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:600;">
+                  ⏰ +30 Days
+                </button>
+              </div>
+            </td>
           </tr>
         `;
       }).join('');
@@ -7967,6 +7984,129 @@ I would like to request a quote for tuning this vehicle.`,
       tbody.innerHTML = '<tr><td colspan="6" style="padding: 2rem; text-align: center; color: #ef4444;">❌ Error loading subscriptions:<br>' + error.message + '</td></tr>';
     }
   }
+  
+  // Global subscription management functions
+  window.refreshAdminSubscriptions = loadAdminSubscriptions;
+  
+  window.showAddSubscriptionModal = function() {
+    const modal = document.getElementById('add-subscription-modal');
+    if (modal) modal.style.display = 'flex';
+  };
+  
+  window.closeAddSubscriptionModal = function() {
+    const modal = document.getElementById('add-subscription-modal');
+    if (modal) modal.style.display = 'none';
+  };
+  
+  window.createManualSubscription = async function() {
+    const email = document.getElementById('new-sub-email')?.value?.trim();
+    const type = document.getElementById('new-sub-type')?.value || 'embed';
+    const days = parseInt(document.getElementById('new-sub-days')?.value) || 30;
+    
+    if (!email) {
+      alert('Please enter a valid email address');
+      return;
+    }
+    
+    try {
+      const response = await fetch(`${API_URL}/api/admin/activate-subscription`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, type, days })
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        alert(`✅ Subscription activated for ${email}!\n\nType: ${type}\nDuration: ${days} days`);
+        closeAddSubscriptionModal();
+        loadAdminSubscriptions();
+      } else {
+        alert('❌ Error: ' + (result.error || 'Failed to activate subscription'));
+      }
+    } catch (error) {
+      console.error('Error creating subscription:', error);
+      alert('❌ Error: ' + error.message);
+    }
+  };
+  
+  window.toggleSubscriptionStatus = async function(email, newStatus) {
+    const action = newStatus === 'active' ? 'activate' : 'deactivate';
+    if (!confirm(`Are you sure you want to ${action} subscription for ${email}?`)) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`${API_URL}/api/admin/update-subscription-status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, status: newStatus })
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        alert(`✅ Subscription ${action}d for ${email}`);
+        loadAdminSubscriptions();
+      } else {
+        alert('❌ Error: ' + (result.error || 'Failed to update subscription'));
+      }
+    } catch (error) {
+      console.error('Error updating subscription:', error);
+      alert('❌ Error: ' + error.message);
+    }
+  };
+  
+  window.extendSubscription = async function(email) {
+    if (!confirm(`Extend subscription for ${email} by 30 days?`)) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`${API_URL}/api/admin/extend-subscription`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, days: 30 })
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        alert(`✅ Subscription extended by 30 days for ${email}\n\nNew expiry: ${new Date(result.newPeriodEnd).toLocaleDateString()}`);
+        loadAdminSubscriptions();
+      } else {
+        alert('❌ Error: ' + (result.error || 'Failed to extend subscription'));
+      }
+    } catch (error) {
+      console.error('Error extending subscription:', error);
+      alert('❌ Error: ' + error.message);
+    }
+  };
+  
+  window.fixAllSubscriptionTypes = async function() {
+    if (!confirm('This will update all subscriptions with type "subscription" to type "embed".\n\nContinue?')) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`${API_URL}/api/admin/fix-subscription-types`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        alert(`✅ Fixed ${result.fixed} subscription(s)`);
+        loadAdminSubscriptions();
+      } else {
+        alert('❌ Error: ' + (result.error || 'Failed to fix subscriptions'));
+      }
+    } catch (error) {
+      console.error('Error fixing subscriptions:', error);
+      alert('❌ Error: ' + error.message);
+    }
+  };
 
   // Load admin overview
   async function loadAdminOverview() {

@@ -2077,6 +2077,7 @@
       <div class="admin-tabs">
         <button class="admin-tab-btn active" data-admin-tab="overview">Overview</button>
         <button class="admin-tab-btn" data-admin-tab="users">Users</button>
+        <button class="admin-tab-btn" data-admin-tab="subscriptions">💳 Subscriptions</button>
         <button class="admin-tab-btn" data-admin-tab="tickets">Tickets</button>
         <button class="admin-tab-btn" data-admin-tab="files">Files</button>
         <button class="admin-tab-btn" data-admin-tab="notifications">🔔 Notifications</button>
@@ -2176,6 +2177,95 @@
         <div class="admin-section">
           <h3>All Uploaded Files</h3>
           <div id="admin-files-list" class="files-grid"></div>
+        </div>
+      </div>
+
+      <!-- Subscriptions Panel -->
+      <div id="admin-subscriptions" class="admin-panel">
+        <div class="admin-section">
+          <div class="section-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+            <h3>💳 Subscription Management</h3>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+              <button class="btn" onclick="refreshAdminSubscriptions()" style="background:#3b82f6;color:#fff;">
+                🔄 Refresh
+              </button>
+              <button class="btn" onclick="showAddSubscriptionModal()" style="background:#22c55e;color:#fff;">
+                ➕ Add Subscription
+              </button>
+              <button class="btn" onclick="fixAllSubscriptionTypes()" style="background:#f59e0b;color:#000;">
+                🔧 Fix Types
+              </button>
+            </div>
+          </div>
+          
+          <!-- Subscription Stats -->
+          <div class="subscription-stats-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem;">
+            <div class="stat-card" style="background:linear-gradient(135deg,#10b981,#059669);padding:1.5rem;border-radius:12px;color:white;text-align:center;">
+              <div style="font-size:2rem;font-weight:bold;" id="active-subs-count">0</div>
+              <div style="font-size:0.9rem;opacity:0.9;">Active</div>
+            </div>
+            <div class="stat-card" style="background:linear-gradient(135deg,#f59e0b,#d97706);padding:1.5rem;border-radius:12px;color:white;text-align:center;">
+              <div style="font-size:2rem;font-weight:bold;" id="pastdue-subs-count">0</div>
+              <div style="font-size:0.9rem;opacity:0.9;">Past Due</div>
+            </div>
+            <div class="stat-card" style="background:linear-gradient(135deg,#ef4444,#dc2626);padding:1.5rem;border-radius:12px;color:white;text-align:center;">
+              <div style="font-size:2rem;font-weight:bold;" id="cancelled-subs-count">0</div>
+              <div style="font-size:0.9rem;opacity:0.9;">Cancelled</div>
+            </div>
+            <div class="stat-card" style="background:linear-gradient(135deg,#FFD700,#FFA500);padding:1.5rem;border-radius:12px;color:#000;text-align:center;">
+              <div style="font-size:2rem;font-weight:bold;" id="monthly-revenue">£0</div>
+              <div style="font-size:0.9rem;opacity:0.8;">Monthly Revenue</div>
+            </div>
+          </div>
+          
+          <!-- Subscriptions Table -->
+          <div style="background:#1a1a1a;border:2px solid #333;border-radius:12px;overflow:hidden;">
+            <table style="width:100%;border-collapse:collapse;">
+              <thead>
+                <tr style="background:#262626;">
+                  <th style="padding:12px;text-align:left;color:#FFD700;font-weight:600;">Email</th>
+                  <th style="padding:12px;text-align:center;color:#FFD700;font-weight:600;">Status</th>
+                  <th style="padding:12px;text-align:center;color:#FFD700;font-weight:600;">Type</th>
+                  <th style="padding:12px;text-align:right;color:#FFD700;font-weight:600;">Amount</th>
+                  <th style="padding:12px;text-align:center;color:#FFD700;font-weight:600;">Expires</th>
+                  <th style="padding:12px;text-align:center;color:#FFD700;font-weight:600;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="subscriptions-tbody">
+                <tr><td colspan="6" style="padding:2rem;text-align:center;color:#9ca3af;">Loading subscriptions...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Subscription Modal -->
+      <div id="add-subscription-modal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width:500px;background:#1a1a1a;border:2px solid #FFD700;border-radius:16px;padding:2rem;">
+          <div class="modal-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+            <h3 style="color:#FFD700;margin:0;">➕ Add/Activate Subscription</h3>
+            <button onclick="closeAddSubscriptionModal()" style="background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;">×</button>
+          </div>
+          <div class="modal-body">
+            <div style="margin-bottom:1rem;">
+              <label style="display:block;margin-bottom:0.5rem;font-weight:600;color:#fff;">User Email *</label>
+              <input type="email" id="new-sub-email" placeholder="user@example.com" style="width:100%;padding:0.75rem;border:2px solid #333;border-radius:8px;background:#262626;color:#fff;">
+            </div>
+            <div style="margin-bottom:1rem;">
+              <label style="display:block;margin-bottom:0.5rem;font-weight:600;color:#fff;">Subscription Type</label>
+              <select id="new-sub-type" style="width:100%;padding:0.75rem;border:2px solid #333;border-radius:8px;background:#262626;color:#fff;">
+                <option value="embed">Embed Widget Access</option>
+                <option value="premium">Premium</option>
+              </select>
+            </div>
+            <div style="margin-bottom:1.5rem;">
+              <label style="display:block;margin-bottom:0.5rem;font-weight:600;color:#fff;">Duration (Days)</label>
+              <input type="number" id="new-sub-days" value="30" min="1" max="365" style="width:100%;padding:0.75rem;border:2px solid #333;border-radius:8px;background:#262626;color:#fff;">
+            </div>
+            <button onclick="createManualSubscription()" style="width:100%;padding:1rem;background:#22c55e;color:#fff;border:none;border-radius:8px;font-weight:600;font-size:1rem;cursor:pointer;">
+              ✅ Activate Subscription
+            </button>
+          </div>
         </div>
       </div>
 
