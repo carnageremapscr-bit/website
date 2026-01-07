@@ -10007,6 +10007,17 @@ I would like to request a quote for tuning this vehicle.`,
         const result = await CarnageAuth.register(email, password, name);
         console.log('Registration result:', result);
         
+        // Notify admin of new user registration
+        fetch(`${API_URL}/api/notify-new-user`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_name: name,
+            user_email: email,
+            registration_time: new Date().toISOString()
+          })
+        }).catch(err => console.warn('New user notification failed:', err));
+        
         console.log('Attempting auto-login...');
         await CarnageAuth.signIn(email, password);
         console.log('Auto-login successful');

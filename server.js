@@ -96,6 +96,118 @@ const transporter = EMAIL_PASSWORD ? nodemailer.createTransport({
 console.log('Transporter created:', !!transporter);
 console.log('===========================');
 
+// ============================================
+// WHATSAPP CONFIGURATION (using CallMeBot free API)
+// ============================================
+// To set up WhatsApp notifications:
+// 1. Save this number to your phone: +34 644 71 77 15
+// 2. Send "I allow callmebot to send me messages" to that number on WhatsApp
+// 3. You'll receive an API key - add it to your environment variables
+// Alternative: Use Twilio WhatsApp API for production
+const WHATSAPP_PHONE = process.env.WHATSAPP_PHONE || ''; // Your phone number with country code (e.g., +447123456789)
+const WHATSAPP_API_KEY = process.env.WHATSAPP_API_KEY || ''; // CallMeBot API key
+const TWILIO_SID = process.env.TWILIO_SID || '';
+const TWILIO_AUTH = process.env.TWILIO_AUTH || '';
+const TWILIO_WHATSAPP_FROM = process.env.TWILIO_WHATSAPP_FROM || ''; // e.g., whatsapp:+14155238886
+
+console.log('=== WhatsApp Configuration ===');
+console.log('WHATSAPP_PHONE set:', !!WHATSAPP_PHONE);
+console.log('WHATSAPP_API_KEY set:', !!WHATSAPP_API_KEY);
+console.log('TWILIO configured:', !!(TWILIO_SID && TWILIO_AUTH));
+console.log('==============================');
+
+// Helper to send WhatsApp notification
+async function sendWhatsAppNotification(message) {
+  // Try CallMeBot (free)
+  if (WHATSAPP_PHONE && WHATSAPP_API_KEY) {
+    try {
+      const encodedMessage = encodeURIComponent(message);
+      const url = `https://api.callmebot.com/whatsapp.php?phone=${WHATSAPP_PHONE}&text=${encodedMessage}&apikey=${WHATSAPP_API_KEY}`;
+      
+      const response = await fetch(url);
+      if (response.ok) {
+        console.log('📱 WhatsApp notification sent via CallMeBot');
+        return true;
+      }
+    } catch (err) {
+      console.warn('⚠️ CallMeBot WhatsApp failed:', err.message);
+    }
+  }
+  
+  // Try Twilio (paid but more reliable)
+  if (TWILIO_SID && TWILIO_AUTH && TWILIO_WHATSAPP_FROM && WHATSAPP_PHONE) {
+    try {
+      const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_SID}/Messages.json`;
+      const auth = Buffer.from(`${TWILIO_SID}:${TWILIO_AUTH}`).toString('base64');
+      
+      const response = await fetch(twilioUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${auth}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+          From: TWILIO_WHATSAPP_FROM,
+          To: `whatsapp:${WHATSAPP_PHONE}`,
+          Body: message
+        })
+      });
+      
+      if (response.ok) {
+        console.log('📱 WhatsApp notification sent via Twilio');
+        return true;
+      }
+    } catch (err) {
+      console.warn('⚠️ Twilio WhatsApp failed:', err.message);
+    }
+  }
+  
+  console.log('📱 WhatsApp not configured - skipping notification');
+  return false;
+}
+
+// ============================================
+// UNIFIED ADMIN NOTIFICATION
+// Sends both Email AND WhatsApp
+// ============================================
+async function notifyAdmin(type, subject, details) {
+  console.log(`🔔 Admin notification: [${type}] ${subject}`);
+  
+  // Build message
+  const timestamp = new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' });
+  const whatsAppMessage = `🔔 ${type}\n\n${subject}\n\n${details}\n\n⏰ ${timestamp}`;
+  const emailHtml = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <div style="background: linear-gradient(135deg, #FFD700, #1a1a1a); padding: 20px; text-align: center;">
+        <h1 style="color: #fff; margin: 0;">🔔 ${type}</h1>
+      </div>
+      <div style="padding: 20px; background: #f9f9f9;">
+        <h2 style="color: #1a1a1a; margin-top: 0;">${subject}</h2>
+        <div style="background: #fff; padding: 15px; border-radius: 8px; border-left: 4px solid #FFD700;">
+          ${details.split('\n').map(line => `<p style="margin: 5px 0;">${line}</p>`).join('')}
+        </div>
+        <p style="color: #666; font-size: 12px; margin-top: 20px;">⏰ ${timestamp}</p>
+      </div>
+      <div style="background: #1a1a1a; padding: 10px; text-align: center;">
+        <p style="color: #FFD700; margin: 0; font-size: 12px;">Carnage Remaps Portal</p>
+      </div>
+    </div>
+  `;
+  
+  // Send both notifications in parallel
+  const results = await Promise.allSettled([
+    sendAdminEmail(`[${type}] ${subject}`, details, emailHtml),
+    sendWhatsAppNotification(whatsAppMessage)
+  ]);
+  
+  const emailSent = results[0].status === 'fulfilled' && results[0].value;
+  const whatsAppSent = results[1].status === 'fulfilled' && results[1].value;
+  
+  console.log(`📧 Email: ${emailSent ? '✅' : '❌'} | 📱 WhatsApp: ${whatsAppSent ? '✅' : '❌'}`);
+  
+  return { emailSent, whatsAppSent };
+}
+
 // Helper to send admin emails
 async function sendAdminEmail(subject, text, html) {
   console.log('📧 sendAdminEmail called for:', subject);
@@ -903,37 +1015,22 @@ app.post('/api/notify-file-upload', express.json(), async (req, res) => {
   }
 
   try {
-    const emailHtml = `
-      <h2>📁 New ECU File Uploaded</h2>
-      <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 15px 0;">
-        <p><strong>Customer:</strong> ${customer_name} (${customer_email})</p>
-        <p><strong>Vehicle:</strong> ${vehicle}</p>
-        <p><strong>Engine:</strong> ${engine || 'N/A'}</p>
-        <p><strong>Stage:</strong> ${stage || 'N/A'}</p>
-        <p><strong>Price:</strong> £${(total_price || 0).toFixed(2)}</p>
-        <p><strong>Filename:</strong> ${filename}</p>
-        <p><strong>Time:</strong> ${new Date().toISOString()}</p>
-      </div>
-      <p><strong>Action Required:</strong> Review and process this file in your admin panel.</p>
-    `;
-
-    console.log('📨 Calling sendAdminEmail for file upload notification...');
-    const emailResult = await sendAdminEmail(
-      `📁 New ECU File Uploaded: ${vehicle}`,
-      `New ECU file uploaded by ${customer_name}\n\nVehicle: ${vehicle}\nEngine: ${engine}\nFilename: ${filename}`,
-      emailHtml
+    // Use unified notification (Email + WhatsApp)
+    const result = await notifyAdmin(
+      '📁 NEW FILE',
+      `ECU File from ${customer_name}`,
+      `Customer: ${customer_name}\nEmail: ${customer_email}\nVehicle: ${vehicle}\nEngine: ${engine || 'N/A'}\nStage: ${stage || 'N/A'}\nPrice: £${(total_price || 0).toFixed(2)}\nFilename: ${filename}`
     );
 
-    if (emailResult) {
-      console.log('✅ EMAIL SENT SUCCESSFULLY - Admin notification delivered');
-      return res.json({ success: true, message: 'Notification sent', email_sent: true });
+    if (result.emailSent || result.whatsAppSent) {
+      console.log('✅ NOTIFICATION SENT - Admin alerted');
+      return res.json({ success: true, message: 'Notification sent', ...result });
     } else {
-      console.log('⚠️ EMAIL SEND FAILED - Check server logs for details');
-      return res.status(500).json({ success: false, message: 'Failed to send email notification', email_sent: false });
+      console.log('⚠️ NOTIFICATION FAILED - Check server logs');
+      return res.status(500).json({ success: false, message: 'Failed to send notification' });
     }
   } catch (error) {
     console.error('❌ Error in notification endpoint:', error.message);
-    console.error('   Full error:', error);
     res.status(500).json({ error: 'Failed to send notification', details: error.message });
   }
 });
@@ -947,17 +1044,64 @@ app.post('/api/notify-topup-request', express.json(), async (req, res) => {
   }
   
   try {
-    const emailHtml = `<h2>💰 Manual Top-Up Request</h2><p><strong>User:</strong> ${user_name}</p><p><strong>Email:</strong> ${user_email}</p><p><strong>Amount:</strong> £${amount.toFixed(2)}</p><p><strong>Request ID:</strong> ${request_id}</p><p><strong>Action:</strong> Review in admin panel</p><p><strong>Time:</strong> ${new Date().toISOString()}</p>`;
-    
-    await sendAdminEmail(
-      `💰 Manual Top-Up Request: £${amount} from ${user_name}`,
-      `${user_name} (${user_email}) requested £${amount.toFixed(2)} wallet credit`,
-      emailHtml
+    // Use unified notification (Email + WhatsApp)
+    const result = await notifyAdmin(
+      '💰 TOP-UP REQUEST',
+      `£${amount.toFixed(2)} from ${user_name}`,
+      `User: ${user_name}\nEmail: ${user_email}\nAmount: £${amount.toFixed(2)}\nRequest ID: ${request_id || 'N/A'}\nStatus: Awaiting approval`
     );
     
-    res.json({ success: true });
+    res.json({ success: true, ...result });
   } catch (error) {
     console.error('Error sending top-up notification:', error);
+    res.status(500).json({ error: 'Failed to send notification' });
+  }
+});
+
+// Notify admin of new user registration
+app.post('/api/notify-new-user', express.json(), async (req, res) => {
+  const { user_name, user_email, registration_time } = req.body;
+  
+  if (!user_name || !user_email) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+  
+  try {
+    // Use unified notification (Email + WhatsApp)
+    const result = await notifyAdmin(
+      '👤 NEW USER',
+      `${user_name} registered`,
+      `Name: ${user_name}\nEmail: ${user_email}\nRegistered: ${registration_time || new Date().toISOString()}`
+    );
+    
+    res.json({ success: true, ...result });
+  } catch (error) {
+    console.error('Error sending new user notification:', error);
+    res.status(500).json({ error: 'Failed to send notification' });
+  }
+});
+
+// Notify admin of payment (backup for webhook)
+app.post('/api/notify-payment', express.json(), async (req, res) => {
+  const { user_name, user_email, amount, type, session_id } = req.body;
+  
+  if (!user_email || !amount) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+  
+  try {
+    const paymentType = type === 'subscription' ? '🔄 SUBSCRIPTION' : '💳 PAYMENT';
+    
+    // Use unified notification (Email + WhatsApp)
+    const result = await notifyAdmin(
+      paymentType,
+      `£${amount.toFixed(2)} from ${user_name || user_email}`,
+      `User: ${user_name || 'N/A'}\nEmail: ${user_email}\nAmount: £${amount.toFixed(2)}\nType: ${type || 'payment'}\nSession: ${session_id || 'N/A'}`
+    );
+    
+    res.json({ success: true, ...result });
+  } catch (error) {
+    console.error('Error sending payment notification:', error);
     res.status(500).json({ error: 'Failed to send notification' });
   }
 });
