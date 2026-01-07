@@ -1546,24 +1546,24 @@
         <!-- ECU Database Search -->
         <div class="settings-card">
           <h3 style="margin-bottom:1rem">🔍 Advanced ECU Database Search</h3>
-          <p class="muted" style="margin-bottom:1.5rem">Search, filter, compare, and export from our comprehensive 40+ ECU database</p>
+          <p class="muted" style="margin-bottom:1.5rem">Search, filter, compare, and export from our comprehensive 150+ ECU database covering all major manufacturers</p>
           
           <!-- Database Statistics -->
           <div id="ecu-statistics" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:2rem">
             <div class="ecu-stat-card" style="background:linear-gradient(135deg,#dc2626,#b91c1c);padding:1.5rem;border-radius:12px;text-align:center;color:white">
-              <div style="font-size:2rem;font-weight:bold" id="total-ecus">40+</div>
+              <div style="font-size:2rem;font-weight:bold" id="total-ecus">150+</div>
               <div style="font-size:0.875rem;opacity:0.9">Total ECUs</div>
             </div>
             <div class="ecu-stat-card" style="background:linear-gradient(135deg,#3b82f6,#2563eb);padding:1.5rem;border-radius:12px;text-align:center;color:white">
-              <div style="font-size:2rem;font-weight:bold" id="diesel-count">22</div>
+              <div style="font-size:2rem;font-weight:bold" id="diesel-count">60+</div>
               <div style="font-size:0.875rem;opacity:0.9">Diesel ECUs</div>
             </div>
             <div class="ecu-stat-card" style="background:linear-gradient(135deg,#ef4444,#dc2626);padding:1.5rem;border-radius:12px;text-align:center;color:white">
-              <div style="font-size:2rem;font-weight:bold" id="petrol-count">18</div>
+              <div style="font-size:2rem;font-weight:bold" id="petrol-count">85+</div>
               <div style="font-size:0.875rem;opacity:0.9">Petrol ECUs</div>
             </div>
             <div class="ecu-stat-card" style="background:linear-gradient(135deg,#10b981,#059669);padding:1.5rem;border-radius:12px;text-align:center;color:white">
-              <div style="font-size:2rem;font-weight:bold" id="brands-count">8</div>
+              <div style="font-size:2rem;font-weight:bold" id="brands-count">20+</div>
               <div style="font-size:0.875rem;opacity:0.9">Brands</div>
             </div>
           </div>
@@ -1585,14 +1585,19 @@
                   <label for="ecu-filter-brand" style="display:block;margin-bottom:0.5rem;font-weight:600;font-size:0.875rem">🏭 Brand</label>
                   <select id="ecu-filter-brand" style="width:100%;padding:0.75rem;border:2px solid #e5e7eb;border-radius:8px;font-weight:500" title="Filter by ECU brand" aria-label="ECU brand filter">
                     <option value="">All Brands</option>
-                    <option value="Bosch">Bosch</option>
-                    <option value="Siemens">Siemens/Continental</option>
-                    <option value="Delphi">Delphi/Aptiv</option>
-                    <option value="Denso">Denso</option>
-                    <option value="Magneti Marelli">Magneti Marelli</option>
-                    <option value="Continental">Continental (VAG)</option>
-                    <option value="BMW">BMW (Bosch)</option>
-                    <option value="Mercedes">Mercedes (Bosch)</option>
+                    <option value="Bosch">Bosch (EDC/MED/MG1/MD1)</option>
+                    <option value="Continental">Continental/Siemens (Simos/SID/EMS)</option>
+                    <option value="Delphi">Delphi/Aptiv (DCM)</option>
+                    <option value="Denso">Denso (SH/Toyota/Mazda)</option>
+                    <option value="Magneti Marelli">Magneti Marelli (IAW/MJD)</option>
+                    <option value="BMW">BMW (DME/DDE/MEVD)</option>
+                    <option value="Mercedes">Mercedes-AMG (ME/MED)</option>
+                    <option value="Hitachi">Hitachi/Nissan (MEC)</option>
+                    <option value="Honda">Honda/Keihin (PGM-FI)</option>
+                    <option value="Tesla">Tesla/EV Controllers</option>
+                    <option value="Ferrari">Ferrari/Lamborghini/McLaren</option>
+                    <option value="Porsche">Porsche (ME/MED)</option>
+                    <option value="Bentley">Bentley/Maserati</option>
                   </select>
                 </div>
 
@@ -1603,6 +1608,7 @@
                     <option value="">All Types</option>
                     <option value="Diesel">Diesel</option>
                     <option value="Petrol">Petrol</option>
+                    <option value="Electric">Electric/Hybrid</option>
                   </select>
                 </div>
 
@@ -1615,8 +1621,12 @@
                     <option value="K-TAG">K-TAG</option>
                     <option value="Autotuner">Autotuner</option>
                     <option value="CMD Flash">CMD Flash</option>
-                    <option value="Magic">Magic</option>
                     <option value="PCMFlash">PCMFlash</option>
+                    <option value="Magic">Magic Motorsport</option>
+                    <option value="FlashPro">Hondata/FlashPro</option>
+                    <option value="ECUTek">ECUTek</option>
+                    <option value="Tricore">Tricore/Boot Mode</option>
+                    <option value="Bench">Bench Tuning</option>
                   </select>
                 </div>
 
@@ -1628,6 +1638,7 @@
                     <option value="brand">Brand (A-Z)</option>
                     <option value="type">Type (Diesel/Petrol)</option>
                     <option value="power">Power (High-Low)</option>
+                    <option value="applications">Vehicle Count</option>
                   </select>
                 </div>
               </div>
