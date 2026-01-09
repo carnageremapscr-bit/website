@@ -19,17 +19,24 @@ CREATE TABLE IF NOT EXISTS top_up_requests (
 -- Enable RLS
 ALTER TABLE top_up_requests ENABLE ROW LEVEL SECURITY;
 
--- Allow users to view their own requests
+-- Allow users to view their own requests (optimized with SELECT wrapper)
 CREATE POLICY "Users can view own top-up requests" ON top_up_requests
-  FOR SELECT USING (auth.uid() = user_id OR (auth.uid() IN (SELECT id FROM users WHERE role = 'admin')));
+  FOR SELECT USING (
+    (SELECT auth.uid()) = user_id 
+    OR (SELECT email FROM auth.users WHERE id = (SELECT auth.uid())) IN (SELECT email FROM users WHERE role = 'admin')
+  );
 
--- Allow admins to view all requests
+-- Allow admins to view all requests (optimized with SELECT wrapper)
 CREATE POLICY "Admins can manage top-up requests" ON top_up_requests
-  FOR ALL USING (auth.uid() IN (SELECT id FROM users WHERE role = 'admin'));
+  FOR ALL USING (
+    (SELECT email FROM auth.users WHERE id = (SELECT auth.uid())) IN (SELECT email FROM users WHERE role = 'admin')
+  );
 
--- Allow users to insert their own requests
+-- Allow users to insert their own requests (optimized with SELECT wrapper)
 CREATE POLICY "Users can request top-ups" ON top_up_requests
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+  FOR INSERT WITH CHECK (
+    (SELECT auth.uid()) = user_id
+  );
 
 -- Create index for faster queries
 CREATE INDEX idx_top_up_requests_status ON top_up_requests(status);
@@ -60,25 +67,42 @@ CREATE TABLE IF NOT EXISTS subscriptions (
 -- Enable RLS
 ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
 
--- Allow users to view their own subscriptions
+-- Allow users to view their own subscriptions (optimized with SELECT wrapper)
 CREATE POLICY "Users can view own subscriptions" ON subscriptions
   FOR SELECT USING (
-    auth.uid() = user_id 
-    OR email = (SELECT email FROM auth.users WHERE id = auth.uid())
-    OR (auth.uid() IN (SELECT id FROM users WHERE role = 'admin'))
+    (SELECT auth.uid()) = user_id 
+    OR email = (SELECT email FROM auth.users WHERE id = (SELECT auth.uid()))
+    OR email IN (SELECT email FROM users WHERE role = 'admin')
   );
 
--- Allow admins to manage all subscriptions
-CREATE POLICY "Admins can manage subscriptions" ON subscriptions
-  FOR ALL USING (auth.uid() IN (SELECT id FROM users WHERE role = 'admin'));
+-- Allow admins to insert subscriptions (optimized with SELECT wrapper)
+CREATE POLICY "Admins can insert subscriptions" ON subscriptions
+  FOR INSERT WITH CHECK (
+    email IN (SELECT email FROM users WHERE role = 'admin')
+  );
 
--- Allow inserts from service role (for webhooks)
-CREATE POLICY "Service can insert subscriptions" ON subscriptions
-  FOR INSERT WITH CHECK (true);
+-- Allow admins to update subscriptions (optimized with SELECT wrapper)
+CREATE POLICY "Admins can update subscriptions" ON subscriptions
+  FOR UPDATE USING (
+    email IN (SELECT email FROM users WHERE role = 'admin')
+  )
+  WITH CHECK (
+    email IN (SELECT email FROM users WHERE role = 'admin')
+  );
 
--- Allow updates from service role
-CREATE POLICY "Service can update subscriptions" ON subscriptions
-  FOR UPDATE USING (true);
+-- Allow admins to delete subscriptions (optimized with SELECT wrapper)
+CREATE POLICY "Admins can delete subscriptions" ON subscriptions
+  FOR DELETE USING (
+    email IN (SELECT email FROM users WHERE role = 'admin')
+  );
+
+-- Service role can manage subscriptions (for webhooks - restrictive to service_role only)
+CREATE POLICY "Service role can manage subscriptions" ON subscriptions
+  AS PERMISSIVE
+  FOR ALL
+  TO service_role
+  USING (true)
+  WITH CHECK (true);
 
 -- Create indexes for faster queries
 CREATE INDEX idx_subscriptions_email ON subscriptions(email);
@@ -106,16 +130,20 @@ CREATE TABLE IF NOT EXISTS transactions (
 -- Enable RLS
 ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
 
--- Allow users to view their own transactions
+-- Allow users to view their own transactions (optimized with SELECT wrapper)
 CREATE POLICY "Users can view own transactions" ON transactions
   FOR SELECT USING (
-    auth.uid() = user_id 
-    OR (auth.uid() IN (SELECT id FROM users WHERE role = 'admin'))
+    (SELECT auth.uid()) = user_id 
+    OR email IN (SELECT email FROM users WHERE role = 'admin')
   );
 
--- Allow service to insert transactions
-CREATE POLICY "Service can insert transactions" ON transactions
-  FOR INSERT WITH CHECK (true);
+-- Service role can manage transactions (for payment processing - restrictive to service_role only)
+CREATE POLICY "Service role can manage transactions" ON transactions
+  AS PERMISSIVE
+  FOR ALL
+  TO service_role
+  USING (true)
+  WITH CHECK (true);
 
 -- Create indexes
 CREATE INDEX idx_transactions_user_id ON transactions(user_id);
@@ -142,9 +170,40 @@ CREATE TABLE IF NOT EXISTS admin_notifications (
 -- Enable RLS
 ALTER TABLE admin_notifications ENABLE ROW LEVEL SECURITY;
 
--- Allow service role to manage notifications (server handles auth via sessions)
-CREATE POLICY "Service can manage notifications" ON admin_notifications
-  FOR ALL USING (true);
+-- Admins can view notifications (optimized with SELECT wrapper)
+CREATE POLICY "Admins can view notifications" ON admin_notifications
+  FOR SELECT USING (
+    (SELECT email FROM auth.users WHERE id = (SELECT auth.uid())) IN (SELECT email FROM users WHERE role = 'admin')
+  );
+
+-- Admins can insert notifications (optimized with SELECT wrapper)
+CREATE POLICY "Admins can insert notifications" ON admin_notifications
+  FOR INSERT WITH CHECK (
+    (SELECT email FROM auth.users WHERE id = (SELECT auth.uid())) IN (SELECT email FROM users WHERE role = 'admin')
+  );
+
+-- Admins can update notifications (optimized with SELECT wrapper)
+CREATE POLICY "Admins can update notifications" ON admin_notifications
+  FOR UPDATE USING (
+    (SELECT email FROM auth.users WHERE id = (SELECT auth.uid())) IN (SELECT email FROM users WHERE role = 'admin')
+  )
+  WITH CHECK (
+    (SELECT email FROM auth.users WHERE id = (SELECT auth.uid())) IN (SELECT email FROM users WHERE role = 'admin')
+  );
+
+-- Admins can delete notifications (optimized with SELECT wrapper)
+CREATE POLICY "Admins can delete notifications" ON admin_notifications
+  FOR DELETE USING (
+    (SELECT email FROM auth.users WHERE id = (SELECT auth.uid())) IN (SELECT email FROM users WHERE role = 'admin')
+  );
+
+-- Service role can manage notifications (restricted to service_role only)
+CREATE POLICY "Service role can manage notifications" ON admin_notifications
+  AS PERMISSIVE
+  FOR ALL
+  TO service_role
+  USING (true)
+  WITH CHECK (true);
 
 -- Create indexes for faster queries
 CREATE INDEX idx_admin_notifications_type ON admin_notifications(type);

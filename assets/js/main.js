@@ -15168,6 +15168,10 @@ Thank you for choosing Carnage Remaps!
       }
       
       console.log('📊 Notification status loaded:', data);
+      
+      // Load the recent notification log for this tab
+      await loadRecentNotifications('notification-log');
+      
     } catch (error) {
       console.error('Error loading notification status:', error);
       if (emailStatus) emailStatus.innerHTML = '⚠️ Error checking status';
