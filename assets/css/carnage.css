@@ -285,11 +285,13 @@ body.not-authenticated {
   min-block-size: 100dvh;
   display: flex;
   background: var(--cr-bg-dark);
+  width: 100%;
 }
 
 /* SIDEBAR NAVIGATION */
 .portal-sidebar {
   width: 250px;
+  min-width: 250px;
   background: #1e293b;
   border-right: 1px solid var(--cr-border);
   overflow-y: auto;
@@ -298,8 +300,10 @@ body.not-authenticated {
   flex-direction: column;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
   height: 100vh;
-  position: sticky;
+  position: fixed;
+  left: 0;
   top: 0;
+  z-index: 999;
 }
 
 .sidebar-header {
@@ -385,6 +389,8 @@ body.not-authenticated {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  margin-left: 250px;
+  width: calc(100% - 250px);
 }
 
 /* TOP BAR */
@@ -2123,6 +2129,7 @@ code{background:#1a1a1a;padding:.2rem .4rem;border-radius:4px;font-family:monosp
 
   .portal-sidebar {
     width: 100%;
+    min-width: 100%;
     height: auto;
     max-height: 60px;
     border-right: none;
@@ -2130,6 +2137,12 @@ code{background:#1a1a1a;padding:.2rem .4rem;border-radius:4px;font-family:monosp
     flex-direction: row;
     position: static;
     padding: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .portal-main {
+    margin-left: 0;
+    width: 100%;
   }
 
   .sidebar-header {
