@@ -200,53 +200,91 @@
   <!-- Main Portal (shown after login) -->
   <div id="main-portal" class="main-portal" style="display:none;">
   
-  <header class="cr-header">
-    <div class="cr-container">
-      <img src="assets/media/logo.avif" alt="Carnage Remaps" class="cr-logo" onerror="this.style.display='none'"/>
-      <nav class="cr-nav" id="main-nav">
-        <a href="#" data-tab="dashboard" class="active">Dashboard</a>
-        <a href="#" data-tab="files">Files</a>
-        <a href="#" data-tab="upload">Upload</a>
-        <a href="#" data-tab="vehicle-search">🔍 Vehicle Search</a>
-        <a href="#" data-tab="billing">💳 Billing</a>
-        <a href="#" data-tab="settings">Settings</a>
-        <a href="#" data-tab="support">Support</a>
-        <a href="#" data-tab="admin" id="admin-nav-link" style="display:none;">Admin</a>
-      </nav>
-      <div class="user-menu">
-        <div id="online-status" style="display:flex;align-items:center;gap:0.5rem;margin-right:1rem;padding:0.5rem 1rem;background:rgba(255,255,255,0.1);border-radius:8px;">
-          <span id="status-indicator" style="width:10px;height:10px;border-radius:50%;background:#22c55e;"></span>
-          <span id="status-text" style="font-size:0.875rem;font-weight:500;">Online</span>
-        </div>
-        <button class="notification-bell" id="notification-bell" style="display:none;">
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="portal-sidebar">
+    <div class="sidebar-header">
+      <img src="assets/media/logo.avif" alt="Carnage Remaps" class="sidebar-logo" onerror="this.style.display='none'"/>
+      <div class="sidebar-title">Carnage Remaps</div>
+    </div>
+
+    <nav class="portal-nav" id="main-nav">
+      <a href="#" data-tab="dashboard" class="nav-item active">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Dashboard</span>
+      </a>
+      <a href="#" data-tab="files" class="nav-item">
+        <span class="nav-icon">📁</span>
+        <span class="nav-label">Files</span>
+      </a>
+      <a href="#" data-tab="upload" class="nav-item">
+        <span class="nav-icon">⬆️</span>
+        <span class="nav-label">Upload</span>
+      </a>
+      <a href="#" data-tab="vehicle-search" class="nav-item">
+        <span class="nav-icon">🔍</span>
+        <span class="nav-label">Vehicle Search</span>
+      </a>
+      <a href="#" data-tab="billing" class="nav-item">
+        <span class="nav-icon">💳</span>
+        <span class="nav-label">Billing</span>
+      </a>
+      <a href="#" data-tab="settings" class="nav-item">
+        <span class="nav-icon">⚙️</span>
+        <span class="nav-label">Settings</span>
+      </a>
+      <a href="#" data-tab="support" class="nav-item">
+        <span class="nav-icon">💬</span>
+        <span class="nav-label">Support</span>
+      </a>
+      <a href="#" data-tab="admin" id="admin-nav-link" class="nav-item" style="display:none;">
+        <span class="nav-icon">👨‍💼</span>
+        <span class="nav-label">Admin</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div id="online-status" style="display:flex;align-items:center;gap:0.5rem;padding:0.75rem;background:rgba(16,185,129,0.15);border-radius:6px;margin-bottom:0.75rem;font-size:0.9em;">
+        <span id="status-indicator" style="width:8px;height:8px;border-radius:50%;background:#10b981;flex-shrink:0;"></span>
+        <span id="status-text" style="font-weight:500;">Online</span>
+      </div>
+      <button class="btn small" id="logout-btn" style="width:100%;">Logout</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT AREA -->
+  <div class="portal-main">
+    <!-- TOP BAR -->
+    <header class="portal-header">
+      <div class="header-left">
+        <button class="notification-bell" id="notification-bell" style="display:none;background:transparent;border:none;cursor:pointer;font-size:1.25rem;">
           <span class="bell-icon">🔔</span>
           <span class="notification-badge" id="notification-badge">0</span>
         </button>
-        <span id="user-name-display"></span>
+      </div>
+      <div class="header-right">
+        <span id="user-name-display" style="font-weight:600;color:var(--cr-text-primary);"></span>
         <span id="user-credit-display" class="credit-badge" style="display:none;">Credits: £0.00</span>
-        <button class="btn small" id="logout-btn">Logout</button>
+      </div>
+    </header>
+
+    <!-- Notification Panel -->
+    <div class="notification-panel" id="notification-panel">
+      <div class="notification-header">
+        <h3>🔔 Notifications</h3>
+        <button class="mark-all-read" id="mark-all-read">Mark all as read</button>
+      </div>
+      <div class="notification-body" id="notification-body">
+        <div class="notification-empty">No new notifications</div>
       </div>
     </div>
-  </header>
 
-  <!-- Notification Panel -->
-  <div class="notification-panel" id="notification-panel">
-    <div class="notification-header">
-      <h3>🔔 Notifications</h3>
-      <button class="mark-all-read" id="mark-all-read">Mark all as read</button>
-    </div>
-    <div class="notification-body" id="notification-body">
-      <div class="notification-empty">No new notifications</div>
-    </div>
-  </div>
-
-  <main class="cr-container">
-    <!-- Dashboard Tab -->
-    <section id="dashboard-tab" class="cr-tab active">
-      <div class="cr-hero" style="margin-bottom:2rem">
-        <h1 style="font-size:2rem;margin-bottom:0.5rem">Welcome back, <span id="dashboard-user-name"></span></h1>
-        <p class="muted" style="font-size:1rem">Here's what's happening with your files today</p>
-      </div>
+    <main class="portal-content">
+      <!-- Dashboard Tab -->
+      <section id="dashboard-tab" class="cr-tab active">
+        <div class="cr-hero" style="margin-bottom:2rem">
+          <h1 style="font-size:2rem;margin-bottom:0.5rem">Welcome back, <span id="dashboard-user-name"></span></h1>
+          <p class="muted" style="font-size:1rem">Here's what's happening with your files today</p>
+        </div>
 
       <!-- Stats Grid - Top Section -->
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-bottom:2rem">
@@ -2564,6 +2602,8 @@
           📧 Request Top Up
         </button>
       </div>
+    </div>
+    </main>
     </div>
   </div>
 

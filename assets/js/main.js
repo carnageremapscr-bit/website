@@ -5187,9 +5187,9 @@
         e.preventDefault();
         const tabName = link.getAttribute('data-tab');
         
-        // Update nav active state
-        document.querySelectorAll('.cr-nav a').forEach(a => a.classList.remove('active'));
-        document.querySelectorAll(`.cr-nav a[data-tab="${tabName}"]`).forEach(a => a.classList.add('active'));
+        // Update nav active state - works with both old and new selectors
+        document.querySelectorAll('.nav-item, .cr-nav a').forEach(a => a.classList.remove('active'));
+        document.querySelectorAll(`.nav-item[data-tab="${tabName}"], .cr-nav a[data-tab="${tabName}"]`).forEach(a => a.classList.add('active'));
         
         // Update tab active state
         tabs.forEach(tab => tab.classList.remove('active'));
