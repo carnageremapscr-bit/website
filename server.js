@@ -1041,8 +1041,8 @@ app.get('/embed.html', (req, res) => {
   res.removeHeader('X-Frame-Options');
   // Allow embedding from any origin
   res.setHeader('Access-Control-Allow-Origin', '*');
-  // Properly allow frame-ancestors from any origin
-  res.setHeader('Content-Security-Policy', "frame-ancestors 'self' http: https:");
+  // Don't set frame-ancestors at all - this allows embedding from anywhere
+  res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline';");
   res.sendFile(path.join(__dirname, 'embed.html'));
 });
 
