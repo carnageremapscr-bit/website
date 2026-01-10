@@ -15,39 +15,39 @@
 
 @layer base {
   :root {
-    /* Color System - Black & Yellow Theme */
-    --cr-primary: #f59e0b; /* Carnage Yellow/Gold */
-    --cr-primary-hover: #d97706; /* Darker yellow on hover */
-    --cr-primary-light: #fbbf24;
-    --cr-primary-dark: #b45309;
-    --cr-primary-glow: rgba(245, 158, 11, 0.3);
+    /* Color System - Portal Pro Clean Professional Theme */
+    --cr-primary: #3b82f6; /* Professional Blue */
+    --cr-primary-hover: #2563eb; /* Darker blue on hover */
+    --cr-primary-light: #60a5fa;
+    --cr-primary-dark: #1e40af;
+    --cr-primary-glow: rgba(59, 130, 246, 0.2);
     
-    /* Dark Theme Base */
-    --cr-bg-dark: #0a0a0a; /* Near black */
-    --cr-bg-card: #111111; /* Card backgrounds */
-    --cr-bg-elevated: #1a1a1a; /* Elevated surfaces */
-    --cr-bg-input: #1f1f1f; /* Input backgrounds */
+    /* Dark Theme Base - Cleaner, less pure black */
+    --cr-bg-dark: #0f172a; /* Soft dark blue-gray */
+    --cr-bg-card: #1e293b; /* Card backgrounds */
+    --cr-bg-elevated: #334155; /* Elevated surfaces */
+    --cr-bg-input: #1e293b; /* Input backgrounds */
     
-    --cr-light: #f7f7f8;
-    --cr-dark: #0a0a0a;
-    --cr-accent: #f59e0b;
-    --cr-success: #22c55e;
+    --cr-light: #f8fafc;
+    --cr-dark: #0f172a;
+    --cr-accent: #3b82f6;
+    --cr-success: #10b981;
     --cr-warning: #f59e0b;
     --cr-error: #ef4444;
     --cr-info: #3b82f6;
-    --cr-border: #2a2a2a;
-    --cr-border-light: #333333;
+    --cr-border: #334155;
+    --cr-border-light: #475569;
     
     /* Text Colors */
-    --cr-text-primary: #ffffff;
-    --cr-text-secondary: #a1a1aa;
-    --cr-text-muted: #71717a;
+    --cr-text-primary: #f1f5f9;
+    --cr-text-secondary: #94a3b8;
+    --cr-text-muted: #64748b;
     
     /* Legacy color aliases */
-    --cr-purple: #8b5cf6;
+    --cr-purple: #a78bfa;
     --cr-cyan: #06b6d4;
     --cr-blue: #3b82f6;
-    --cr-gray: #71717a;
+    --cr-gray: #64748b;
     
     /* Spacing Scale */
     --space-xs: 0.25rem;
@@ -58,15 +58,15 @@
     --space-2xl: 3rem;
     
     /* Typography */
-    --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    --font-sans: 'Segoe UI', 'Helvetica Neue', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --font-mono: 'Fira Code', 'JetBrains Mono', Consolas, monospace;
     
-    /* Shadows - Dark theme optimized */
-    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.3);
-    --shadow-md: 0 4px 6px rgb(0 0 0 / 0.4), 0 2px 4px rgb(0 0 0 / 0.3);
-    --shadow-lg: 0 10px 15px rgb(0 0 0 / 0.5), 0 4px 6px rgb(0 0 0 / 0.3);
-    --shadow-xl: 0 20px 25px rgb(0 0 0 / 0.5), 0 8px 10px rgb(0 0 0 / 0.3);
-    --shadow-glow: 0 0 20px var(--cr-primary-glow);
+    /* Shadows - Professional, subtle */
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.1);
+    --shadow-md: 0 4px 6px rgb(0 0 0 / 0.15);
+    --shadow-lg: 0 10px 15px rgb(0 0 0 / 0.2);
+    --shadow-xl: 0 20px 25px rgb(0 0 0 / 0.25);
+    --shadow-glow: 0 0 12px var(--cr-primary-glow);
     
     /* Animation */
     --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -74,10 +74,10 @@
     --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
     
     /* Border Radius */
-    --radius-sm: 6px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
-    --radius-xl: 16px;
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --radius-xl: 12px;
     --radius-full: 9999px;
   }
 
@@ -122,7 +122,7 @@ body {
 }
 
 body.not-authenticated {
-  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
   background-attachment: fixed;
 }
 
