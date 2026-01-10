@@ -1011,11 +1011,8 @@ app.use(compression());
 
 // Security headers with Helmet (EXCLUDING embed.html which needs to be embeddable)
 app.use((req, res, next) => {
-  // Skip helmet's frame restrictions for embed.html
+  // Skip helmet entirely for embed.html - it will be handled by its dedicated route
   if (req.path === '/embed.html') {
-    // Allow embed.html to be framed anywhere
-    res.setHeader('X-Frame-Options', 'ALLOWALL');
-    res.removeHeader('Content-Security-Policy');
     return next();
   }
   
@@ -1040,9 +1037,12 @@ app.use((req, res, next) => {
 
 // Special route for embed.html to ensure it's embeddable
 app.get('/embed.html', (req, res) => {
-  res.setHeader('X-Frame-Options', 'ALLOWALL');
+  // Remove X-Frame-Options entirely to avoid conflicts
+  res.removeHeader('X-Frame-Options');
+  // Allow embedding from any origin
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Content-Security-Policy', "frame-ancestors *");
+  // Properly allow frame-ancestors from any origin
+  res.setHeader('Content-Security-Policy', "frame-ancestors 'self' http: https:");
   res.sendFile(path.join(__dirname, 'embed.html'));
 });
 
