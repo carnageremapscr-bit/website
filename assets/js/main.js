@@ -7233,8 +7233,17 @@
         const summary = [data.vehicle?.make, data.vehicle?.model, data.vehicle?.year].filter(Boolean).join(' ');
         const needsEngine = selection.year && !selection.engine;
         const suffix = filled ? `Filled: ${filled}.` : 'Please confirm details.';
-        const engineNote = needsEngine ? ' Select the correct engine if it differs.' : '';
+        const engineNote = needsEngine ? ' Select the correct engine to continue.' : '';
         setVrmStatusSearch(`Found ${summary || 'vehicle'}. ${suffix}${engineNote}`, 'success');
+
+        // If engine wasn’t auto-selected, scroll and highlight the engine selector
+        if (needsEngine && searchEngine) {
+          const fg = searchEngine.closest('.form-group') || searchEngine;
+          fg.classList.add('highlight-pulse');
+          searchEngine.focus();
+          fg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setTimeout(() => fg.classList.remove('highlight-pulse'), 3000);
+        }
 
         // Auto-run search when we have at least an engine selected
         if (selection.engine && searchBtn) {
