@@ -7148,6 +7148,34 @@
         return option;
       };
 
+      const deriveModelKeysSearch = (modelRaw) => {
+        if (!modelRaw) return [];
+        const cleaned = modelRaw
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+        if (!cleaned) return [];
+        const parts = cleaned.split(' ');
+        const candidates = new Set();
+
+        const pushModel = (text) => {
+          if (!text) return;
+          const norm = normalizeModelKey(text);
+          if (norm) candidates.add(norm);
+        };
+
+        pushModel(cleaned); // full string
+        pushModel(parts[0]); // first token (e.g., a3, golf, focus)
+        if (parts.length >= 2) {
+          pushModel(`${parts[0]} ${parts[1]}`); // first two tokens
+          if (parts[1] === 'series' || parts[1] === 'class') {
+            pushModel(`${parts[0]}-${parts[1]}`); // 3-series, c-class
+          }
+        }
+        return Array.from(candidates);
+      };
+
       if (vehicle.make) {
         const makeKey = normalizeMakeKeySearch(vehicle.make);
         const matchedManufacturer = trySelectOptionSearch(
@@ -7158,19 +7186,25 @@
       }
 
       if (result.manufacturer && vehicle.model && searchModel) {
-        const modelKey = normalizeModelKey(vehicle.model);
-        let matchedModel = trySelectOptionSearch(
-          searchModel,
-          (opt) => opt.value === modelKey || normalizeModelKey(opt.textContent) === modelKey
-        );
+        const modelKeys = deriveModelKeysSearch(vehicle.model);
+        let matchedModel = null;
 
-        // Fuzzy fallback: substring match either way
+        // Exact/normalized matches across candidate keys
+        for (const candidate of modelKeys) {
+          matchedModel = trySelectOptionSearch(
+            searchModel,
+            (opt) => opt.value === candidate || normalizeModelKey(opt.textContent) === candidate
+          );
+          if (matchedModel) break;
+        }
+
+        // Fuzzy fallback: substring match either way for any candidate
         if (!matchedModel) {
           matchedModel = trySelectOptionSearch(
             searchModel,
             (opt) => {
               const optKey = normalizeModelKey(opt.textContent);
-              return optKey.includes(modelKey) || modelKey.includes(optKey);
+              return modelKeys.some((mk) => optKey.includes(mk) || mk.includes(optKey));
             }
           );
         }
@@ -7178,6 +7212,14 @@
         // If still nothing and only one real option exists, auto-select it
         if (!matchedModel && searchModel.options.length === 2) {
           matchedModel = selectAndTrigger(searchModel, searchModel.options[1]);
+        }
+
+        // If we have manufacturer but no model match, at least select first available
+        if (!matchedModel) {
+          const firstReal = Array.from(searchModel.options).find((opt) => opt.value);
+          if (firstReal) {
+            matchedModel = selectAndTrigger(searchModel, firstReal);
+          }
         }
         result.model = !!matchedModel;
       }
