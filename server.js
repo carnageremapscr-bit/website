@@ -2568,8 +2568,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal server error', message: err.message });
 });
 
-}
-
 // Start server
 app.listen(PORT, () => {
   console.log(`\n🚀 Carnage Remaps API Server running on http://localhost:${PORT}`);
