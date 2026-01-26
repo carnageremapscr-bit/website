@@ -1067,6 +1067,17 @@ app.get('/embed.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'embed.html'));
 });
 
+// Special route for test-vrm.html to ensure it's embeddable
+app.get('/test-vrm.html', (req, res) => {
+  // Remove X-Frame-Options entirely to avoid conflicts
+  res.removeHeader('X-Frame-Options');
+  // Allow embedding from any origin
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  // Don't set frame-ancestors at all - this allows embedding from anywhere
+  res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; connect-src *;");
+  res.sendFile(path.join(__dirname, 'test-vrm.html'));
+});
+
 // Explicit routes for Supabase JS modules (bypass potential static middleware issues)
 const supabaseJsFiles = ['supabase-client.js', 'supabase-auth.js', 'supabase-files.js', 'supabase-support.js', 'supabase-compat.js', 'supabase-config.js'];
 supabaseJsFiles.forEach(filename => {
