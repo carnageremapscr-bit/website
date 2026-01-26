@@ -1871,6 +1871,7 @@ app.get('/api/vrm-lookup', async (req, res) => {
     console.error('❌ VRM lookup error:', err);
     res.status(500).json({ error: 'VRM lookup failed', details: err.message });
   }
+});
 
 // ============================================
 // DVLA Open Data API Endpoint
