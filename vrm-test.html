@@ -3,38 +3,114 @@
 <head>
   <title>VRM Test</title>
   <style>
-    body { font-family: Arial; background: #222; color: #fff; padding: 20px; }
-    .box { background: #333; padding: 20px; border-radius: 8px; margin-bottom: 15px; }
-    input, select, button { padding: 8px; margin: 5px; font-size: 14px; }
-    button { background: #f59e0b; color: #000; border: none; cursor: pointer; font-weight: bold; }
-    pre { background: #1a1a1a; padding: 10px; overflow: auto; max-height: 300px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); 
+      color: #e2e8f0; 
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+    h1 {
+      background: linear-gradient(135deg, #ffc107 0%, #ff6b35 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 20px;
+      font-size: 28px;
+      font-weight: 700;
+    }
+    .box { 
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+      padding: 20px; 
+      border-radius: 12px; 
+      margin-bottom: 15px;
+      border: 1px solid rgba(255, 193, 7, 0.2);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+    .box h3 {
+      color: #ffc107;
+      margin-bottom: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    input, select { 
+      padding: 10px 12px; 
+      margin: 5px; 
+      font-size: 14px;
+      border: 2px solid rgba(255, 193, 7, 0.2);
+      background: rgba(15, 23, 42, 0.8);
+      color: #e2e8f0;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #ffc107;
+      box-shadow: 0 0 15px rgba(255, 193, 7, 0.2);
+    }
+    button { 
+      padding: 10px 20px; 
+      margin: 5px; 
+      font-size: 14px;
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      color: white; 
+      border: none; 
+      cursor: pointer; 
+      font-weight: bold;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 20px rgba(220, 38, 38, 0.3);
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px rgba(220, 38, 38, 0.5);
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+    pre { 
+      background: rgba(0, 0, 0, 0.3);
+      padding: 12px; 
+      overflow: auto; 
+      max-height: 300px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 193, 7, 0.1);
+      color: #4ade80;
+      font-size: 12px;
+    }
+    p {
+      color: #cbd5e1;
+    }
   </style>
 </head>
 <body>
-  <div class="box">
-    <h1>VRM Lookup</h1>
-    <input type="text" id="vrm" placeholder="Enter VRM e.g. AB12CDE">
-    <select id="dp">
-      <option value="ukvehicledata">ukvehicledata</option>
-      <option value="vehicleregistration">vehicleregistration</option>
-      <option value="vehiclespecs">vehiclespecs</option>
-    </select>
-    <button onclick="lookup()">Lookup</button>
-  </div>
+  <div class="container">
+    <div class="box">
+      <h1>🔍 VRM Lookup Test</h1>
+      <input type="text" id="vrm" placeholder="Enter VRM e.g. AB12CDE">
+      <select id="dp">
+        <option value="ukvehicledata">ukvehicledata</option>
+        <option value="vehicleregistration">vehicleregistration</option>
+        <option value="vehiclespecs">vehiclespecs</option>
+      </select>
+      <button onclick="lookup()">Lookup</button>
+    </div>
 
-  <div class="box">
-    <h3>Status:</h3>
-    <p id="status">Ready</p>
-  </div>
+    <div class="box">
+      <h3>Status:</h3>
+      <p id="status">Ready</p>
+    </div>
 
-  <div class="box">
-    <h3>Vehicle Data:</h3>
-    <pre id="vehicle">{}</pre>
-  </div>
+    <div class="box">
+      <h3>Vehicle Data:</h3>
+      <pre id="vehicle">{}</pre>
+    </div>
 
-  <div class="box">
-    <h3>Raw Response:</h3>
-    <pre id="raw">{}</pre>
+    <div class="box">
+      <h3>Raw Response:</h3>
+      <pre id="raw">{}</pre>
+    </div>
   </div>
 
   <script>
