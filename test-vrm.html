@@ -338,18 +338,60 @@
             }).join('');
           }
 
+          function pick(...vals) {
+            for (const v of vals) if (v !== undefined && v !== null && v !== '') return v;
+            return undefined;
+          }
+
           async function fetchVehicle(vrm) {
-            // Try DVLA first
-            const dvlaResp = await fetch(`/api/dvla-lookup?vrm=${encodeURIComponent(vrm)}`);
-            const dvlaJson = await dvlaResp.json();
-            if (dvlaResp.ok && dvlaJson.success && dvlaJson.vehicle) return dvlaJson.vehicle;
+            let dvla = null;
+            let cc = null;
+            let usedFallback = false;
 
-            // Fallback to CheckCar
-            const ccResp = await fetch(`/api/vrm-lookup?vrm=${encodeURIComponent(vrm)}&datapoint=vehiclespecs`);
-            const ccJson = await ccResp.json();
-            if (ccResp.ok && ccJson.success && ccJson.vehicle) return ccJson.vehicle;
+            // DVLA first
+            try {
+              const dvlaResp = await fetch(`/api/dvla-lookup?vrm=${encodeURIComponent(vrm)}`);
+              const dvlaJson = await dvlaResp.json();
+              if (dvlaResp.ok && dvlaJson.success && dvlaJson.vehicle) dvla = dvlaJson.vehicle;
+            } catch (e) { /* ignore */ }
 
-            throw new Error(ccJson.error || dvlaJson.error || 'Lookup failed');
+            // CheckCar enrichment
+            try {
+              const ccResp = await fetch(`/api/vrm-lookup?vrm=${encodeURIComponent(vrm)}&datapoint=vehiclespecs`);
+              const ccJson = await ccResp.json();
+              if (ccResp.ok && ccJson.success && ccJson.vehicle) cc = ccJson.vehicle;
+            } catch (e) { /* ignore */ }
+
+            if (!dvla && !cc) throw new Error('Lookup failed');
+
+            // If only one source, return it
+            if (dvla && !cc) return { vehicle: dvla, usedFallback }; // no fallback used
+            if (!dvla && cc) return { vehicle: cc, usedFallback: true };
+
+            // Merge: prefer DVLA for core identity, CheckCar for performance if missing
+            const combined = {
+              make: pick(dvla.make, cc.make),
+              model: pick(dvla.model, cc.model),
+              year: pick(dvla.year, cc.year),
+              fuelType: pick(dvla.fuelType, cc.fuelType),
+              engine: pick(dvla.engine, cc.engine),
+              engineLabel: pick(dvla.engineLabel, cc.engineLabel),
+              engineCapacity: pick(dvla.engineCapacity, cc.engineCapacity),
+              powerBhp: pick(dvla.powerBhp, cc.powerBhp),
+              torqueNm: pick(dvla.torqueNm, cc.torqueNm),
+              aspiration: pick(dvla.aspiration, cc.aspiration),
+              induction: pick(dvla.induction, cc.induction),
+              driveType: pick(dvla.driveType, cc.driveType),
+              transmission: pick(dvla.transmission, dvla.transmissionType, cc.transmission, cc.transmissionType),
+              maxSpeedMph: pick(dvla.maxSpeedMph, cc.maxSpeedMph),
+              maxSpeedKph: pick(dvla.maxSpeedKph, cc.maxSpeedKph),
+              vin: pick(dvla.vin, cc.vin),
+              // keep the rest
+              ...cc,
+              ...dvla,
+            };
+
+            return { vehicle: combined, usedFallback: true };
           }
 
           async function handleLookup() {
@@ -363,8 +405,9 @@
             lookupBtn.disabled = true;
 
             try {
-              const vehicle = await fetchVehicle(vrm);
-              setStatus(`Found ${vehicle.make || ''} ${vehicle.model || ''} ${vehicle.year || ''} ✓`, 'success');
+              const { vehicle, usedFallback } = await fetchVehicle(vrm);
+              const summary = [vehicle.make, vehicle.model, vehicle.year].filter(Boolean).join(' ');
+              setStatus(`Found ${summary}${usedFallback ? ' (enriched)' : ''} ✓`, 'success');
               buildSpecs(vehicle);
               buildPerformance(vehicle);
             } catch (err) {
