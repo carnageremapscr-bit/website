@@ -2638,7 +2638,6 @@ app.use((err, req, res, next) => {
 });
 
 // Start server (close any unclosed block)
-}
 app.listen(PORT, () => {
   console.log(`\n🚀 Carnage Remaps API Server running on http://localhost:${PORT}`);
   console.log(`📝 API Endpoints:`);
