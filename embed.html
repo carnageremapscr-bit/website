@@ -26,6 +26,17 @@
       --stage2: #f59e0b;
       --stage3: #ef4444;
     }
+    html {
+      --accent: inherit;
+      --accent-2: inherit;
+      --bg: inherit;
+      --text: inherit;
+      --muted: inherit;
+      --card: inherit;
+      --stage1: inherit;
+      --stage2: inherit;
+      --stage3: inherit;
+    }
     html, body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: transparent;
@@ -281,15 +292,16 @@
       var emailParam = params.get('email');
 
       var widget = document.getElementById('widget');
-      widget.style.setProperty('--accent', accentColor);
-      widget.style.setProperty('--accent-2', accentColor2);
-      widget.style.setProperty('--bg', bgColor);
-      widget.style.setProperty('--text', textColor);
-      widget.style.setProperty('--muted', mutedColor);
-      widget.style.setProperty('--card', cardColor);
-      widget.style.setProperty('--stage1', stage1Color);
-      widget.style.setProperty('--stage2', stage2Color);
-      widget.style.setProperty('--stage3', stage3Color);
+      var htmlEl = document.documentElement;
+      htmlEl.style.setProperty('--accent', accentColor);
+      htmlEl.style.setProperty('--accent-2', accentColor2);
+      htmlEl.style.setProperty('--bg', bgColor);
+      htmlEl.style.setProperty('--text', textColor);
+      htmlEl.style.setProperty('--muted', mutedColor);
+      htmlEl.style.setProperty('--card', cardColor);
+      htmlEl.style.setProperty('--stage1', stage1Color);
+      htmlEl.style.setProperty('--stage2', stage2Color);
+      htmlEl.style.setProperty('--stage3', stage3Color);
 
       // Apply custom title/description if provided
       var headerTitle = document.querySelector('.header h2');
