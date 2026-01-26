@@ -2705,6 +2705,136 @@ app.post('/api/verify-payment', async (req, res) => {
   }
 });
 
+// ============ IFRAME TRACKING ENDPOINTS ============
+
+// Track/create a new iframe embed
+app.post('/api/iframes/create', authenticateToken, async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { url } = req.body;
+    
+    if (!url) {
+      return res.status(400).json({ error: 'URL is required' });
+    }
+
+    // Insert into iframes table
+    const { data, error } = await supabase
+      .from('iframes')
+      .insert({
+        user_id: userId,
+        url: url,
+        locked: false,
+        usage_count: 0,
+        created_at: new Date().toISOString(),
+      })
+      .select();
+
+    if (error) throw error;
+
+    res.json({ success: true, iframe: data[0] });
+  } catch (error) {
+    console.error('Error creating iframe record:', error);
+    res.status(500).json({ error: error.message || 'Failed to create iframe record' });
+  }
+});
+
+// Get all iframes for admin
+app.get('/api/iframes', authenticateToken, async (req, res) => {
+  try {
+    const { userId } = req.user;
+    
+    // Check if user is admin (would need to add role check)
+    const { data, error } = await supabase
+      .from('iframes')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    res.json({ iframes: data || [] });
+  } catch (error) {
+    console.error('Error fetching iframes:', error);
+    res.status(500).json({ error: error.message || 'Failed to fetch iframes' });
+  }
+});
+
+// Lock/unlock an iframe
+app.put('/api/iframes/:id/lock', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { locked } = req.body;
+
+    const { data, error } = await supabase
+      .from('iframes')
+      .update({
+        locked: locked,
+        locked_at: locked ? new Date().toISOString() : null,
+      })
+      .eq('id', id)
+      .select();
+
+    if (error) throw error;
+
+    res.json({ success: true, iframe: data[0] });
+  } catch (error) {
+    console.error('Error updating iframe lock:', error);
+    res.status(500).json({ error: error.message || 'Failed to update iframe' });
+  }
+});
+
+// Delete an iframe
+app.delete('/api/iframes/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { error } = await supabase
+      .from('iframes')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting iframe:', error);
+    res.status(500).json({ error: error.message || 'Failed to delete iframe' });
+  }
+});
+
+// Increment iframe usage count
+app.post('/api/iframes/:id/use', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Get current usage count
+    const { data: current, error: fetchError } = await supabase
+      .from('iframes')
+      .select('usage_count')
+      .eq('id', id)
+      .single();
+
+    if (fetchError) throw fetchError;
+
+    const newCount = (current?.usage_count || 0) + 1;
+
+    const { data, error } = await supabase
+      .from('iframes')
+      .update({
+        usage_count: newCount,
+        last_used: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select();
+
+    if (error) throw error;
+
+    res.json({ success: true, iframe: data[0] });
+  } catch (error) {
+    console.error('Error updating iframe usage:', error);
+    res.status(500).json({ error: error.message || 'Failed to update usage' });
+  }
+});
+
 // Global error handler - catch all unhandled errors
 app.use((err, req, res, next) => {
   console.error('🔥 Unhandled error:', err);

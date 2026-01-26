@@ -2164,6 +2164,7 @@
         <button class="admin-tab-btn" data-admin-tab="files">Files</button>
         <button class="admin-tab-btn" data-admin-tab="notifications">🔔 Notifications</button>
         <button class="admin-tab-btn" data-admin-tab="vrm">🔍 VRM Lookup</button>
+        <button class="admin-tab-btn" data-admin-tab="iframes">📋 Embed Tracker</button>
       </div>
       
       <!-- Overview Panel -->
@@ -2498,6 +2499,53 @@
                 <button class="btn primary" id="admin-vrm-copy-btn" type="button" style="width:100%;background:#22c55e;border:none;font-weight:600;color:#fff;padding:0.8rem;border-radius:8px;cursor:pointer;transition:background 0.2s;">📋 Copy Code</button>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Iframe Tracker Panel -->
+      <div id="admin-iframes" class="admin-panel">
+        <div class="admin-section">
+          <div class="section-header" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem;">
+            <div>
+              <h3 style="margin:0;color:#fff;font-size:1.4rem;">📋 Iframe Embeds Manager</h3>
+              <p class="muted" style="margin:0.5rem 0 0;font-size:0.9rem;">Track, lock, and manage all generated iframe embeds</p>
+            </div>
+            <button class="btn primary" id="admin-iframes-refresh-btn" type="button" style="background:#3b82f6;color:#fff;padding:0.7rem 1.25rem;border-radius:8px;border:none;cursor:pointer;font-weight:600;">🔄 Refresh</button>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;margin-bottom:1.5rem;">
+            <div style="background:linear-gradient(135deg, rgba(59,130,246,0.1), rgba(59,130,246,0.05));border:2px solid rgba(59,130,246,0.2);border-radius:12px;padding:1rem;">
+              <div style="font-size:0.85rem;color:#93c5fd;font-weight:600;margin-bottom:0.5rem;">Total Iframes</div>
+              <div style="font-size:2rem;font-weight:700;color:#e2e8f0;" id="iframe-total-count">0</div>
+            </div>
+            <div style="background:linear-gradient(135deg, rgba(34,197,94,0.1), rgba(34,197,94,0.05));border:2px solid rgba(34,197,94,0.2);border-radius:12px;padding:1rem;">
+              <div style="font-size:0.85rem;color:#86efac;font-weight:600;margin-bottom:0.5rem;">Active</div>
+              <div style="font-size:2rem;font-weight:700;color:#e2e8f0;" id="iframe-active-count">0</div>
+            </div>
+            <div style="background:linear-gradient(135deg, rgba(239,68,68,0.1), rgba(239,68,68,0.05));border:2px solid rgba(239,68,68,0.2);border-radius:12px;padding:1rem;">
+              <div style="font-size:0.85rem;color:#fca5a5;font-weight:600;margin-bottom:0.5rem;">Locked</div>
+              <div style="font-size:2rem;font-weight:700;color:#e2e8f0;" id="iframe-locked-count">0</div>
+            </div>
+          </div>
+
+          <div class="admin-table-wrap">
+            <table class="admin-table" style="font-size:0.9rem;">
+              <thead>
+                <tr>
+                  <th>Embed Code Preview</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th>Uses</th>
+                  <th class="text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-iframes-list">
+                <tr>
+                  <td colspan="5" class="empty-cell">Loading iframes...</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

@@ -8672,6 +8672,9 @@ I would like to request a quote for tuning this vehicle.`,
           initAdminVrmPanel();
           adminVrmInitialized = true;
         }
+        if (tabName === 'iframes') {
+          loadAdminIframes();
+        }
         if (tabName === 'credit') {
           if (!isLoadingAdminUsers) loadAdminUsers(); // Load users for credit management
         }
@@ -8766,11 +8769,24 @@ I would like to request a quote for tuning this vehicle.`,
           { bg: 'rgba(248,113,113,0.12)', border: 'rgba(248,113,113,0.3)', title: '#fca5a5', accent: '#f87171' }
         ];
         const colors = stageColors[idx] || stageColors[0];
+        
+        // Define parts requirements for each stage
+        const stageRequirements = isTurbo ? [
+          'Remap Only',
+          'Downpipe + Remap',
+          'Turbo Upgrade + Fueling'
+        ] : [
+          'Remap Only',
+          'Exhaust + Intake + Remap',
+          'Cams + Full Exhaust + Remap'
+        ];
+        const requirements = stageRequirements[idx] || 'Remap Only';
+        
         return `
           <div style="background:linear-gradient(135deg, ${colors.bg}, rgba(30,41,59,0.2));border:2px solid ${colors.border};border-radius:14px;padding:1rem;transition:all 0.3s ease;cursor:default;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.9rem;">
               <span style="font-weight:800;font-size:1rem;color:${colors.title};">${label}</span>
-              <span style="font-size:0.75rem;color:#cbd5e1;background:${colors.bg};padding:0.35rem 0.75rem;border-radius:6px;border:1px solid ${colors.border};font-weight:600;text-transform:uppercase;letter-spacing:0.4px;">${isTurbo ? 'Turbo' : 'N.A.'}</span>
+              <span style="font-size:0.7rem;color:#cbd5e1;background:${colors.bg};padding:0.35rem 0.65rem;border-radius:6px;border:1px solid ${colors.border};font-weight:600;letter-spacing:0.3px;">${requirements}</span>
             </div>
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.75rem;">
               <div style="background:linear-gradient(135deg, rgba(15,23,42,0.8), rgba(30,41,59,0.6));border-radius:12px;padding:0.8rem;border:1px solid ${colors.border};opacity:0.9;">
@@ -8921,11 +8937,26 @@ I would like to request a quote for tuning this vehicle.`,
     const buildEmbed = () => `<iframe src="https://web-production-df12d.up.railway.app/test-vrm.html" width="100%" height="520" style="border:none;border-radius:12px;max-width:100%;" title="Carnage VRM Lookup" loading="lazy"></iframe>`;
     if (embedOutput) embedOutput.value = buildEmbed();
     if (copyEmbedBtn) {
-      copyEmbedBtn.addEventListener('click', () => {
+      copyEmbedBtn.addEventListener('click', async () => {
         if (!embedOutput) return;
         embedOutput.select();
         document.execCommand('copy');
         copyEmbedBtn.textContent = '✓ Copied!';
+        
+        // Track iframe creation
+        try {
+          await fetch('/api/iframes/create', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            },
+            body: JSON.stringify({ url: 'https://web-production-df12d.up.railway.app/test-vrm.html' })
+          });
+        } catch (err) {
+          console.log('Iframe tracking note:', err.message);
+        }
+        
         setTimeout(() => { copyEmbedBtn.textContent = '📋 Copy iframe'; }, 1800);
       });
     }
@@ -9278,6 +9309,121 @@ I would like to request a quote for tuning this vehicle.`,
       }, 500);
     }
   }
+
+  // Load admin iframes
+  async function loadAdminIframes() {
+    const container = document.getElementById('admin-iframes-list');
+    if (!container) return;
+
+    try {
+      container.innerHTML = '<tr><td colspan="5" class="empty-cell">Loading iframes...</td></tr>';
+
+      const response = await fetch('/api/iframes', {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch iframes');
+
+      const { iframes } = await response.json();
+
+      // Update counts
+      document.getElementById('iframe-total-count').textContent = iframes.length;
+      document.getElementById('iframe-active-count').textContent = iframes.filter(i => !i.locked).length;
+      document.getElementById('iframe-locked-count').textContent = iframes.filter(i => i.locked).length;
+
+      if (iframes.length === 0) {
+        container.innerHTML = '<tr><td colspan="5" class="empty-cell">No iframes created yet</td></tr>';
+        return;
+      }
+
+      container.innerHTML = iframes.map(iframe => {
+        const created = new Date(iframe.created_at).toLocaleDateString();
+        const status = iframe.locked ? '🔒 Locked' : '🔓 Active';
+        const statusColor = iframe.locked ? '#ef4444' : '#22c55e';
+        
+        return `
+          <tr>
+            <td>
+              <code style="font-size:0.75rem;color:#0f0;background:rgba(0,0,0,0.3);padding:0.35rem 0.6rem;border-radius:6px;display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                test-vrm.html
+              </code>
+            </td>
+            <td>
+              <span style="background:${iframe.locked ? 'rgba(239,68,68,0.15)' : 'rgba(34,197,94,0.15)'};color:${statusColor};padding:0.3rem 0.75rem;border-radius:6px;font-size:0.8rem;font-weight:600;display:inline-block;">
+                ${status}
+              </span>
+            </td>
+            <td style="font-size:0.85rem;color:#cbd5e1;">${created}</td>
+            <td style="font-size:0.85rem;color:#cbd5e1;font-weight:600;"><span style="background:rgba(100,116,139,0.2);padding:0.25rem 0.5rem;border-radius:4px;">${iframe.usage_count || 0}</span></td>
+            <td style="text-align:center;">
+              <button onclick="toggleIframelock('${iframe.id}', ${iframe.locked})" style="background:${iframe.locked ? '#22c55e' : '#ef4444'};color:#fff;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;margin-right:0.5rem;font-weight:600;">
+                ${iframe.locked ? '🔓 Unlock' : '🔒 Lock'}
+              </button>
+              <button onclick="deleteIframe('${iframe.id}')" style="background:#64748b;color:#fff;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;font-weight:600;">
+                🗑️ Delete
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    } catch (error) {
+      console.error('Error loading iframes:', error);
+      container.innerHTML = `<tr><td colspan="5" class="empty-cell" style="color:#dc2626;">Error loading iframes: ${error.message}</td></tr>`;
+    }
+  }
+
+  // Toggle iframe lock
+  async function toggleIframelock(iframeId, currentLocked) {
+    try {
+      const response = await fetch(`/api/iframes/${iframeId}/lock`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        },
+        body: JSON.stringify({ locked: !currentLocked })
+      });
+
+      if (!response.ok) throw new Error('Failed to update iframe');
+
+      loadAdminIframes();
+    } catch (error) {
+      alert('Error: ' + error.message);
+    }
+  }
+
+  // Delete iframe
+  async function deleteIframe(iframeId) {
+    if (!confirm('Are you sure you want to delete this iframe? It cannot be undone.')) return;
+
+    try {
+      const response = await fetch(`/api/iframes/${iframeId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+      });
+
+      if (!response.ok) throw new Error('Failed to delete iframe');
+
+      loadAdminIframes();
+    } catch (error) {
+      alert('Error: ' + error.message);
+    }
+  }
+
+  // Initialize iframe tracking when admin iframes tab is clicked
+  document.addEventListener('DOMContentLoaded', () => {
+    const refreshBtn = document.getElementById('admin-iframes-refresh-btn');
+    if (refreshBtn) {
+      refreshBtn.onclick = loadAdminIframes;
+    }
+  });
+
+  // Load iframes when tab is selected
+  document.addEventListener('tabselected', (e) => {
+    if (e.detail?.tabId === 'admin-iframes') {
+      loadAdminIframes();
+    }
+  });
 
   // Load admin tickets
   async function loadAdminTickets() {

@@ -198,6 +198,12 @@
     vrmInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') handleLookup();
     });
+
+    // Track iframe usage (get from parent or use default)
+    const iframeId = new URLSearchParams(window.location.search).get('id');
+    if (iframeId) {
+      fetch(`/api/iframes/${iframeId}/use`, { method: 'POST' }).catch(() => {});
+    }
   </script>
 </body>
 </html>
