@@ -5623,6 +5623,34 @@
       });
     }
     
+    // Expose vehicle matching function globally for dashboard use
+    window.matchVehicleFromAPI = function(vehicle) {
+      if (!vehicleDatabase || !manufacturerSelect) {
+        console.warn('Vehicle database not available for matching');
+        return null;
+      }
+      
+      try {
+        const selection = applyVrmSuggestion(vehicle);
+        const filled = [
+          selection.manufacturer ? 'make' : null,
+          selection.model ? 'model' : null,
+          selection.year ? 'year' : null,
+          selection.engine ? 'engine' : null
+        ].filter(Boolean).join(', ');
+        
+        const summary = [vehicle.make, vehicle.model, vehicle.year].filter(Boolean).join(' ');
+        const needsEngine = selection.year && !selection.engine;
+        const suffix = filled ? `Filled: ${filled}` : 'Please confirm details';
+        const engineNote = needsEngine ? ' Select the correct engine if it differs' : '';
+        
+        return `${summary || 'Vehicle'} - ${suffix}${engineNote}`;
+      } catch (e) {
+        console.error('Vehicle matching error:', e);
+        return null;
+      }
+    };
+    
     if (manufacturerSelect && modelSelect) {
       console.log('Attaching vehicle selection event listeners...');
       

@@ -498,6 +498,15 @@
               <div class="card-content">
                 <div class="form-grid">
                   <div class="form-group">
+                    <label>Vehicle registration (license plate)</label>
+                    <div class="registration-row">
+                      <input type="text" id="vehicle-registration" placeholder="e.g. AB12 CDE" class="modern-input" aria-label="Vehicle registration">
+                      <button type="button" id="vrm-lookup-btn" class="vrm-lookup-btn">Lookup</button>
+                    </div>
+                    <p id="vrm-lookup-status" class="vrm-status" aria-live="polite"></p>
+                  </div>
+
+                  <div class="form-group">
                     <label>Vehicle Type</label>
                     <select id="vehicle-type" class="modern-select" required>
                       <option value="">Cars/Vans</option>
@@ -666,15 +675,6 @@
                       <span>Transmission File</span>
                     </button>
                   </div>
-                </div>
-
-                <div class="form-group">
-                  <label>Vehicle registration (license plate)</label>
-                  <div class="registration-row">
-                    <input type="text" id="vehicle-registration" placeholder="e.g. AB12 CDE" class="modern-input" aria-label="Vehicle registration">
-                    <button type="button" id="vrm-lookup-btn" class="vrm-lookup-btn">Lookup</button>
-                  </div>
-                  <p id="vrm-lookup-status" class="vrm-status" aria-live="polite"></p>
                 </div>
 
                 <div class="form-group">

@@ -947,6 +947,12 @@
       document.body.style.filter = document.body.style.filter === 'invert(1)' ? 'invert(0)' : 'invert(1)';
     }
 
+    // Vehicle matching helpers (shared with main.js)
+    function normalizeKey(text) {
+      if (!text) return '';
+      return text.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/--+/g, '-');
+    }
+
     // Registration Lookup Function
     async function performRegLookup() {
       const input = document.getElementById('reg-lookup-input');
@@ -970,9 +976,28 @@
         const data = await resp.json();
         
         if (resp.ok && data.success) {
-          status.textContent = '✓ Vehicle found';
+          const vehicle = data.vehicle || {};
+          
+          // Display results
+          status.textContent = '✓ Vehicle found - Matching to database...';
           status.style.color = 'var(--success)';
-          results.textContent = JSON.stringify(data.vehicle, null, 2);
+          results.textContent = JSON.stringify(vehicle, null, 2);
+          
+          // Try to match with vehicle search if main portal is loaded
+          setTimeout(() => {
+            if (window.matchVehicleFromAPI && typeof window.matchVehicleFromAPI === 'function') {
+              try {
+                const matchResult = window.matchVehicleFromAPI(vehicle);
+                if (matchResult) {
+                  status.textContent = `✓ Vehicle found and matched! ${matchResult}`;
+                } else {
+                  status.textContent = '✓ Vehicle found (manual match needed)';
+                }
+              } catch (e) {
+                console.log('Vehicle matching not available');
+              }
+            }
+          }, 100);
         } else {
           status.textContent = '❌ ' + (data.error || 'Lookup failed');
           status.style.color = 'var(--error)';
