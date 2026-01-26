@@ -1065,17 +1065,20 @@
         <div class="search-form-card card">
           <h3>Search Vehicle</h3>
           <div class="search-form">
-            <!-- New: VRM (Registration) Lookup -->
-            <div class="form-row" style="align-items:flex-end; gap: 1rem; margin-bottom: 0.75rem;">
-              <div class="form-group" style="flex: 1 1 220px;">
-                <label for="search-vrm">Registration (VRM)</label>
-                <input type="text" id="search-vrm" class="form-control" placeholder="e.g. AB12 CDE" autocomplete="off">
+            <!-- VRM (Registration) Lookup -->
+            <div class="form-group">
+              <label>Vehicle registration (license plate)</label>
+              <div class="registration-row">
+                <div class="uk-plate">
+                  <div class="plate-flag">
+                    <span class="flag-text">🇬🇧 UK</span>
+                  </div>
+                  <input type="text" id="search-vrm" placeholder="AB12 CDE" class="plate-input" aria-label="Vehicle registration" maxlength="8" autocomplete="off">
+                </div>
+                <button type="button" id="search-vrm-btn" class="vrm-lookup-btn">Find</button>
               </div>
-              <div class="form-group" style="flex: 0 0 auto;">
-                <button type="button" class="btn" id="search-vrm-btn">Lookup</button>
-              </div>
+              <p id="search-vrm-status" class="vrm-status" aria-live="polite"></p>
             </div>
-            <div id="search-vrm-status" class="vrm-status" style="display:block;margin:-0.25rem 0 0.75rem; font-size: 0.9rem; color: #94a3b8;"></div>
             <div class="form-row">
               <div class="form-group">
                 <label for="search-manufacturer">Manufacturer</label>
