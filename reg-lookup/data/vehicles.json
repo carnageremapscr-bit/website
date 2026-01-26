@@ -1,0 +1,52 @@
+[
+  {
+    "registration": "ABC123",
+    "make": "Volkswagen",
+    "model": "Golf GTI",
+    "year": 2021,
+    "stock": { "hp": 241, "nm": 370 },
+    "stage1": { "hp": 300, "nm": 450 },
+    "stage2": { "hp": 330, "nm": 500 },
+    "stage3": { "hp": 360, "nm": 550 }
+  },
+  {
+    "registration": "DEF456",
+    "make": "BMW",
+    "model": "M140i",
+    "year": 2018,
+    "stock": { "hp": 335, "nm": 500 },
+    "stage1": { "hp": 380, "nm": 560 },
+    "stage2": { "hp": 410, "nm": 620 },
+    "stage3": { "hp": 440, "nm": 680 }
+  },
+  {
+    "registration": "GHI789",
+    "make": "Audi",
+    "model": "S3",
+    "year": 2020,
+    "stock": { "hp": 306, "nm": 400 },
+    "stage1": { "hp": 350, "nm": 470 },
+    "stage2": { "hp": 380, "nm": 520 },
+    "stage3": { "hp": 410, "nm": 570 }
+  },
+  {
+    "registration": "JKL321",
+    "make": "Ford",
+    "model": "Focus ST",
+    "year": 2019,
+    "stock": { "hp": 276, "nm": 420 },
+    "stage1": { "hp": 320, "nm": 470 },
+    "stage2": { "hp": 345, "nm": 510 },
+    "stage3": { "hp": 365, "nm": 540 }
+  },
+  {
+    "registration": "MNO654",
+    "make": "Mercedes-Benz",
+    "model": "A45 AMG",
+    "year": 2022,
+    "stock": { "hp": 382, "nm": 480 },
+    "stage1": { "hp": 420, "nm": 540 },
+    "stage2": { "hp": 450, "nm": 590 },
+    "stage3": { "hp": 480, "nm": 640 }
+  }
+]

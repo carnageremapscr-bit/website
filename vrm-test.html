@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>VRM Test</title>
+  <style>
+    body { font-family: Arial; background: #222; color: #fff; padding: 20px; }
+    .box { background: #333; padding: 20px; border-radius: 8px; margin-bottom: 15px; }
+    input, select, button { padding: 8px; margin: 5px; font-size: 14px; }
+    button { background: #f59e0b; color: #000; border: none; cursor: pointer; font-weight: bold; }
+    pre { background: #1a1a1a; padding: 10px; overflow: auto; max-height: 300px; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>VRM Lookup</h1>
+    <input type="text" id="vrm" placeholder="Enter VRM e.g. AB12CDE">
+    <select id="dp">
+      <option value="ukvehicledata">ukvehicledata</option>
+      <option value="vehicleregistration">vehicleregistration</option>
+      <option value="vehiclespecs">vehiclespecs</option>
+    </select>
+    <button onclick="lookup()">Lookup</button>
+  </div>
+
+  <div class="box">
+    <h3>Status:</h3>
+    <p id="status">Ready</p>
+  </div>
+
+  <div class="box">
+    <h3>Vehicle Data:</h3>
+    <pre id="vehicle">{}</pre>
+  </div>
+
+  <div class="box">
+    <h3>Raw Response:</h3>
+    <pre id="raw">{}</pre>
+  </div>
+
+  <script>
+    async function lookup() {
+      const vrm = document.getElementById('vrm').value.replace(/\s/g, '').toUpperCase();
+      const dp = document.getElementById('dp').value;
+      const statusEl = document.getElementById('status');
+
+      if (!vrm) {
+        statusEl.textContent = 'Error: Enter a VRM';
+        return;
+      }
+
+      statusEl.textContent = 'Loading...';
+
+      try {
+        const resp = await fetch(`/api/vrm-lookup?vrm=${encodeURIComponent(vrm)}&datapoint=${encodeURIComponent(dp)}`);
+        const data = await resp.json();
+
+        statusEl.textContent = data.success ? 'Success!' : (data.error || 'Failed');
+        document.getElementById('vehicle').textContent = JSON.stringify(data.vehicle || {}, null, 2);
+        document.getElementById('raw').textContent = JSON.stringify(data, null, 2);
+      } catch (e) {
+        statusEl.textContent = 'Error: ' + e.message;
+      }
+    }
+
+    document.getElementById('vrm').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') lookup();
+    });
+  </script>
+</body>
+</html>

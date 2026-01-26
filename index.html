@@ -670,7 +670,11 @@
 
                 <div class="form-group">
                   <label>Vehicle registration (license plate)</label>
-                  <input type="text" id="vehicle-registration" placeholder="e.g. AB12 CDE" class="modern-input">
+                  <div class="registration-row">
+                    <input type="text" id="vehicle-registration" placeholder="e.g. AB12 CDE" class="modern-input" aria-label="Vehicle registration">
+                    <button type="button" id="vrm-lookup-btn" class="vrm-lookup-btn">Lookup</button>
+                  </div>
+                  <p id="vrm-lookup-status" class="vrm-status" aria-live="polite"></p>
                 </div>
 
                 <div class="form-group">

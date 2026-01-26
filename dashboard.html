@@ -567,6 +567,10 @@
             <span class="nav-icon">💳</span>
             <span>Payments</span>
           </a>
+          <a href="#reg-lookup" class="nav-item" onclick="loadPage('reg-lookup', event)">
+            <span class="nav-icon">🔍</span>
+            <span>Reg Lookup</span>
+          </a>
         </div>
 
         <!-- Resources Section -->
@@ -833,6 +837,33 @@
             </div>
           </div>
 
+          <!-- REGISTRATION LOOKUP PAGE -->
+          <div id="reg-lookup-page" style="display: none;">
+            <div class="page-header">
+              <h1 class="page-title">🔍 Vehicle Registration Lookup</h1>
+              <p class="page-description">Search vehicle information by registration number</p>
+            </div>
+
+            <div class="details-section">
+              <div class="section-title">🚗 VRM Lookup</div>
+              <div class="detail-grid" style="grid-template-columns: 1fr;">
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px; align-items: flex-end;">
+                  <div>
+                    <label style="display: block; margin-bottom: 8px; color: var(--text-secondary); font-size: 0.9rem;">Registration Number (VRM)</label>
+                    <input type="text" id="reg-lookup-input" placeholder="E.g. AB12CDE" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--card-bg); color: var(--text-primary); font-size: 1rem;">
+                  </div>
+                  <button onclick="performRegLookup()" style="padding: 10px 20px; background: linear-gradient(135deg, #f59e0b, #c81010); color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: transform 0.2s;">Lookup</button>
+                </div>
+              </div>
+              <div id="reg-lookup-status" style="margin-top: 12px; font-size: 0.9rem; min-height: 20px;"></div>
+            </div>
+
+            <div class="details-section" style="margin-top: 24px;">
+              <div class="section-title">📋 Vehicle Details</div>
+              <pre id="reg-lookup-results" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px; padding: 16px; overflow-x: auto; font-size: 0.85rem; line-height: 1.4; max-height: 400px; overflow-y: auto; color: var(--text-secondary);">No results yet</pre>
+            </div>
+          </div>
+
           <!-- SETTINGS PAGE -->
           <div id="settings-page" style="display: none;">
             <div class="page-header">
@@ -888,6 +919,7 @@
         'dashboard': 'Dashboard',
         'vehicles': 'Vehicles',
         'payments': 'Payments',
+        'reg-lookup': 'Reg Lookup',
         'settings': 'Settings'
       };
       document.getElementById('breadcrumb-current').textContent = breadcrumbMap[pageName] || 'Home';
@@ -914,6 +946,54 @@
     function toggleDarkMode() {
       document.body.style.filter = document.body.style.filter === 'invert(1)' ? 'invert(0)' : 'invert(1)';
     }
+
+    // Registration Lookup Function
+    async function performRegLookup() {
+      const input = document.getElementById('reg-lookup-input');
+      const status = document.getElementById('reg-lookup-status');
+      const results = document.getElementById('reg-lookup-results');
+      
+      const vrm = (input.value || '').replace(/\s/g, '').toUpperCase();
+      
+      if (!vrm) {
+        status.textContent = '❌ Enter a registration number';
+        status.style.color = 'var(--error)';
+        return;
+      }
+      
+      status.textContent = '⏳ Searching...';
+      status.style.color = 'var(--warning)';
+      results.textContent = 'Loading...';
+      
+      try {
+        const resp = await fetch(`/api/dvla-lookup?vrm=${encodeURIComponent(vrm)}`);
+        const data = await resp.json();
+        
+        if (resp.ok && data.success) {
+          status.textContent = '✓ Vehicle found';
+          status.style.color = 'var(--success)';
+          results.textContent = JSON.stringify(data.vehicle, null, 2);
+        } else {
+          status.textContent = '❌ ' + (data.error || 'Lookup failed');
+          status.style.color = 'var(--error)';
+          results.textContent = JSON.stringify(data, null, 2);
+        }
+      } catch (err) {
+        status.textContent = '❌ ' + err.message;
+        status.style.color = 'var(--error)';
+        results.textContent = '{}';
+      }
+    }
+    
+    // Allow Enter key to trigger lookup
+    document.addEventListener('DOMContentLoaded', () => {
+      const input = document.getElementById('reg-lookup-input');
+      if (input) {
+        input.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') performRegLookup();
+        });
+      }
+    });
 
     // Set initial last updated time
     document.getElementById('last-updated').textContent = new Date().toLocaleString();

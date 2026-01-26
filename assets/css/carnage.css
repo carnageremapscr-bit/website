@@ -904,6 +904,54 @@ body.not-authenticated {
   transform: translateY(-1px);
 }
 
+.registration-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.vrm-lookup-btn {
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f59e0b 0%, #c81010 100%);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  min-width: 120px;
+}
+
+.vrm-lookup-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.vrm-lookup-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+.vrm-status {
+  margin-top: 0.35rem;
+  font-size: 0.9rem;
+  min-height: 1.2rem;
+  color: var(--cr-text-secondary);
+}
+
+.vrm-status.vrm-loading {
+  color: var(--cr-primary);
+}
+
+.vrm-status.vrm-success {
+  color: #16a34a;
+}
+
+.vrm-status.vrm-error {
+  color: #dc2626;
+}
+
 .help-link {
   text-align: center;
   margin-top: 1rem;

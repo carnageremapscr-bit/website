@@ -25,6 +25,14 @@ const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 const stripeConfigured = STRIPE_KEY && STRIPE_KEY.startsWith('sk_');
 const stripe = stripeConfigured ? require('stripe')(STRIPE_KEY) : null;
 
+// Vehicle data lookup (CheckCarDetails)
+const CHECKCAR_API_KEY = process.env.CHECKCAR_API_KEY || '';
+const CHECKCAR_DATAPOINT = process.env.CHECKCAR_DATAPOINT || 'ukvehicledata';
+
+// DVLA Open Data API
+const DVLA_API_KEY = process.env.DVLA_API_KEY || '';
+const DVLA_API_BASE_URL = process.env.DVLA_API_BASE_URL || 'https://api.dvlaonlineservices.dvla.gov.uk/v1';
+
 // Log configuration status on startup
 console.log('=== Stripe Configuration ===');
 console.log('STRIPE_SECRET_KEY set:', !!STRIPE_KEY);
@@ -37,6 +45,13 @@ if (!stripeConfigured && STRIPE_KEY) {
   console.log('⚠️ STRIPE_SECRET_KEY is set but does not start with sk_ - key prefix:', STRIPE_KEY?.substring(0, 3));
 }
 console.log('===========================');
+
+console.log('=== VRM Lookup Configuration ===');
+console.log('CHECKCAR_API_KEY set:', !!CHECKCAR_API_KEY);
+console.log('CHECKCAR_DATAPOINT:', CHECKCAR_DATAPOINT);
+console.log('DVLA_API_KEY set:', !!DVLA_API_KEY);
+console.log('DVLA_API_BASE_URL:', DVLA_API_BASE_URL);
+console.log('================================');
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -1704,6 +1719,220 @@ app.get('/api/vehicles', (req, res) => {
     genericEngines: GENERIC_ENGINES,
     yearEngines: VEHICLE_ENGINE_DATABASE
   });
+});
+
+// VRM lookup via CheckCarDetails
+function pickVehicleField(source, candidateKeys) {
+  if (!source) return null;
+  const queue = [source];
+  const keySet = candidateKeys.map(k => k.toLowerCase());
+  while (queue.length > 0) {
+    const current = queue.shift();
+    if (!current) continue;
+    if (Array.isArray(current)) {
+      queue.push(...current);
+      continue;
+    }
+    if (typeof current !== 'object') continue;
+    for (const [key, value] of Object.entries(current)) {
+      if (keySet.includes(key.toLowerCase())) {
+        if (typeof value === 'string' || typeof value === 'number') {
+          const text = String(value).trim();
+          if (text) return text;
+        }
+      }
+      if (value && typeof value === 'object') {
+        queue.push(value);
+      }
+    }
+  }
+  return null;
+}
+
+function formatEngineCapacity(value) {
+  if (value === null || value === undefined) return null;
+  const numeric = parseFloat(value);
+  if (!Number.isNaN(numeric)) {
+    if (numeric > 100 && numeric < 10000) {
+      const liters = numeric / 1000;
+      return liters % 1 === 0 ? `${liters.toFixed(0)}L` : `${liters.toFixed(1)}L`;
+    }
+    if (numeric > 0 && numeric < 20) {
+      return numeric % 1 === 0 ? `${numeric.toFixed(1)}L` : `${numeric.toFixed(1)}L`;
+    }
+  }
+  const text = String(value).trim();
+  if (!text) return null;
+  return /cc|cm3|l/i.test(text) ? text : `${text}L`;
+}
+
+function buildEngineLabel(vehicle) {
+  const parts = [];
+  const capacity = formatEngineCapacity(vehicle.engineCapacity);
+  if (capacity) parts.push(capacity);
+  if (vehicle.fuelType) parts.push(vehicle.fuelType);
+  if (vehicle.powerBhp) {
+    const powerText = String(vehicle.powerBhp).toLowerCase().includes('hp')
+      ? String(vehicle.powerBhp)
+      : `${vehicle.powerBhp}hp`;
+    parts.push(powerText);
+  }
+  if (!parts.length && vehicle.engine) {
+    parts.push(vehicle.engine);
+  }
+  return parts.join(' ').trim();
+}
+
+function normalizeVehicleResponse(data) {
+  const dataItems = data?.Response?.DataItems || data?.DataItems || data?.dataItems || data?.data || data;
+  const blocks = [
+    dataItems?.UkVehicleData || dataItems?.ukvehicledata,
+    dataItems?.VehicleRegistration || dataItems?.vehicleregistration,
+    dataItems?.VehicleData || dataItems?.vehicledata || dataItems?.vehicle,
+    dataItems?.VehicleSpecs || dataItems?.vehiclespecs,
+    dataItems
+  ].filter(block => block && typeof block === 'object');
+
+  const source = blocks[0] || {};
+  const vehicle = {
+    make: pickVehicleField(source, ['make', 'manufacturer', 'marque']),
+    model: pickVehicleField(source, ['model', 'range', 'vehiclemodel', 'description']),
+    year: pickVehicleField(source, ['yearofmanufacture', 'registrationyear', 'manufactureyear', 'modelyear', 'plateyear', 'year']),
+    fuelType: pickVehicleField(source, ['fueltype', 'fuel', 'fuel_type']),
+    engineCapacity: pickVehicleField(source, ['enginecapacity', 'engine_cubic_capacity', 'enginecc', 'cc', 'cubiccapacity', 'enginecapacityltr']),
+    powerBhp: pickVehicleField(source, ['powerbhp', 'power_bhp', 'maxpowerbhp', 'bhp', 'power']),
+    engine: pickVehicleField(source, ['engine', 'enginedescription', 'enginecode']),
+    transmission: pickVehicleField(source, ['transmission', 'gearbox']),
+    vin: pickVehicleField(source, ['vin', 'vehicleidentificationnumber']),
+    bodyStyle: pickVehicleField(source, ['bodystyle', 'body_type', 'body'])
+  };
+
+  vehicle.engineLabel = buildEngineLabel(vehicle);
+  return vehicle;
+}
+
+app.get('/api/vrm-lookup', async (req, res) => {
+  const apiKey = CHECKCAR_API_KEY;
+  const vrmRaw = (req.query.vrm || '').toString().trim();
+
+  if (!vrmRaw) {
+    return res.status(400).json({ error: 'vrm is required' });
+  }
+
+  if (!apiKey) {
+    return res.status(500).json({ error: 'VRM lookup is not configured' });
+  }
+
+  const vrm = vrmRaw.replace(/\s+/g, '').toUpperCase();
+  const datapoint = (req.query.datapoint || CHECKCAR_DATAPOINT || 'ukvehicledata').toString().trim();
+  const url = `https://api.checkcardetails.co.uk/vehicledata/${encodeURIComponent(datapoint)}?apikey=${encodeURIComponent(apiKey)}&vrm=${encodeURIComponent(vrm)}`;
+
+  try {
+    const providerResp = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    const rawText = await providerResp.text();
+    let providerJson = null;
+
+    try {
+      providerJson = JSON.parse(rawText);
+    } catch (err) {
+      // Keep raw text when JSON parse fails
+    }
+
+    if (!providerResp.ok) {
+      return res.status(providerResp.status).json({
+        error: providerJson?.error || providerJson?.message || 'Lookup failed',
+        providerStatus: providerResp.status,
+        providerBody: providerJson || rawText
+      });
+    }
+
+    const vehicle = normalizeVehicleResponse(providerJson || {});
+
+    res.json({
+      success: true,
+      vrm,
+      datapoint,
+      provider: 'checkcardetails',
+      vehicle,
+      providerStatus: providerResp.status
+    });
+  } catch (err) {
+    console.error('VRM lookup error:', err);
+    res.status(500).json({ error: 'VRM lookup failed' });
+  }
+});
+
+// ============================================
+// DVLA Open Data API Endpoint
+// ============================================
+// Lookup vehicle information via DVLA API
+app.get('/api/dvla-lookup', async (req, res) => {
+  const vrmRaw = (req.query.vrm || '').toString().trim();
+
+  if (!vrmRaw) {
+    return res.status(400).json({ error: 'vrm is required' });
+  }
+
+  if (!DVLA_API_KEY) {
+    return res.status(500).json({ error: 'DVLA API is not configured' });
+  }
+
+  // Clean and validate VRM
+  const vrm = vrmRaw.replace(/\s+/g, '').toUpperCase();
+  if (!/^[A-Z0-9]{2,7}$/.test(vrm)) {
+    return res.status(400).json({ error: 'Invalid VRM format' });
+  }
+
+  try {
+    const response = await fetch(`${DVLA_API_BASE_URL}/vehicles/vrm/${vrm}`, {
+      method: 'GET',
+      headers: {
+        'x-api-key': DVLA_API_KEY,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return res.status(response.status).json({
+        error: data.error || data.message || 'DVLA lookup failed',
+        dvlaStatus: response.status,
+        dvlaResponse: data
+      });
+    }
+
+    // Transform DVLA response to our standard format
+    const vehicle = {
+      vrm: data.registrationNumber || vrm,
+      make: data.make,
+      model: data.model,
+      fuelType: data.fuelType,
+      engineCapacity: data.engineCapacity,
+      power: data.power,
+      transmission: data.transmission,
+      colour: data.colour,
+      firstRegistrationDate: data.firstRegistrationDate,
+      yearOfManufacture: data.yearOfManufacture,
+      taxStatus: data.taxStatus,
+      motStatus: data.motStatus,
+      engineNumber: data.engineNumber,
+      vin: data.vin
+    };
+
+    res.json({
+      success: true,
+      vrm,
+      provider: 'dvla',
+      vehicle,
+      dvlaStatus: response.status,
+      retrievedAt: new Date().toISOString()
+    });
+  } catch (err) {
+    console.error('DVLA lookup error:', err);
+    res.status(500).json({ error: 'DVLA lookup failed', details: err.message });
+  }
 });
 
 // Admin endpoint to fix subscription types

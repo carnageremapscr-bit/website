@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VRM Lookup Test</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #0f172a;
+      border-radius: 12px;
+      padding: 30px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+    }
+    .section {
+      margin-bottom: 24px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      color: #cbd5e1;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      border-radius: 8px;
+      background: #1e293b;
+      color: #e2e8f0;
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.1);
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 120px;
+      gap: 12px;
+      align-items: flex-end;
+    }
+    button {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #f59e0b, #c81010);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(200, 16, 16, 0.3);
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .status {
+      font-size: 0.9rem;
+      min-height: 20px;
+      margin: 8px 0;
+      font-family: monospace;
+    }
+    .status.info { color: #60a5fa; }
+    .status.success { color: #4ade80; }
+    .status.error { color: #f87171; }
+    .results {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    pre {
+      background: #1e293b;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 8px;
+      padding: 12px;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .label-small {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-bottom: 8px;
+    }
+    @media (max-width: 700px) {
+      .row { grid-template-columns: 1fr; }
+      .results { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 VRM Lookup Tester</h1>
+    
+    <div class="section">
+      <div class="row">
+        <div>
+          <label>Registration (VRM)</label>
+          <input type="text" id="vrm" placeholder="E.g. AB12CDE" autofocus>
+        </div>
+        <div>
+          <label>Datapoint</label>
+          <select id="datapoint">
+            <option value="ukvehicledata" selected>ukvehicledata</option>
+            <option value="vehicleregistration">vehicleregistration</option>
+            <option value="vehiclespecs">vehiclespecs</option>
+            <option value="carhistorycheck">carhistorycheck</option>
+            <option value="mot">mot</option>
+          </select>
+        </div>
+        <button id="lookup">Lookup</button>
+      </div>
+      <div class="status" id="status"></div>
+    </div>
+
+    <div class="results">
+      <div>
+        <div class="label-small">Normalized Vehicle Data</div>
+        <pre id="normalized">{}</pre>
+      </div>
+      <div>
+        <div class="label-small">Raw Provider Response</div>
+        <pre id="raw">{}</pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const vrmInput = document.getElementById('vrm');
+    const dpSelect = document.getElementById('datapoint');
+    const statusEl = document.getElementById('status');
+    const normalizedEl = document.getElementById('normalized');
+    const rawEl = document.getElementById('raw');
+    const lookupBtn = document.getElementById('lookup');
+
+    function setStatus(msg, cls = 'info') {
+      statusEl.textContent = msg;
+      statusEl.className = 'status ' + cls;
+    }
+
+    async function handleLookup() {
+      const vrm = (vrmInput.value || '').replace(/\s/g, '').toUpperCase();
+      const dp = dpSelect.value;
+
+      if (!vrm) {
+        setStatus('Enter a VRM', 'error');
+        return;
+      }
+
+      setStatus('Looking up...', 'info');
+      lookupBtn.disabled = true;
+
+      try {
+        const url = `/api/vrm-lookup?vrm=${encodeURIComponent(vrm)}&datapoint=${encodeURIComponent(dp)}`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+
+        if (resp.ok && data.success) {
+          setStatus('✓ Success', 'success');
+          normalizedEl.textContent = JSON.stringify(data.vehicle || {}, null, 2);
+          rawEl.textContent = JSON.stringify(data, null, 2);
+        } else {
+          setStatus(data.error || 'Lookup failed', 'error');
+          normalizedEl.textContent = '{}';
+          rawEl.textContent = JSON.stringify(data, null, 2);
+        }
+      } catch (err) {
+        setStatus(err.message, 'error');
+        normalizedEl.textContent = '{}';
+        rawEl.textContent = '{}';
+      } finally {
+        lookupBtn.disabled = false;
+      }
+    }
+
+    lookupBtn.addEventListener('click', handleLookup);
+    vrmInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleLookup();
+    });
+  </script>
+</body>
+</html>
