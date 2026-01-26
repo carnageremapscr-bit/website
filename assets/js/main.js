@@ -7188,6 +7188,23 @@
         .filter(Boolean)));
     };
 
+    const parseEngineOptionSearch = (text) => {
+      const t = normalizeEngineTextSearch(text);
+      const displacementMatch = t.match(/(\d+(?:\.\d+)?)\s*l/);
+      const hpMatch = t.match(/(\d+)hp/);
+      const fuel = /diesel|d\b/.test(t) ? 'diesel' : (/petrol|ts[ie]|fsi|gdi|p\b/.test(t) ? 'petrol' : null);
+      let displacement = null;
+      if (displacementMatch) {
+        displacement = parseFloat(displacementMatch[1]);
+      }
+      return {
+        displacement,
+        hp: hpMatch ? parseInt(hpMatch[1], 10) : null,
+        fuel,
+        raw: t
+      };
+    };
+
     const trySelectOptionSearch = (selectEl, matcher) => {
       if (!selectEl) return null;
       const match = Array.from(selectEl.options).find((opt) => matcher(opt));
@@ -7329,10 +7346,53 @@
         let matchedEngine = null;
 
         if (normalizedCandidates.length) {
-          matchedEngine = trySelectOptionSearch(
-            searchEngine,
-            (opt) => opt.value && normalizedCandidates.some((candidate) => normalizeEngineTextSearch(opt.textContent).includes(candidate))
-          );
+          // Score all options and pick best based on displacement/fuel/power proximity
+          const targetDispLiters = (() => {
+            if (!vehicle.engineCapacity) return null;
+            const n = parseFloat(vehicle.engineCapacity);
+            if (Number.isNaN(n)) return null;
+            return n > 20 ? n / 1000 : n;
+          })();
+          const targetFuel = normalizeEngineTextSearch(vehicle.fuelType || '').includes('diesel') ? 'diesel'
+            : (vehicle.fuelType ? 'petrol' : null);
+          const targetHp = vehicle.powerBhp ? parseInt(vehicle.powerBhp, 10) : null;
+
+          let best = null;
+          let bestScore = Number.POSITIVE_INFINITY;
+
+          Array.from(searchEngine.options).forEach((opt) => {
+            if (!opt.value) return;
+            const parsed = parseEngineOptionSearch(opt.textContent);
+
+            let score = 0;
+
+            if (targetDispLiters && parsed.displacement) {
+              score += Math.abs(parsed.displacement - targetDispLiters) * 8; // weight displacement strongly
+            } else if (targetDispLiters && !parsed.displacement) {
+              score += 5; // penalty if we can't compare displacement
+            }
+
+            if (targetHp && parsed.hp) {
+              score += Math.abs(parsed.hp - targetHp) * 0.1;
+            }
+
+            if (targetFuel && parsed.fuel && targetFuel !== parsed.fuel) {
+              score += 5; // penalty for fuel mismatch
+            }
+
+            // If any candidate string is contained, give a small bonus
+            const containsCandidate = normalizedCandidates.some((cand) => parsed.raw.includes(cand));
+            if (containsCandidate) score -= 1;
+
+            if (score < bestScore) {
+              bestScore = score;
+              best = opt;
+            }
+          });
+
+          if (best) {
+            matchedEngine = trySelectOptionSearch(searchEngine, (opt) => opt === best);
+          }
         }
 
         // Fallback: if only one real option exists, pick it
