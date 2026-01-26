@@ -1830,6 +1830,13 @@ function normalizeVehicleResponse(data) {
   const perf = source.Performance || source.performance || {};
   const power = source.Power || source.power || {};
   const powerSource = source.PowerSource || source.powersource || {};
+  const bodyDetails = source.BodyDetails || source.bodydetails || {};
+  const dimensions = source.Dimensions || source.dimensions || {};
+  const weights = source.Weights || source.weights || {};
+  const iceDetails = powerSource.IceDetails || powerSource.icedetails || {};
+  const exciseDuty = source.VehicleExciseDutyDetails || source.vehicleexcisedutydetails || {};
+  const torqueObj = perf.Torque || perf.torque || {};
+  const powerObj = perf.Power || perf.power || {};
 
   vehicle.make = smmt.Make || tech.Make || specsRoot.Make || modelData.Manufacturer || vehicle.make;
   vehicle.model = smmt.Model || tech.Model || specsRoot.Model || modelData.Model || vehicle.model;
@@ -1837,8 +1844,37 @@ function normalizeVehicleResponse(data) {
     || smmt.YearOfManufacture || tech.YearOfManufacture || vehicle.year;
   vehicle.engineCapacity = tech.EngineCapacity || powerSource.EngineCapacity || specsRoot.EngineCapacity || vehicle.engineCapacity;
   vehicle.fuelType = tech.FuelType || powerSource.FuelType || smmt.FuelType || vehicle.fuelType;
-  vehicle.powerBhp = power.PerformanceBhp || perf.MaximumPowerBhp || vehicle.powerBhp;
-  vehicle.torqueNm = power.PerformanceTorque || power.Torque || perf.MaximumTorque || perf.Torque || vehicle.torqueNm || null;
+  vehicle.powerBhp = power.PerformanceBhp || perf.MaximumPowerBhp || powerObj.Bhp || smmt.PowerBhp || vehicle.powerBhp;
+  vehicle.torqueNm = power.PerformanceTorque || power.Torque || perf.MaximumTorque || perf.Torque || torqueObj.Nm || smmt.TorqueNm || vehicle.torqueNm || null;
+
+  // Additional rich fields from vehiclespecs
+  vehicle.vin = specsRoot.Vin || vehicle.vin || null;
+  vehicle.engineNumber = specsRoot.EngineNumber || iceDetails.EngineNumber || null;
+  vehicle.v5cCount = specsRoot.V5cCertificateCount || null;
+  vehicle.co2 = exciseDuty.DvlaCo2 || tech.Co2 || smmt.Co2 || null;
+  vehicle.fuelTankCapacity = bodyDetails.FuelTankCapacityLitres || null;
+  vehicle.towingCapacityBraked = tech.MaxTowableMassBraked || null;
+  vehicle.towingCapacityUnbraked = tech.MaxTowableMassUnbraked || null;
+  vehicle.kerbWeight = weights.KerbWeightKg || tech.MassInService || smmt.KerbWeight || null;
+  vehicle.grossWeight = weights.GrossVehicleWeightKg || tech.GrossWeight || smmt.GrossVehicleWeight || null;
+  vehicle.numberOfDoors = bodyDetails.NumberOfDoors || smmt.NumberOfDoors || tech.SeatCountIncludingDriver || null;
+  vehicle.numberOfSeats = bodyDetails.NumberOfSeats || smmt.NumberOfSeats || null;
+  vehicle.numberOfCylinders = iceDetails.NumberOfCylinders || smmt.NumberOfCylinders || null;
+  vehicle.bore = iceDetails.Bore || smmt.Bore || null;
+  vehicle.stroke = iceDetails.Stroke || smmt.Stroke || null;
+  vehicle.aspiration = iceDetails.Aspiration || smmt.Aspiration || null;
+  vehicle.valveGear = iceDetails.ValveGear || smmt.ValveGear || null;
+  vehicle.numberOfGears = modelData.NumberOfGears || smmt.NumberOfGears || null;
+  vehicle.transmissionType = modelData.TransmissionType || smmt.Transmission || null;
+  vehicle.driveType = modelData.DriveType || smmt.DriveType || null;
+  vehicle.maxSpeedKph = perf.Statistics?.MaxSpeedKph || smmt.MaxSpeedKph || null;
+  vehicle.maxSpeedMph = perf.Statistics?.MaxSpeedMph || smmt.MaxSpeedMph || null;
+  vehicle.torqueRpm = torqueObj.Rpm || smmt.TorqueRpm || null;
+  vehicle.powerRpm = powerObj.Rpm || smmt.PowerRpm || null;
+  vehicle.length = dimensions.LengthMm || smmt.Length || null;
+  vehicle.width = dimensions.WidthMm || smmt.Width || null;
+  vehicle.height = dimensions.HeightMm || smmt.Height || null;
+  vehicle.wheelbase = dimensions.WheelBaseLengthMm || smmt.WheelBase || null;
 
   vehicle.engineLabel = buildEngineLabel(vehicle);
   return vehicle;

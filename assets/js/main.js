@@ -7015,6 +7015,102 @@
     });
 
     // --- VRM Lookup for Vehicle Search ---
+    const displayVehicleDetailsCard = (vehicle) => {
+      // Create a details card showing all rich vehicle data
+      if (!vrmStatusSearch || !vrmStatusSearch.parentElement) return;
+      
+      let detailsHtml = `<div style="margin-top: 1.5rem; padding: 1.5rem; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">`;
+      
+      // Identification section
+      if (vehicle.vin || vehicle.engineNumber) {
+        detailsHtml += `<div style="margin-bottom: 1rem;">
+          <h4 style="margin: 0 0 0.5rem 0; font-size: 0.875rem; font-weight: 600; color: #64748b; text-transform: uppercase;">Identification</h4>
+          ${vehicle.vin ? `<p style="margin: 0.25rem 0; font-size: 0.875rem;"><strong>VIN:</strong> ${vehicle.vin}</p>` : ''}
+          ${vehicle.engineNumber ? `<p style="margin: 0.25rem 0; font-size: 0.875rem;"><strong>Engine #:</strong> ${vehicle.engineNumber}</p>` : ''}
+          ${vehicle.v5cCount ? `<p style="margin: 0.25rem 0; font-size: 0.875rem;"><strong>V5C Certificates:</strong> ${vehicle.v5cCount}</p>` : ''}
+        </div>`;
+      }
+      
+      // Performance section
+      if (vehicle.powerBhp || vehicle.torqueNm || vehicle.maxSpeedKph || vehicle.torqueRpm || vehicle.powerRpm) {
+        detailsHtml += `<div style="margin-bottom: 1rem;">
+          <h4 style="margin: 0 0 0.5rem 0; font-size: 0.875rem; font-weight: 600; color: #64748b; text-transform: uppercase;">Performance</h4>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; font-size: 0.875rem;">
+            ${vehicle.powerBhp ? `<div><strong>Power:</strong> ${vehicle.powerBhp}bhp${vehicle.powerRpm ? ` @ ${vehicle.powerRpm}rpm` : ''}</div>` : ''}
+            ${vehicle.torqueNm ? `<div><strong>Torque:</strong> ${vehicle.torqueNm}nm${vehicle.torqueRpm ? ` @ ${vehicle.torqueRpm}rpm` : ''}</div>` : ''}
+            ${vehicle.maxSpeedKph ? `<div><strong>Max Speed:</strong> ${vehicle.maxSpeedKph}kph${vehicle.maxSpeedMph ? ` / ${vehicle.maxSpeedMph}mph` : ''}</div>` : ''}
+            ${vehicle.co2 ? `<div><strong>CO₂:</strong> ${vehicle.co2}g/km</div>` : ''}
+          </div>
+        </div>`;
+      }
+      
+      // Engine section
+      if (vehicle.numberOfCylinders || vehicle.bore || vehicle.stroke || vehicle.aspiration || vehicle.valveGear) {
+        detailsHtml += `<div style="margin-bottom: 1rem;">
+          <h4 style="margin: 0 0 0.5rem 0; font-size: 0.875rem; font-weight: 600; color: #64748b; text-transform: uppercase;">Engine Details</h4>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; font-size: 0.875rem;">
+            ${vehicle.numberOfCylinders ? `<div><strong>Cylinders:</strong> ${vehicle.numberOfCylinders}</div>` : ''}
+            ${vehicle.aspiration ? `<div><strong>Aspiration:</strong> ${vehicle.aspiration}</div>` : ''}
+            ${vehicle.bore ? `<div><strong>Bore:</strong> ${vehicle.bore}mm</div>` : ''}
+            ${vehicle.stroke ? `<div><strong>Stroke:</strong> ${vehicle.stroke}mm</div>` : ''}
+            ${vehicle.valveGear ? `<div><strong>Valve Gear:</strong> ${vehicle.valveGear}</div>` : ''}
+            ${vehicle.fuelTankCapacity ? `<div><strong>Fuel Tank:</strong> ${vehicle.fuelTankCapacity}L</div>` : ''}
+          </div>
+        </div>`;
+      }
+      
+      // Transmission & Drive
+      if (vehicle.numberOfGears || vehicle.transmissionType || vehicle.driveType) {
+        detailsHtml += `<div style="margin-bottom: 1rem;">
+          <h4 style="margin: 0 0 0.5rem 0; font-size: 0.875rem; font-weight: 600; color: #64748b; text-transform: uppercase;">Transmission & Drive</h4>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; font-size: 0.875rem;">
+            ${vehicle.numberOfGears ? `<div><strong>Gears:</strong> ${vehicle.numberOfGears}</div>` : ''}
+            ${vehicle.transmissionType ? `<div><strong>Type:</strong> ${vehicle.transmissionType}</div>` : ''}
+            ${vehicle.driveType ? `<div><strong>Drive:</strong> ${vehicle.driveType}</div>` : ''}
+          </div>
+        </div>`;
+      }
+      
+      // Body & Dimensions
+      if (vehicle.numberOfDoors || vehicle.numberOfSeats || vehicle.length || vehicle.width || vehicle.height) {
+        detailsHtml += `<div style="margin-bottom: 1rem;">
+          <h4 style="margin: 0 0 0.5rem 0; font-size: 0.875rem; font-weight: 600; color: #64748b; text-transform: uppercase;">Body & Dimensions</h4>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; font-size: 0.875rem;">
+            ${vehicle.numberOfDoors ? `<div><strong>Doors:</strong> ${vehicle.numberOfDoors}</div>` : ''}
+            ${vehicle.numberOfSeats ? `<div><strong>Seats:</strong> ${vehicle.numberOfSeats}</div>` : ''}
+            ${vehicle.length ? `<div><strong>Length:</strong> ${vehicle.length}mm</div>` : ''}
+            ${vehicle.width ? `<div><strong>Width:</strong> ${vehicle.width}mm</div>` : ''}
+            ${vehicle.height ? `<div><strong>Height:</strong> ${vehicle.height}mm</div>` : ''}
+            ${vehicle.wheelbase ? `<div><strong>Wheelbase:</strong> ${vehicle.wheelbase}mm</div>` : ''}
+          </div>
+        </div>`;
+      }
+      
+      // Weight & Towing
+      if (vehicle.kerbWeight || vehicle.grossWeight || vehicle.towingCapacityBraked) {
+        detailsHtml += `<div style="margin-bottom: 1rem;">
+          <h4 style="margin: 0 0 0.5rem 0; font-size: 0.875rem; font-weight: 600; color: #64748b; text-transform: uppercase;">Weight & Towing</h4>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; font-size: 0.875rem;">
+            ${vehicle.kerbWeight ? `<div><strong>Kerb Weight:</strong> ${vehicle.kerbWeight}kg</div>` : ''}
+            ${vehicle.grossWeight ? `<div><strong>Gross Weight:</strong> ${vehicle.grossWeight}kg</div>` : ''}
+            ${vehicle.towingCapacityBraked ? `<div><strong>Towing (Braked):</strong> ${vehicle.towingCapacityBraked}kg</div>` : ''}
+            ${vehicle.towingCapacityUnbraked ? `<div><strong>Towing (Unbraked):</strong> ${vehicle.towingCapacityUnbraked}kg</div>` : ''}
+          </div>
+        </div>`;
+      }
+      
+      detailsHtml += `</div>`;
+      
+      // Find or create container for details
+      let detailsContainer = vrmStatusSearch.parentElement.querySelector('.vrm-details-card');
+      if (!detailsContainer) {
+        detailsContainer = document.createElement('div');
+        detailsContainer.className = 'vrm-details-card';
+        vrmStatusSearch.parentElement.appendChild(detailsContainer);
+      }
+      detailsContainer.innerHTML = detailsHtml;
+    };
+
     const setVrmStatusSearch = (message, tone = 'info') => {
       if (!vrmStatusSearch) return;
       vrmStatusSearch.textContent = message;
@@ -7476,7 +7572,11 @@
         const engineNote = needsEngineNote ? ' Select the correct engine to continue.' : '';
         const fallbackNote = usedFallback ? ' (supplemented via CheckCar)' : '';
         const perfDetail = engineSpec ? ` [${engineSpec}]` : '';
-        setVrmStatusSearch(`Found ${summary || 'vehicle'}${perfDetail}. ${suffix}${engineNote}${fallbackNote}`, 'success');
+        const vinDetail = vehicle?.vin ? ` • VIN: ${vehicle.vin}` : '';
+        setVrmStatusSearch(`Found ${summary || 'vehicle'}${perfDetail}${vinDetail}. ${suffix}${engineNote}${fallbackNote}`, 'success');
+
+        // Display detailed vehicle specs card
+        displayVehicleDetailsCard(vehicle);
 
         // If engine wasn’t auto-selected, scroll and highlight the engine selector
         if (needsEngineNote && searchEngine) {
