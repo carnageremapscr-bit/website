@@ -8747,20 +8747,74 @@ I would like to request a quote for tuning this vehicle.`,
         vrmResult.innerHTML = '<span class="muted">No data returned.</span>';
         return;
       }
-      const lines = [
-        vehicle.make && vehicle.model ? `${vehicle.make} ${vehicle.model}` : null,
-        vehicle.year ? `Year: ${vehicle.year}` : null,
-        vehicle.vin ? `VIN: ${vehicle.vin}` : null,
-        vehicle.engineLabel || vehicle.engine ? `Engine: ${vehicle.engineLabel || vehicle.engine}` : null,
-        vehicle.powerBhp ? `Power: ${vehicle.powerBhp} bhp` : null,
-        vehicle.torqueNm ? `Torque: ${vehicle.torqueNm} Nm` : null,
-        vehicle.co2Emissions ? `CO₂: ${vehicle.co2Emissions} g/km` : null
-      ].filter(Boolean);
+
+      const fmt = (label, value) => value ? `<div style="display:flex;justify-content:space-between;gap:1rem;"><span class="muted">${label}</span><span style="font-weight:600;color:#e2e8f0;">${value}</span></div>` : '';
+
+      const baseHp = Number(vehicle.powerBhp) || null;
+      const baseTq = Number(vehicle.torqueNm) || null;
+      const isTurbo = ((vehicle.aspiration || '').toLowerCase().includes('turbo')) || ((vehicle.induction || '').toLowerCase().includes('turbo'));
+      const gainSet = isTurbo
+        ? [{ label: 'Stage 1', hp: 0.20, tq: 0.25 }, { label: 'Stage 2', hp: 0.30, tq: 0.35 }, { label: 'Stage 3', hp: 0.45, tq: 0.55 }]
+        : [{ label: 'Stage 1', hp: 0.12, tq: 0.15 }, { label: 'Stage 2', hp: 0.18, tq: 0.22 }, { label: 'Stage 3', hp: 0.25, tq: 0.28 }];
+
+      const perfCards = (baseHp && baseTq) ? gainSet.map(({ label, hp, tq }) => {
+        const tunedHp = Math.round(baseHp * (1 + hp));
+        const tunedTq = Math.round(baseTq * (1 + tq));
+        const hpGain = Math.round(baseHp * hp);
+        const tqGain = Math.round(baseTq * tq);
+        return `
+          <div style="background:linear-gradient(135deg, rgba(59,130,246,0.12), rgba(59,130,246,0.06));border:1px solid rgba(59,130,246,0.35);border-radius:12px;padding:0.75rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem;">
+              <span style="font-weight:700;color:#93c5fd;">${label}</span>
+              <span style="font-size:0.9rem;color:#cbd5e1;">${isTurbo ? 'Turbo' : 'NA'} estimate</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.5rem;font-size:0.95rem;color:#e2e8f0;">
+              <div style="background:rgba(15,23,42,0.6);border-radius:10px;padding:0.6rem;border:1px solid rgba(59,130,246,0.25);">
+                <div style="color:#9ca3af;font-size:0.8rem;">Power</div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span>${baseHp} → <strong>${tunedHp} bhp</strong></span>
+                  <span style="color:#22c55e;font-weight:700;">+${hpGain}</span>
+                </div>
+              </div>
+              <div style="background:rgba(15,23,42,0.6);border-radius:10px;padding:0.6rem;border:1px solid rgba(34,197,94,0.25);">
+                <div style="color:#9ca3af;font-size:0.8rem;">Torque</div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span>${baseTq} → <strong>${tunedTq} Nm</strong></span>
+                  <span style="color:#22c55e;font-weight:700;">+${tqGain}</span>
+                </div>
+              </div>
+            </div>
+          </div>`;
+      }).join('') : '<div class="muted">Power/torque not available for gain estimates.</div>';
+
+      const specGrid = `
+        ${fmt('Make/Model', [vehicle.make, vehicle.model].filter(Boolean).join(' ') || '—')}
+        ${fmt('Year', vehicle.year || '—')}
+        ${fmt('Fuel', vehicle.fuelType || '—')}
+        ${fmt('Engine', vehicle.engineLabel || vehicle.engine || '—')}
+        ${fmt('Capacity', vehicle.engineCapacity || '—')}
+        ${fmt('VIN', vehicle.vin || '—')}
+        ${fmt('Engine No.', vehicle.engineNumber || '—')}
+        ${fmt('CO₂', vehicle.co2Emissions ? `${vehicle.co2Emissions} g/km` : '—')}
+        ${fmt('Drive', vehicle.driveType || '—')}
+        ${fmt('Transmission', vehicle.transmission || vehicle.transmissionType || '—')}
+        ${fmt('Max Speed', vehicle.maxSpeed || vehicle.maxSpeedMph || vehicle.maxSpeedKph || '—')}
+      `;
 
       vrmResult.innerHTML = `
-        <div style="font-weight:700;margin-bottom:0.35rem;">${vehicle.registration || 'Vehicle found'}</div>
-        <div style="display:flex;flex-direction:column;gap:0.25rem;color:#e2e8f0;">
-          ${lines.map(line => `<div>• ${line}</div>`).join('') || '<span class="muted">No fields available.</span>'}
+        <div style="font-weight:800;margin-bottom:0.25rem;color:#e5e7eb;">${vehicle.registration || 'Vehicle found'}</div>
+        <div style="display:grid;gap:1rem;">
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:0.85rem;">
+            <div style="color:#9ca3af;font-weight:600;margin-bottom:0.5rem;">Identification</div>
+            <div style="display:flex;flex-direction:column;gap:0.35rem;">${specGrid}</div>
+          </div>
+          <div style="background:rgba(15,23,42,0.65);border:1px solid rgba(59,130,246,0.2);border-radius:12px;padding:0.85rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem;">
+              <span style="color:#93c5fd;font-weight:700;">Estimated Gains</span>
+              <span style="color:#94a3b8;font-size:0.85rem;">Quick calc (± logical)</span>
+            </div>
+            <div style="display:grid;gap:0.5rem;">${perfCards}</div>
+          </div>
         </div>
       `;
     };
