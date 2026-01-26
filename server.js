@@ -2572,7 +2572,8 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal server error', message: err.message });
 });
 
-// Start server
+// Start server (close any unclosed block)
+}
 app.listen(PORT, () => {
   console.log(`\n🚀 Carnage Remaps API Server running on http://localhost:${PORT}`);
   console.log(`📝 API Endpoints:`);
@@ -2582,3 +2583,4 @@ app.listen(PORT, () => {
   console.log(`   - POST http://localhost:${PORT}/api/verify-payment`);
   console.log(`\n⚠️  Don't forget to set your Stripe keys in .env file!\n`);
 });
+
