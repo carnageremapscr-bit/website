@@ -7092,6 +7092,28 @@
         return null;
       };
 
+      // Infer target displacement in liters from DVLA capacity
+      const targetDispLiters = (() => {
+        const raw = vehicle.engineCapacity;
+        if (!raw) return null;
+        const n = parseFloat(raw);
+        if (Number.isNaN(n)) return null;
+        return n > 20 ? n / 1000 : n;
+      })();
+
+      // Infer target fuel
+      const targetFuel = fuelKey(vehicle.fuelType || vehicle.engine || vehicle.engineLabel || '');
+
+      // Model popularity bias for tiebreak (VW example)
+      const modelBias = {
+        'golf': -0.1,
+        'polo': 0.2,
+        'up': 0.3,
+        'passat': 0.1,
+        'tiguan': 0.15,
+        'jetta': 0.25
+      };
+
       let best = null;
       let bestScore = Number.POSITIVE_INFINITY;
 
@@ -7109,23 +7131,32 @@
             }
           }
 
-          // Engine score (use first engine as representative)
+          // Engine score (count matches for displacement + fuel within this model/year)
           let engineScore = 0;
-          const firstEngine = Array.isArray(engines) ? engines[0] : null;
-          if (firstEngine) {
-            const disp = parseDisplacement(firstEngine);
-            const targetDisp = parseDisplacement(vehicle.engineCapacity || vehicle.engineLabel || vehicle.engine);
-            if (disp && targetDisp) {
-              engineScore += Math.abs(disp - (targetDisp >= 50 ? targetDisp / 1000 : targetDisp)) * 10;
-            }
-            const fe = fuelKey(firstEngine);
-            const fv = fuelKey(vehicle.fuelType);
-            if (fv && fe && fv !== fe) {
-              engineScore += 5; // fuel mismatch penalty
-            }
+          if (Array.isArray(engines) && engines.length) {
+            let dispMatches = 0;
+            let fuelMatches = 0;
+            engines.forEach((eng) => {
+              const disp = parseDisplacement(eng);
+              const fe = fuelKey(eng);
+              // Check displacement match (within 0.2L)
+              if (targetDispLiters && disp && Math.abs(disp - targetDispLiters) <= 0.2) {
+                dispMatches++;
+              }
+              // Check fuel match
+              if (targetFuel && fe === targetFuel) {
+                fuelMatches++;
+              }
+            });
+            engineScore = -dispMatches * 2 - fuelMatches; // negative because we minimize score; more matches = lower score
+          } else {
+            engineScore = 10; // penalty if no engines listed
           }
 
-          const score = yearScore + engineScore;
+          // Apply model bias
+          const bias = modelBias[modelKey] || 0;
+
+          const score = yearScore + engineScore + bias;
           if (score < bestScore) {
             bestScore = score;
             best = modelKey;
