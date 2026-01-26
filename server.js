@@ -1819,7 +1819,8 @@ function normalizeVehicleResponse(data) {
 
 app.get('/api/vrm-lookup', async (req, res) => {
   try {
-    const apiKey = CHECKCAR_API_KEY;
+    // Prefer env key; if missing, fall back to provided test key (letters must include 'A')
+    const apiKey = CHECKCAR_API_KEY || 'e80ce7141c39ae0b111a1999f6a0891b';
     const vrmRaw = (req.query.vrm || '').toString().trim();
 
     if (!vrmRaw) {
@@ -1832,7 +1833,7 @@ app.get('/api/vrm-lookup', async (req, res) => {
     }
 
     const vrm = vrmRaw.replace(/\s+/g, '').toUpperCase();
-    const datapoint = (req.query.datapoint || CHECKCAR_DATAPOINT || 'ukvehicledata').toString().trim();
+    const datapoint = (req.query.datapoint || CHECKCAR_DATAPOINT || 'vehicleregistration').toString().trim();
     const url = `https://api.checkcardetails.co.uk/vehicledata/${encodeURIComponent(datapoint)}?apikey=${encodeURIComponent(apiKey)}&vrm=${encodeURIComponent(vrm)}`;
 
     console.log(`📍 VRM Lookup: ${vrm} via ${datapoint}`);

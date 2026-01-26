@@ -327,57 +327,57 @@
       },
       'scirocco': {
         '2009-2017': ['1.4 TSI - 122hp', '1.4 TSI - 160hp', '2.0 TSI - 180hp', '2.0 TSI - 210hp', '2.0 TSI R - 280hp', '2.0 TDI - 140hp', '2.0 TDI - 150hp', '2.0 TDI - 184hp']
-      },
-      'beetle': {
-        '1998-2010': ['1.4 - 75hp', '1.6 - 102hp', '2.0 - 115hp', '1.8T - 150hp', '1.9 TDI - 90hp', '1.9 TDI - 105hp'],
-        '2011-2019': ['1.2 TSI - 105hp', '1.4 TSI - 150hp', '1.4 TSI - 160hp', '2.0 TSI - 200hp', '2.0 TDI - 110hp', '2.0 TDI - 150hp']
-      },
-      'sharan': {
-        '1996-2010': ['1.8 - 150hp', '2.0 - 115hp', '2.8 VR6 - 204hp', '1.9 TDI - 90hp', '1.9 TDI - 110hp', '1.9 TDI - 115hp', '1.9 TDI - 130hp'],
-        '2011-2022': ['1.4 TSI - 150hp', '2.0 TSI - 220hp', '2.0 TDI - 115hp', '2.0 TDI - 140hp', '2.0 TDI - 150hp', '2.0 TDI - 177hp', '2.0 TDI - 184hp']
-      },
-      'up!': {
-        '2012-2024': ['1.0 - 60hp', '1.0 - 75hp', '1.0 TSI - 90hp']
-      },
-      'amarok': {
-        '2011-2016': ['2.0 TSI - 180hp', '2.0 TDI - 122hp', '2.0 TDI - 140hp', '2.0 TDI - 163hp', '2.0 TDI BiTurbo - 180hp'],
-        '2017-2023': ['2.0 TSI - 258hp', '2.0 TDI - 140hp', '2.0 TDI - 163hp', '2.0 TDI - 180hp', '3.0 V6 TDI - 224hp', '3.0 V6 TDI - 258hp']
-      }
-    },
-    'ford': {
-      'focus': {
-        '2005-2010': ['1.4 - 80hp', '1.6 - 100hp', '1.8 - 125hp', '2.0 - 145hp', '2.5 ST - 225hp', '1.6 TDCi - 90hp', '1.6 TDCi - 109hp', '1.8 TDCi - 115hp', '2.0 TDCi - 136hp'],
-        '2011-2014': ['1.0 EcoBoost - 100hp', '1.0 EcoBoost - 125hp', '1.6 - 105hp', '1.6 - 125hp', '2.0 ST - 250hp', '1.6 TDCi - 95hp', '1.6 TDCi - 115hp', '2.0 TDCi - 140hp', '2.0 TDCi - 163hp'],
-        '2015-2018': ['1.0 EcoBoost - 100hp', '1.0 EcoBoost - 125hp', '1.5 EcoBoost - 150hp', '1.5 EcoBoost - 182hp', '2.3 EcoBoost RS - 350hp', '1.5 TDCi - 95hp', '1.5 TDCi - 120hp', '2.0 TDCi - 150hp', '2.0 TDCi - 185hp'],
-        '2019-2024': ['1.0 EcoBoost - 100hp', '1.0 EcoBoost - 125hp', '1.5 EcoBoost - 150hp', '1.5 EcoBoost - 182hp', '2.3 EcoBoost ST - 280hp', '1.5 EcoBlue - 95hp', '1.5 EcoBlue - 120hp', '2.0 EcoBlue - 150hp']
-      },
-      'fiesta': {
-        '2005-2008': ['1.25 - 75hp', '1.4 - 80hp', '1.6 - 100hp', '2.0 ST - 150hp', '1.4 TDCi - 68hp', '1.6 TDCi - 90hp'],
-        '2009-2012': ['1.25 - 82hp', '1.4 - 96hp', '1.6 - 120hp', '1.6 ST - 182hp', '1.4 TDCi - 70hp', '1.6 TDCi - 75hp', '1.6 TDCi - 95hp'],
-        '2013-2017': ['1.0 EcoBoost - 100hp', '1.0 EcoBoost - 125hp', '1.0 EcoBoost - 140hp', '1.6 ST - 182hp', '1.5 TDCi - 75hp', '1.5 TDCi - 95hp', '1.6 TDCi - 95hp'],
-        '2018-2023': ['1.0 EcoBoost - 85hp', '1.0 EcoBoost - 100hp', '1.0 EcoBoost - 125hp', '1.0 EcoBoost - 140hp', '1.5 EcoBoost ST - 200hp', '1.5 TDCi - 85hp', '1.5 TDCi - 120hp']
-      },
-      'kuga': {
-        '2008-2012': ['1.6 EcoBoost - 150hp', '2.0 - 145hp', '2.5 - 200hp', '2.0 TDCi - 136hp', '2.0 TDCi - 163hp'],
-        '2013-2019': ['1.5 EcoBoost - 120hp', '1.5 EcoBoost - 150hp', '1.5 EcoBoost - 182hp', '2.0 EcoBoost - 240hp', '1.5 TDCi - 120hp', '2.0 TDCi - 120hp', '2.0 TDCi - 150hp', '2.0 TDCi - 180hp'],
-        '2020-2024': ['1.5 EcoBoost - 120hp', '1.5 EcoBoost - 150hp', '2.0 EcoBoost - 190hp', '2.5 PHEV - 225hp', '1.5 EcoBlue - 120hp', '2.0 EcoBlue - 150hp', '2.0 EcoBlue - 190hp']
-      },
-      'mondeo': {
-        '2001-2007': ['1.8 - 125hp', '2.0 - 145hp', '2.5 V6 - 170hp', '3.0 V6 - 220hp', '2.0 TDCi - 115hp', '2.0 TDCi - 130hp', '2.2 TDCi - 155hp'],
-        '2008-2014': ['1.6 EcoBoost - 160hp', '2.0 EcoBoost - 203hp', '2.0 EcoBoost - 240hp', '1.6 TDCi - 115hp', '2.0 TDCi - 115hp', '2.0 TDCi - 140hp', '2.0 TDCi - 163hp', '2.2 TDCi - 200hp'],
-        '2015-2022': ['1.5 EcoBoost - 160hp', '2.0 EcoBoost - 187hp', '2.0 EcoBoost - 240hp', '1.5 TDCi - 120hp', '2.0 TDCi - 150hp', '2.0 TDCi - 180hp', '2.0 TDCi - 210hp']
-      },
-      'mustang': {
-        '2005-2014': ['4.0 V6 - 210hp', '4.6 V8 - 300hp', '5.0 V8 - 420hp'],
-        '2015-2023': ['2.3 EcoBoost - 290hp', '2.3 EcoBoost - 330hp', '5.0 V8 - 450hp', '5.2 V8 Shelby - 760hp'],
-        '2024': ['2.3 EcoBoost - 315hp', '5.0 V8 - 480hp']
-      },
-      'ecosport': {
-        '2014-2022': ['1.0 EcoBoost - 100hp', '1.0 EcoBoost - 125hp', '1.5 - 122hp', '1.5 TDCi - 95hp', '2.0 - 140hp']
-      },
-      'puma': {
-        '2020-2024': ['1.0 EcoBoost - 125hp', '1.0 EcoBoost - 155hp', '1.5 EcoBlue - 120hp']
-      },
+      try {
+        let vehicle = {};
+        let source = 'checkcar';
+        let usedFallback = false;
+
+        // Primary: CheckCar
+        try {
+          const ccResp = await fetch(`${API_URL}/api/vrm-lookup?vrm=${encodeURIComponent(vrm)}`);
+          let ccData = {};
+          try { ccData = await ccResp.json(); } catch (_) { ccData = {}; }
+          if (ccResp.ok && ccData.success && ccData.vehicle) {
+            vehicle = ccData.vehicle;
+          } else {
+            throw new Error(ccData.error || 'CheckCar lookup failed');
+          }
+        } catch (primaryErr) {
+          // Fallback: DVLA if CheckCar fails entirely
+          source = 'dvla';
+          const response = await fetch(`${API_URL}/api/dvla-lookup?vrm=${encodeURIComponent(vrm)}`);
+          let data = {};
+          try { data = await response.json(); } catch (_) { data = {}; }
+          if (!response.ok || !data.success) {
+            throw new Error(data.error || primaryErr.message || 'Lookup failed');
+          }
+          vehicle = data.vehicle || {};
+        }
+
+        // If primary (CheckCar) lacked make/year, try to supplement with DVLA
+        const needsMakeYear = !vehicle.make || !vehicle.year;
+        if (source === 'checkcar' && needsMakeYear) {
+          try {
+            const dvlaResp = await fetch(`${API_URL}/api/dvla-lookup?vrm=${encodeURIComponent(vrm)}`);
+            let dvlaData = {};
+            try { dvlaData = await dvlaResp.json(); } catch (_) { dvlaData = {}; }
+            if (dvlaResp.ok && dvlaData.success && dvlaData.vehicle) {
+              vehicle = {
+                ...vehicle,
+                make: vehicle.make || dvlaData.vehicle.make,
+                year: vehicle.year || dvlaData.vehicle.year || dvlaData.vehicle.yearOfManufacture,
+                yearOfManufacture: vehicle.yearOfManufacture || dvlaData.vehicle.yearOfManufacture,
+                engineCapacity: vehicle.engineCapacity || dvlaData.vehicle.engineCapacity,
+                fuelType: vehicle.fuelType || dvlaData.vehicle.fuelType,
+              };
+              usedFallback = true;
+            }
+          } catch (_) {
+            // ignore
+          }
+        }
+
+        const selection = applyVrmSuggestionSearch(vehicle);
       'edge': {
         '2016-2024': ['2.0 EcoBlue - 150hp', '2.0 EcoBlue - 190hp', '2.0 EcoBlue - 238hp', '2.0 EcoBoost - 245hp', '2.7 EcoBoost - 335hp']
       },
@@ -7427,6 +7427,7 @@
       }
 
       try {
+        // Primary: DVLA
         const response = await fetch(`${API_URL}/api/dvla-lookup?vrm=${encodeURIComponent(vrm)}`);
         let data = {};
         try { data = await response.json(); } catch (_) { data = {}; }
@@ -7434,7 +7435,31 @@
           throw new Error(data.error || 'Lookup failed');
         }
 
-        const selection = applyVrmSuggestionSearch(data.vehicle || {});
+        let vehicle = data.vehicle || {};
+        let usedFallback = false;
+
+        // Fallback: CheckCar if model/engine data is missing
+        const needsModel = !vehicle.model;
+        const needsEngine = !vehicle.engine && !vehicle.engineLabel && !vehicle.engineCapacity;
+        if (needsModel || needsEngine) {
+          try {
+            const ccResp = await fetch(`${API_URL}/api/vrm-lookup?vrm=${encodeURIComponent(vrm)}`);
+            let ccData = {};
+            try { ccData = await ccResp.json(); } catch (_) { ccData = {}; }
+            if (ccResp.ok && ccData.success && ccData.vehicle) {
+              usedFallback = true;
+              // Merge: keep DVLA make/year, fill missing model/engine fields from CheckCar
+              vehicle = {
+                ...ccData.vehicle,
+                ...vehicle, // DVLA wins for make/year if present
+              };
+            }
+          } catch (_) {
+            // Ignore fallback errors
+          }
+        }
+
+        const selection = applyVrmSuggestionSearch(vehicle);
         const filled = [
           selection.manufacturer ? 'make' : null,
           selection.model ? 'model' : null,
@@ -7442,14 +7467,15 @@
           selection.engine ? 'engine' : null
         ].filter(Boolean).join(', ');
 
-        const summary = [data.vehicle?.make, data.vehicle?.model, data.vehicle?.year].filter(Boolean).join(' ');
-        const needsEngine = selection.year && !selection.engine;
+        const summary = [vehicle?.make, vehicle?.model, vehicle?.year].filter(Boolean).join(' ');
+        const needsEngineNote = selection.year && !selection.engine;
         const suffix = filled ? `Filled: ${filled}.` : 'Please confirm details.';
-        const engineNote = needsEngine ? ' Select the correct engine to continue.' : '';
-        setVrmStatusSearch(`Found ${summary || 'vehicle'}. ${suffix}${engineNote}`, 'success');
+        const engineNote = needsEngineNote ? ' Select the correct engine to continue.' : '';
+        const fallbackNote = usedFallback ? ' (supplemented via CheckCar)' : '';
+        setVrmStatusSearch(`Found ${summary || 'vehicle'}. ${suffix}${engineNote}${fallbackNote}`, 'success');
 
         // If engine wasn’t auto-selected, scroll and highlight the engine selector
-        if (needsEngine && searchEngine) {
+        if (needsEngineNote && searchEngine) {
           const fg = searchEngine.closest('.form-group') || searchEngine;
           fg.classList.add('highlight-pulse');
           searchEngine.focus();
