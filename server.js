@@ -1876,7 +1876,7 @@ app.get('/api/vrm-lookup', async (req, res) => {
 // ============================================
 // DVLA Open Data API Endpoint
 // ============================================
-// Step 1: Authenticate to get JWT token (valid 1 hour)
+// Step 1: Authenticate to get JWT token (valid 1 hour) — optional; VES can run with API key only
 async function getDvlaJwtToken() {
   // Check if cached token is still valid
   if (dvlaJwtToken && dvlaJwtExpiry && Date.now() < dvlaJwtExpiry) {
@@ -1937,24 +1937,22 @@ app.get('/api/dvla-lookup', async (req, res) => {
 
     console.log(`📍 DVLA Lookup: ${vrm}`);
 
-    // Get JWT token (from cache or authenticate)
-    let jwtToken;
-    try {
-      jwtToken = await getDvlaJwtToken();
-    } catch (authError) {
-      console.error('❌ DVLA auth error:', authError.message);
-      return res.status(500).json({ 
-        error: 'DVLA authentication failed', 
-        details: authError.message 
-      });
+    // Optional JWT: only used if username/password are configured
+    let jwtToken = null;
+    if (DVLA_USERNAME && DVLA_PASSWORD) {
+      try {
+        jwtToken = await getDvlaJwtToken();
+      } catch (authError) {
+        console.warn('⚠️ DVLA auth unavailable, falling back to API key only:', authError.message);
+      }
     }
 
-    // DVLA requires POST with registrationNumber in body
+    // DVLA VES accepts API key; JWT (if present) is added for third-party flows
     const response = await fetch(`${DVLA_API_BASE_URL}/vehicle-enquiry/v1/vehicles`, {
       method: 'POST',
       headers: {
         'x-api-key': DVLA_API_KEY,
-        'Authorization': jwtToken,
+        ...(jwtToken ? { 'Authorization': jwtToken } : {}),
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -1967,9 +1965,9 @@ app.get('/api/dvla-lookup', async (req, res) => {
     if (!response.ok) {
       console.error(`❌ DVLA error (${response.status}):`, JSON.stringify(data));
       
-      // If 401, clear cached JWT and retry once
-      if (response.status === 401) {
-        console.log('🔄 JWT expired, re-authenticating...');
+      // If 401 and we tried JWT, clear cache
+      if (response.status === 401 && jwtToken) {
+        console.log('🔄 JWT expired, clearing cache...');
         dvlaJwtToken = null;
         dvlaJwtExpiry = null;
       }
