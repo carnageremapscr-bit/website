@@ -1833,7 +1833,8 @@ app.get('/api/vrm-lookup', async (req, res) => {
     }
 
     const vrm = vrmRaw.replace(/\s+/g, '').toUpperCase();
-    const datapoint = (req.query.datapoint || CHECKCAR_DATAPOINT || 'vehicleregistration').toString().trim();
+    // Force datapoint to vehicleregistration unless explicitly overridden
+    const datapoint = (req.query.datapoint || 'vehicleregistration').toString().trim();
     const url = `https://api.checkcardetails.co.uk/vehicledata/${encodeURIComponent(datapoint)}?apikey=${encodeURIComponent(apiKey)}&vrm=${encodeURIComponent(vrm)}`;
 
     console.log(`📍 VRM Lookup: ${vrm} via ${datapoint}`);

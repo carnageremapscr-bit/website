@@ -327,57 +327,7 @@
       },
       'scirocco': {
         '2009-2017': ['1.4 TSI - 122hp', '1.4 TSI - 160hp', '2.0 TSI - 180hp', '2.0 TSI - 210hp', '2.0 TSI R - 280hp', '2.0 TDI - 140hp', '2.0 TDI - 150hp', '2.0 TDI - 184hp']
-      try {
-        let vehicle = {};
-        let source = 'checkcar';
-        let usedFallback = false;
-
-        // Primary: CheckCar
-        try {
-          const ccResp = await fetch(`${API_URL}/api/vrm-lookup?vrm=${encodeURIComponent(vrm)}`);
-          let ccData = {};
-          try { ccData = await ccResp.json(); } catch (_) { ccData = {}; }
-          if (ccResp.ok && ccData.success && ccData.vehicle) {
-            vehicle = ccData.vehicle;
-          } else {
-            throw new Error(ccData.error || 'CheckCar lookup failed');
-          }
-        } catch (primaryErr) {
-          // Fallback: DVLA if CheckCar fails entirely
-          source = 'dvla';
-          const response = await fetch(`${API_URL}/api/dvla-lookup?vrm=${encodeURIComponent(vrm)}`);
-          let data = {};
-          try { data = await response.json(); } catch (_) { data = {}; }
-          if (!response.ok || !data.success) {
-            throw new Error(data.error || primaryErr.message || 'Lookup failed');
-          }
-          vehicle = data.vehicle || {};
-        }
-
-        // If primary (CheckCar) lacked make/year, try to supplement with DVLA
-        const needsMakeYear = !vehicle.make || !vehicle.year;
-        if (source === 'checkcar' && needsMakeYear) {
-          try {
-            const dvlaResp = await fetch(`${API_URL}/api/dvla-lookup?vrm=${encodeURIComponent(vrm)}`);
-            let dvlaData = {};
-            try { dvlaData = await dvlaResp.json(); } catch (_) { dvlaData = {}; }
-            if (dvlaResp.ok && dvlaData.success && dvlaData.vehicle) {
-              vehicle = {
-                ...vehicle,
-                make: vehicle.make || dvlaData.vehicle.make,
-                year: vehicle.year || dvlaData.vehicle.year || dvlaData.vehicle.yearOfManufacture,
-                yearOfManufacture: vehicle.yearOfManufacture || dvlaData.vehicle.yearOfManufacture,
-                engineCapacity: vehicle.engineCapacity || dvlaData.vehicle.engineCapacity,
-                fuelType: vehicle.fuelType || dvlaData.vehicle.fuelType,
-              };
-              usedFallback = true;
-            }
-          } catch (_) {
-            // ignore
-          }
-        }
-
-        const selection = applyVrmSuggestionSearch(vehicle);
+      },
       'edge': {
         '2016-2024': ['2.0 EcoBlue - 150hp', '2.0 EcoBlue - 190hp', '2.0 EcoBlue - 238hp', '2.0 EcoBoost - 245hp', '2.7 EcoBoost - 335hp']
       },
