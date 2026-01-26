@@ -906,21 +906,82 @@ body.not-authenticated {
 
 .registration-row {
   display: flex;
-  gap: 0.5rem;
+  gap: 1rem;
   align-items: center;
+  flex-wrap: wrap;
+}
+
+.uk-plate {
+  display: flex;
+  align-items: center;
+  background: #FFCC00;
+  border: 3px solid #000;
+  border-radius: 4px;
+  padding: 0;
+  height: 80px;
+  flex: 1;
+  min-width: 250px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.plate-flag {
+  background: #003399;
+  color: #FFCC00;
+  padding: 0 12px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 2px solid #000;
+  min-width: 50px;
+}
+
+.flag-text {
+  font-weight: bold;
+  font-size: 14px;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.plate-input {
+  flex: 1;
+  border: none;
+  background: #FFCC00;
+  color: #000;
+  font-family: 'Arial Black', sans-serif;
+  font-size: 28px;
+  font-weight: bold;
+  letter-spacing: 4px;
+  padding: 0 12px;
+  text-transform: uppercase;
+  outline: none;
+  text-align: center;
+  height: 100%;
+}
+
+.plate-input::placeholder {
+  color: #999;
+  opacity: 0.6;
+}
+
+.plate-input:focus {
+  outline: 2px solid #ff6b00;
+  outline-offset: -2px;
 }
 
 .vrm-lookup-btn {
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #f59e0b 0%, #c81010 100%);
+  border-radius: 8px;
+  background: linear-gradient(135deg, #00bcd4 0%, #0097a7 100%);
   color: #fff;
   font-weight: 700;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  min-width: 120px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 100px;
+  font-size: 1rem;
 }
 
 .vrm-lookup-btn:disabled {
@@ -929,8 +990,23 @@ body.not-authenticated {
 }
 
 .vrm-lookup-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .registration-row {
+    flex-direction: column;
+  }
+  
+  .uk-plate {
+    width: 100%;
+    min-width: unset;
+  }
+  
+  .vrm-lookup-btn {
+    width: 100%;
+  }
 }
 
 .vrm-status {
