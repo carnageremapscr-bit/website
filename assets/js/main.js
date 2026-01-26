@@ -8706,6 +8706,10 @@ I would like to request a quote for tuning this vehicle.`,
     const flagBg = document.getElementById('admin-flag-bg');
     const btnStart = document.getElementById('admin-btn-start');
     const btnEnd = document.getElementById('admin-btn-end');
+    const accentLight = document.getElementById('admin-accent-light');
+    const gold = document.getElementById('admin-gold');
+    const bgDark = document.getElementById('admin-bg-dark');
+    const bgPanel = document.getElementById('admin-bg-panel');
     const applyThemeBtn = document.getElementById('admin-apply-vrm-theme');
     const resetThemeBtn = document.getElementById('admin-reset-vrm-theme');
     const embedOutput = document.getElementById('admin-vrm-embed-output');
@@ -8716,17 +8720,54 @@ I would like to request a quote for tuning this vehicle.`,
       plateText: '#000000',
       flagBg: '#003399',
       btnStart: '#00bcd4',
-      btnEnd: '#0097a7'
+      btnEnd: '#0097a7',
+      accent: '#dc2626',
+      accentLight: '#ef4444',
+      gold: '#ffc107',
+      bgDark: '#0f172a',
+      bgPanel: '#1e293b'
+    };
+
+    const buildEmbed = () => {
+      const params = new URLSearchParams({
+        color: btnStart?.value || defaultTheme.accent,
+        colorLight: accentLight?.value || defaultTheme.accentLight,
+        gold: gold?.value || defaultTheme.gold,
+        bg: bgDark?.value || defaultTheme.bgDark,
+        bgPanel: bgPanel?.value || defaultTheme.bgPanel
+      });
+      const gradient = `linear-gradient(135deg, ${params.get('bg')} 0%, ${params.get('bgPanel')} 50%, ${params.get('bg')} 100%)`;
+      params.set('bgGradient', gradient);
+      const src = `https://web-production-df12d.up.railway.app/test-vrm.html?${params.toString()}`;
+      return `<iframe src="${src}" width="100%" height="520" style="border:none;border-radius:12px;max-width:100%;" title="Carnage VRM Lookup" loading="lazy"></iframe>`;
+    };
+
+    const updateEmbedOutput = () => {
+      if (embedOutput) embedOutput.value = buildEmbed();
     };
 
     const applyTheme = () => {
       if (!preview) return;
+      const dark = bgDark?.value || defaultTheme.bgDark;
+      const panel = bgPanel?.value || defaultTheme.bgPanel;
+      const gradient = `linear-gradient(135deg, ${dark} 0%, ${panel} 50%, ${dark} 100%)`;
+
       preview.style.setProperty('--plate-bg', plateBg?.value || defaultTheme.plateBg);
       preview.style.setProperty('--plate-text', plateText?.value || defaultTheme.plateText);
       preview.style.setProperty('--plate-flag-bg', flagBg?.value || defaultTheme.flagBg);
       preview.style.setProperty('--plate-flag-text', plateBg?.value || defaultTheme.plateBg);
       preview.style.setProperty('--vrm-btn-start', btnStart?.value || defaultTheme.btnStart);
       preview.style.setProperty('--vrm-btn-end', btnEnd?.value || defaultTheme.btnEnd);
+      preview.style.setProperty('--accent-color', btnStart?.value || defaultTheme.accent);
+      preview.style.setProperty('--accent-light', accentLight?.value || defaultTheme.accentLight);
+      preview.style.setProperty('--gold-color', gold?.value || defaultTheme.gold);
+      preview.style.setProperty('--bg-dark', dark);
+      preview.style.setProperty('--bg-panel', panel);
+      preview.style.setProperty('--bg-gradient', gradient);
+      preview.style.background = gradient;
+      preview.style.borderColor = `${btnStart?.value || defaultTheme.accent}35`;
+
+      updateEmbedOutput();
     };
 
     const resetTheme = () => {
@@ -8735,6 +8776,10 @@ I would like to request a quote for tuning this vehicle.`,
       if (flagBg) flagBg.value = defaultTheme.flagBg;
       if (btnStart) btnStart.value = defaultTheme.btnStart;
       if (btnEnd) btnEnd.value = defaultTheme.btnEnd;
+      if (accentLight) accentLight.value = defaultTheme.accentLight;
+      if (gold) gold.value = defaultTheme.gold;
+      if (bgDark) bgDark.value = defaultTheme.bgDark;
+      if (bgPanel) bgPanel.value = defaultTheme.bgPanel;
       applyTheme();
     };
 
@@ -8919,10 +8964,11 @@ I would like to request a quote for tuning this vehicle.`,
 
     if (applyThemeBtn) applyThemeBtn.addEventListener('click', applyTheme);
     if (resetThemeBtn) resetThemeBtn.addEventListener('click', resetTheme);
-    [plateBg, plateText, flagBg, btnStart, btnEnd].forEach(ctrl => {
+    [plateBg, plateText, flagBg, btnStart, btnEnd, accentLight, gold, bgDark, bgPanel].forEach(ctrl => {
       if (ctrl) ctrl.addEventListener('input', applyTheme);
     });
     applyTheme();
+    updateEmbedOutput();
 
     if (vrmBtn) vrmBtn.addEventListener('click', performLookup);
     if (vrmInput) {
@@ -8934,7 +8980,6 @@ I would like to request a quote for tuning this vehicle.`,
       });
     }
 
-    const buildEmbed = () => `<iframe src="https://web-production-df12d.up.railway.app/test-vrm.html" width="100%" height="520" style="border:none;border-radius:12px;max-width:100%;" title="Carnage VRM Lookup" loading="lazy"></iframe>`;
     if (embedOutput) embedOutput.value = buildEmbed();
     if (copyEmbedBtn) {
       copyEmbedBtn.addEventListener('click', async () => {
@@ -8956,7 +9001,7 @@ I would like to request a quote for tuning this vehicle.`,
           console.log('Iframe tracking note:', err.message);
         }
         
-        setTimeout(() => { copyEmbedBtn.textContent = '📋 Copy iframe'; }, 1800);
+        setTimeout(() => { copyEmbedBtn.textContent = '📋 Copy Code'; }, 1800);
       });
     }
   }
