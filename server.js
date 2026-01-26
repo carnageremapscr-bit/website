@@ -1041,7 +1041,7 @@ app.use((req, res, next) => {
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
         imgSrc: ["'self'", "data:", "https:", "blob:"],
-        connectSrc: ["'self'", "https://*.supabase.co", "https://api.stripe.com", "wss://*.supabase.co", "https://cdn.jsdelivr.net", "https://www.google-analytics.com"],
+        connectSrc: ["'self'", "https://*.supabase.co", "https://api.stripe.com", "wss://*.supabase.co", "https://cdn.jsdelivr.net", "https://www.google-analytics.com", "https://www.googletagmanager.com", "https://analytics.google.com"],
         frameSrc: ["https://js.stripe.com", "https://hooks.stripe.com"],
         frameAncestors: ["'self'"],
       },
