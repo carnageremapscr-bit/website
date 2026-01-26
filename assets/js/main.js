@@ -7217,6 +7217,11 @@
       };
 
       // If DVLA did not provide model, try to guess one so we can populate dependent dropdowns
+      // Normalize year from yearOfManufacture when DVLA provides it
+      if (!vehicle.year && vehicle.yearOfManufacture) {
+        vehicle.year = vehicle.yearOfManufacture;
+      }
+
       if (!vehicle.model) {
         const guessedModel = guessModelForVehicle(vehicle);
         if (guessedModel) {
@@ -7333,12 +7338,16 @@
         result.year = !!matchedYear;
       }
 
-      if (result.year && vehicle.engineLabel && searchEngine) {
+      if (result.year && searchEngine) {
         const normalizedCandidates = buildEngineCandidatesSearch(vehicle);
-        let matchedEngine = trySelectOptionSearch(
-          searchEngine,
-          (opt) => opt.value && normalizedCandidates.some((candidate) => normalizeEngineTextSearch(opt.textContent).includes(candidate))
-        );
+        let matchedEngine = null;
+
+        if (normalizedCandidates.length) {
+          matchedEngine = trySelectOptionSearch(
+            searchEngine,
+            (opt) => opt.value && normalizedCandidates.some((candidate) => normalizeEngineTextSearch(opt.textContent).includes(candidate))
+          );
+        }
 
         // Fallback: if only one real option exists, pick it
         if (!matchedEngine && searchEngine.options.length === 2) {
