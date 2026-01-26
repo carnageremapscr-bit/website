@@ -7470,11 +7470,13 @@
         ].filter(Boolean).join(', ');
 
         const summary = [vehicle?.make, vehicle?.model, vehicle?.year].filter(Boolean).join(' ');
+        const engineSpec = [vehicle?.powerBhp ? `${vehicle.powerBhp}hp` : null, vehicle?.torqueNm ? `${vehicle.torqueNm}nm` : null].filter(Boolean).join(' + ');
         const needsEngineNote = selection.year && !selection.engine;
         const suffix = filled ? `Filled: ${filled}.` : 'Please confirm details.';
         const engineNote = needsEngineNote ? ' Select the correct engine to continue.' : '';
         const fallbackNote = usedFallback ? ' (supplemented via CheckCar)' : '';
-        setVrmStatusSearch(`Found ${summary || 'vehicle'}. ${suffix}${engineNote}${fallbackNote}`, 'success');
+        const perfDetail = engineSpec ? ` [${engineSpec}]` : '';
+        setVrmStatusSearch(`Found ${summary || 'vehicle'}${perfDetail}. ${suffix}${engineNote}${fallbackNote}`, 'success');
 
         // If engine wasn’t auto-selected, scroll and highlight the engine selector
         if (needsEngineNote && searchEngine) {

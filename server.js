@@ -1783,6 +1783,12 @@ function buildEngineLabel(vehicle) {
       : `${vehicle.powerBhp}hp`;
     parts.push(powerText);
   }
+  if (vehicle.torqueNm) {
+    const torqueText = String(vehicle.torqueNm).toLowerCase().includes('nm')
+      ? String(vehicle.torqueNm)
+      : `${vehicle.torqueNm}nm`;
+    parts.push(torqueText);
+  }
   if (!parts.length && vehicle.engine) {
     parts.push(vehicle.engine);
   }
@@ -1791,27 +1797,48 @@ function buildEngineLabel(vehicle) {
 
 function normalizeVehicleResponse(data) {
   const dataItems = data?.Response?.DataItems || data?.DataItems || data?.dataItems || data?.data || data;
+
+  // Pull out rich blocks first (vehiclespecs), then fallbacks
   const blocks = [
+    dataItems?.VehicleSpecs || dataItems?.vehiclespecs,
     dataItems?.UkVehicleData || dataItems?.ukvehicledata,
     dataItems?.VehicleRegistration || dataItems?.vehicleregistration,
     dataItems?.VehicleData || dataItems?.vehicledata || dataItems?.vehicle,
-    dataItems?.VehicleSpecs || dataItems?.vehiclespecs,
     dataItems
   ].filter(block => block && typeof block === 'object');
 
   const source = blocks[0] || {};
   const vehicle = {
+    // Prefer SMMT/DVLA naming when present
     make: pickVehicleField(source, ['make', 'manufacturer', 'marque']),
     model: pickVehicleField(source, ['model', 'range', 'vehiclemodel', 'description']),
-    year: pickVehicleField(source, ['yearofmanufacture', 'registrationyear', 'manufactureyear', 'modelyear', 'plateyear', 'year']),
+    year: pickVehicleField(source, ['dateoffirstregistration', 'yearofmanufacture', 'registrationyear', 'manufactureyear', 'modelyear', 'plateyear', 'year']),
     fuelType: pickVehicleField(source, ['fueltype', 'fuel', 'fuel_type']),
     engineCapacity: pickVehicleField(source, ['enginecapacity', 'engine_cubic_capacity', 'enginecc', 'cc', 'cubiccapacity', 'enginecapacityltr']),
-    powerBhp: pickVehicleField(source, ['powerbhp', 'power_bhp', 'maxpowerbhp', 'bhp', 'power']),
-    engine: pickVehicleField(source, ['engine', 'enginedescription', 'enginecode']),
+    powerBhp: pickVehicleField(source, ['performancebhp', 'maximumpowerbhp', 'powerbhp', 'power_bhp', 'maxpowerbhp', 'bhp', 'power']),
+    engine: pickVehicleField(source, ['engine', 'enginedescription', 'enginecode'] ),
     transmission: pickVehicleField(source, ['transmission', 'gearbox']),
     vin: pickVehicleField(source, ['vin', 'vehicleidentificationnumber']),
     bodyStyle: pickVehicleField(source, ['bodystyle', 'body_type', 'body'])
   };
+
+  // Vehiclespecs-specific overrides (richer data)
+  const specsRoot = source.VehicleIdentification || source.vehicleidentification || source;
+  const modelData = source.ModelData || source.modeldata || {};
+  const smmt = source.SmmtDetails || source.smmtdetails || {};
+  const tech = source.DvlaTechnicalDetails || source.dvlatechnicaldetails || {};
+  const perf = source.Performance || source.performance || {};
+  const power = source.Power || source.power || {};
+  const powerSource = source.PowerSource || source.powersource || {};
+
+  vehicle.make = smmt.Make || tech.Make || specsRoot.Make || modelData.Manufacturer || vehicle.make;
+  vehicle.model = smmt.Model || tech.Model || specsRoot.Model || modelData.Model || vehicle.model;
+  vehicle.year = (source.DateOfFirstRegistration || source.dateoffirstregistration || '').toString().slice(0, 4)
+    || smmt.YearOfManufacture || tech.YearOfManufacture || vehicle.year;
+  vehicle.engineCapacity = tech.EngineCapacity || powerSource.EngineCapacity || specsRoot.EngineCapacity || vehicle.engineCapacity;
+  vehicle.fuelType = tech.FuelType || powerSource.FuelType || smmt.FuelType || vehicle.fuelType;
+  vehicle.powerBhp = power.PerformanceBhp || perf.MaximumPowerBhp || vehicle.powerBhp;
+  vehicle.torqueNm = power.PerformanceTorque || power.Torque || perf.MaximumTorque || perf.Torque || vehicle.torqueNm || null;
 
   vehicle.engineLabel = buildEngineLabel(vehicle);
   return vehicle;
@@ -1833,8 +1860,8 @@ app.get('/api/vrm-lookup', async (req, res) => {
     }
 
     const vrm = vrmRaw.replace(/\s+/g, '').toUpperCase();
-    // Force datapoint to vehicleregistration unless explicitly overridden
-    const datapoint = (req.query.datapoint || 'vehicleregistration').toString().trim();
+    // Default to vehiclespecs for richer data, allow explicit override
+    const datapoint = (req.query.datapoint || 'vehiclespecs').toString().trim();
     const url = `https://api.checkcardetails.co.uk/vehicledata/${encodeURIComponent(datapoint)}?apikey=${encodeURIComponent(apiKey)}&vrm=${encodeURIComponent(vrm)}`;
 
     console.log(`📍 VRM Lookup: ${vrm} via ${datapoint}`);
