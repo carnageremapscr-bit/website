@@ -5577,7 +5577,7 @@
       }
 
       try {
-        const response = await fetch(`${API_URL}/api/vrm-lookup?vrm=${encodeURIComponent(vrm)}`);
+        const response = await fetch(`${API_URL}/api/dvla-lookup?vrm=${encodeURIComponent(vrm)}`);
         let data = {};
         try {
           data = await response.json();

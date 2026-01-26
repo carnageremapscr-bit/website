@@ -1812,22 +1812,25 @@ function normalizeVehicleResponse(data) {
 }
 
 app.get('/api/vrm-lookup', async (req, res) => {
-  const apiKey = CHECKCAR_API_KEY;
-  const vrmRaw = (req.query.vrm || '').toString().trim();
-
-  if (!vrmRaw) {
-    return res.status(400).json({ error: 'vrm is required' });
-  }
-
-  if (!apiKey) {
-    return res.status(500).json({ error: 'VRM lookup is not configured' });
-  }
-
-  const vrm = vrmRaw.replace(/\s+/g, '').toUpperCase();
-  const datapoint = (req.query.datapoint || CHECKCAR_DATAPOINT || 'ukvehicledata').toString().trim();
-  const url = `https://api.checkcardetails.co.uk/vehicledata/${encodeURIComponent(datapoint)}?apikey=${encodeURIComponent(apiKey)}&vrm=${encodeURIComponent(vrm)}`;
-
   try {
+    const apiKey = CHECKCAR_API_KEY;
+    const vrmRaw = (req.query.vrm || '').toString().trim();
+
+    if (!vrmRaw) {
+      return res.status(400).json({ error: 'vrm is required' });
+    }
+
+    if (!apiKey) {
+      console.warn('⚠️ CHECKCAR_API_KEY not configured');
+      return res.status(500).json({ error: 'VRM lookup is not configured' });
+    }
+
+    const vrm = vrmRaw.replace(/\s+/g, '').toUpperCase();
+    const datapoint = (req.query.datapoint || CHECKCAR_DATAPOINT || 'ukvehicledata').toString().trim();
+    const url = `https://api.checkcardetails.co.uk/vehicledata/${encodeURIComponent(datapoint)}?apikey=${encodeURIComponent(apiKey)}&vrm=${encodeURIComponent(vrm)}`;
+
+    console.log(`📍 VRM Lookup: ${vrm} via ${datapoint}`);
+
     const providerResp = await fetch(url, { headers: { 'Accept': 'application/json' } });
     const rawText = await providerResp.text();
     let providerJson = null;
@@ -1836,9 +1839,11 @@ app.get('/api/vrm-lookup', async (req, res) => {
       providerJson = JSON.parse(rawText);
     } catch (err) {
       // Keep raw text when JSON parse fails
+      console.warn('⚠️ Failed to parse provider response as JSON');
     }
 
     if (!providerResp.ok) {
+      console.error(`❌ Provider error (${providerResp.status}):`, providerJson?.error || rawText?.substring(0, 200));
       return res.status(providerResp.status).json({
         error: providerJson?.error || providerJson?.message || 'Lookup failed',
         providerStatus: providerResp.status,
@@ -1857,33 +1862,35 @@ app.get('/api/vrm-lookup', async (req, res) => {
       providerStatus: providerResp.status
     });
   } catch (err) {
-    console.error('VRM lookup error:', err);
-    res.status(500).json({ error: 'VRM lookup failed' });
+    console.error('❌ VRM lookup error:', err);
+    res.status(500).json({ error: 'VRM lookup failed', details: err.message });
   }
-});
 
 // ============================================
 // DVLA Open Data API Endpoint
 // ============================================
 // Lookup vehicle information via DVLA API
 app.get('/api/dvla-lookup', async (req, res) => {
-  const vrmRaw = (req.query.vrm || '').toString().trim();
-
-  if (!vrmRaw) {
-    return res.status(400).json({ error: 'vrm is required' });
-  }
-
-  if (!DVLA_API_KEY) {
-    return res.status(500).json({ error: 'DVLA API is not configured' });
-  }
-
-  // Clean and validate VRM
-  const vrm = vrmRaw.replace(/\s+/g, '').toUpperCase();
-  if (!/^[A-Z0-9]{2,7}$/.test(vrm)) {
-    return res.status(400).json({ error: 'Invalid VRM format' });
-  }
-
   try {
+    const vrmRaw = (req.query.vrm || '').toString().trim();
+
+    if (!vrmRaw) {
+      return res.status(400).json({ error: 'vrm is required' });
+    }
+
+    if (!DVLA_API_KEY) {
+      console.warn('⚠️ DVLA_API_KEY not configured');
+      return res.status(500).json({ error: 'DVLA API is not configured' });
+    }
+
+    // Clean and validate VRM
+    const vrm = vrmRaw.replace(/\s+/g, '').toUpperCase();
+    if (!/^[A-Z0-9]{2,7}$/.test(vrm)) {
+      return res.status(400).json({ error: 'Invalid VRM format' });
+    }
+
+    console.log(`📍 DVLA Lookup: ${vrm}`);
+
     const response = await fetch(`${DVLA_API_BASE_URL}/vehicles/vrm/${vrm}`, {
       method: 'GET',
       headers: {
@@ -1896,6 +1903,7 @@ app.get('/api/dvla-lookup', async (req, res) => {
     const data = await response.json();
 
     if (!response.ok) {
+      console.error(`❌ DVLA error (${response.status}):`, data?.error || data?.message);
       return res.status(response.status).json({
         error: data.error || data.message || 'DVLA lookup failed',
         dvlaStatus: response.status,
@@ -1903,23 +1911,17 @@ app.get('/api/dvla-lookup', async (req, res) => {
       });
     }
 
-    // Transform DVLA response to our standard format
+    // Transform DVLA response to our standard format - only essential fields for matching
     const vehicle = {
-      vrm: data.registrationNumber || vrm,
       make: data.make,
       model: data.model,
-      fuelType: data.fuelType,
-      engineCapacity: data.engineCapacity,
-      power: data.power,
-      transmission: data.transmission,
-      colour: data.colour,
-      firstRegistrationDate: data.firstRegistrationDate,
       yearOfManufacture: data.yearOfManufacture,
-      taxStatus: data.taxStatus,
-      motStatus: data.motStatus,
-      engineNumber: data.engineNumber,
-      vin: data.vin
+      engineCapacity: data.engineCapacity,
+      fuelType: data.fuelType,
+      power: data.power
     };
+
+    console.log(`✅ DVLA Lookup success: ${data.make} ${data.model} ${data.yearOfManufacture}`);
 
     res.json({
       success: true,
@@ -1930,7 +1932,7 @@ app.get('/api/dvla-lookup', async (req, res) => {
       retrievedAt: new Date().toISOString()
     });
   } catch (err) {
-    console.error('DVLA lookup error:', err);
+    console.error('❌ DVLA lookup error:', err.message);
     res.status(500).json({ error: 'DVLA lookup failed', details: err.message });
   }
 });
