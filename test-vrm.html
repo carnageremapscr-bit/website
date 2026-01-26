@@ -266,8 +266,10 @@
     const contactActions = document.getElementById('contact-actions');
     const waBtn = document.getElementById('contact-wa');
     const emailBtn = document.getElementById('contact-email');
-    const waParam = params.get('wa') || params.get('mobile');
-    const emailParam = params.get('email');
+    const defaultWa = '07546371963';
+    const defaultEmail = 'carnageremaps@gmail.com';
+    const waParam = params.get('wa') || params.get('mobile') || defaultWa;
+    const emailParam = params.get('email') || defaultEmail;
 
     const normalizePhone = (p) => {
       if (!p) return '';

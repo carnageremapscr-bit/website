@@ -8717,6 +8717,14 @@ I would like to request a quote for tuning this vehicle.`,
     const contactPhone = document.getElementById('admin-contact-phone');
     const contactEmail = document.getElementById('admin-contact-email');
 
+    // Prefill contact inputs from saved CONTACT_SETTINGS so embeds carry defaults
+    if (contactPhone && !contactPhone.value && CONTACT_SETTINGS.whatsappNumber) {
+      contactPhone.value = CONTACT_SETTINGS.whatsappNumber;
+    }
+    if (contactEmail && !contactEmail.value && CONTACT_SETTINGS.email) {
+      contactEmail.value = CONTACT_SETTINGS.email;
+    }
+
     const defaultTheme = {
       plateBg: '#ffcc00',
       plateText: '#000000',
@@ -8739,9 +8747,9 @@ I would like to request a quote for tuning this vehicle.`,
         bgPanel: bgPanel?.value || defaultTheme.bgPanel
       });
 
-      const waVal = (contactPhone?.value || '').trim();
+      const waVal = (contactPhone?.value || CONTACT_SETTINGS.whatsappNumber || '').trim();
       if (waVal) params.set('wa', waVal);
-      const emailVal = (contactEmail?.value || '').trim();
+      const emailVal = (contactEmail?.value || CONTACT_SETTINGS.email || '').trim();
       if (emailVal) params.set('email', emailVal);
       const gradient = `linear-gradient(135deg, ${params.get('bg')} 0%, ${params.get('bgPanel')} 50%, ${params.get('bg')} 100%)`;
       params.set('bgGradient', gradient);
