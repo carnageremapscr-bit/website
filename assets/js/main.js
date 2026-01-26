@@ -7141,6 +7141,13 @@
       const result = { manufacturer: false, model: false, year: false, engine: false };
       if (!vehicle || !searchManufacturer) return result;
 
+      const selectAndTrigger = (selectEl, option) => {
+        if (!selectEl || !option) return null;
+        selectEl.value = option.value;
+        selectEl.dispatchEvent(new Event('change'));
+        return option;
+      };
+
       if (vehicle.make) {
         const makeKey = normalizeMakeKeySearch(vehicle.make);
         const matchedManufacturer = trySelectOptionSearch(
@@ -7152,28 +7159,79 @@
 
       if (result.manufacturer && vehicle.model && searchModel) {
         const modelKey = normalizeModelKey(vehicle.model);
-        const matchedModel = trySelectOptionSearch(
+        let matchedModel = trySelectOptionSearch(
           searchModel,
           (opt) => opt.value === modelKey || normalizeModelKey(opt.textContent) === modelKey
         );
+
+        // Fuzzy fallback: substring match either way
+        if (!matchedModel) {
+          matchedModel = trySelectOptionSearch(
+            searchModel,
+            (opt) => {
+              const optKey = normalizeModelKey(opt.textContent);
+              return optKey.includes(modelKey) || modelKey.includes(optKey);
+            }
+          );
+        }
+
+        // If still nothing and only one real option exists, auto-select it
+        if (!matchedModel && searchModel.options.length === 2) {
+          matchedModel = selectAndTrigger(searchModel, searchModel.options[1]);
+        }
         result.model = !!matchedModel;
       }
 
       if (result.model && vehicle.year && searchYear) {
         const yearNum = parseInt(vehicle.year, 10);
-        const matchedYear = trySelectOptionSearch(
+        let matchedYear = trySelectOptionSearch(
           searchYear,
           (opt) => matchesYearRangeSearch(opt.value, yearNum)
         );
+
+        // Fallback: pick closest range if within any; otherwise the first non-empty option
+        if (!matchedYear && searchYear.options.length > 1 && !Number.isNaN(yearNum)) {
+          const candidates = Array.from(searchYear.options).filter((opt) => opt.value);
+          let best = null;
+          let bestScore = Number.POSITIVE_INFINITY;
+          candidates.forEach((opt) => {
+            const [start, endRaw] = opt.value.split('-');
+            const startNum = parseInt(start, 10);
+            const endNum = parseInt(endRaw, 10);
+            if (!Number.isNaN(startNum) && !Number.isNaN(endNum) && yearNum >= startNum && yearNum <= endNum) {
+              const mid = (startNum + endNum) / 2;
+              const score = Math.abs(mid - yearNum);
+              if (score < bestScore) {
+                bestScore = score;
+                best = opt;
+              }
+            }
+          });
+          if (!best && candidates.length) best = candidates[0];
+          if (best) {
+            matchedYear = selectAndTrigger(searchYear, best);
+          }
+        }
         result.year = !!matchedYear;
       }
 
       if (result.year && vehicle.engineLabel && searchEngine) {
         const normalizedCandidates = buildEngineCandidatesSearch(vehicle);
-        const matchedEngine = trySelectOptionSearch(
+        let matchedEngine = trySelectOptionSearch(
           searchEngine,
           (opt) => opt.value && normalizedCandidates.some((candidate) => normalizeEngineTextSearch(opt.textContent).includes(candidate))
         );
+
+        // Fallback: if only one real option exists, pick it
+        if (!matchedEngine && searchEngine.options.length === 2) {
+          matchedEngine = selectAndTrigger(searchEngine, searchEngine.options[1]);
+        }
+
+        // Fallback: pick first non-empty option
+        if (!matchedEngine) {
+          const firstReal = Array.from(searchEngine.options).find((opt) => opt.value);
+          if (firstReal) matchedEngine = selectAndTrigger(searchEngine, firstReal);
+        }
         result.engine = !!matchedEngine;
       }
 
