@@ -8755,37 +8755,43 @@ I would like to request a quote for tuning this vehicle.`,
         ? [{ label: 'Stage 1', hp: 0.20, tq: 0.25 }, { label: 'Stage 2', hp: 0.30, tq: 0.35 }, { label: 'Stage 3', hp: 0.45, tq: 0.55 }]
         : [{ label: 'Stage 1', hp: 0.12, tq: 0.15 }, { label: 'Stage 2', hp: 0.18, tq: 0.22 }, { label: 'Stage 3', hp: 0.25, tq: 0.28 }];
 
-      const perfCards = (baseHp && baseTq) ? gainSet.map(({ label, hp, tq }) => {
+      const perfCards = (baseHp && baseTq) ? gainSet.map(({ label, hp, tq }, idx) => {
         const tunedHp = Math.round(baseHp * (1 + hp));
         const tunedTq = Math.round(baseTq * (1 + tq));
         const hpGain = Math.round(baseHp * hp);
         const tqGain = Math.round(baseTq * tq);
+        const stageColors = [
+          { bg: 'rgba(59,130,246,0.15)', border: 'rgba(59,130,246,0.35)', title: '#93c5fd', accent: '#60a5fa' },
+          { bg: 'rgba(251,146,60,0.12)', border: 'rgba(251,146,60,0.3)', title: '#fed7aa', accent: '#fb923c' },
+          { bg: 'rgba(248,113,113,0.12)', border: 'rgba(248,113,113,0.3)', title: '#fca5a5', accent: '#f87171' }
+        ];
+        const colors = stageColors[idx] || stageColors[0];
         return `
-          <div style="background:linear-gradient(135deg, rgba(59,130,246,0.15), rgba(59,130,246,0.08));border:2px solid rgba(59,130,246,0.3);border-radius:14px;padding:1rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
-              <span style="font-weight:800;font-size:1.1rem;color:#93c5fd;">${label}</span>
-              <span style="font-size:0.8rem;color:#64748b;background:rgba(59,130,246,0.2);padding:0.25rem 0.75rem;border-radius:6px;">${isTurbo ? 'Turbo' : 'NA'}</span>
+          <div style="background:linear-gradient(135deg, ${colors.bg}, rgba(30,41,59,0.2));border:2px solid ${colors.border};border-radius:14px;padding:1rem;transition:all 0.3s ease;cursor:default;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.9rem;">
+              <span style="font-weight:800;font-size:1rem;color:${colors.title};">${label}</span>
+              <span style="font-size:0.75rem;color:#cbd5e1;background:${colors.bg};padding:0.35rem 0.75rem;border-radius:6px;border:1px solid ${colors.border};font-weight:600;text-transform:uppercase;letter-spacing:0.4px;">${isTurbo ? 'Turbo' : 'N.A.'}</span>
             </div>
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.75rem;">
-              <div style="background:rgba(15,23,42,0.7);border-radius:12px;padding:0.75rem;border:1px solid rgba(59,130,246,0.2);">
-                <div style="color:#94a3b8;font-size:0.75rem;font-weight:600;margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.5px;">Power</div>
-                <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:0.5rem;">
-                  <div style="color:#e2e8f0;font-size:0.9rem;"><span style="color:#9ca3af;">${baseHp}</span> → <span style="font-weight:700;font-size:1rem;">${tunedHp}</span></div>
-                  <span style="color:#22c55e;font-weight:800;font-size:1rem;">+${hpGain}</span>
+              <div style="background:linear-gradient(135deg, rgba(15,23,42,0.8), rgba(30,41,59,0.6));border-radius:12px;padding:0.8rem;border:1px solid ${colors.border};opacity:0.9;">
+                <div style="color:#cbd5e1;font-size:0.75rem;font-weight:700;margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.4px;">⚡ Power</div>
+                <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:0.5rem;margin-bottom:0.4rem;">
+                  <div style="color:#e2e8f0;font-size:0.85rem;"><span style="color:#94a3b8;font-weight:500;">${baseHp}</span><span style="color:#64748b;margin:0 0.25rem;">→</span><span style="font-weight:700;font-size:0.95rem;color:${colors.accent};">${tunedHp}</span></div>
+                  <span style="color:#22c55e;font-weight:800;font-size:0.9rem;">+${hpGain}</span>
                 </div>
-                <div style="color:#9ca3af;font-size:0.75rem;margin-top:0.25rem;">bhp</div>
+                <div style="color:#64748b;font-size:0.75rem;font-weight:500;">bhp</div>
               </div>
-              <div style="background:rgba(15,23,42,0.7);border-radius:12px;padding:0.75rem;border:1px solid rgba(16,185,129,0.2);">
-                <div style="color:#94a3b8;font-size:0.75rem;font-weight:600;margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.5px;">Torque</div>
-                <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:0.5rem;">
-                  <div style="color:#e2e8f0;font-size:0.9rem;"><span style="color:#9ca3af;">${baseTq}</span> → <span style="font-weight:700;font-size:1rem;">${tunedTq}</span></div>
-                  <span style="color:#22c55e;font-weight:800;font-size:1rem;">+${tqGain}</span>
+              <div style="background:linear-gradient(135deg, rgba(15,23,42,0.8), rgba(30,41,59,0.6));border-radius:12px;padding:0.8rem;border:1px solid ${colors.border};opacity:0.9;">
+                <div style="color:#cbd5e1;font-size:0.75rem;font-weight:700;margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.4px;">💨 Torque</div>
+                <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:0.5rem;margin-bottom:0.4rem;">
+                  <div style="color:#e2e8f0;font-size:0.85rem;"><span style="color:#94a3b8;font-weight:500;">${baseTq}</span><span style="color:#64748b;margin:0 0.25rem;">→</span><span style="font-weight:700;font-size:0.95rem;color:${colors.accent};">${tunedTq}</span></div>
+                  <span style="color:#22c55e;font-weight:800;font-size:0.9rem;">+${tqGain}</span>
                 </div>
-                <div style="color:#9ca3af;font-size:0.75rem;margin-top:0.25rem;">Nm</div>
+                <div style="color:#64748b;font-size:0.75rem;font-weight:500;">Nm</div>
               </div>
             </div>
           </div>`;
-      }).join('') : '<div style="padding:1rem;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);border-radius:12px;color:#94a3b8;text-align:center;font-size:0.9rem;">Power/torque data not available. Try enriched lookup via CheckCar.</div>';
+      }).join('') : '<div style="padding:1rem;background:rgba(59,130,246,0.08);border:2px solid rgba(59,130,246,0.2);border-radius:12px;color:#94a3b8;text-align:center;font-size:0.9rem;">Power/torque data unavailable.</div>';
 
       const specData = [
         { label: 'Make/Model', val: [vehicle.make, vehicle.model].filter(Boolean).join(' ') },
@@ -8800,23 +8806,23 @@ I would like to request a quote for tuning this vehicle.`,
         { label: 'Max Speed', val: vehicle.maxSpeed || vehicle.maxSpeedMph || vehicle.maxSpeedKph },
       ].filter(({ val }) => val);
 
-      const specGrid = specData.map(({ label, val }) => `
-        <div style="display:grid;grid-template-columns:140px 1fr;gap:1rem;padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.05);">
-          <span style="color:#64748b;font-size:0.9rem;font-weight:600;">${label}</span>
-          <span style="color:#e2e8f0;font-weight:600;font-size:0.95rem;">${val}</span>
+      const specGrid = specData.map(({ label, val }, idx) => `
+        <div style="display:grid;grid-template-columns:140px 1fr;gap:1rem;padding:0.65rem 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+          <span style="color:#93c5fd;font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;">${label}</span>
+          <span style="color:#e2e8f0;font-weight:600;font-size:0.95rem;word-break:break-word;">${val}</span>
         </div>`).join('');
 
       vrmResult.innerHTML = `
         <div style="display:grid;gap:1.25rem;">
-          <div style="background:linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1rem;backdrop-filter:blur(10px);">
-            <div style="color:#cbd5e1;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.75rem;">📋 Identification</div>
-            <div style="font-size:0.9rem;">${specGrid}</div>
+          <div style="background:linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));border:2px solid rgba(255,255,255,0.12);border-radius:14px;padding:1.25rem;backdrop-filter:blur(10px);">
+            <div style="color:#93c5fd;font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;"><span>📋</span> Vehicle Identification</div>
+            <div style="display:grid;gap:0.5rem;font-size:0.9rem;">${specGrid}</div>
           </div>
-          <div style="background:linear-gradient(135deg, rgba(59,130,246,0.08), rgba(59,130,246,0.04));border:1px solid rgba(59,130,246,0.2);border-radius:14px;padding:1rem;backdrop-filter:blur(10px);">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+          <div style="background:linear-gradient(135deg, rgba(59,130,246,0.1), rgba(59,130,246,0.04));border:2px solid rgba(59,130,246,0.25);border-radius:14px;padding:1.25rem;backdrop-filter:blur(10px);">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.95rem;flex-wrap:wrap;gap:0.5rem;">
               <div>
-                <div style="color:#93c5fd;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">🚀 Estimated Performance Gains</div>
-                <div style="color:#64748b;font-size:0.8rem;margin-top:0.25rem;">Stock → Tuned | All figures ±</div>
+                <div style="color:#93c5fd;font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;display:flex;align-items:center;gap:0.5rem;"><span>🚀</span> Estimated Performance Gains</div>
+                <div style="color:#94a3b8;font-size:0.8rem;margin-top:0.35rem;">Stock → Tuned | Approximations based on engine type</div>
               </div>
             </div>
             <div style="display:grid;gap:0.75rem;">${perfCards}</div>
