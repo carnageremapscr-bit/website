@@ -1,13 +1,14 @@
 :root {
-  --bg: #0f1115;
-  --panel: #171b22;
-  --border: #202632;
-  --accent: #5bd0c9;
-  --text: #e8edf4;
-  --muted: #a5afc3;
-  --danger: #f26d7d;
-  --shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
-  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --bg: #0f172a;
+  --panel: #1e293b;
+  --border: rgba(255, 193, 7, 0.2);
+  --accent: #dc2626;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --danger: #fca5a5;
+  --shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  --gold: #ffc107;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 * {
@@ -16,9 +17,7 @@
 
 body {
   margin: 0;
-  background: radial-gradient(circle at 20% 20%, rgba(91, 208, 201, 0.08), transparent 35%),
-    radial-gradient(circle at 80% 0%, rgba(242, 109, 125, 0.06), transparent 30%),
-    var(--bg);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
   color: var(--text);
   min-height: 100vh;
 }
@@ -40,6 +39,10 @@ body {
 h1, h2, h3, h4 {
   margin: 8px 0;
   letter-spacing: -0.4px;
+  background: linear-gradient(135deg, var(--gold) 0%, #ff6b35 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 p {
@@ -50,7 +53,8 @@ p {
   text-transform: uppercase;
   letter-spacing: 1.4px;
   font-size: 12px;
-  color: var(--muted);
+  color: var(--gold);
+  font-weight: 700;
 }
 
 .lede {
@@ -59,9 +63,9 @@ p {
 }
 
 .lookup {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+  border: 1px solid rgba(255, 193, 7, 0.2);
+  border-radius: 12px;
   padding: 16px;
   box-shadow: var(--shadow);
 }
@@ -70,6 +74,7 @@ p {
   display: block;
   font-weight: 600;
   margin-bottom: 8px;
+  color: var(--gold);
 }
 
 .input-row {
@@ -82,43 +87,42 @@ p {
 input[type="text"] {
   width: 100%;
   padding: 12px 14px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: #0b0d11;
+  border-radius: 10px;
+  border: 2px solid rgba(255, 193, 7, 0.2);
+  background: rgba(15, 23, 42, 0.8);
   color: var(--text);
   font-size: 16px;
+  transition: all 0.3s ease;
 }
 
 input[type="text"]:focus {
-  outline: 2px solid var(--accent);
-  outline-offset: 1px;
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 20px rgba(255, 193, 7, 0.2);
+  background: rgba(15, 23, 42, 0.95);
 }
 
 button {
-  padding: 12px 16px;
+  padding: 12px 20px;
   border: none;
-  border-radius: 12px;
-  background: var(--accent);
-  color: #0b0d11;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  color: white;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 120ms ease, box-shadow 120ms ease;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 10px 25px rgba(220, 38, 38, 0.3);
 }
 
 button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
-}
-
-.hint {
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 16px;
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(220, 38, 38, 0.5);
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.6) 100%);
+  border: 1px solid rgba(255, 193, 7, 0.2);
+  border-radius: 12px;
   padding: 16px;
   box-shadow: var(--shadow);
 }
@@ -134,7 +138,7 @@ button:hover {
   gap: 16px;
   flex-wrap: wrap;
   padding-bottom: 12px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid rgba(255, 193, 7, 0.2);
 }
 
 .stock {
@@ -144,6 +148,8 @@ button:hover {
 .stat {
   font-size: 20px;
   margin: 2px 0;
+  color: var(--gold);
+  font-weight: 700;
 }
 
 .table-wrapper {
@@ -160,21 +166,34 @@ table {
 th, td {
   padding: 12px;
   text-align: left;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid rgba(255, 193, 7, 0.15);
 }
 
 th {
-  color: var(--muted);
+  color: var(--gold);
   font-weight: 600;
   font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 tbody tr:hover {
-  background: #11151c;
+  background: rgba(255, 193, 7, 0.05);
 }
 
 .stage-label {
   font-weight: 700;
+  color: var(--gold);
+}
+
+.positive {
+  color: #4ade80;
+  font-weight: 600;
+}
+
+.negative {
+  color: var(--danger);
+  font-weight: 600
 }
 
 .positive {
