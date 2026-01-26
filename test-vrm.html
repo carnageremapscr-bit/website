@@ -111,6 +111,28 @@
     }
     .btn:hover { transform: translateY(-2px); box-shadow: 0 15px 40px rgba(220, 38, 38, 0.6); }
     .btn:active { transform: translateY(0); }
+    .contact-actions {
+      display: none;
+      gap: 10px;
+      margin: 10px 0;
+      flex-wrap: wrap;
+    }
+    .contact-btn {
+      flex: 1 1 160px;
+      text-align: center;
+      text-decoration: none;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-weight: 800;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    }
+    .contact-btn:hover { transform: translateY(-1px); box-shadow: 0 14px 30px rgba(0,0,0,0.35); }
+    .contact-btn:active { transform: translateY(0); }
+    .contact-btn.wa { background: linear-gradient(135deg, #25D366, #128C7E); }
+    .contact-btn.email { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
     .status {
       margin-top: 14px;
       padding: 10px 12px;
@@ -184,6 +206,11 @@
         <button id="lookup" class="btn" type="button">FIND</button>
       </div>
 
+      <div class="contact-actions" id="contact-actions" aria-label="Contact options">
+        <a id="contact-wa" class="contact-btn wa" href="#" target="_blank" rel="noopener">WhatsApp</a>
+        <a id="contact-email" class="contact-btn email" href="#">Email</a>
+      </div>
+
       <div id="status" class="status info" aria-live="polite">Awaiting input…</div>
 
       <div class="results">
@@ -234,6 +261,38 @@
     }
     if (subtitle) {
       document.getElementById('panel-sub').textContent = subtitle;
+    }
+
+    const contactActions = document.getElementById('contact-actions');
+    const waBtn = document.getElementById('contact-wa');
+    const emailBtn = document.getElementById('contact-email');
+    const waParam = params.get('wa') || params.get('mobile');
+    const emailParam = params.get('email');
+
+    const normalizePhone = (p) => {
+      if (!p) return '';
+      let phone = p.replace(/[^0-9+]/g, '');
+      if (phone.startsWith('+')) phone = phone.slice(1);
+      if (phone.length >= 10 && phone[0] === '0') phone = '44' + phone.slice(1);
+      return phone;
+    };
+
+    let hasContact = false;
+    if (waParam && waBtn) {
+      const normalized = normalizePhone(waParam);
+      if (normalized) {
+        waBtn.href = `https://wa.me/${normalized}`;
+        hasContact = true;
+      }
+    }
+
+    if (emailParam && emailBtn) {
+      emailBtn.href = `mailto:${emailParam}?subject=Reg%20Lookup%20Enquiry`;
+      hasContact = true;
+    }
+
+    if (hasContact && contactActions) {
+      contactActions.style.display = 'flex';
     }
 
     const vrmInput = document.getElementById('vrm');

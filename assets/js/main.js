@@ -8714,6 +8714,8 @@ I would like to request a quote for tuning this vehicle.`,
     const resetThemeBtn = document.getElementById('admin-reset-vrm-theme');
     const embedOutput = document.getElementById('admin-vrm-embed-output');
     const copyEmbedBtn = document.getElementById('admin-vrm-copy-btn');
+    const contactPhone = document.getElementById('admin-contact-phone');
+    const contactEmail = document.getElementById('admin-contact-email');
 
     const defaultTheme = {
       plateBg: '#ffcc00',
@@ -8736,6 +8738,11 @@ I would like to request a quote for tuning this vehicle.`,
         bg: bgDark?.value || defaultTheme.bgDark,
         bgPanel: bgPanel?.value || defaultTheme.bgPanel
       });
+
+      const waVal = (contactPhone?.value || '').trim();
+      if (waVal) params.set('wa', waVal);
+      const emailVal = (contactEmail?.value || '').trim();
+      if (emailVal) params.set('email', emailVal);
       const gradient = `linear-gradient(135deg, ${params.get('bg')} 0%, ${params.get('bgPanel')} 50%, ${params.get('bg')} 100%)`;
       params.set('bgGradient', gradient);
       const src = `https://web-production-df12d.up.railway.app/test-vrm.html?${params.toString()}`;
@@ -8966,6 +8973,9 @@ I would like to request a quote for tuning this vehicle.`,
     if (resetThemeBtn) resetThemeBtn.addEventListener('click', resetTheme);
     [plateBg, plateText, flagBg, btnStart, btnEnd, accentLight, gold, bgDark, bgPanel].forEach(ctrl => {
       if (ctrl) ctrl.addEventListener('input', applyTheme);
+    });
+    [contactPhone, contactEmail].forEach(ctrl => {
+      if (ctrl) ctrl.addEventListener('input', updateEmbedOutput);
     });
     applyTheme();
     updateEmbedOutput();
