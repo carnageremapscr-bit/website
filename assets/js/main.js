@@ -7073,6 +7073,74 @@
       vrmStatusSearch.className = `${base} ${toneClass}`.trim();
     };
 
+    const guessModelForVehicle = (vehicle) => {
+      const makeKey = normalizeMakeKeySearch(vehicle.make);
+      const yearNum = vehicle.year ? parseInt(vehicle.year, 10) : vehicle.yearOfManufacture ? parseInt(vehicle.yearOfManufacture, 10) : null;
+      if (!makeKey || !VEHICLE_ENGINE_DATABASE[makeKey]) return null;
+
+      const parseDisplacement = (text) => {
+        const match = String(text || '').match(/(\d+(?:\.\d+)?)\s*(?:l|L)?/);
+        if (!match) return null;
+        const val = parseFloat(match[1]);
+        return Number.isNaN(val) ? null : val;
+      };
+
+      const fuelKey = (text) => {
+        const t = (text || '').toLowerCase();
+        if (/diesel|tdi|d\b/.test(t)) return 'diesel';
+        if (/petrol|tsi|gdi|tfs|tfsi|p\b/.test(t)) return 'petrol';
+        return null;
+      };
+
+      let best = null;
+      let bestScore = Number.POSITIVE_INFINITY;
+
+      Object.entries(VEHICLE_ENGINE_DATABASE[makeKey]).forEach(([modelKey, ranges]) => {
+        Object.entries(ranges).forEach(([range, engines]) => {
+          // Year score
+          let yearScore = 0;
+          if (yearNum) {
+            const [start, end] = range.split('-').map(v => parseInt(v, 10));
+            if (!Number.isNaN(start) && !Number.isNaN(end) && yearNum >= start && yearNum <= end) {
+              const mid = (start + end) / 2;
+              yearScore = Math.abs(mid - yearNum);
+            } else {
+              yearScore = 50; // penalize out-of-range
+            }
+          }
+
+          // Engine score (use first engine as representative)
+          let engineScore = 0;
+          const firstEngine = Array.isArray(engines) ? engines[0] : null;
+          if (firstEngine) {
+            const disp = parseDisplacement(firstEngine);
+            const targetDisp = parseDisplacement(vehicle.engineCapacity || vehicle.engineLabel || vehicle.engine);
+            if (disp && targetDisp) {
+              engineScore += Math.abs(disp - (targetDisp >= 50 ? targetDisp / 1000 : targetDisp)) * 10;
+            }
+            const fe = fuelKey(firstEngine);
+            const fv = fuelKey(vehicle.fuelType);
+            if (fv && fe && fv !== fe) {
+              engineScore += 5; // fuel mismatch penalty
+            }
+          }
+
+          const score = yearScore + engineScore;
+          if (score < bestScore) {
+            bestScore = score;
+            best = modelKey;
+          }
+        });
+      });
+
+      if (!best) {
+        const firstModel = Object.keys(VEHICLE_ENGINE_DATABASE[makeKey])[0];
+        if (firstModel) best = firstModel;
+      }
+
+      return best;
+    };
+
     const normalizeMakeKeySearch = (make) => {
       if (!make) return '';
       const key = make.toLowerCase().trim();
@@ -7147,6 +7215,14 @@
         selectEl.dispatchEvent(new Event('change'));
         return option;
       };
+
+      // If DVLA did not provide model, try to guess one so we can populate dependent dropdowns
+      if (!vehicle.model) {
+        const guessedModel = guessModelForVehicle(vehicle);
+        if (guessedModel) {
+          vehicle.model = guessedModel;
+        }
+      }
 
       const deriveModelKeysSearch = (modelRaw) => {
         if (!modelRaw) return [];
