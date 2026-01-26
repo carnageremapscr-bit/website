@@ -7210,17 +7210,9 @@
         return option;
       };
 
-      // If DVLA did not provide model, try to guess one so we can populate dependent dropdowns
       // Normalize year from yearOfManufacture when DVLA provides it
       if (!vehicle.year && vehicle.yearOfManufacture) {
         vehicle.year = vehicle.yearOfManufacture;
-      }
-
-      if (!vehicle.model) {
-        const guessedModel = guessModelForVehicle(vehicle);
-        if (guessedModel) {
-          vehicle.model = guessedModel;
-        }
       }
 
       const deriveModelKeysSearch = (modelRaw) => {
