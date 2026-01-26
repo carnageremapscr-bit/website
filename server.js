@@ -31,7 +31,13 @@ const CHECKCAR_DATAPOINT = process.env.CHECKCAR_DATAPOINT || 'ukvehicledata';
 
 // DVLA Open Data API
 const DVLA_API_KEY = process.env.DVLA_API_KEY || '';
-const DVLA_API_BASE_URL = process.env.DVLA_API_BASE_URL || 'https://api.dvlaonlineservices.dvla.gov.uk/v1';
+const DVLA_API_BASE_URL = process.env.DVLA_API_BASE_URL || 'https://driver-vehicle-licensing.api.gov.uk';
+const DVLA_USERNAME = process.env.DVLA_USERNAME || '';
+const DVLA_PASSWORD = process.env.DVLA_PASSWORD || '';
+
+// JWT token cache for DVLA (valid for 1 hour)
+let dvlaJwtToken = null;
+let dvlaJwtExpiry = null;
 
 // Log configuration status on startup
 console.log('=== Stripe Configuration ===');
@@ -1869,7 +1875,46 @@ app.get('/api/vrm-lookup', async (req, res) => {
 // ============================================
 // DVLA Open Data API Endpoint
 // ============================================
-// Lookup vehicle information via DVLA API
+// Step 1: Authenticate to get JWT token (valid 1 hour)
+async function getDvlaJwtToken() {
+  // Check if cached token is still valid
+  if (dvlaJwtToken && dvlaJwtExpiry && Date.now() < dvlaJwtExpiry) {
+    return dvlaJwtToken;
+  }
+
+  if (!DVLA_USERNAME || !DVLA_PASSWORD) {
+    throw new Error('DVLA username and password not configured');
+  }
+
+  console.log('📍 Authenticating with DVLA API...');
+  
+  const authResponse = await fetch(`${DVLA_API_BASE_URL}/thirdparty-access/v1/authenticate`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify({
+      userName: DVLA_USERNAME,
+      password: DVLA_PASSWORD
+    })
+  });
+
+  if (!authResponse.ok) {
+    const errorData = await authResponse.json().catch(() => ({}));
+    console.error('❌ DVLA authentication failed:', errorData);
+    throw new Error(errorData.detail || errorData.title || 'DVLA authentication failed');
+  }
+
+  const authData = await authResponse.json();
+  dvlaJwtToken = authData['id-token'];
+  dvlaJwtExpiry = Date.now() + (55 * 60 * 1000); // Cache for 55 minutes (JWT valid for 1 hour)
+  
+  console.log('✅ DVLA JWT obtained, expires in 55 minutes');
+  return dvlaJwtToken;
+}
+
+// Step 2: Lookup vehicle information via DVLA API
 app.get('/api/dvla-lookup', async (req, res) => {
   try {
     const vrmRaw = (req.query.vrm || '').toString().trim();
@@ -1890,13 +1935,25 @@ app.get('/api/dvla-lookup', async (req, res) => {
     }
 
     console.log(`📍 DVLA Lookup: ${vrm}`);
-    console.log(`📌 Using API: ${DVLA_API_BASE_URL}/vehicle-enquiry/v1/vehicles`);
+
+    // Get JWT token (from cache or authenticate)
+    let jwtToken;
+    try {
+      jwtToken = await getDvlaJwtToken();
+    } catch (authError) {
+      console.error('❌ DVLA auth error:', authError.message);
+      return res.status(500).json({ 
+        error: 'DVLA authentication failed', 
+        details: authError.message 
+      });
+    }
 
     // DVLA requires POST with registrationNumber in body
     const response = await fetch(`${DVLA_API_BASE_URL}/vehicle-enquiry/v1/vehicles`, {
       method: 'POST',
       headers: {
         'x-api-key': DVLA_API_KEY,
+        'Authorization': jwtToken,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -1907,25 +1964,33 @@ app.get('/api/dvla-lookup', async (req, res) => {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error(`❌ DVLA error (${response.status}):`, data?.error || data?.message || JSON.stringify(data));
+      console.error(`❌ DVLA error (${response.status}):`, JSON.stringify(data));
+      
+      // If 401, clear cached JWT and retry once
+      if (response.status === 401) {
+        console.log('🔄 JWT expired, re-authenticating...');
+        dvlaJwtToken = null;
+        dvlaJwtExpiry = null;
+      }
+      
       return res.status(response.status).json({
-        error: data.error || data.message || data.errors?.[0]?.title || 'DVLA lookup failed',
-        dvlaStatus: response.status,
-        dvlaResponse: data
+        error: data.errors?.[0]?.title || data.error || data.message || 'DVLA lookup failed',
+        details: data.errors?.[0]?.detail || data.detail,
+        dvlaStatus: response.status
       });
     }
 
-    // Transform DVLA response to our standard format - only essential fields for matching
+    // Transform DVLA response to our standard format
     const vehicle = {
       make: data.make,
       model: data.model,
       yearOfManufacture: data.yearOfManufacture,
       engineCapacity: data.engineCapacity,
       fuelType: data.fuelType,
-      power: data.power
+      colour: data.colour
     };
 
-    console.log(`✅ DVLA Lookup success: ${data.make} ${data.model} ${data.yearOfManufacture}`);
+    console.log(`✅ DVLA Lookup success: ${data.make} ${data.model} (${data.yearOfManufacture})`);
 
     res.json({
       success: true,
