@@ -7906,7 +7906,9 @@ I would like to request a quote for tuning this vehicle.`,
     const embedWidth = document.getElementById('embed-width');
     const embedCodeContainer = document.getElementById('embed-code-container');
     const embedCodeOutput = document.getElementById('embed-code-output');
+    const embedCodeOutputCompact = document.getElementById('embed-code-output-compact');
     const copyEmbedBtn = document.getElementById('copy-embed-btn');
+    const copyEmbedCompactBtn = document.getElementById('copy-embed-compact-btn');
     const uploadLogoBtn = document.getElementById('upload-logo-btn');
 
     // Hidden file input for uploads
@@ -8037,21 +8039,37 @@ I would like to request a quote for tuning this vehicle.`,
 </iframe>
 
 <!-- End Carnage Remaps Widget -->`;
+        const compactCode = `<iframe src="${baseUrl}/embed.html?${params}" width="${width}" height="550" style="border:none;border-radius:12px;max-width:100%;" title="Carnage Remaps Vehicle Search" loading="lazy"></iframe>`;
 
-        embedCodeOutput.value = embedCode;
-        embedCodeContainer.style.display = 'block';
-        embedCodeContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        if (embedCodeOutput) embedCodeOutput.value = embedCode;
+        if (embedCodeOutputCompact) embedCodeOutputCompact.value = compactCode;
+        if (embedCodeContainer) {
+          embedCodeContainer.style.display = 'block';
+          embedCodeContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
       });
     }
 
     // Copy embed code
     if (copyEmbedBtn) {
       copyEmbedBtn.addEventListener('click', () => {
+        if (!embedCodeOutput) return;
         embedCodeOutput.select();
         document.execCommand('copy');
         copyEmbedBtn.textContent = '✓ Copied!';
         setTimeout(() => {
           copyEmbedBtn.textContent = '📋 Copy';
+        }, 2000);
+      });
+    }
+    if (copyEmbedCompactBtn) {
+      copyEmbedCompactBtn.addEventListener('click', () => {
+        if (!embedCodeOutputCompact) return;
+        embedCodeOutputCompact.select();
+        document.execCommand('copy');
+        copyEmbedCompactBtn.textContent = '✓ Copied!';
+        setTimeout(() => {
+          copyEmbedCompactBtn.textContent = '📋 Copy';
         }, 2000);
       });
     }
