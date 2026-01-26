@@ -7181,7 +7181,20 @@
         candidates.push(`${vehicle.engineCapacity} ${vehicle.fuelType}`);
       }
       if (vehicle.engineCapacity) {
-        candidates.push(String(vehicle.engineCapacity));
+        const raw = String(vehicle.engineCapacity);
+        candidates.push(raw);
+        const numeric = parseFloat(raw);
+        if (!Number.isNaN(numeric)) {
+          // Add liter variant when capacity looks like cc
+          if (numeric > 20) {
+            const liters = numeric / 1000;
+            candidates.push(liters.toFixed(1));
+            candidates.push(`${liters.toFixed(1)}l`);
+          } else {
+            candidates.push(numeric.toFixed(1));
+            candidates.push(`${numeric.toFixed(1)}l`);
+          }
+        }
       }
       if (vehicle.powerBhp) {
         const powerText = String(vehicle.powerBhp).toLowerCase().includes('hp')
@@ -7189,9 +7202,9 @@
           : `${vehicle.powerBhp}hp`;
         candidates.push(powerText);
       }
-      return candidates
+      return Array.from(new Set(candidates
         .map(normalizeEngineTextSearch)
-        .filter(Boolean);
+        .filter(Boolean)));
     };
 
     const trySelectOptionSearch = (selectEl, matcher) => {
