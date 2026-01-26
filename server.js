@@ -1845,7 +1845,19 @@ function normalizeVehicleResponse(data) {
   vehicle.engineCapacity = tech.EngineCapacity || powerSource.EngineCapacity || specsRoot.EngineCapacity || vehicle.engineCapacity;
   vehicle.fuelType = tech.FuelType || powerSource.FuelType || smmt.FuelType || vehicle.fuelType;
   vehicle.powerBhp = power.PerformanceBhp || perf.MaximumPowerBhp || powerObj.Bhp || smmt.PowerBhp || vehicle.powerBhp;
-  vehicle.torqueNm = power.PerformanceTorque || power.Torque || perf.MaximumTorque || perf.Torque || torqueObj.Nm || smmt.TorqueNm || vehicle.torqueNm || null;
+  
+  // Extract torque - handle both object and scalar formats
+  let torqueFinal = null;
+  if (torqueObj && typeof torqueObj === 'object' && torqueObj.Nm) {
+    torqueFinal = torqueObj.Nm;
+  } else if (power && power.PerformanceTorque && typeof power.PerformanceTorque === 'object' && power.PerformanceTorque.Nm) {
+    torqueFinal = power.PerformanceTorque.Nm;
+  } else if (power && power.Torque && typeof power.Torque === 'object' && power.Torque.Nm) {
+    torqueFinal = power.Torque.Nm;
+  } else if (smmt && smmt.TorqueNm) {
+    torqueFinal = smmt.TorqueNm;
+  }
+  vehicle.torqueNm = torqueFinal || null;
 
   // Additional rich fields from vehiclespecs
   vehicle.vin = specsRoot.Vin || vehicle.vin || null;

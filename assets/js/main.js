@@ -7016,85 +7016,87 @@
 
     // --- VRM Lookup for Vehicle Search ---
     const displayVehicleDetailsCard = (vehicle) => {
-      // Create a details card showing all rich vehicle data
+      // Create a details card showing all rich vehicle data - integrated with existing design
       if (!vrmStatusSearch || !vrmStatusSearch.parentElement) return;
       
-      let detailsHtml = `<div style="margin-top: 1.5rem; padding: 1.5rem; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">`;
+      let detailsHtml = `<div style="margin-top: 1.5rem; padding: 1.5rem; background: #1a2a3a; border-radius: 8px; border: 1px solid #2d4059;">`;
       
       // Identification section
-      if (vehicle.vin || vehicle.engineNumber) {
-        detailsHtml += `<div style="margin-bottom: 1rem;">
-          <h4 style="margin: 0 0 0.5rem 0; font-size: 0.875rem; font-weight: 600; color: #64748b; text-transform: uppercase;">Identification</h4>
-          ${vehicle.vin ? `<p style="margin: 0.25rem 0; font-size: 0.875rem;"><strong>VIN:</strong> ${vehicle.vin}</p>` : ''}
-          ${vehicle.engineNumber ? `<p style="margin: 0.25rem 0; font-size: 0.875rem;"><strong>Engine #:</strong> ${vehicle.engineNumber}</p>` : ''}
-          ${vehicle.v5cCount ? `<p style="margin: 0.25rem 0; font-size: 0.875rem;"><strong>V5C Certificates:</strong> ${vehicle.v5cCount}</p>` : ''}
+      if (vehicle.vin || vehicle.engineNumber || vehicle.v5cCount) {
+        detailsHtml += `<div style="margin-bottom: 1.5rem;">
+          <h4 style="margin: 0 0 0.75rem 0; font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Identification</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            ${vehicle.vin ? `<div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;"><div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; margin-bottom: 0.25rem;">VIN</div><div style="font-size: 0.875rem; color: #f1f5f9; font-family: monospace;">${vehicle.vin}</div></div>` : ''}
+            ${vehicle.engineNumber ? `<div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;"><div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; margin-bottom: 0.25rem;">Engine #</div><div style="font-size: 0.875rem; color: #f1f5f9; font-family: monospace;">${vehicle.engineNumber}</div></div>` : ''}
+            ${vehicle.v5cCount ? `<div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;"><div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; margin-bottom: 0.25rem;">V5C Count</div><div style="font-size: 0.875rem; color: #f1f5f9;">${vehicle.v5cCount}</div></div>` : ''}
+          </div>
         </div>`;
       }
       
       // Performance section
-      if (vehicle.powerBhp || vehicle.torqueNm || vehicle.maxSpeedKph || vehicle.torqueRpm || vehicle.powerRpm) {
-        detailsHtml += `<div style="margin-bottom: 1rem;">
-          <h4 style="margin: 0 0 0.5rem 0; font-size: 0.875rem; font-weight: 600; color: #64748b; text-transform: uppercase;">Performance</h4>
-          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; font-size: 0.875rem;">
-            ${vehicle.powerBhp ? `<div><strong>Power:</strong> ${vehicle.powerBhp}bhp${vehicle.powerRpm ? ` @ ${vehicle.powerRpm}rpm` : ''}</div>` : ''}
-            ${vehicle.torqueNm ? `<div><strong>Torque:</strong> ${vehicle.torqueNm}nm${vehicle.torqueRpm ? ` @ ${vehicle.torqueRpm}rpm` : ''}</div>` : ''}
-            ${vehicle.maxSpeedKph ? `<div><strong>Max Speed:</strong> ${vehicle.maxSpeedKph}kph${vehicle.maxSpeedMph ? ` / ${vehicle.maxSpeedMph}mph` : ''}</div>` : ''}
-            ${vehicle.co2 ? `<div><strong>CO₂:</strong> ${vehicle.co2}g/km</div>` : ''}
+      if (vehicle.powerBhp || vehicle.torqueNm || vehicle.maxSpeedKph || vehicle.co2) {
+        detailsHtml += `<div style="margin-bottom: 1.5rem;">
+          <h4 style="margin: 0 0 0.75rem 0; font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Performance</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.75rem;">
+            ${vehicle.powerBhp ? `<div style="padding: 0.75rem; background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(59,130,246,0.05)); border-radius: 6px; border-left: 3px solid #3b82f6;"><div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.25rem;">Power</div><div style="font-size: 1rem; font-weight: 600; color: #3b82f6;">${vehicle.powerBhp}<span style="font-size: 0.875rem;">bhp</span></div>${vehicle.powerRpm ? `<div style="font-size: 0.75rem; color: #64748b;">@ ${vehicle.powerRpm}rpm</div>` : ''}</div>` : ''}
+            ${vehicle.torqueNm ? `<div style="padding: 0.75rem; background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(16,185,129,0.05)); border-radius: 6px; border-left: 3px solid #10b981;"><div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.25rem;">Torque</div><div style="font-size: 1rem; font-weight: 600; color: #10b981;">${vehicle.torqueNm}<span style="font-size: 0.875rem;">nm</span></div>${vehicle.torqueRpm ? `<div style="font-size: 0.75rem; color: #64748b;">@ ${vehicle.torqueRpm}rpm</div>` : ''}</div>` : ''}
+            ${vehicle.maxSpeedKph ? `<div style="padding: 0.75rem; background: linear-gradient(135deg, rgba(251,146,60,0.1), rgba(251,146,60,0.05)); border-radius: 6px; border-left: 3px solid #fb923c;"><div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.25rem;">Max Speed</div><div style="font-size: 1rem; font-weight: 600; color: #fb923c;">${vehicle.maxSpeedKph}<span style="font-size: 0.875rem;">kph</span></div></div>` : ''}
+            ${vehicle.co2 ? `<div style="padding: 0.75rem; background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(168,85,247,0.05)); border-radius: 6px; border-left: 3px solid #a855f7;"><div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.25rem;">CO₂</div><div style="font-size: 1rem; font-weight: 600; color: #a855f7;">${vehicle.co2}<span style="font-size: 0.875rem;">g/km</span></div></div>` : ''}
           </div>
         </div>`;
       }
       
       // Engine section
-      if (vehicle.numberOfCylinders || vehicle.bore || vehicle.stroke || vehicle.aspiration || vehicle.valveGear) {
-        detailsHtml += `<div style="margin-bottom: 1rem;">
-          <h4 style="margin: 0 0 0.5rem 0; font-size: 0.875rem; font-weight: 600; color: #64748b; text-transform: uppercase;">Engine Details</h4>
-          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; font-size: 0.875rem;">
-            ${vehicle.numberOfCylinders ? `<div><strong>Cylinders:</strong> ${vehicle.numberOfCylinders}</div>` : ''}
-            ${vehicle.aspiration ? `<div><strong>Aspiration:</strong> ${vehicle.aspiration}</div>` : ''}
-            ${vehicle.bore ? `<div><strong>Bore:</strong> ${vehicle.bore}mm</div>` : ''}
-            ${vehicle.stroke ? `<div><strong>Stroke:</strong> ${vehicle.stroke}mm</div>` : ''}
-            ${vehicle.valveGear ? `<div><strong>Valve Gear:</strong> ${vehicle.valveGear}</div>` : ''}
-            ${vehicle.fuelTankCapacity ? `<div><strong>Fuel Tank:</strong> ${vehicle.fuelTankCapacity}L</div>` : ''}
+      if (vehicle.numberOfCylinders || vehicle.bore || vehicle.stroke || vehicle.aspiration || vehicle.valveGear || vehicle.fuelTankCapacity) {
+        detailsHtml += `<div style="margin-bottom: 1.5rem;">
+          <h4 style="margin: 0 0 0.75rem 0; font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Engine Details</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.75rem; font-size: 0.875rem;">
+            ${vehicle.numberOfCylinders ? `<div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;"><div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.25rem;">Cylinders</div><div style="color: #f1f5f9;">${vehicle.numberOfCylinders}</div></div>` : ''}
+            ${vehicle.aspiration ? `<div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;"><div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.25rem;">Aspiration</div><div style="color: #f1f5f9; font-size: 0.8rem;">${vehicle.aspiration}</div></div>` : ''}
+            ${vehicle.bore ? `<div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;"><div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.25rem;">Bore</div><div style="color: #f1f5f9;">${vehicle.bore}mm</div></div>` : ''}
+            ${vehicle.stroke ? `<div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;"><div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.25rem;">Stroke</div><div style="color: #f1f5f9;">${vehicle.stroke}mm</div></div>` : ''}
+            ${vehicle.valveGear ? `<div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;"><div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.25rem;">Valve Gear</div><div style="color: #f1f5f9; font-size: 0.8rem;">${vehicle.valveGear}</div></div>` : ''}
+            ${vehicle.fuelTankCapacity ? `<div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;"><div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.25rem;">Fuel Tank</div><div style="color: #f1f5f9;">${vehicle.fuelTankCapacity}L</div></div>` : ''}
           </div>
         </div>`;
       }
       
       // Transmission & Drive
       if (vehicle.numberOfGears || vehicle.transmissionType || vehicle.driveType) {
-        detailsHtml += `<div style="margin-bottom: 1rem;">
-          <h4 style="margin: 0 0 0.5rem 0; font-size: 0.875rem; font-weight: 600; color: #64748b; text-transform: uppercase;">Transmission & Drive</h4>
-          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; font-size: 0.875rem;">
-            ${vehicle.numberOfGears ? `<div><strong>Gears:</strong> ${vehicle.numberOfGears}</div>` : ''}
-            ${vehicle.transmissionType ? `<div><strong>Type:</strong> ${vehicle.transmissionType}</div>` : ''}
-            ${vehicle.driveType ? `<div><strong>Drive:</strong> ${vehicle.driveType}</div>` : ''}
+        detailsHtml += `<div style="margin-bottom: 1.5rem;">
+          <h4 style="margin: 0 0 0.75rem 0; font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Transmission & Drive</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.75rem;">
+            ${vehicle.numberOfGears ? `<div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;"><div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.25rem;">Gears</div><div style="color: #f1f5f9; font-size: 0.875rem;">${vehicle.numberOfGears}</div></div>` : ''}
+            ${vehicle.transmissionType ? `<div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;"><div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.25rem;">Type</div><div style="color: #f1f5f9; font-size: 0.8rem;">${vehicle.transmissionType}</div></div>` : ''}
+            ${vehicle.driveType ? `<div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;"><div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.25rem;">Drive</div><div style="color: #f1f5f9; font-size: 0.8rem;">${vehicle.driveType}</div></div>` : ''}
           </div>
         </div>`;
       }
       
       // Body & Dimensions
-      if (vehicle.numberOfDoors || vehicle.numberOfSeats || vehicle.length || vehicle.width || vehicle.height) {
-        detailsHtml += `<div style="margin-bottom: 1rem;">
-          <h4 style="margin: 0 0 0.5rem 0; font-size: 0.875rem; font-weight: 600; color: #64748b; text-transform: uppercase;">Body & Dimensions</h4>
-          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; font-size: 0.875rem;">
-            ${vehicle.numberOfDoors ? `<div><strong>Doors:</strong> ${vehicle.numberOfDoors}</div>` : ''}
-            ${vehicle.numberOfSeats ? `<div><strong>Seats:</strong> ${vehicle.numberOfSeats}</div>` : ''}
-            ${vehicle.length ? `<div><strong>Length:</strong> ${vehicle.length}mm</div>` : ''}
-            ${vehicle.width ? `<div><strong>Width:</strong> ${vehicle.width}mm</div>` : ''}
-            ${vehicle.height ? `<div><strong>Height:</strong> ${vehicle.height}mm</div>` : ''}
-            ${vehicle.wheelbase ? `<div><strong>Wheelbase:</strong> ${vehicle.wheelbase}mm</div>` : ''}
+      if (vehicle.numberOfDoors || vehicle.numberOfSeats || vehicle.length || vehicle.width || vehicle.height || vehicle.wheelbase) {
+        detailsHtml += `<div style="margin-bottom: 1.5rem;">
+          <h4 style="margin: 0 0 0.75rem 0; font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Body & Dimensions</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 0.75rem; font-size: 0.875rem;">
+            ${vehicle.numberOfDoors ? `<div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;"><div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.25rem;">Doors</div><div style="color: #f1f5f9;">${vehicle.numberOfDoors}</div></div>` : ''}
+            ${vehicle.numberOfSeats ? `<div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;"><div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.25rem;">Seats</div><div style="color: #f1f5f9;">${vehicle.numberOfSeats}</div></div>` : ''}
+            ${vehicle.length ? `<div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;"><div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.25rem;">Length</div><div style="color: #f1f5f9;">${(vehicle.length / 1000).toFixed(2)}m</div></div>` : ''}
+            ${vehicle.width ? `<div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;"><div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.25rem;">Width</div><div style="color: #f1f5f9;">${(vehicle.width / 1000).toFixed(2)}m</div></div>` : ''}
+            ${vehicle.height ? `<div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;"><div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.25rem;">Height</div><div style="color: #f1f5f9;">${(vehicle.height / 1000).toFixed(2)}m</div></div>` : ''}
+            ${vehicle.wheelbase ? `<div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;"><div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.25rem;">Wheelbase</div><div style="color: #f1f5f9;">${(vehicle.wheelbase / 1000).toFixed(2)}m</div></div>` : ''}
           </div>
         </div>`;
       }
       
       // Weight & Towing
-      if (vehicle.kerbWeight || vehicle.grossWeight || vehicle.towingCapacityBraked) {
-        detailsHtml += `<div style="margin-bottom: 1rem;">
-          <h4 style="margin: 0 0 0.5rem 0; font-size: 0.875rem; font-weight: 600; color: #64748b; text-transform: uppercase;">Weight & Towing</h4>
-          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; font-size: 0.875rem;">
-            ${vehicle.kerbWeight ? `<div><strong>Kerb Weight:</strong> ${vehicle.kerbWeight}kg</div>` : ''}
-            ${vehicle.grossWeight ? `<div><strong>Gross Weight:</strong> ${vehicle.grossWeight}kg</div>` : ''}
-            ${vehicle.towingCapacityBraked ? `<div><strong>Towing (Braked):</strong> ${vehicle.towingCapacityBraked}kg</div>` : ''}
-            ${vehicle.towingCapacityUnbraked ? `<div><strong>Towing (Unbraked):</strong> ${vehicle.towingCapacityUnbraked}kg</div>` : ''}
+      if (vehicle.kerbWeight || vehicle.grossWeight || vehicle.towingCapacityBraked || vehicle.towingCapacityUnbraked) {
+        detailsHtml += `<div style="margin-bottom: 0;">
+          <h4 style="margin: 0 0 0.75rem 0; font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Weight & Towing</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.75rem;">
+            ${vehicle.kerbWeight ? `<div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;"><div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.25rem;">Kerb</div><div style="color: #f1f5f9;">${vehicle.kerbWeight}kg</div></div>` : ''}
+            ${vehicle.grossWeight ? `<div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;"><div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.25rem;">Gross</div><div style="color: #f1f5f9;">${vehicle.grossWeight}kg</div></div>` : ''}
+            ${vehicle.towingCapacityBraked ? `<div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;"><div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.25rem;">Tow (B)</div><div style="color: #f1f5f9;">${vehicle.towingCapacityBraked}kg</div></div>` : ''}
+            ${vehicle.towingCapacityUnbraked ? `<div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;"><div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.25rem;">Tow (UB)</div><div style="color: #f1f5f9;">${vehicle.towingCapacityUnbraked}kg</div></div>` : ''}
           </div>
         </div>`;
       }
@@ -7570,10 +7572,9 @@
         const needsEngineNote = selection.year && !selection.engine;
         const suffix = filled ? `Filled: ${filled}.` : 'Please confirm details.';
         const engineNote = needsEngineNote ? ' Select the correct engine to continue.' : '';
-        const fallbackNote = usedFallback ? ' (supplemented via CheckCar)' : '';
         const perfDetail = engineSpec ? ` [${engineSpec}]` : '';
         const vinDetail = vehicle?.vin ? ` • VIN: ${vehicle.vin}` : '';
-        setVrmStatusSearch(`Found ${summary || 'vehicle'}${perfDetail}${vinDetail}. ${suffix}${engineNote}${fallbackNote}`, 'success');
+        setVrmStatusSearch(`Found ${summary || 'vehicle'}${perfDetail}${vinDetail}. ${suffix}${engineNote}`, 'success');
 
         // Display detailed vehicle specs card
         displayVehicleDetailsCard(vehicle);
