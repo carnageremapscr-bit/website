@@ -206,16 +206,23 @@
       'q8': {
         '2019-2024': ['3.0 TFSI - 340hp', '4.0 TFSI - 507hp', '3.0 TDI - 231hp', '3.0 TDI - 286hp']
       },
-      'tt': {
-        '2006-2014': ['1.8 TFSI - 160hp', '2.0 TFSI - 200hp', '2.0 TFSI - 272hp', '3.2 V6 - 250hp', '2.0 TDI - 170hp'],
-        '2015-2024': ['1.8 TFSI - 180hp', '2.0 TFSI - 230hp', '2.0 TFSI - 310hp', '2.5 TFSI RS - 400hp']
-      },
-      'r8': {
-        '2007-2015': ['4.2 V8 - 430hp', '5.2 V10 - 525hp', '5.2 V10+ - 550hp'],
-        '2016-2024': ['5.2 V10 - 540hp', '5.2 V10+ - 620hp']
-      },
-      'e-tron': {
-        '2019-2024': ['Electric 50 - 313hp', 'Electric 55 - 408hp', 'Electric GT - 646hp']
+      try {
+        const response = await fetch(`${API_URL}/api/dvla-lookup?vrm=${encodeURIComponent(vrm)}`);
+        let data = {};
+        try { data = await response.json(); } catch (_) { data = {}; }
+        if (!response.ok || !data.success) {
+          throw new Error(data.error || 'Lookup failed');
+        }
+
+        // Normalize vehicle fields for selector matching
+        const vehicleResp = data.vehicle || {};
+        const vehicle = { ...vehicleResp };
+        if (!vehicle.year && vehicle.yearOfManufacture) {
+          vehicle.year = vehicle.yearOfManufacture;
+        }
+
+        const selection = applyVrmSuggestionSearch(vehicle);
+        const summary = [vehicle.make, vehicle.model, vehicle.year].filter(Boolean).join(' ');
       },
       'q4-e-tron': {
         '2021-2024': ['Electric 35 - 170hp', 'Electric 40 - 204hp', 'Electric 45 - 299hp', 'Electric 50 - 299hp']
@@ -6979,6 +6986,10 @@
     const searchBtn = document.getElementById('search-vehicle-btn');
     const searchResults = document.getElementById('search-results');
     const emptyState = document.getElementById('search-empty-state');
+    // VRM elements for search page
+    const vrmInputSearch = document.getElementById('search-vrm');
+    const vrmBtnSearch = document.getElementById('search-vrm-btn');
+    const vrmStatusSearch = document.getElementById('search-vrm-status');
     
     if (!searchManufacturer || !searchModel || !searchYear || !searchEngine || !searchBtn) return;
     
@@ -7069,6 +7080,186 @@
         searchEngine.appendChild(option);
       });
     });
+
+    // --- VRM Lookup for Vehicle Search ---
+    const setVrmStatusSearch = (message, tone = 'info') => {
+      if (!vrmStatusSearch) return;
+      vrmStatusSearch.textContent = message;
+      const base = 'vrm-status';
+      const toneClass = `vrm-${tone}`;
+      vrmStatusSearch.className = `${base} ${toneClass}`.trim();
+    };
+
+    const normalizeMakeKeySearch = (make) => {
+      if (!make) return '';
+      const key = make.toLowerCase().trim();
+      const aliases = {
+        'mercedes-benz': 'mercedes',
+        'mercedes benz': 'mercedes',
+        'land rover': 'land-rover',
+        'alfa romeo': 'alfa-romeo',
+        'rolls royce': 'rolls-royce',
+        'vw': 'volkswagen',
+        'vauxhall': 'vauxhall',
+        'bmc': 'mini'
+      };
+      if (aliases[key]) return aliases[key];
+      return key.replace(/[^a-z0-9]+/g, '-').replace(/--+/g, '-');
+    };
+
+    const matchesYearRangeSearch = (rangeText, year) => {
+      if (!rangeText || Number.isNaN(year)) return false;
+      const clean = rangeText.trim();
+      const [start, end] = clean.split('-').map(v => parseInt(v, 10));
+      if (!Number.isNaN(start) && !Number.isNaN(end)) return year >= start && year <= end;
+      if (!Number.isNaN(start) && clean.endsWith('+')) return year >= start;
+      return year === start;
+    };
+
+    const normalizeEngineTextSearch = (text) => (text || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9.\s-]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    const buildEngineCandidatesSearch = (vehicle) => {
+      const candidates = [];
+      if (vehicle.engineLabel) candidates.push(vehicle.engineLabel);
+      if (vehicle.engine) candidates.push(vehicle.engine);
+      if (vehicle.engineCapacity && vehicle.fuelType) {
+        candidates.push(`${vehicle.engineCapacity} ${vehicle.fuelType}`);
+      }
+      if (vehicle.engineCapacity) {
+        candidates.push(String(vehicle.engineCapacity));
+      }
+      if (vehicle.powerBhp) {
+        const powerText = String(vehicle.powerBhp).toLowerCase().includes('hp')
+          ? String(vehicle.powerBhp)
+          : `${vehicle.powerBhp}hp`;
+        candidates.push(powerText);
+      }
+      return candidates
+        .map(normalizeEngineTextSearch)
+        .filter(Boolean);
+    };
+
+    const trySelectOptionSearch = (selectEl, matcher) => {
+      if (!selectEl) return null;
+      const match = Array.from(selectEl.options).find((opt) => matcher(opt));
+      if (match) {
+        selectEl.value = match.value;
+        selectEl.dispatchEvent(new Event('change'));
+        return match;
+      }
+      return null;
+    };
+
+    const applyVrmSuggestionSearch = (vehicle) => {
+      const result = { manufacturer: false, model: false, year: false, engine: false };
+      if (!vehicle || !searchManufacturer) return result;
+
+      if (vehicle.make) {
+        const makeKey = normalizeMakeKeySearch(vehicle.make);
+        const matchedManufacturer = trySelectOptionSearch(
+          searchManufacturer,
+          (opt) => opt.value === makeKey || normalizeMakeKeySearch(opt.textContent) === makeKey
+        );
+        result.manufacturer = !!matchedManufacturer;
+      }
+
+      if (result.manufacturer && vehicle.model && searchModel) {
+        const modelKey = normalizeModelKey(vehicle.model);
+        const matchedModel = trySelectOptionSearch(
+          searchModel,
+          (opt) => opt.value === modelKey || normalizeModelKey(opt.textContent) === modelKey
+        );
+        result.model = !!matchedModel;
+      }
+
+      if (result.model && vehicle.year && searchYear) {
+        const yearNum = parseInt(vehicle.year, 10);
+        const matchedYear = trySelectOptionSearch(
+          searchYear,
+          (opt) => matchesYearRangeSearch(opt.value, yearNum)
+        );
+        result.year = !!matchedYear;
+      }
+
+      if (result.year && vehicle.engineLabel && searchEngine) {
+        const normalizedCandidates = buildEngineCandidatesSearch(vehicle);
+        const matchedEngine = trySelectOptionSearch(
+          searchEngine,
+          (opt) => opt.value && normalizedCandidates.some((candidate) => normalizeEngineTextSearch(opt.textContent).includes(candidate))
+        );
+        result.engine = !!matchedEngine;
+      }
+
+      return result;
+    };
+
+    const handleVrmLookupSearch = async () => {
+      if (!vrmInputSearch) return;
+      const vrmValue = vrmInputSearch.value.trim();
+      if (!vrmValue) {
+        setVrmStatusSearch('Enter a registration to look up.', 'error');
+        return;
+      }
+
+      const vrm = vrmValue.replace(/\s+/g, '').toUpperCase();
+      vrmInputSearch.value = vrm;
+      setVrmStatusSearch('Looking up vehicle...', 'loading');
+
+      if (vrmBtnSearch) {
+        vrmBtnSearch.disabled = true;
+        vrmBtnSearch.textContent = 'Checking...';
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/api/dvla-lookup?vrm=${encodeURIComponent(vrm)}`);
+        let data = {};
+        try { data = await response.json(); } catch (_) { data = {}; }
+        if (!response.ok || !data.success) {
+          throw new Error(data.error || 'Lookup failed');
+        }
+
+        const selection = applyVrmSuggestionSearch(data.vehicle || {});
+        const filled = [
+          selection.manufacturer ? 'make' : null,
+          selection.model ? 'model' : null,
+          selection.year ? 'year' : null,
+          selection.engine ? 'engine' : null
+        ].filter(Boolean).join(', ');
+
+        const summary = [data.vehicle?.make, data.vehicle?.model, data.vehicle?.year].filter(Boolean).join(' ');
+        const needsEngine = selection.year && !selection.engine;
+        const suffix = filled ? `Filled: ${filled}.` : 'Please confirm details.';
+        const engineNote = needsEngine ? ' Select the correct engine if it differs.' : '';
+        setVrmStatusSearch(`Found ${summary || 'vehicle'}. ${suffix}${engineNote}`, 'success');
+
+        // Auto-run search when we have at least an engine selected
+        if (selection.engine && searchBtn) {
+          // Delay slightly to allow dropdown change handlers to complete
+          setTimeout(() => searchBtn.click(), 50);
+        }
+      } catch (err) {
+        setVrmStatusSearch(err.message || 'Lookup failed', 'error');
+      } finally {
+        if (vrmBtnSearch) {
+          vrmBtnSearch.disabled = false;
+          vrmBtnSearch.textContent = 'Lookup';
+        }
+      }
+    };
+
+    if (vrmBtnSearch && vrmInputSearch) {
+      vrmBtnSearch.addEventListener('click', handleVrmLookupSearch);
+      vrmInputSearch.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          handleVrmLookupSearch();
+        }
+      });
+    }
     
     // Search button click
     searchBtn.addEventListener('click', () => {
