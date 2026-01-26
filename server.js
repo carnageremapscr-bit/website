@@ -2708,20 +2708,19 @@ app.post('/api/verify-payment', async (req, res) => {
 // ============ IFRAME TRACKING ENDPOINTS ============
 
 // Track/create a new iframe embed
-app.post('/api/iframes/create', authenticateToken, async (req, res) => {
+app.post('/api/iframes/create', async (req, res) => {
   try {
-    const { userId } = req.user;
     const { url } = req.body;
     
     if (!url) {
-      return res.status(400).json({ error: 'URL is required' });
+    return res.status(400).json({ error: 'URL is required' });
     }
 
-    // Insert into iframes table
+    // Insert into iframes table (user_id can be null for now)
     const { data, error } = await supabase
       .from('iframes')
       .insert({
-        user_id: userId,
+        user_id: null,
         url: url,
         locked: false,
         usage_count: 0,
@@ -2739,11 +2738,8 @@ app.post('/api/iframes/create', authenticateToken, async (req, res) => {
 });
 
 // Get all iframes for admin
-app.get('/api/iframes', authenticateToken, async (req, res) => {
+app.get('/api/iframes', async (req, res) => {
   try {
-    const { userId } = req.user;
-    
-    // Check if user is admin (would need to add role check)
     const { data, error } = await supabase
       .from('iframes')
       .select('*')
@@ -2759,7 +2755,7 @@ app.get('/api/iframes', authenticateToken, async (req, res) => {
 });
 
 // Lock/unlock an iframe
-app.put('/api/iframes/:id/lock', authenticateToken, async (req, res) => {
+app.put('/api/iframes/:id/lock', async (req, res) => {
   try {
     const { id } = req.params;
     const { locked } = req.body;
@@ -2783,7 +2779,7 @@ app.put('/api/iframes/:id/lock', authenticateToken, async (req, res) => {
 });
 
 // Delete an iframe
-app.delete('/api/iframes/:id', authenticateToken, async (req, res) => {
+app.delete('/api/iframes/:id', async (req, res) => {
   try {
     const { id } = req.params;
 

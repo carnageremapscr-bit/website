@@ -1,7 +1,7 @@
 -- Create iframes tracking table
 CREATE TABLE IF NOT EXISTS iframes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   url TEXT NOT NULL,
   locked BOOLEAN DEFAULT FALSE,
   locked_at TIMESTAMP,
@@ -19,46 +19,18 @@ CREATE INDEX idx_iframes_created_at ON iframes(created_at DESC);
 -- Enable RLS (Row Level Security)
 ALTER TABLE iframes ENABLE ROW LEVEL SECURITY;
 
--- Create policies for admin access
-CREATE POLICY "Admins can view all iframes" ON iframes
-  FOR SELECT USING (
-    EXISTS (
-      SELECT 1 FROM auth.users 
-      WHERE auth.users.id = auth.uid() 
-      AND auth.users.raw_user_meta_data->>'role' = 'admin'
-    )
-  );
+-- Allow public access to all operations for now (can be restricted later with proper auth)
+CREATE POLICY "Public can view iframes" ON iframes
+  FOR SELECT USING (true);
 
-CREATE POLICY "Admins can update iframes" ON iframes
-  FOR UPDATE USING (
-    EXISTS (
-      SELECT 1 FROM auth.users 
-      WHERE auth.users.id = auth.uid() 
-      AND auth.users.raw_user_meta_data->>'role' = 'admin'
-    )
-  );
+CREATE POLICY "Public can insert iframes" ON iframes
+  FOR INSERT WITH CHECK (true);
 
-CREATE POLICY "Admins can delete iframes" ON iframes
-  FOR DELETE USING (
-    EXISTS (
-      SELECT 1 FROM auth.users 
-      WHERE auth.users.id = auth.uid() 
-      AND auth.users.raw_user_meta_data->>'role' = 'admin'
-    )
-  );
+CREATE POLICY "Public can update iframes" ON iframes
+  FOR UPDATE USING (true);
 
-CREATE POLICY "Admins can insert iframes" ON iframes
-  FOR INSERT WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM auth.users 
-      WHERE auth.users.id = auth.uid() 
-      AND auth.users.raw_user_meta_data->>'role' = 'admin'
-    )
-  );
+CREATE POLICY "Public can delete iframes" ON iframes
+  FOR DELETE USING (true);
 
--- Allow public access to increment usage (for tracking embeds)
-CREATE POLICY "Anyone can use iframes (increment usage)" ON iframes
-  FOR UPDATE USING (true) WITH CHECK (true);
-
-GRANT SELECT, UPDATE, DELETE ON iframes TO authenticated;
-GRANT SELECT ON iframes TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON iframes TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON iframes TO authenticated;

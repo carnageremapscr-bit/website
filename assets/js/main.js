@@ -8948,8 +8948,7 @@ I would like to request a quote for tuning this vehicle.`,
           await fetch('/api/iframes/create', {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+              'Content-Type': 'application/json'
             },
             body: JSON.stringify({ url: 'https://web-production-df12d.up.railway.app/test-vrm.html' })
           });
@@ -9318,9 +9317,7 @@ I would like to request a quote for tuning this vehicle.`,
     try {
       container.innerHTML = '<tr><td colspan="5" class="empty-cell">Loading iframes...</td></tr>';
 
-      const response = await fetch('/api/iframes', {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
-      });
+      const response = await fetch('/api/iframes');
 
       if (!response.ok) throw new Error('Failed to fetch iframes');
 
@@ -9378,8 +9375,7 @@ I would like to request a quote for tuning this vehicle.`,
       const response = await fetch(`/api/iframes/${iframeId}/lock`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ locked: !currentLocked })
       });
@@ -9398,8 +9394,7 @@ I would like to request a quote for tuning this vehicle.`,
 
     try {
       const response = await fetch(`/api/iframes/${iframeId}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+        method: 'DELETE'
       });
 
       if (!response.ok) throw new Error('Failed to delete iframe');
