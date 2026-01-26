@@ -206,24 +206,7 @@
       'q8': {
         '2019-2024': ['3.0 TFSI - 340hp', '4.0 TFSI - 507hp', '3.0 TDI - 231hp', '3.0 TDI - 286hp']
       },
-      try {
-        const response = await fetch(`${API_URL}/api/dvla-lookup?vrm=${encodeURIComponent(vrm)}`);
-        let data = {};
-        try { data = await response.json(); } catch (_) { data = {}; }
-        if (!response.ok || !data.success) {
-          throw new Error(data.error || 'Lookup failed');
-        }
-
-        // Normalize vehicle fields for selector matching
-        const vehicleResp = data.vehicle || {};
-        const vehicle = { ...vehicleResp };
-        if (!vehicle.year && vehicle.yearOfManufacture) {
-          vehicle.year = vehicle.yearOfManufacture;
-        }
-
-        const selection = applyVrmSuggestionSearch(vehicle);
-        const summary = [vehicle.make, vehicle.model, vehicle.year].filter(Boolean).join(' ');
-      },
+      
       'q4-e-tron': {
         '2021-2024': ['Electric 35 - 170hp', 'Electric 40 - 204hp', 'Electric 45 - 299hp', 'Electric 50 - 299hp']
       },
