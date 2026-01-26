@@ -3,448 +3,305 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VRM Lookup Test</title>
+  <title>VRM Lookup Service</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 20% 20%, rgba(59,130,246,0.12), transparent 30%),
+                  radial-gradient(circle at 80% 0%, rgba(168,85,247,0.15), transparent 28%),
+                  #0b1220;
       color: #e2e8f0;
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>VRM Lookup Service</title>
-        <style>
-          * { box-sizing: border-box; margin: 0; padding: 0; }
-          body {
-            font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
-            background: radial-gradient(circle at 20% 20%, rgba(59,130,246,0.12), transparent 30%),
-                        radial-gradient(circle at 80% 0%, rgba(168,85,247,0.15), transparent 28%),
-                        #0b1220;
-            color: #e2e8f0;
-            min-height: 100vh;
-            padding: 32px 18px 48px;
-            display: flex;
-            justify-content: center;
-          }
-          .shell {
-            width: min(1080px, 100%);
-          }
-          h1 {
-            font-size: clamp(2rem, 4vw, 2.8rem);
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            margin-bottom: 8px;
-            text-align: center;
-            color: #9fafff;
-          }
-          .subtitle {
-            text-align: center;
-            color: #93a7c2;
-            margin-bottom: 26px;
-            font-size: 1rem;
-          }
-          .panel {
-            background: linear-gradient(145deg, rgba(14,23,42,0.9), rgba(13,19,33,0.95));
-            border: 1px solid rgba(148, 163, 184, 0.18);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
-          }
-          .panel-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 16px;
-          }
-          .badge-icon {
-            font-size: 1.4rem;
-          }
-          .panel-title {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: #e2e8f0;
-          }
-          .panel-sub {
-            color: #94a3b8;
-            font-size: 0.95rem;
-            margin-bottom: 14px;
-          }
-          .lookup-row {
-            display: flex;
-            gap: 14px;
-            align-items: stretch;
-            flex-wrap: wrap;
-          }
-          .plate-wrap {
-            display: flex;
-            flex: 1 1 480px;
-            background: linear-gradient(135deg, #0f172a, #111827);
-            border: 1px solid rgba(148, 163, 184, 0.35);
-            border-radius: 12px;
-            overflow: hidden;
-            min-height: 72px;
-            box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.6);
-          }
-          .flag {
-            width: 92px;
-            background: #0a2ea6;
-            color: #fefefe;
-            display: grid;
-            place-items: center;
-            font-weight: 800;
-            letter-spacing: 1px;
-            font-size: 1.05rem;
-            border-right: 2px solid #ffd700;
-            position: relative;
-          }
-          .flag::after {
-            content: '';
-            position: absolute;
-            inset: 8px;
-            border: 1px solid rgba(255,255,255,0.18);
-            border-radius: 6px;
-          }
-          .plate-input {
-            flex: 1;
-            border: none;
-            background: #111827;
-            color: #cbd5e1;
-            font-weight: 800;
-            letter-spacing: 6px;
-            font-size: 1.3rem;
-            text-transform: uppercase;
-            padding: 0 16px;
-            outline: none;
-          }
-          .plate-input::placeholder {
-            color: #475569;
-          }
-          .plate-input:focus {
-            box-shadow: inset 0 0 0 2px rgba(59,130,246,0.45);
-          }
-          .btn {
-            background: linear-gradient(135deg, #00bcd4, #0097a7);
-            color: #fff;
-            font-weight: 800;
-            padding: 16px 26px;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 1.05rem;
-            box-shadow: 0 12px 30px rgba(0,188,212,0.35);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-          }
-          .btn:hover { transform: translateY(-2px); }
-          .btn:active { transform: translateY(0); }
-          .status {
-            margin-top: 14px;
-            padding: 10px 12px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-          }
-          .status.info { background: rgba(59,130,246,0.12); color: #93c5fd; }
-          .status.success { background: rgba(34,197,94,0.12); color: #86efac; }
-          .status.error { background: rgba(239,68,68,0.12); color: #fca5a5; }
-          .results {
-            margin-top: 18px;
-            display: grid;
-            gap: 14px;
-          }
-          .card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
-            border: 1px solid rgba(148,163,184,0.12);
-            border-radius: 12px;
-            padding: 14px;
-          }
-          .card h3 {
-            margin-bottom: 10px;
-            font-size: 1rem;
-            letter-spacing: 0.5px;
-            color: #93c5fd;
-            text-transform: uppercase;
-          }
-          .spec-grid {
-            display: grid;
-            grid-template-columns: 160px 1fr;
-            gap: 8px 16px;
-            font-size: 0.95rem;
-          }
-          .spec-label { color: #94a3b8; font-weight: 700; text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.3px; }
-          .spec-value { color: #e2e8f0; font-weight: 600; }
-          .perf-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 12px;
-          }
-          .stage {
-            padding: 12px;
-            border-radius: 12px;
-            border: 2px solid rgba(59,130,246,0.25);
-            background: linear-gradient(135deg, rgba(59,130,246,0.14), rgba(15,23,42,0.35));
-          }
-          .stage.orange { border-color: rgba(251,146,60,0.35); background: linear-gradient(135deg, rgba(251,146,60,0.14), rgba(15,23,42,0.35)); }
-          .stage.red { border-color: rgba(248,113,113,0.35); background: linear-gradient(135deg, rgba(248,113,113,0.14), rgba(15,23,42,0.35)); }
-          .stage-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            font-weight: 800;
-          }
-          .req {
-            font-size: 0.72rem;
-            background: rgba(255,255,255,0.08);
-            padding: 4px 8px;
-            border-radius: 6px;
-            color: #cbd5e1;
-            border: 1px solid rgba(255,255,255,0.12);
-          }
-          .boxgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-          .box {
-            background: rgba(15,23,42,0.6);
-            border: 1px solid rgba(148,163,184,0.2);
-            border-radius: 10px;
-            padding: 8px;
-            font-size: 0.85rem;
-          }
-          .box .lbl { color: #94a3b8; text-transform: uppercase; font-weight: 700; font-size: 0.72rem; }
-          .vals { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
-          .gain { color: #22c55e; font-weight: 800; }
-          .muted { color: #94a3b8; font-size: 0.9rem; }
-        </style>
-      </head>
-      <body>
-        <div class="shell">
-          <h1>VRM Lookup Service</h1>
-          <div class="subtitle">Enter a UK vehicle registration number to get instant vehicle information</div>
+      min-height: 100vh;
+      padding: 32px 18px 48px;
+      display: flex;
+      justify-content: center;
+    }
+    .shell { width: min(1080px, 100%); }
+    h1 {
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      text-align: center;
+      color: #9fafff;
+    }
+    .subtitle {
+      text-align: center;
+      color: #93a7c2;
+      margin-bottom: 26px;
+      font-size: 1rem;
+    }
+    .panel {
+      background: linear-gradient(145deg, rgba(14,23,42,0.9), rgba(13,19,33,0.95));
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+    .panel-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .badge-icon { font-size: 1.4rem; }
+    .panel-title { font-size: 1.5rem; font-weight: 800; color: #e2e8f0; }
+    .panel-sub { color: #94a3b8; font-size: 0.95rem; margin-bottom: 14px; }
+    .lookup-row { display: flex; gap: 14px; align-items: stretch; flex-wrap: wrap; }
+    .plate-wrap {
+      display: flex;
+      flex: 1 1 480px;
+      background: linear-gradient(135deg, #0f172a, #111827);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 12px;
+      overflow: hidden;
+      min-height: 72px;
+      box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.6);
+    }
+    .flag {
+      width: 92px;
+      background: #0a2ea6;
+      color: #fefefe;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      letter-spacing: 1px;
+      font-size: 1.05rem;
+      border-right: 2px solid #ffd700;
+      position: relative;
+    }
+    .flag::after {
+      content: '';
+      position: absolute;
+      inset: 8px;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 6px;
+    }
+    .plate-input {
+      flex: 1;
+      border: none;
+      background: #111827;
+      color: #cbd5e1;
+      font-weight: 800;
+      letter-spacing: 6px;
+      font-size: 1.3rem;
+      text-transform: uppercase;
+      padding: 0 16px;
+      outline: none;
+    }
+    .plate-input::placeholder { color: #475569; }
+    .plate-input:focus { box-shadow: inset 0 0 0 2px rgba(59,130,246,0.45); }
+    .btn {
+      background: linear-gradient(135deg, #00bcd4, #0097a7);
+      color: #fff;
+      font-weight: 800;
+      padding: 16px 26px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1.05rem;
+      box-shadow: 0 12px 30px rgba(0,188,212,0.35);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:active { transform: translateY(0); }
+    .status {
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .status.info { background: rgba(59,130,246,0.12); color: #93c5fd; }
+    .status.success { background: rgba(34,197,94,0.12); color: #86efac; }
+    .status.error { background: rgba(239,68,68,0.12); color: #fca5a5; }
+    .results { margin-top: 18px; display: grid; gap: 14px; }
+    .card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+      border: 1px solid rgba(148,163,184,0.12);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .card h3 {
+      margin-bottom: 10px;
+      font-size: 1rem;
+      letter-spacing: 0.5px;
+      color: #93c5fd;
+      text-transform: uppercase;
+    }
+    .spec-grid { display: grid; grid-template-columns: 160px 1fr; gap: 8px 16px; font-size: 0.95rem; }
+    .spec-label { color: #94a3b8; font-weight: 700; text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.3px; }
+    .spec-value { color: #e2e8f0; font-weight: 600; }
+    .perf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+    .stage {
+      padding: 12px;
+      border-radius: 12px;
+      border: 2px solid rgba(59,130,246,0.25);
+      background: linear-gradient(135deg, rgba(59,130,246,0.14), rgba(15,23,42,0.35));
+    }
+    .stage.orange { border-color: rgba(251,146,60,0.35); background: linear-gradient(135deg, rgba(251,146,60,0.14), rgba(15,23,42,0.35)); }
+    .stage.red { border-color: rgba(248,113,113,0.35); background: linear-gradient(135deg, rgba(248,113,113,0.14), rgba(15,23,42,0.35)); }
+    .stage-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: 800; }
+    .req { font-size: 0.72rem; background: rgba(255,255,255,0.08); padding: 4px 8px; border-radius: 6px; color: #cbd5e1; border: 1px solid rgba(255,255,255,0.12); }
+    .boxgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .box { background: rgba(15,23,42,0.6); border: 1px solid rgba(148,163,184,0.2); border-radius: 10px; padding: 8px; font-size: 0.85rem; }
+    .box .lbl { color: #94a3b8; text-transform: uppercase; font-weight: 700; font-size: 0.72rem; }
+    .vals { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+    .gain { color: #22c55e; font-weight: 800; }
+    .muted { color: #94a3b8; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <h1>VRM Lookup Service</h1>
+    <div class="subtitle">Enter a UK vehicle registration number to get instant vehicle information</div>
 
-          <div class="panel">
-            <div class="panel-header">
-              <span class="badge-icon">🔍</span>
-              <div>
-                <div class="panel-title">VRM Lookup Tester</div>
-                <div class="panel-sub">Live DVLA + CheckCar enrichment</div>
-              </div>
-            </div>
-
-            <div class="lookup-row">
-              <div class="plate-wrap">
-                <div class="flag">GB UK</div>
-                <input id="vrm" class="plate-input" type="text" maxlength="8" placeholder="AB12 CDE" autocomplete="off" aria-label="Registration">
-              </div>
-              <button id="lookup" class="btn" type="button">FIND</button>
-            </div>
-
-            <div id="status" class="status info" aria-live="polite">Awaiting input…</div>
-
-            <div class="results">
-              <div class="card">
-                <h3>Identification</h3>
-                <div class="spec-grid" id="spec-grid"></div>
-              </div>
-              <div class="card">
-                <h3>Estimated Performance Gains</h3>
-                <div class="perf-grid" id="perf-grid"></div>
-              </div>
-            </div>
-          </div>
+    <div class="panel">
+      <div class="panel-header">
+        <span class="badge-icon">🔍</span>
+        <div>
+          <div class="panel-title">VRM Lookup Tester</div>
+          <div class="panel-sub">Live vehicle specs via CheckCar</div>
         </div>
+      </div>
 
-        <script>
-          const vrmInput = document.getElementById('vrm');
-          const statusEl = document.getElementById('status');
-          const specGrid = document.getElementById('spec-grid');
-          const perfGrid = document.getElementById('perf-grid');
-          const lookupBtn = document.getElementById('lookup');
+      <div class="lookup-row">
+        <div class="plate-wrap">
+          <div class="flag">GB UK</div>
+          <input id="vrm" class="plate-input" type="text" maxlength="8" placeholder="AB12 CDE" autocomplete="off" aria-label="Registration">
+        </div>
+        <button id="lookup" class="btn" type="button">FIND</button>
+      </div>
 
-          function setStatus(msg, cls = 'info') {
-            statusEl.textContent = msg;
-            statusEl.className = 'status ' + cls;
-          }
+      <div id="status" class="status info" aria-live="polite">Awaiting input…</div>
 
-          function buildSpecs(vehicle) {
-            const specs = [
-              ['Make/Model', [vehicle.make, vehicle.model].filter(Boolean).join(' ')],
-              ['Year', vehicle.year],
-              ['Fuel', vehicle.fuelType],
-              ['Engine', vehicle.engineLabel || vehicle.engine],
-              ['Capacity', vehicle.engineCapacity],
-              ['Power (bhp)', vehicle.powerBhp],
-              ['Torque (Nm)', vehicle.torqueNm],
-              ['VIN', vehicle.vin],
-              ['Drive', vehicle.driveType],
-              ['Transmission', vehicle.transmission || vehicle.transmissionType],
-              ['Max Speed', vehicle.maxSpeedMph || vehicle.maxSpeedKph],
-            ].filter(([, v]) => v);
+      <div class="results">
+        <div class="card">
+          <h3>Identification</h3>
+          <div class="spec-grid" id="spec-grid"></div>
+        </div>
+        <div class="card">
+          <h3>Estimated Performance Gains</h3>
+          <div class="perf-grid" id="perf-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-            specGrid.innerHTML = specs.map(([k, v]) => `
-              <div class="spec-label">${k}</div>
-              <div class="spec-value">${v}</div>
-            `).join('');
-          }
+  <script>
+    const vrmInput = document.getElementById('vrm');
+    const statusEl = document.getElementById('status');
+    const specGrid = document.getElementById('spec-grid');
+    const perfGrid = document.getElementById('perf-grid');
+    const lookupBtn = document.getElementById('lookup');
 
-          function buildPerformance(vehicle) {
-            const baseHp = Number(vehicle.powerBhp) || null;
-            const baseTq = Number(vehicle.torqueNm) || null;
-            const isTurbo = ((vehicle.aspiration || '').toLowerCase().includes('turbo')) || ((vehicle.induction || '').toLowerCase().includes('turbo'));
+    function setStatus(msg, cls = 'info') {
+      statusEl.textContent = msg;
+      statusEl.className = 'status ' + cls;
+    }
 
-            if (!baseHp || !baseTq) {
-              perfGrid.innerHTML = '<div class="muted">Power/torque data unavailable.</div>';
-              return;
-            }
+    function buildSpecs(vehicle) {
+      const specs = [
+        ['Make/Model', [vehicle.make, vehicle.model].filter(Boolean).join(' ')],
+        ['Year', vehicle.year],
+        ['Fuel', vehicle.fuelType],
+        ['Engine', vehicle.engineLabel || vehicle.engine],
+        ['Capacity', vehicle.engineCapacity],
+        ['Power (bhp)', vehicle.powerBhp],
+        ['Torque (Nm)', vehicle.torqueNm],
+        ['VIN', vehicle.vin],
+        ['Drive', vehicle.driveType],
+        ['Transmission', vehicle.transmission || vehicle.transmissionType],
+        ['Max Speed', vehicle.maxSpeedMph || vehicle.maxSpeedKph],
+      ].filter(([, v]) => v);
 
-            const stages = isTurbo
-              ? [
-                  { name: 'Stage 1', hp: 0.20, tq: 0.25, req: 'Remap Only', cls: '' },
-                  { name: 'Stage 2', hp: 0.30, tq: 0.35, req: 'Downpipe + Remap', cls: 'orange' },
-                  { name: 'Stage 3', hp: 0.45, tq: 0.55, req: 'Turbo Upgrade + Fueling', cls: 'red' },
-                ]
-              : [
-                  { name: 'Stage 1', hp: 0.12, tq: 0.15, req: 'Remap Only', cls: '' },
-                  { name: 'Stage 2', hp: 0.18, tq: 0.22, req: 'Exhaust + Intake + Remap', cls: 'orange' },
-                  { name: 'Stage 3', hp: 0.25, tq: 0.28, req: 'Cams + Full Exhaust + Remap', cls: 'red' },
-                ];
+      specGrid.innerHTML = specs.map(([k, v]) => `
+        <div class="spec-label">${k}</div>
+        <div class="spec-value">${v}</div>
+      `).join('');
+    }
 
-            perfGrid.innerHTML = stages.map((s, idx) => {
-              const tunedHp = Math.round(baseHp * (1 + s.hp));
-              const tunedTq = Math.round(baseTq * (1 + s.tq));
-              const hpGain = Math.round(baseHp * s.hp);
-              const tqGain = Math.round(baseTq * s.tq);
-              const cls = idx === 1 ? 'stage orange' : idx === 2 ? 'stage red' : 'stage';
-              return `
-                <div class="${cls}">
-                  <div class="stage-head">
-                    <span>${s.name}</span>
-                    <span class="req">${s.req}</span>
-                  </div>
-                  <div class="boxgrid">
-                    <div class="box">
-                      <div class="lbl">Power</div>
-                      <div class="vals"><span>${baseHp} → <strong>${tunedHp}</strong> bhp</span><span class="gain">+${hpGain}</span></div>
-                    </div>
-                    <div class="box">
-                      <div class="lbl">Torque</div>
-                      <div class="vals"><span>${baseTq} → <strong>${tunedTq}</strong> Nm</span><span class="gain">+${tqGain}</span></div>
-                    </div>
-                  </div>
-                </div>`;
-            }).join('');
-          }
+    function buildPerformance(vehicle) {
+      const baseHp = Number(vehicle.powerBhp) || null;
+      const baseTq = Number(vehicle.torqueNm) || null;
+      const isTurbo = ((vehicle.aspiration || '').toLowerCase().includes('turbo')) || ((vehicle.induction || '').toLowerCase().includes('turbo'));
 
-          function pick(...vals) {
-            for (const v of vals) if (v !== undefined && v !== null && v !== '') return v;
-            return undefined;
-          }
+      if (!baseHp || !baseTq) {
+        perfGrid.innerHTML = '<div class="muted">Power/torque data unavailable.</div>';
+        return;
+      }
 
-          async function fetchVehicle(vrm) {
-            let dvla = null;
-            let cc = null;
-            let usedFallback = false;
+      const stages = isTurbo
+        ? [
+            { name: 'Stage 1', hp: 0.20, tq: 0.25, req: 'Remap Only', cls: '' },
+            { name: 'Stage 2', hp: 0.30, tq: 0.35, req: 'Downpipe + Remap', cls: 'orange' },
+            { name: 'Stage 3', hp: 0.45, tq: 0.55, req: 'Turbo Upgrade + Fueling', cls: 'red' },
+          ]
+        : [
+            { name: 'Stage 1', hp: 0.12, tq: 0.15, req: 'Remap Only', cls: '' },
+            { name: 'Stage 2', hp: 0.18, tq: 0.22, req: 'Exhaust + Intake + Remap', cls: 'orange' },
+            { name: 'Stage 3', hp: 0.25, tq: 0.28, req: 'Cams + Full Exhaust + Remap', cls: 'red' },
+          ];
 
-            // DVLA first
-            try {
-              const dvlaResp = await fetch(`/api/dvla-lookup?vrm=${encodeURIComponent(vrm)}`);
-              const dvlaJson = await dvlaResp.json();
-              if (dvlaResp.ok && dvlaJson.success && dvlaJson.vehicle) dvla = dvlaJson.vehicle;
-            } catch (e) { /* ignore */ }
+      perfGrid.innerHTML = stages.map((s, idx) => {
+        const tunedHp = Math.round(baseHp * (1 + s.hp));
+        const tunedTq = Math.round(baseTq * (1 + s.tq));
+        const hpGain = Math.round(baseHp * s.hp);
+        const tqGain = Math.round(baseTq * s.tq);
+        const cls = idx === 1 ? 'stage orange' : idx === 2 ? 'stage red' : 'stage';
+        return `
+          <div class="${cls}">
+            <div class="stage-head">
+              <span>${s.name}</span>
+              <span class="req">${s.req}</span>
+            </div>
+            <div class="boxgrid">
+              <div class="box">
+                <div class="lbl">Power</div>
+                <div class="vals"><span>${baseHp} → <strong>${tunedHp}</strong> bhp</span><span class="gain">+${hpGain}</span></div>
+              </div>
+              <div class="box">
+                <div class="lbl">Torque</div>
+                <div class="vals"><span>${baseTq} → <strong>${tunedTq}</strong> Nm</span><span class="gain">+${tqGain}</span></div>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    }
 
-            // CheckCar enrichment
-            try {
-              const ccResp = await fetch(`/api/vrm-lookup?vrm=${encodeURIComponent(vrm)}&datapoint=vehiclespecs`);
-              const ccJson = await ccResp.json();
-              if (ccResp.ok && ccJson.success && ccJson.vehicle) cc = ccJson.vehicle;
-            } catch (e) { /* ignore */ }
+    async function fetchVehicle(vrm) {
+      const resp = await fetch(`/api/vrm-lookup?vrm=${encodeURIComponent(vrm)}&datapoint=vehiclespecs`);
+      const json = await resp.json();
+      if (resp.ok && json.success && json.vehicle) return json.vehicle;
+      throw new Error(json.error || 'Lookup failed');
+    }
 
-            if (!dvla && !cc) throw new Error('Lookup failed');
+    async function handleLookup() {
+      const vrm = (vrmInput.value || '').replace(/\s+/g, '').toUpperCase();
+      if (!vrm) {
+        setStatus('Enter a registration.', 'error');
+        return;
+      }
 
-            // If only one source, return it
-            if (dvla && !cc) return { vehicle: dvla, usedFallback }; // no fallback used
-            if (!dvla && cc) return { vehicle: cc, usedFallback: true };
+      setStatus('Looking up vehicle…', 'info');
+      lookupBtn.disabled = true;
 
-            // Merge: prefer DVLA for core identity, CheckCar for performance if missing
-            const combined = {
-              make: pick(dvla.make, cc.make),
-              model: pick(dvla.model, cc.model),
-              year: pick(dvla.year, cc.year),
-              fuelType: pick(dvla.fuelType, cc.fuelType),
-              engine: pick(dvla.engine, cc.engine),
-              engineLabel: pick(dvla.engineLabel, cc.engineLabel),
-              engineCapacity: pick(dvla.engineCapacity, cc.engineCapacity),
-              powerBhp: pick(dvla.powerBhp, cc.powerBhp),
-              torqueNm: pick(dvla.torqueNm, cc.torqueNm),
-              aspiration: pick(dvla.aspiration, cc.aspiration),
-              induction: pick(dvla.induction, cc.induction),
-              driveType: pick(dvla.driveType, cc.driveType),
-              transmission: pick(dvla.transmission, dvla.transmissionType, cc.transmission, cc.transmissionType),
-              maxSpeedMph: pick(dvla.maxSpeedMph, cc.maxSpeedMph),
-              maxSpeedKph: pick(dvla.maxSpeedKph, cc.maxSpeedKph),
-              vin: pick(dvla.vin, cc.vin),
-              // keep the rest
-              ...cc,
-              ...dvla,
-            };
-
-            return { vehicle: combined, usedFallback: true };
-          }
-
-          async function handleLookup() {
-            const vrm = (vrmInput.value || '').replace(/\s+/g, '').toUpperCase();
-            if (!vrm) {
-              setStatus('Enter a registration.', 'error');
-              return;
-            }
-
-            setStatus('Looking up vehicle…', 'info');
-            lookupBtn.disabled = true;
-
-            try {
-              const { vehicle, usedFallback } = await fetchVehicle(vrm);
-              const summary = [vehicle.make, vehicle.model, vehicle.year].filter(Boolean).join(' ');
-              setStatus(`Found ${summary}${usedFallback ? ' (enriched)' : ''} ✓`, 'success');
-              buildSpecs(vehicle);
-              buildPerformance(vehicle);
-            } catch (err) {
-              setStatus(err.message || 'Lookup failed', 'error');
-              specGrid.innerHTML = '';
-              perfGrid.innerHTML = '';
-            } finally {
-              lookupBtn.disabled = false;
-            }
-          }
-
-          lookupBtn.addEventListener('click', handleLookup);
-          vrmInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLookup(); });
-
-          // Track iframe usage (get from parent or use default)
-          const iframeId = new URLSearchParams(window.location.search).get('id');
-          if (iframeId) {
-            fetch(`/api/iframes/${iframeId}/use`, { method: 'POST' }).catch(() => {});
-          }
-        </script>
-      </body>
-      </html>
-          rawEl.textContent = JSON.stringify(data, null, 2);
-        }
+      try {
+        const vehicle = await fetchVehicle(vrm);
+        const summary = [vehicle.make, vehicle.model, vehicle.year].filter(Boolean).join(' ');
+        setStatus(`Found ${summary} ✓`, 'success');
+        buildSpecs(vehicle);
+        buildPerformance(vehicle);
       } catch (err) {
-        setStatus(err.message, 'error');
-        normalizedEl.textContent = '{}';
-        rawEl.textContent = '{}';
+        setStatus(err.message || 'Lookup failed', 'error');
+        specGrid.innerHTML = '';
+        perfGrid.innerHTML = '';
       } finally {
         lookupBtn.disabled = false;
       }
     }
 
     lookupBtn.addEventListener('click', handleLookup);
-    vrmInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') handleLookup();
-    });
+    vrmInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLookup(); });
 
     // Track iframe usage (get from parent or use default)
     const iframeId = new URLSearchParams(window.location.search).get('id');
