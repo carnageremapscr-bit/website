@@ -520,6 +520,158 @@
         display: none;
       }
     }
+
+    /* MODAL STYLES */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 16px;
+    }
+
+    .modal-title {
+      font-size: 1.3em;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.9em;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: #0f172a;
+      color: var(--text-primary);
+      font-size: 0.95em;
+    }
+
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+    }
+
+    .color-picker-wrapper {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .color-picker {
+      width: 50px;
+      height: 50px;
+      border: 2px solid var(--border-color);
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .iframe-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .iframe-preview {
+      width: 60px;
+      height: 60px;
+      border-radius: 6px;
+      border: 2px solid var(--border-color);
+    }
+
+    .iframe-info h3 {
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .iframe-info p {
+      color: var(--text-secondary);
+      font-size: 0.85em;
+      margin: 2px 0;
+    }
+
+    .iframe-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-small {
+      padding: 6px 12px;
+      font-size: 0.85em;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background: var(--primary);
+      color: white;
+      transition: all 0.2s;
+    }
+
+    .btn-small:hover {
+      background: var(--primary-light);
+    }
+
+    .btn-danger {
+      background: var(--error);
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
   </style>
 </head>
 <body>
@@ -583,6 +735,10 @@
           <a href="ADMIN_SETUP.md" class="nav-item">
             <span class="nav-icon">📖</span>
             <span>Setup Guide</span>
+          </a>
+          <a href="#iframes" class="nav-item" onclick="loadPage('iframe', event)">
+            <span class="nav-icon">🖼️</span>
+            <span>Embed Widgets</span>
           </a>
           <a href="embed.html" class="nav-item">
             <span class="nav-icon">🔌</span>
@@ -864,6 +1020,24 @@
             </div>
           </div>
 
+          <!-- IFRAME CONFIGS PAGE -->
+          <div id="iframe-page" style="display: none;">
+            <div class="page-header">
+              <h1 class="page-title">🖼️ Embed Widget Manager</h1>
+              <p class="page-description">Create and manage multiple iframe configurations with custom colors and logos</p>
+              <div class="page-actions">
+                <button onclick="openIframeModal()" class="btn btn-primary">+ Create New Configuration</button>
+              </div>
+            </div>
+
+            <div class="details-section">
+              <div class="section-title">📌 Your Iframe Configurations</div>
+              <div id="iframes-list" style="display: grid; gap: 16px;">
+                <p style="color: var(--text-secondary);">Loading configurations...</p>
+              </div>
+            </div>
+          </div>
+
           <!-- SETTINGS PAGE -->
           <div id="settings-page" style="display: none;">
             <div class="page-header">
@@ -1022,6 +1196,163 @@
 
     // Set initial last updated time
     document.getElementById('last-updated').textContent = new Date().toLocaleString();
+
+    // ===== IFRAME CONFIGURATION MANAGEMENT =====
+    let iframes = JSON.parse(localStorage.getItem('iframeConfigs') || '[]');
+
+    function openIframeModal() {
+      document.getElementById('iframe-modal').classList.add('active');
+      document.getElementById('iframe-form').reset();
+      document.getElementById('modal-title').textContent = 'Create New Configuration';
+      document.getElementById('form-id').value = '';
+    }
+
+    function closeIframeModal() {
+      document.getElementById('iframe-modal').classList.remove('active');
+    }
+
+    function saveIframeConfig(e) {
+      e.preventDefault();
+      
+      const id = document.getElementById('form-id').value || 'iframe_' + Date.now();
+      const name = document.getElementById('form-name').value;
+      const accentColor = document.getElementById('form-accent').value;
+      const goldColor = document.getElementById('form-gold').value;
+      const logo = document.getElementById('form-logo').value;
+      const title = document.getElementById('form-title').value;
+      
+      const config = { id, name, accentColor, goldColor, logo, title, created: new Date().toISOString() };
+      
+      if (document.getElementById('form-id').value) {
+        iframes = iframes.map(i => i.id === id ? config : i);
+      } else {
+        iframes.push(config);
+      }
+      
+      localStorage.setItem('iframeConfigs', JSON.stringify(iframes));
+      closeIframeModal();
+      loadIframeConfigs();
+    }
+
+    function loadIframeConfigs() {
+      const list = document.getElementById('iframes-list');
+      if (iframes.length === 0) {
+        list.innerHTML = '<p style="color: var(--text-secondary);">No configurations yet. Create one to get started!</p>';
+        return;
+      }
+
+      list.innerHTML = iframes.map(config => `
+        <div class="iframe-card">
+          <div class="iframe-preview" style="background: ${config.accentColor}; border-color: ${config.goldColor};"></div>
+          <div class="iframe-info">
+            <h3>${config.name}</h3>
+            <p>Accent: ${config.accentColor}</p>
+            <p>Gold: ${config.goldColor}</p>
+            <p>ID: <code style="background: #0f172a; padding: 2px 6px; border-radius: 3px;">${config.id}</code></p>
+            <button class="btn-small" onclick="copyEmbedCode('${config.id}')">📋 Copy Code</button>
+          </div>
+          <div class="iframe-actions">
+            <button class="btn-small" onclick="editIframeConfig('${config.id}')">✏️ Edit</button>
+            <button class="btn-small btn-danger" onclick="deleteIframeConfig('${config.id}')">🗑️ Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function editIframeConfig(id) {
+      const config = iframes.find(i => i.id === id);
+      if (!config) return;
+      
+      document.getElementById('form-id').value = config.id;
+      document.getElementById('form-name').value = config.name;
+      document.getElementById('form-accent').value = config.accentColor;
+      document.getElementById('form-gold').value = config.goldColor;
+      document.getElementById('form-logo').value = config.logo || '';
+      document.getElementById('form-title').value = config.title || '';
+      document.getElementById('modal-title').textContent = 'Edit Configuration';
+      openIframeModal();
+    }
+
+    function deleteIframeConfig(id) {
+      if (confirm('Delete this iframe configuration?')) {
+        iframes = iframes.filter(i => i.id !== id);
+        localStorage.setItem('iframeConfigs', JSON.stringify(iframes));
+        loadIframeConfigs();
+      }
+    }
+
+    function copyEmbedCode(id) {
+      const config = iframes.find(i => i.id === id);
+      if (!config) return;
+      
+      const params = new URLSearchParams({
+        color: config.accentColor,
+        gold: config.goldColor,
+        ...(config.logo && { logo: config.logo }),
+        ...(config.title && { title: config.title })
+      });
+      
+      const code = `<iframe src="https://your-domain.com/test-vrm.html?${params.toString()}" width="100%" height="600" style="border:none;border-radius:12px;"></iframe>`;
+      
+      navigator.clipboard.writeText(code).then(() => {
+        alert('Embed code copied to clipboard!');
+      });
+    }
+
+    // Load iframes on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      loadIframeConfigs();
+    });
   </script>
+
+  <!-- IFRAME CONFIGURATION MODAL -->
+  <div id="iframe-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Create New Configuration</h2>
+        <button class="modal-close" onclick="closeIframeModal()">✕</button>
+      </div>
+      
+      <form id="iframe-form" onsubmit="saveIframeConfig(event)">
+        <input type="hidden" id="form-id">
+        
+        <div class="form-group">
+          <label class="form-label">Configuration Name</label>
+          <input type="text" id="form-name" class="form-input" placeholder="e.g., Client Brand 1" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Accent Color (Red)</label>
+          <div class="color-picker-wrapper">
+            <input type="color" id="form-accent" class="color-picker" value="#dc2626" required>
+            <input type="text" class="form-input" value="#dc2626" readonly style="flex: 1;">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Gold/Highlight Color</label>
+          <div class="color-picker-wrapper">
+            <input type="color" id="form-gold" class="color-picker" value="#ffc107" required>
+            <input type="text" class="form-input" value="#ffc107" readonly style="flex: 1;">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Logo URL (Optional)</label>
+          <input type="url" id="form-logo" class="form-input" placeholder="https://example.com/logo.png">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Title (Optional)</label>
+          <input type="text" id="form-title" class="form-input" placeholder="Custom title for the widget">
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 24px;">
+          <button type="submit" class="btn btn-primary">Save Configuration</button>
+          <button type="button" class="btn btn-secondary" onclick="closeIframeModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </body>
 </html>

@@ -6,9 +6,16 @@
   <title>VRM Lookup Service</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --accent-color: #dc2626;
+      --accent-light: #ef4444;
+      --gold-color: #ffc107;
+      --bg-dark: #0f172a;
+      --bg-panel: #1e293b;
+    }
     body {
       font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+      background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-panel) 50%, var(--bg-dark) 100%);
       color: #e2e8f0;
       min-height: 100vh;
       padding: 32px 18px 48px;
@@ -22,7 +29,7 @@
       letter-spacing: -0.02em;
       margin-bottom: 8px;
       text-align: center;
-      background: linear-gradient(135deg, #ffc107 0%, #ff6b35 100%);
+      background: linear-gradient(135deg, var(--gold-color) 0%, #ff6b35 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -41,6 +48,7 @@
       box-shadow: 0 20px 60px rgba(0,0,0,0.35);
     }
     .panel-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .panel-header img { max-width: 50px; height: auto; }
     .badge-icon { font-size: 1.4rem; }
     .panel-title { font-size: 1.5rem; font-weight: 800; color: #e2e8f0; }
     .panel-sub { color: #94a3b8; font-size: 0.95rem; margin-bottom: 14px; }
@@ -57,14 +65,14 @@
     }
     .flag {
       width: 92px;
-      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-light) 100%);
       color: #fefefe;
       display: grid;
       place-items: center;
       font-weight: 800;
       letter-spacing: 1px;
       font-size: 1.05rem;
-      border-right: 3px solid #ffc107;
+      border-right: 3px solid var(--gold-color);
       position: relative;
     }
     .flag::after {
@@ -89,7 +97,7 @@
     .plate-input::placeholder { color: #475569; }
     .plate-input:focus { box-shadow: inset 0 0 0 2px rgba(255, 193, 7, 0.45); }
     .btn {
-      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-light) 100%);
       color: #fff;
       font-weight: 800;
       padding: 16px 26px;
@@ -100,7 +108,7 @@
       box-shadow: 0 12px 30px rgba(220, 38, 38, 0.4);
       transition: all 0.3s ease;
     }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 15px 40px rgba(220, 38, 38, 0.6); background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 15px 40px rgba(220, 38, 38, 0.6); }
     .btn:active { transform: translateY(0); }
     .status {
       margin-top: 14px;
@@ -112,7 +120,7 @@
       align-items: center;
       gap: 8px;
     }
-    .status.info { background: rgba(255, 193, 7, 0.1); color: #ffc107; }
+    .status.info { background: rgba(255, 193, 7, 0.1); color: var(--gold-color); }
     .status.success { background: rgba(34,197,94,0.12); color: #86efac; }
     .status.error { background: rgba(239,68,68,0.12); color: #fca5a5; }
     .results { margin-top: 18px; display: grid; gap: 14px; }
@@ -126,7 +134,7 @@
       margin-bottom: 10px;
       font-size: 1rem;
       letter-spacing: 0.5px;
-      color: #ffc107;
+      color: var(--gold-color);
       text-transform: uppercase;
       font-weight: 700;
     }
@@ -159,10 +167,11 @@
 
     <div class="panel">
       <div class="panel-header">
-        <span class="badge-icon">🔍</span>
+        <img id="logo" src="" alt="Logo" style="display:none;">
+        <span id="badge" class="badge-icon">🔍</span>
         <div>
-          <div class="panel-title">VRM Lookup Tester</div>
-          <div class="panel-sub">Live vehicle specs via CheckCar</div>
+          <div class="panel-title" id="panel-title">VRM Lookup Tester</div>
+          <div class="panel-sub" id="panel-sub">Live vehicle specs via CheckCar</div>
         </div>
       </div>
 
@@ -190,6 +199,39 @@
   </div>
 
   <script>
+    // Parse URL parameters for customization
+    const params = new URLSearchParams(window.location.search);
+    const accentColor = params.get('color') || '#dc2626';
+    const accentLight = params.get('colorLight') || '#ef4444';
+    const goldColor = params.get('gold') || '#ffc107';
+    const bgDark = params.get('bg') || '#0f172a';
+    const bgPanel = params.get('bgPanel') || '#1e293b';
+    const logoUrl = params.get('logo');
+    const title = params.get('title');
+    const subtitle = params.get('subtitle');
+    
+    // Apply CSS variables
+    document.documentElement.style.setProperty('--accent-color', accentColor);
+    document.documentElement.style.setProperty('--accent-light', accentLight);
+    document.documentElement.style.setProperty('--gold-color', goldColor);
+    document.documentElement.style.setProperty('--bg-dark', bgDark);
+    document.documentElement.style.setProperty('--bg-panel', bgPanel);
+    
+    // Apply custom logo if provided
+    if (logoUrl) {
+      const logoImg = document.getElementById('logo');
+      logoImg.src = logoUrl;
+      logoImg.style.display = 'block';
+    }
+    
+    // Apply custom title/subtitle if provided
+    if (title) {
+      document.getElementById('panel-title').textContent = title;
+    }
+    if (subtitle) {
+      document.getElementById('panel-sub').textContent = subtitle;
+    }
+
     const vrmInput = document.getElementById('vrm');
     const statusEl = document.getElementById('status');
     const specGrid = document.getElementById('spec-grid');
