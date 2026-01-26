@@ -914,8 +914,8 @@ body.not-authenticated {
 .uk-plate {
   display: flex;
   align-items: center;
-  background: #FFCC00;
-  border: 3px solid #000;
+  background: var(--plate-bg, #FFCC00);
+  border: 3px solid var(--plate-border, #000);
   border-radius: 4px;
   padding: 0;
   height: 80px;
@@ -926,8 +926,8 @@ body.not-authenticated {
 }
 
 .plate-flag {
-  background: #003399;
-  color: #FFCC00;
+  background: var(--plate-flag-bg, #003399);
+  color: var(--plate-flag-text, #FFCC00);
   padding: 0 12px;
   height: 100%;
   display: flex;
@@ -947,8 +947,8 @@ body.not-authenticated {
 .plate-input {
   flex: 1;
   border: none;
-  background: #FFCC00;
-  color: #000;
+  background: var(--plate-bg, #FFCC00);
+  color: var(--plate-text, #000);
   font-family: 'Arial Black', sans-serif;
   font-size: 28px;
   font-weight: bold;
@@ -974,7 +974,7 @@ body.not-authenticated {
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 8px;
-  background: linear-gradient(135deg, #00bcd4 0%, #0097a7 100%);
+  background: linear-gradient(135deg, var(--vrm-btn-start, #00bcd4) 0%, var(--vrm-btn-end, #0097a7) 100%);
   color: #fff;
   font-weight: 700;
   cursor: pointer;

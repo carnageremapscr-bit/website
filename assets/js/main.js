@@ -8629,6 +8629,7 @@ I would like to request a quote for tuning this vehicle.`,
   // Debounce mechanism for admin user loading
   let adminUsersLoadTimeout = null;
   let isLoadingAdminUsers = false;
+  let adminVrmInitialized = false;
   
   function initAdmin() {
     const adminTabBtns = document.querySelectorAll('.admin-tab-btn');
@@ -8667,6 +8668,10 @@ I would like to request a quote for tuning this vehicle.`,
         }
         if (tabName === 'files') loadAdminFiles();
         if (tabName === 'notifications') loadNotificationSettings();
+        if (tabName === 'vrm' && !adminVrmInitialized) {
+          initAdminVrmPanel();
+          adminVrmInitialized = true;
+        }
         if (tabName === 'credit') {
           if (!isLoadingAdminUsers) loadAdminUsers(); // Load users for credit management
         }
@@ -8684,6 +8689,143 @@ I would like to request a quote for tuning this vehicle.`,
       loadAdminOverview();
       loadAdminNotifications(); // Load recent activity on initial load
     }, 0);
+  }
+
+  // Admin VRM panel
+  function initAdminVrmPanel() {
+    const vrmInput = document.getElementById('admin-vrm-input');
+    const vrmBtn = document.getElementById('admin-vrm-btn');
+    const vrmStatus = document.getElementById('admin-vrm-status');
+    const vrmResult = document.getElementById('admin-vrm-result');
+    const preview = document.getElementById('admin-vrm-preview');
+    const plateBg = document.getElementById('admin-plate-bg');
+    const plateText = document.getElementById('admin-plate-text');
+    const flagBg = document.getElementById('admin-flag-bg');
+    const btnStart = document.getElementById('admin-btn-start');
+    const btnEnd = document.getElementById('admin-btn-end');
+    const applyThemeBtn = document.getElementById('admin-apply-vrm-theme');
+    const resetThemeBtn = document.getElementById('admin-reset-vrm-theme');
+    const embedOutput = document.getElementById('admin-vrm-embed-output');
+    const copyEmbedBtn = document.getElementById('admin-vrm-copy-btn');
+
+    const defaultTheme = {
+      plateBg: '#ffcc00',
+      plateText: '#000000',
+      flagBg: '#003399',
+      btnStart: '#00bcd4',
+      btnEnd: '#0097a7'
+    };
+
+    const applyTheme = () => {
+      if (!preview) return;
+      preview.style.setProperty('--plate-bg', plateBg?.value || defaultTheme.plateBg);
+      preview.style.setProperty('--plate-text', plateText?.value || defaultTheme.plateText);
+      preview.style.setProperty('--plate-flag-bg', flagBg?.value || defaultTheme.flagBg);
+      preview.style.setProperty('--plate-flag-text', plateBg?.value || defaultTheme.plateBg);
+      preview.style.setProperty('--vrm-btn-start', btnStart?.value || defaultTheme.btnStart);
+      preview.style.setProperty('--vrm-btn-end', btnEnd?.value || defaultTheme.btnEnd);
+    };
+
+    const resetTheme = () => {
+      if (plateBg) plateBg.value = defaultTheme.plateBg;
+      if (plateText) plateText.value = defaultTheme.plateText;
+      if (flagBg) flagBg.value = defaultTheme.flagBg;
+      if (btnStart) btnStart.value = defaultTheme.btnStart;
+      if (btnEnd) btnEnd.value = defaultTheme.btnEnd;
+      applyTheme();
+    };
+
+    const setStatus = (msg, tone = 'info') => {
+      if (!vrmStatus) return;
+      vrmStatus.textContent = msg;
+      vrmStatus.className = `vrm-status vrm-${tone}`;
+    };
+
+    const renderResult = (vehicle) => {
+      if (!vrmResult) return;
+      if (!vehicle) {
+        vrmResult.innerHTML = '<span class="muted">No data returned.</span>';
+        return;
+      }
+      const lines = [
+        vehicle.make && vehicle.model ? `${vehicle.make} ${vehicle.model}` : null,
+        vehicle.year ? `Year: ${vehicle.year}` : null,
+        vehicle.vin ? `VIN: ${vehicle.vin}` : null,
+        vehicle.engineLabel || vehicle.engine ? `Engine: ${vehicle.engineLabel || vehicle.engine}` : null,
+        vehicle.powerBhp ? `Power: ${vehicle.powerBhp} bhp` : null,
+        vehicle.torqueNm ? `Torque: ${vehicle.torqueNm} Nm` : null,
+        vehicle.co2Emissions ? `CO₂: ${vehicle.co2Emissions} g/km` : null
+      ].filter(Boolean);
+
+      vrmResult.innerHTML = `
+        <div style="font-weight:700;margin-bottom:0.35rem;">${vehicle.registration || 'Vehicle found'}</div>
+        <div style="display:flex;flex-direction:column;gap:0.25rem;color:#e2e8f0;">
+          ${lines.map(line => `<div>• ${line}</div>`).join('') || '<span class="muted">No fields available.</span>'}
+        </div>
+      `;
+    };
+
+    const performLookup = async () => {
+      if (!vrmInput) return;
+      const raw = vrmInput.value.trim();
+      if (!raw) {
+        setStatus('Enter a registration.', 'error');
+        return;
+      }
+      const vrm = raw.replace(/\s+/g, '').toUpperCase();
+      vrmInput.value = vrm;
+      setStatus('Looking up vehicle...', 'loading');
+      if (vrmBtn) {
+        vrmBtn.disabled = true;
+        vrmBtn.textContent = 'Checking...';
+      }
+      try {
+        const resp = await fetch(`${API_URL}/api/dvla-lookup?vrm=${encodeURIComponent(vrm)}`);
+        const data = await resp.json();
+        if (!resp.ok || !data.success) throw new Error(data.error || 'Lookup failed');
+        renderResult(data.vehicle || {});
+        const summary = [data.vehicle?.make, data.vehicle?.model, data.vehicle?.year].filter(Boolean).join(' ');
+        setStatus(`Found ${summary || 'vehicle'}.`, 'success');
+      } catch (err) {
+        console.error('Admin VRM lookup error:', err);
+        renderResult(null);
+        setStatus(err.message || 'Lookup failed', 'error');
+      } finally {
+        if (vrmBtn) {
+          vrmBtn.disabled = false;
+          vrmBtn.textContent = 'Find';
+        }
+      }
+    };
+
+    if (applyThemeBtn) applyThemeBtn.addEventListener('click', applyTheme);
+    if (resetThemeBtn) resetThemeBtn.addEventListener('click', resetTheme);
+    [plateBg, plateText, flagBg, btnStart, btnEnd].forEach(ctrl => {
+      if (ctrl) ctrl.addEventListener('input', applyTheme);
+    });
+    applyTheme();
+
+    if (vrmBtn) vrmBtn.addEventListener('click', performLookup);
+    if (vrmInput) {
+      vrmInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          performLookup();
+        }
+      });
+    }
+
+    const buildEmbed = () => `<iframe src="https://web-production-df12d.up.railway.app/test-vrm.html" width="100%" height="520" style="border:none;border-radius:12px;max-width:100%;" title="Carnage VRM Lookup" loading="lazy"></iframe>`;
+    if (embedOutput) embedOutput.value = buildEmbed();
+    if (copyEmbedBtn) {
+      copyEmbedBtn.addEventListener('click', () => {
+        if (!embedOutput) return;
+        embedOutput.select();
+        document.execCommand('copy');
+        copyEmbedBtn.textContent = '✓ Copied!';
+        setTimeout(() => { copyEmbedBtn.textContent = '📋 Copy iframe'; }, 1800);
+      });
+    }
   }
   
   // Load admin subscriptions
