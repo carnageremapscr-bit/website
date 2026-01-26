@@ -1890,22 +1890,26 @@ app.get('/api/dvla-lookup', async (req, res) => {
     }
 
     console.log(`📍 DVLA Lookup: ${vrm}`);
+    console.log(`📌 Using API: ${DVLA_API_BASE_URL}/vehicle-enquiry/v1/vehicles`);
 
-    const response = await fetch(`${DVLA_API_BASE_URL}/vehicles/vrm/${vrm}`, {
-      method: 'GET',
+    // DVLA requires POST with registrationNumber in body
+    const response = await fetch(`${DVLA_API_BASE_URL}/vehicle-enquiry/v1/vehicles`, {
+      method: 'POST',
       headers: {
         'x-api-key': DVLA_API_KEY,
-        'Accept': 'application/json',
         'Content-Type': 'application/json'
-      }
+      },
+      body: JSON.stringify({
+        registrationNumber: vrm
+      })
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-      console.error(`❌ DVLA error (${response.status}):`, data?.error || data?.message);
+      console.error(`❌ DVLA error (${response.status}):`, data?.error || data?.message || JSON.stringify(data));
       return res.status(response.status).json({
-        error: data.error || data.message || 'DVLA lookup failed',
+        error: data.error || data.message || data.errors?.[0]?.title || 'DVLA lookup failed',
         dvlaStatus: response.status,
         dvlaResponse: data
       });
