@@ -8744,11 +8744,9 @@ I would like to request a quote for tuning this vehicle.`,
     const renderResult = (vehicle) => {
       if (!vrmResult) return;
       if (!vehicle) {
-        vrmResult.innerHTML = '<span class="muted">No data returned.</span>';
+        vrmResult.innerHTML = '<div style="padding:1rem;text-align:center;color:#94a3b8;">No data returned.</div>';
         return;
       }
-
-      const fmt = (label, value) => value ? `<div style="display:flex;justify-content:space-between;gap:1rem;"><span class="muted">${label}</span><span style="font-weight:600;color:#e2e8f0;">${value}</span></div>` : '';
 
       const baseHp = Number(vehicle.powerBhp) || null;
       const baseTq = Number(vehicle.torqueNm) || null;
@@ -8763,57 +8761,65 @@ I would like to request a quote for tuning this vehicle.`,
         const hpGain = Math.round(baseHp * hp);
         const tqGain = Math.round(baseTq * tq);
         return `
-          <div style="background:linear-gradient(135deg, rgba(59,130,246,0.12), rgba(59,130,246,0.06));border:1px solid rgba(59,130,246,0.35);border-radius:12px;padding:0.75rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem;">
-              <span style="font-weight:700;color:#93c5fd;">${label}</span>
-              <span style="font-size:0.9rem;color:#cbd5e1;">${isTurbo ? 'Turbo' : 'NA'} estimate</span>
+          <div style="background:linear-gradient(135deg, rgba(59,130,246,0.15), rgba(59,130,246,0.08));border:2px solid rgba(59,130,246,0.3);border-radius:14px;padding:1rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+              <span style="font-weight:800;font-size:1.1rem;color:#93c5fd;">${label}</span>
+              <span style="font-size:0.8rem;color:#64748b;background:rgba(59,130,246,0.2);padding:0.25rem 0.75rem;border-radius:6px;">${isTurbo ? 'Turbo' : 'NA'}</span>
             </div>
-            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.5rem;font-size:0.95rem;color:#e2e8f0;">
-              <div style="background:rgba(15,23,42,0.6);border-radius:10px;padding:0.6rem;border:1px solid rgba(59,130,246,0.25);">
-                <div style="color:#9ca3af;font-size:0.8rem;">Power</div>
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span>${baseHp} → <strong>${tunedHp} bhp</strong></span>
-                  <span style="color:#22c55e;font-weight:700;">+${hpGain}</span>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.75rem;">
+              <div style="background:rgba(15,23,42,0.7);border-radius:12px;padding:0.75rem;border:1px solid rgba(59,130,246,0.2);">
+                <div style="color:#94a3b8;font-size:0.75rem;font-weight:600;margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.5px;">Power</div>
+                <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:0.5rem;">
+                  <div style="color:#e2e8f0;font-size:0.9rem;"><span style="color:#9ca3af;">${baseHp}</span> → <span style="font-weight:700;font-size:1rem;">${tunedHp}</span></div>
+                  <span style="color:#22c55e;font-weight:800;font-size:1rem;">+${hpGain}</span>
                 </div>
+                <div style="color:#9ca3af;font-size:0.75rem;margin-top:0.25rem;">bhp</div>
               </div>
-              <div style="background:rgba(15,23,42,0.6);border-radius:10px;padding:0.6rem;border:1px solid rgba(34,197,94,0.25);">
-                <div style="color:#9ca3af;font-size:0.8rem;">Torque</div>
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span>${baseTq} → <strong>${tunedTq} Nm</strong></span>
-                  <span style="color:#22c55e;font-weight:700;">+${tqGain}</span>
+              <div style="background:rgba(15,23,42,0.7);border-radius:12px;padding:0.75rem;border:1px solid rgba(16,185,129,0.2);">
+                <div style="color:#94a3b8;font-size:0.75rem;font-weight:600;margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.5px;">Torque</div>
+                <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:0.5rem;">
+                  <div style="color:#e2e8f0;font-size:0.9rem;"><span style="color:#9ca3af;">${baseTq}</span> → <span style="font-weight:700;font-size:1rem;">${tunedTq}</span></div>
+                  <span style="color:#22c55e;font-weight:800;font-size:1rem;">+${tqGain}</span>
                 </div>
+                <div style="color:#9ca3af;font-size:0.75rem;margin-top:0.25rem;">Nm</div>
               </div>
             </div>
           </div>`;
-      }).join('') : '<div class="muted">Power/torque not available for gain estimates.</div>';
+      }).join('') : '<div style="padding:1rem;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);border-radius:12px;color:#94a3b8;text-align:center;font-size:0.9rem;">Power/torque data not available. Try enriched lookup via CheckCar.</div>';
 
-      const specGrid = `
-        ${fmt('Make/Model', [vehicle.make, vehicle.model].filter(Boolean).join(' ') || '—')}
-        ${fmt('Year', vehicle.year || '—')}
-        ${fmt('Fuel', vehicle.fuelType || '—')}
-        ${fmt('Engine', vehicle.engineLabel || vehicle.engine || '—')}
-        ${fmt('Capacity', vehicle.engineCapacity || '—')}
-        ${fmt('VIN', vehicle.vin || '—')}
-        ${fmt('Engine No.', vehicle.engineNumber || '—')}
-        ${fmt('CO₂', vehicle.co2Emissions ? `${vehicle.co2Emissions} g/km` : '—')}
-        ${fmt('Drive', vehicle.driveType || '—')}
-        ${fmt('Transmission', vehicle.transmission || vehicle.transmissionType || '—')}
-        ${fmt('Max Speed', vehicle.maxSpeed || vehicle.maxSpeedMph || vehicle.maxSpeedKph || '—')}
-      `;
+      const specData = [
+        { label: 'Make/Model', val: [vehicle.make, vehicle.model].filter(Boolean).join(' ') },
+        { label: 'Year', val: vehicle.year },
+        { label: 'Fuel', val: vehicle.fuelType },
+        { label: 'Engine', val: vehicle.engineLabel || vehicle.engine },
+        { label: 'Capacity', val: vehicle.engineCapacity },
+        { label: 'VIN', val: vehicle.vin },
+        { label: 'Engine No.', val: vehicle.engineNumber },
+        { label: 'Drive', val: vehicle.driveType },
+        { label: 'Transmission', val: vehicle.transmission || vehicle.transmissionType },
+        { label: 'Max Speed', val: vehicle.maxSpeed || vehicle.maxSpeedMph || vehicle.maxSpeedKph },
+      ].filter(({ val }) => val);
+
+      const specGrid = specData.map(({ label, val }) => `
+        <div style="display:grid;grid-template-columns:140px 1fr;gap:1rem;padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+          <span style="color:#64748b;font-size:0.9rem;font-weight:600;">${label}</span>
+          <span style="color:#e2e8f0;font-weight:600;font-size:0.95rem;">${val}</span>
+        </div>`).join('');
 
       vrmResult.innerHTML = `
-        <div style="font-weight:800;margin-bottom:0.25rem;color:#e5e7eb;">${vehicle.registration || 'Vehicle found'}</div>
-        <div style="display:grid;gap:1rem;">
-          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:0.85rem;">
-            <div style="color:#9ca3af;font-weight:600;margin-bottom:0.5rem;">Identification</div>
-            <div style="display:flex;flex-direction:column;gap:0.35rem;">${specGrid}</div>
+        <div style="display:grid;gap:1.25rem;">
+          <div style="background:linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1rem;backdrop-filter:blur(10px);">
+            <div style="color:#cbd5e1;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.75rem;">📋 Identification</div>
+            <div style="font-size:0.9rem;">${specGrid}</div>
           </div>
-          <div style="background:rgba(15,23,42,0.65);border:1px solid rgba(59,130,246,0.2);border-radius:12px;padding:0.85rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem;">
-              <span style="color:#93c5fd;font-weight:700;">Estimated Gains</span>
-              <span style="color:#94a3b8;font-size:0.85rem;">Quick calc (± logical)</span>
+          <div style="background:linear-gradient(135deg, rgba(59,130,246,0.08), rgba(59,130,246,0.04));border:1px solid rgba(59,130,246,0.2);border-radius:14px;padding:1rem;backdrop-filter:blur(10px);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+              <div>
+                <div style="color:#93c5fd;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">🚀 Estimated Performance Gains</div>
+                <div style="color:#64748b;font-size:0.8rem;margin-top:0.25rem;">Stock → Tuned | All figures ±</div>
+              </div>
             </div>
-            <div style="display:grid;gap:0.5rem;">${perfCards}</div>
+            <div style="display:grid;gap:0.75rem;">${perfCards}</div>
           </div>
         </div>
       `;
@@ -8873,9 +8879,10 @@ I would like to request a quote for tuning this vehicle.`,
         }
 
         renderResult(vehicle);
-        const summary = [vehicle?.make, vehicle?.model, vehicle?.year].filter(Boolean).join(' ');
-        const fallbackNote = usedFallback ? ' (with CheckCar enrichment)' : '';
-        setStatus(`Found ${summary || 'vehicle'}${fallbackNote}.`, 'success');
+        const summary = [vehicle?.make, vehicle?.model].filter(Boolean).join(' ');
+        const year = vehicle?.year ? ` (${vehicle.year})` : '';
+        const fallbackNote = usedFallback ? ' ✓' : '';
+        setStatus(`Found ${summary}${year}${fallbackNote}`, 'success');
       } catch (err) {
         console.error('Admin VRM lookup error:', err);
         renderResult(null);
