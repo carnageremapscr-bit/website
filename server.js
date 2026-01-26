@@ -2497,6 +2497,95 @@ app.post('/api/wallet-subscription', async (req, res) => {
     if (!supabase) {
       return res.status(500).json({ error: 'Database not configured' });
     }
+
+    const { userId, amount, currency = 'gbp' } = req.body;
+
+    if (!userId || !amount) {
+      return res.status(400).json({ error: 'User ID and amount required' });
+    }
+
+    const { data: wallet } = await supabase
+      .from('user_wallets')
+      .select('balance')
+      .eq('user_id', userId)
+      .single();
+
+    if (!wallet || wallet.balance < amount) {
+      return res.status(400).json({ error: 'Insufficient wallet balance' });
+    }
+
+    const { data: subscription } = await supabase
+      .from('subscriptions')
+      .insert({
+        user_id: userId,
+        subscription_type: 'embed-widget',
+        start_date: new Date(),
+        next_renewal: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+        status: 'active',
+      })
+      .select();
+
+    await supabase
+      .from('user_wallets')
+      .update({ balance: wallet.balance - amount })
+      .eq('user_id', userId);
+
+    res.json({ success: true, message: 'Subscription activated' });
+
+  } catch (error) {
+    console.error('Wallet subscription error:', error);
+    res.status(500).json({ error: error.message || 'Failed to create wallet subscription' });
+  }
+});
+
+// Verify payment session
+app.post('/api/verify-payment', async (req, res) => {
+  try {
+    const { sessionId } = req.body;
+
+    if (!sessionId) {
+      return res.status(400).json({ error: 'Session ID required' });
+    }
+
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+    res.json({
+      status: session.payment_status,
+      amount: session.amount_total / 100,
+      metadata: session.metadata,
+    });
+  } catch (error) {
+    console.error('Payment verification error:', error);
+    res.status(500).json({ error: error.message || 'Failed to verify payment' });
+  }
+});
+
+// Global error handler - catch all unhandled errors
+app.use((err, req, res, next) => {
+  console.error('🔥 Unhandled error:', err);
+  console.error('   Request:', req.method, req.url);
+  console.error('   Stack:', err.stack);
+  res.status(500).json({ error: 'Internal server error', message: err.message });
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`\n🚀 Carnage Remaps API Server running on http://localhost:${PORT}`);
+  console.log(`📝 API Endpoints:`);
+  console.log(`   - POST http://localhost:${PORT}/api/create-checkout-session`);
+  console.log(`   - POST http://localhost:${PORT}/api/create-subscription-session`);
+  console.log(`   - POST http://localhost:${PORT}/api/webhook`);
+  console.log(`   - POST http://localhost:${PORT}/api/verify-payment`);
+  console.log(`\n⚠️  Don't forget to set your Stripe keys in .env file!\n`);
+});
+});
+
+// Create subscription via wallet payment (manual renewal)
+app.post('/api/wallet-subscription', async (req, res) => {
+  try {
+    if (!supabase) {
+      return res.status(500).json({ error: 'Database not configured' });
+    }
     
     const { userId, email, userName, type, amount, periodStart, periodEnd } = req.body;
     
