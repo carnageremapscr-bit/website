@@ -8834,12 +8834,48 @@ I would like to request a quote for tuning this vehicle.`,
         vrmBtn.textContent = 'Checking...';
       }
       try {
-        const resp = await fetch(`${API_URL}/api/dvla-lookup?vrm=${encodeURIComponent(vrm)}`);
-        const data = await resp.json();
-        if (!resp.ok || !data.success) throw new Error(data.error || 'Lookup failed');
-        renderResult(data.vehicle || {});
-        const summary = [data.vehicle?.make, data.vehicle?.model, data.vehicle?.year].filter(Boolean).join(' ');
-        setStatus(`Found ${summary || 'vehicle'}.`, 'success');
+        const fetchJson = async (url) => {
+          const resp = await fetch(url);
+          let data = {};
+          try { data = await resp.json(); } catch (_) { data = {}; }
+          return { resp, data };
+        };
+
+        let vehicle = null;
+        let usedFallback = false;
+        let dvlaError = '';
+
+        // Primary: DVLA
+        try {
+          const { resp, data } = await fetchJson(`${API_URL}/api/dvla-lookup?vrm=${encodeURIComponent(vrm)}`);
+          if (resp.ok && data.success && data.vehicle) {
+            vehicle = data.vehicle;
+          } else {
+            dvlaError = data.error || 'DVLA lookup failed';
+          }
+        } catch (err) {
+          dvlaError = err.message || 'DVLA lookup failed';
+        }
+
+        // Fallback / enrich: CheckCar normalized payload
+        try {
+          const { resp, data } = await fetchJson(`${API_URL}/api/vrm-lookup?vrm=${encodeURIComponent(vrm)}`);
+          if (resp.ok && data.success && data.vehicle) {
+            usedFallback = true;
+            vehicle = { ...(data.vehicle || {}), ...(vehicle || {}) }; // DVLA overrides when present
+          }
+        } catch (_) {
+          // ignore
+        }
+
+        if (!vehicle) {
+          throw new Error(dvlaError || 'Lookup failed');
+        }
+
+        renderResult(vehicle);
+        const summary = [vehicle?.make, vehicle?.model, vehicle?.year].filter(Boolean).join(' ');
+        const fallbackNote = usedFallback ? ' (with CheckCar enrichment)' : '';
+        setStatus(`Found ${summary || 'vehicle'}${fallbackNote}.`, 'success');
       } catch (err) {
         console.error('Admin VRM lookup error:', err);
         renderResult(null);
