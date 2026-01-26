@@ -232,14 +232,14 @@
 
       const stages = isTurbo
         ? [
-            { name: 'Stage 1', hp: 0.20, tq: 0.25, req: 'Remap Only', cls: '' },
-            { name: 'Stage 2', hp: 0.30, tq: 0.35, req: 'Downpipe + Remap', cls: 'orange' },
-            { name: 'Stage 3', hp: 0.45, tq: 0.55, req: 'Turbo Upgrade + Fueling', cls: 'red' },
+            { name: 'Stage 1', hp: 0.23, tq: 0.28, req: 'Remap Only', cls: '' },
+            { name: 'Stage 2', hp: 0.34, tq: 0.40, req: 'Downpipe + Remap', cls: 'orange' },
+            { name: 'Stage 3', hp: 0.48, tq: 0.60, req: 'Turbo Upgrade + Fueling', cls: 'red' },
           ]
         : [
-            { name: 'Stage 1', hp: 0.12, tq: 0.15, req: 'Remap Only', cls: '' },
-            { name: 'Stage 2', hp: 0.18, tq: 0.22, req: 'Exhaust + Intake + Remap', cls: 'orange' },
-            { name: 'Stage 3', hp: 0.25, tq: 0.28, req: 'Cams + Full Exhaust + Remap', cls: 'red' },
+            { name: 'Stage 1', hp: 0.15, tq: 0.18, req: 'Remap Only', cls: '' },
+            { name: 'Stage 2', hp: 0.22, tq: 0.26, req: 'Exhaust + Intake + Remap', cls: 'orange' },
+            { name: 'Stage 3', hp: 0.29, tq: 0.33, req: 'Cams + Full Exhaust + Remap', cls: 'red' },
           ];
 
       perfGrid.innerHTML = stages.map((s, idx) => {
