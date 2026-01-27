@@ -697,7 +697,7 @@
         const iframeId = new URLSearchParams(window.location.search).get('iframeId');
         if (iframeId) {
           try {
-            const statusResp = await fetch(`/api/iframes/${iframeId}/status`);
+            const statusResp = await fetch(`/api/iframes/${iframeId}/status`, { cache: 'no-store' });
             const statusData = statusResp.ok ? await statusResp.json() : null;
             const locked = statusData?.iframe?.status === 'locked';
             if (locked) {
