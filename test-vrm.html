@@ -14,10 +14,14 @@
       --bg-panel: #1e293b;
       --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
     }
+    html {
+      background: #0f172a !important;
+      color: #e2e8f0 !important;
+    }
     body {
-      font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
-      background: var(--bg-gradient);
-      color: #e2e8f0;
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif !important;
+      background: var(--bg-gradient) !important;
+      color: #e2e8f0 !important;
       min-height: 100vh;
       padding: 32px 18px 48px;
       display: flex;
@@ -42,8 +46,8 @@
       font-size: 1rem;
     }
     .panel {
-      background: linear-gradient(145deg, rgba(14,23,42,0.9), rgba(13,19,33,0.95));
-      border: 1px solid rgba(148, 163, 184, 0.18);
+      background: linear-gradient(145deg, rgba(14,23,42,0.9), rgba(13,19,33,0.95)) !important;
+      border: 1px solid rgba(148, 163, 184, 0.18) !important;
       border-radius: 16px;
       padding: 20px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.35);
@@ -116,7 +120,7 @@
       gap: 10px;
       margin: 10px 0;
       flex-wrap: wrap;
-      background: linear-gradient(90deg, #84cc16 0%, #eab308 25%, #f97316 50%, #ef4444 75%, #dc2626 100%);
+      background: linear-gradient(90deg, #84cc16 0%, #eab308 25%, #f97316 50%, #ef4444 75%, #dc2626 100%) !important;
       border-radius: 10px;
       padding: 1rem;
       text-align: center;
@@ -151,9 +155,9 @@
     }
     .contact-btn:hover { opacity: 0.9; }
     .contact-btn:active { transform: translateY(0); }
-    .contact-btn.wa { background: #25D366; }
-    .contact-btn.email { background: #EA4335; }
-    .contact-btn.sms { background: #0088cc; }
+    .contact-btn.wa { background: #25D366 !important; }
+    .contact-btn.email { background: #EA4335 !important; }
+    .contact-btn.sms { background: #0088cc !important; }
     .status {
       margin-top: 14px;
       padding: 10px 12px;
