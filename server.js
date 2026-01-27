@@ -1162,9 +1162,9 @@ app.get('/api/check-embed-subscription', async (req, res) => {
           return res.json({ hasSubscription: false });
         }
 
-        const validTypes = ['embed', 'embed-widget', 'embed_widget'];
+        const validTypes = ['embed', 'embed-widget', 'embed_widget', 'premium', 'all-access', 'premium-access'];
         const hasEmbedSub = subscriptions && subscriptions.some(sub => 
-          validTypes.includes(sub.type) || (sub.type && sub.type.includes('embed'))
+          validTypes.includes(sub.type) || (sub.type && sub.type.includes('embed')) || (sub.type && sub.type.includes('premium'))
         );
         if (hasEmbedSub) return res.json({ hasSubscription: true });
       }
@@ -1190,8 +1190,8 @@ app.get('/api/check-embed-subscription', async (req, res) => {
         .eq('email', emailToCheck)
         .eq('status', 'active');
       if (!emailErr && subsByEmail) {
-        const validTypes = ['embed', 'embed-widget', 'embed_widget'];
-        const hasEmbedSub = subsByEmail.some(sub => validTypes.includes(sub.type) || (sub.type && sub.type.includes('embed')));
+        const validTypes = ['embed', 'embed-widget', 'embed_widget', 'premium', 'all-access', 'premium-access'];
+        const hasEmbedSub = subsByEmail.some(sub => validTypes.includes(sub.type) || (sub.type && sub.type.includes('embed')) || (sub.type && sub.type.includes('premium')));
         console.log(`✅ Embed subscription check for ${emailToCheck}: ${hasEmbedSub}`);
         return res.json({ hasSubscription: hasEmbedSub });
       }
@@ -1211,6 +1211,8 @@ app.get('/api/check-vrm-subscription', async (req, res) => {
     const emailParam = req.query.email || req.headers['x-user-email'];
     const authHeader = req.headers.authorization;
     const token = authHeader ? authHeader.replace('Bearer ', '') : null;
+
+    console.log('🔍 VRM subscription check - iframeId:', iframeId, 'emailParam:', emailParam);
 
     if (!supabase) {
       console.log('Supabase not configured - allowing VRM access');
@@ -1237,11 +1239,14 @@ app.get('/api/check-vrm-subscription', async (req, res) => {
           return res.json({ hasSubscription: false });
         }
 
-        const validTypes = ['vrm', 'vrm-lookup', 'vrm_lookup'];
+        const validTypes = ['vrm', 'vrm-lookup', 'vrm_lookup', 'premium', 'all-access', 'premium-access'];
         const hasVrmSub = subscriptions && subscriptions.some(sub => 
-          validTypes.includes(sub.type) || (sub.type && sub.type.includes('vrm'))
+          validTypes.includes(sub.type) || (sub.type && sub.type.includes('vrm')) || (sub.type && sub.type.includes('premium'))
         );
-        if (hasVrmSub) return res.json({ hasSubscription: true });
+        if (hasVrmSub) {
+          console.log('✅ Found VRM subscription via token');
+          return res.json({ hasSubscription: true });
+        }
       }
     }
 
@@ -1255,23 +1260,35 @@ app.get('/api/check-vrm-subscription', async (req, res) => {
         .single();
       if (!iframeErr && iframe) {
         emailToCheck = iframe.email;
+        console.log('📧 Found email from iframe:', emailToCheck);
+      } else {
+        console.log('⚠️ Could not find iframe or email:', iframeErr?.message);
       }
     }
 
     if (emailToCheck) {
+      console.log('🔍 Checking subscriptions for email:', emailToCheck);
       const { data: subsByEmail, error: emailErr } = await supabase
         .from('subscriptions')
         .select('*')
         .eq('email', emailToCheck)
         .eq('status', 'active');
+      
+      console.log('📊 Found subscriptions:', subsByEmail?.length || 0, subsByEmail?.map(s => s.type));
+      
       if (!emailErr && subsByEmail) {
-        const validTypes = ['vrm', 'vrm-lookup', 'vrm_lookup'];
-        const hasVrmSub = subsByEmail.some(sub => validTypes.includes(sub.type) || (sub.type && sub.type.includes('vrm')));
+        const validTypes = ['vrm', 'vrm-lookup', 'vrm_lookup', 'premium', 'all-access', 'premium-access'];
+        const hasVrmSub = subsByEmail.some(sub => validTypes.includes(sub.type) || (sub.type && sub.type.includes('vrm')) || (sub.type && sub.type.includes('premium')));
         console.log(`✅ VRM subscription check for ${emailToCheck}: ${hasVrmSub}`);
         return res.json({ hasSubscription: hasVrmSub });
+      } else {
+        console.log('❌ Error fetching subscriptions:', emailErr?.message);
       }
+    } else {
+      console.log('❌ No email to check');
     }
 
+    console.log('❌ No subscription found - returning false');
     return res.json({ hasSubscription: false });
   } catch (error) {
     console.error('VRM subscription check error:', error);
@@ -1335,10 +1352,11 @@ app.get('/api/admin/iframes', async (req, res) => {
         
         if (!subErr && subs && subs.length > 0) {
           const relevantTypes = iframe.type === 'vrm' 
-            ? ['vrm', 'vrm-lookup', 'vrm_lookup']
-            : ['embed', 'embed-widget', 'embed_widget'];
+            ? ['vrm', 'vrm-lookup', 'vrm_lookup', 'premium', 'all-access', 'premium-access']
+            : ['embed', 'embed-widget', 'embed_widget', 'premium', 'all-access', 'premium-access'];
           
           const activeSub = subs.find(s => relevantTypes.includes(s.type) || 
+            (s.type && s.type.includes('premium')) ||
             (s.type && (iframe.type === 'vrm' ? s.type.includes('vrm') : s.type.includes('embed'))));
           
           if (activeSub) {
