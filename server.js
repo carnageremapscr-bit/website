@@ -1170,27 +1170,29 @@ app.get('/api/check-embed-subscription', async (req, res) => {
       }
     }
 
-    // Fallback: iframe record or email-based check
-    if (iframeId) {
+    // Fallback: get email from iframe record, then do LIVE subscription check
+    let emailToCheck = emailParam;
+    if (iframeId && !emailToCheck) {
       const { data: iframe, error: iframeErr } = await supabase
         .from('iframes')
-        .select('has_active_subscription, subscription_type, subscription_expires, status')
+        .select('email')
         .eq('id', iframeId)
         .single();
       if (!iframeErr && iframe) {
-        return res.json({ hasSubscription: !!iframe.has_active_subscription });
+        emailToCheck = iframe.email;
       }
     }
 
-    if (emailParam) {
+    if (emailToCheck) {
       const { data: subsByEmail, error: emailErr } = await supabase
         .from('subscriptions')
         .select('*')
-        .eq('email', emailParam)
+        .eq('email', emailToCheck)
         .eq('status', 'active');
       if (!emailErr && subsByEmail) {
         const validTypes = ['embed', 'embed-widget', 'embed_widget'];
         const hasEmbedSub = subsByEmail.some(sub => validTypes.includes(sub.type) || (sub.type && sub.type.includes('embed')));
+        console.log(`✅ Embed subscription check for ${emailToCheck}: ${hasEmbedSub}`);
         return res.json({ hasSubscription: hasEmbedSub });
       }
     }
@@ -1243,27 +1245,29 @@ app.get('/api/check-vrm-subscription', async (req, res) => {
       }
     }
 
-    // Fallback: iframe record or email-based check
-    if (iframeId) {
+    // Fallback: get email from iframe record, then do LIVE subscription check
+    let emailToCheck = emailParam;
+    if (iframeId && !emailToCheck) {
       const { data: iframe, error: iframeErr } = await supabase
         .from('iframes')
-        .select('has_active_subscription, subscription_type, subscription_expires, status')
+        .select('email')
         .eq('id', iframeId)
         .single();
       if (!iframeErr && iframe) {
-        return res.json({ hasSubscription: !!iframe.has_active_subscription });
+        emailToCheck = iframe.email;
       }
     }
 
-    if (emailParam) {
+    if (emailToCheck) {
       const { data: subsByEmail, error: emailErr } = await supabase
         .from('subscriptions')
         .select('*')
-        .eq('email', emailParam)
+        .eq('email', emailToCheck)
         .eq('status', 'active');
       if (!emailErr && subsByEmail) {
         const validTypes = ['vrm', 'vrm-lookup', 'vrm_lookup'];
         const hasVrmSub = subsByEmail.some(sub => validTypes.includes(sub.type) || (sub.type && sub.type.includes('vrm')));
+        console.log(`✅ VRM subscription check for ${emailToCheck}: ${hasVrmSub}`);
         return res.json({ hasSubscription: hasVrmSub });
       }
     }
