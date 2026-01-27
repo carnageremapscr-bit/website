@@ -1340,7 +1340,34 @@ app.post('/api/admin/iframes/:id/toggle', express.json(), async (req, res) => {
   }
 });
 
-// Track iframe usage when loaded
+// Fetch iframe status/details (used by embeds to respect lock state)
+app.get('/api/iframes/:id/status', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!supabase) {
+      return res.status(500).json({ success: false, error: 'Database not configured' });
+    }
+
+    const { data, error } = await supabase
+      .from('iframes')
+      .select('id, status, type, has_active_subscription, subscription_type, subscription_expires')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      console.error('Error fetching iframe status:', error);
+      return res.status(404).json({ success: false, error: 'Not found' });
+    }
+
+    return res.json({ success: true, iframe: data });
+  } catch (err) {
+    console.error('Error in iframe status endpoint:', err);
+    return res.status(500).json({ success: false, error: 'Server error' });
+  }
+});
+
+// Track iframe usage when loaded (skips if locked)
 app.post('/api/iframes/:id/track', express.json(), async (req, res) => {
   try {
     const { id } = req.params;
@@ -1349,16 +1376,21 @@ app.post('/api/iframes/:id/track', express.json(), async (req, res) => {
       return res.json({ success: false });
     }
     
-    // Increment uses count
+    // Fetch current status/uses
     const { data: iframe, error: fetchError } = await supabase
       .from('iframes')
-      .select('uses')
+      .select('uses, status')
       .eq('id', id)
       .single();
     
     if (fetchError && fetchError.code !== 'PGRST116') {
       console.error('Error fetching iframe:', fetchError);
       return res.json({ success: false });
+    }
+
+    // If locked, do not count usage
+    if (!iframe || iframe.status === 'locked') {
+      return res.status(403).json({ success: false, status: 'locked' });
     }
     
     const currentUses = iframe?.uses || 0;

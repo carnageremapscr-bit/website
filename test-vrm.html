@@ -219,6 +219,16 @@
     </div>
   </div>
 
+  <!-- Iframe Locked Overlay -->
+  <div id="iframe-locked" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;z-index:10000;font-family:inherit">
+    <div style="background:#0f172a;border:1px solid #f97316;border-radius:12px;padding:40px;text-align:center;max-width:420px;color:#fff">
+      <div style="font-size:3rem;margin-bottom:1rem">⏸️</div>
+      <h2 style="margin-bottom:1rem;font-size:1.5rem">Widget Locked</h2>
+      <p style="color:#fcd34d;margin-bottom:1.25rem;line-height:1.6">This VRM widget has been locked by an admin.</p>
+      <p style="color:#94a3b8;font-size:0.9rem">Please contact the site owner to restore access.</p>
+    </div>
+  </div>
+
   <!-- VRM Disabled Overlay -->
   <div id="vrm-disabled" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;z-index:10000;font-family:inherit">
     <div style="background:#0f172a;border:1px solid #f97316;border-radius:12px;padding:40px;text-align:center;max-width:420px;color:#fff">
@@ -485,10 +495,29 @@
     vrmInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLookup(); });
 
     // Track iframe usage (get from parent or use default)
-    const iframeId = new URLSearchParams(window.location.search).get('iframeId');
-    if (iframeId) {
-      fetch(`/api/iframes/${iframeId}/track`, { method: 'POST' }).catch(() => {});
-    }
+    (async () => {
+      const iframeId = new URLSearchParams(window.location.search).get('iframeId');
+      if (iframeId) {
+        try {
+          const statusResp = await fetch(`/api/iframes/${iframeId}/status`);
+          const statusData = statusResp.ok ? await statusResp.json() : null;
+          const locked = statusData?.iframe?.status === 'locked';
+          if (locked) {
+            const overlay = document.getElementById('iframe-locked');
+            const shell = document.querySelector('.shell');
+            if (overlay && shell) {
+              overlay.style.display = 'flex';
+              shell.style.display = 'none';
+            }
+            return;
+          }
+        } catch (err) {
+          console.warn('Iframe status check failed', err);
+        }
+
+        fetch(`/api/iframes/${iframeId}/track`, { method: 'POST' }).catch(() => {});
+      }
+    })();
   </script>
 
   <!-- VRM Subscription Check Script -->
