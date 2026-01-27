@@ -1670,12 +1670,20 @@ app.post('/api/admin/iframes/unlock-all', express.json(), async (req, res) => {
     }
 
     const { email } = req.body || {};
-    let query = supabase.from('iframes').update({ status: 'active', updated_at: new Date().toISOString() });
+    
+    // Build the update query
+    let updateQuery = supabase.from('iframes').update({ 
+      status: 'active', 
+      updated_at: new Date().toISOString() 
+    });
+    
+    // If email provided, only unlock that user's iframes
     if (email) {
-      query = query.eq('email', email);
+      updateQuery = updateQuery.eq('email', email);
     }
-
-    const { data, error } = await query.select();
+    
+    const { data, error } = await updateQuery.select();
+    
     if (error) {
       console.error('Error unlocking iframes:', error);
       return res.status(500).json({ success: false, error: error.message });
@@ -1685,7 +1693,7 @@ app.post('/api/admin/iframes/unlock-all', express.json(), async (req, res) => {
     return res.json({ success: true, count: data?.length || 0, iframes: data });
   } catch (err) {
     console.error('Error in unlock-all endpoint:', err);
-    return res.status(500).json({ success: false, error: 'Server error' });
+    return res.status(500).json({ success: false, error: err.message || 'Server error' });
   }
 });
 
