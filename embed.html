@@ -676,7 +676,18 @@
         }
         
         const data = await response.json();
-        
+
+        // If iframe is locked, show locked overlay regardless of subscription
+        if (data.locked) {
+          const overlay = document.getElementById('iframe-locked');
+          const widget = document.getElementById('widget');
+          if (overlay && widget) {
+            overlay.style.display = 'flex';
+            widget.style.display = 'none';
+          }
+          return;
+        }
+
         // If no active subscription found, show overlay
         if (!data.hasSubscription) {
           const overlay = document.getElementById('subscription-check');

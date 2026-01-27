@@ -591,8 +591,19 @@
         
         const data = await response.json();
         
-        // If HAS subscription, bypass VRM enabled check and allow access
+        // If HAS subscription
         if (data.hasSubscription) {
+          if (data.locked) {
+            console.log('🔒 Iframe is locked by admin');
+            const overlay = document.getElementById('iframe-locked');
+            const shell = document.querySelector('.shell');
+            if (overlay && shell) {
+              overlay.style.display = 'flex';
+              shell.style.display = 'none';
+            }
+            return;
+          }
+
           console.log('✅ Active VRM subscription - allowing access');
           const overlay = document.getElementById('subscription-check');
           if (overlay) overlay.style.display = 'none';

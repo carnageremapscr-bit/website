@@ -1268,6 +1268,9 @@ app.get('/api/check-embed-subscription', async (req, res) => {
     }
 
     // Auto-track: Create or update iframe record when widget loads
+    let locked = false;
+    let trackedIframeId = null;
+
     if (emailParam && currentUrl !== 'unknown') {
       try {
         // Check if iframe record exists for this email + URL
@@ -1280,7 +1283,7 @@ app.get('/api/check-embed-subscription', async (req, res) => {
 
         if (!existingIframe) {
           console.log(`📝 Auto-creating embed iframe record for ${emailParam} at ${currentUrl}`);
-          await supabase
+          const { data: created } = await supabase
             .from('iframes')
             .insert({
               email: emailParam,
@@ -1288,13 +1291,19 @@ app.get('/api/check-embed-subscription', async (req, res) => {
               type: 'embed-widget',
               status: 'active',
               created_at: new Date().toISOString()
-            });
+            })
+            .select()
+            .single();
+          trackedIframeId = created?.id || null;
+          locked = created?.status === 'locked';
         } else {
           // Update last_accessed
           await supabase
             .from('iframes')
             .update({ last_accessed: new Date().toISOString() })
             .eq('id', existingIframe.id);
+          trackedIframeId = existingIframe.id;
+          locked = existingIframe.status === 'locked';
         }
       } catch (trackError) {
         console.error('Failed to track iframe:', trackError);
@@ -1308,7 +1317,7 @@ app.get('/api/check-embed-subscription', async (req, res) => {
       if (!error && user) {
         if (user.email === ADMIN_EMAIL) {
           console.log('✅ Admin user bypassing embed subscription check');
-          return res.json({ hasSubscription: true });
+          return res.json({ hasSubscription: true, locked, iframeId: trackedIframeId });
         }
 
         const { data: subscriptions, error: subError } = await supabase
@@ -1353,14 +1362,14 @@ app.get('/api/check-embed-subscription', async (req, res) => {
         const validTypes = ['embed', 'embed-widget', 'embed_widget', 'premium', 'all-access', 'premium-access'];
         const hasEmbedSub = subsByEmail.some(sub => validTypes.includes(sub.type) || (sub.type && sub.type.includes('embed')) || (sub.type && sub.type.includes('premium')));
         console.log(`✅ Embed subscription check for ${emailToCheck}: ${hasEmbedSub}`);
-        return res.json({ hasSubscription: hasEmbedSub });
+        return res.json({ hasSubscription: hasEmbedSub, locked, iframeId: trackedIframeId });
       }
     }
 
-    return res.json({ hasSubscription: false });
+    return res.json({ hasSubscription: false, locked, iframeId: trackedIframeId });
   } catch (error) {
     console.error('Embed subscription check error:', error);
-    res.json({ hasSubscription: false });
+    res.json({ hasSubscription: false, locked: false });
   }
 });
 
@@ -1377,10 +1386,12 @@ app.get('/api/check-vrm-subscription', async (req, res) => {
 
     if (!supabase) {
       console.log('Supabase not configured - allowing VRM access');
-      return res.json({ hasSubscription: true });
+      return res.json({ hasSubscription: true, locked: false });
     }
 
     // Auto-track: Create or update iframe record when widget loads
+    let locked = false;
+    let trackedIframeId = null;
     if (emailParam && currentUrl !== 'unknown') {
       try {
         // Check if iframe record exists for this email + URL
@@ -1393,7 +1404,7 @@ app.get('/api/check-vrm-subscription', async (req, res) => {
 
         if (!existingIframe) {
           console.log(`📝 Auto-creating VRM iframe record for ${emailParam} at ${currentUrl}`);
-          await supabase
+          const { data: created } = await supabase
             .from('iframes')
             .insert({
               email: emailParam,
@@ -1401,13 +1412,19 @@ app.get('/api/check-vrm-subscription', async (req, res) => {
               type: 'vrm-lookup',
               status: 'active',
               created_at: new Date().toISOString()
-            });
+            })
+            .select()
+            .single();
+          trackedIframeId = created?.id || null;
+          locked = created?.status === 'locked';
         } else {
           // Update last_accessed
           await supabase
             .from('iframes')
             .update({ last_accessed: new Date().toISOString() })
             .eq('id', existingIframe.id);
+          trackedIframeId = existingIframe.id;
+          locked = existingIframe.status === 'locked';
         }
       } catch (trackError) {
         console.error('Failed to track iframe:', trackError);
@@ -1421,7 +1438,7 @@ app.get('/api/check-vrm-subscription', async (req, res) => {
       if (!error && user) {
         if (user.email === ADMIN_EMAIL) {
           console.log('✅ Admin user bypassing VRM subscription check');
-          return res.json({ hasSubscription: true });
+          return res.json({ hasSubscription: true, locked, iframeId: trackedIframeId });
         }
 
         const { data: subscriptions, error: subError } = await supabase
@@ -1441,7 +1458,7 @@ app.get('/api/check-vrm-subscription', async (req, res) => {
         );
         if (hasVrmSub) {
           console.log('✅ Found VRM subscription via token');
-          return res.json({ hasSubscription: true });
+          return res.json({ hasSubscription: true, locked, iframeId: trackedIframeId });
         }
       }
     }
@@ -1476,7 +1493,7 @@ app.get('/api/check-vrm-subscription', async (req, res) => {
         const validTypes = ['vrm', 'vrm-lookup', 'vrm_lookup', 'premium', 'all-access', 'premium-access'];
         const hasVrmSub = subsByEmail.some(sub => validTypes.includes(sub.type) || (sub.type && sub.type.includes('vrm')) || (sub.type && sub.type.includes('premium')));
         console.log(`✅ VRM subscription check for ${emailToCheck}: ${hasVrmSub}`);
-        return res.json({ hasSubscription: hasVrmSub });
+        return res.json({ hasSubscription: hasVrmSub, locked, iframeId: trackedIframeId });
       } else {
         console.log('❌ Error fetching subscriptions:', emailErr?.message);
       }
@@ -1485,10 +1502,10 @@ app.get('/api/check-vrm-subscription', async (req, res) => {
     }
 
     console.log('❌ No subscription found - returning false');
-    return res.json({ hasSubscription: false });
+    return res.json({ hasSubscription: false, locked, iframeId: trackedIframeId });
   } catch (error) {
     console.error('VRM subscription check error:', error);
-    res.json({ hasSubscription: false });
+    res.json({ hasSubscription: false, locked: false });
   }
 });
 
