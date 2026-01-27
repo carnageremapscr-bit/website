@@ -8089,6 +8089,29 @@ I would like to request a quote for tuning this vehicle.`,
     // Generate VRM embed code
     if (generateVrmEmbedBtn) {
       generateVrmEmbedBtn.addEventListener('click', async () => {
+        // Check if user has active VRM subscription (admins bypass)
+        const isAdminUser = sessionStorage.getItem('isAdmin') === 'true';
+        const hasSubscription = isAdminUser || await hasActiveVrmSubscription();
+        
+        if (!hasSubscription) {
+          const upgrade = confirm('🔒 VRM Lookup Access Required\n\nThe VRM lookup embed feature requires an active subscription (£17.99/month).\n\nVehicle lookup is FREE for all users, but embedding the widget on external websites requires a subscription.\n\nWould you like to go to the Billing tab to subscribe?');
+          if (upgrade) {
+            document.getElementById('billing-tab').classList.add('active');
+            document.getElementById('settings-tab').classList.remove('active');
+            const settingsPanel = document.getElementById('settings-tab');
+            const billingPanel = document.getElementById('billing-tab');
+            if (settingsPanel) settingsPanel.style.display = 'none';
+            if (billingPanel) billingPanel.style.display = 'block';
+            
+            // Scroll to subscription section
+            setTimeout(() => {
+              const subSection = document.querySelector('[id*="active-subscriptions"]')?.parentElement;
+              if (subSection) subSection.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+          }
+          return;
+        }
+
         const accentColor = vrmAccentColorText?.value || '#dc2626';
         const bgColor = vrmBgColorText?.value || '#0f172a';
         const logoVal = (vrmLogoUrl?.value || '').trim();
@@ -8124,6 +8147,22 @@ I would like to request a quote for tuning this vehicle.`,
         setTimeout(() => {
           copyVrmEmbedBtn.textContent = '📋 Copy';
         }, 2000);
+      });
+    }
+
+    // Subscribe to VRM Lookup
+    const subscribeVrmBtn = document.getElementById('subscribe-vrm-btn');
+    if (subscribeVrmBtn) {
+      subscribeVrmBtn.addEventListener('click', async () => {
+        const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
+        const hasSubscription = isAdmin || await hasActiveVrmSubscription();
+        
+        if (hasSubscription) {
+          alert('✅ You already have an active VRM Lookup subscription!');
+          return;
+        }
+        
+        await createVrmSubscription();
       });
     }
 
@@ -10700,12 +10739,17 @@ I would like to request a quote for tuning this vehicle.`,
         const nextBilling = new Date(s.nextBilling);
         const daysUntil = Math.ceil((nextBilling - new Date()) / (1000 * 60 * 60 * 24));
         
+        let subscriptionLabel = s.type;
+        if (s.type === 'vehicle-stats-widget') subscriptionLabel = '📊 Vehicle Stats Widget';
+        if (s.type === 'embed' || s.type === 'embed-widget' || s.type === 'embed_widget') subscriptionLabel = '🔗 Embed Widget';
+        if (s.type === 'vrm' || s.type === 'vrm-lookup' || s.type === 'vrm_lookup') subscriptionLabel = '🚗 VRM Lookup';
+        
         return `
           <div style="padding: 15px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 10px; background: white;">
             <div style="display: flex; justify-content: space-between; align-items: start;">
               <div>
                 <div style="font-weight: 600; color: #333; margin-bottom: 5px;">
-                  ${s.type === 'vehicle-stats-widget' ? '📊 Vehicle Stats Widget' : s.type}
+                  ${subscriptionLabel}
                 </div>
                 <div style="font-size: 14px; color: #666;">
                   £${s.price.toFixed(2)}/month
@@ -14192,6 +14236,118 @@ Thank you for choosing Carnage Remaps!
       } catch (error) {
         console.error('❌ Error checking subscription:', error);
         return false;
+      }
+    }
+    
+    // Check if user has active VRM subscription
+    async function hasActiveVrmSubscription() {
+      try {
+        console.log('🔎 hasActiveVrmSubscription called');
+        const subscriptions = await CarnageAuth.getActiveSubscriptions();
+        console.log('📋 Raw subscriptions received:', subscriptions);
+        // Accept 'vrm', 'vrm-lookup', 'vrm_lookup' types for VRM access
+        const validTypes = ['vrm', 'vrm-lookup', 'vrm_lookup'];
+        const hasValid = subscriptions.some(sub => {
+          const typeMatch = validTypes.includes(sub.type) || (sub.type && sub.type.includes('vrm'));
+          console.log('🔍 Checking VRM subscription:', {
+            id: sub.id,
+            type: sub.type,
+            status: sub.status,
+            typeMatch: typeMatch,
+            statusActive: sub.status === 'active'
+          });
+          return typeMatch && sub.status === 'active';
+        });
+        console.log('✅ VRM Subscription check result:', subscriptions.length, 'found, hasValid:', hasValid);
+        return hasValid;
+      } catch (error) {
+        console.error('❌ Error checking VRM subscription:', error);
+        return false;
+      }
+    }
+    
+    // Create VRM subscription via Stripe recurring payment
+    async function createVrmSubscription() {
+      try {
+        const userId = sessionStorage.getItem('userId');
+        const userEmail = sessionStorage.getItem('userEmail');
+        const userName = sessionStorage.getItem('userName');
+        
+        if (!userId || !userEmail) {
+          alert('Please log in to continue');
+          return;
+        }
+        
+        const subscriptionPrice = 17.99;
+        
+        const confirmed = confirm(`Start VRM Lookup subscription for £${subscriptionPrice.toFixed(2)}/month?\n\n✓ Billed monthly to your card via Stripe\n✓ Automatic recurring payments\n✓ Cancel anytime\n\nYou will be redirected to secure Stripe checkout.`);
+        if (!confirmed) return;
+        
+        // Show loading indicator
+        const loadingMsg = document.createElement('div');
+        loadingMsg.id = 'stripe-loading';
+        loadingMsg.textContent = '🔄 Redirecting to secure Stripe checkout...';
+        loadingMsg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:30px 40px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:10000;font-size:1.1rem;font-weight:600;color:#1e293b;';
+        document.body.appendChild(loadingMsg);
+        
+        console.log(`💳 Creating Stripe subscription checkout for £${subscriptionPrice}/month`);
+        
+        // Prevent attempts to call backend when page is opened via file://
+        if (window.location.protocol === 'file:') {
+          const existing = document.getElementById('stripe-loading');
+          if (existing) existing.remove();
+          alert('Cannot reach backend API when running the page from the file system (file://).\n\nPlease serve the site over HTTP (for example run a local server) and try again.\n\nSuggested: run in PowerShell from the project folder:\n   python -m http.server 8000\nor\n   npx http-server .\n');
+          return;
+        }
+        
+        // Create Stripe subscription checkout session
+        // Your backend should:
+        // 1. Create a Stripe subscription (recurring payment)
+        // 2. Set up monthly billing at £17.99
+        // 3. On successful subscription (webhook), activate user's VRM access
+        // 4. Handle subscription lifecycle events (payment_failed, subscription_cancelled, etc.)
+        const response = await fetch(`${API_URL}/api/create-subscription-session`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            priceId: 'price_1SPUIFRlB9jtRSJm2BqFTJUD', // Your Stripe Price ID for £17.99/month recurring
+            userId: userId,
+            userEmail: userEmail,
+            userName: userName,
+            subscriptionType: 'vrm_lookup',
+            successUrl: `${window.location.origin}${window.location.pathname}?subscription=success&type=vrm`,
+            cancelUrl: `${window.location.origin}${window.location.pathname}?subscription=cancelled`
+          })
+        });
+        
+        // Remove loading indicator
+        const existing = document.getElementById('stripe-loading');
+        if (existing) existing.remove();
+        
+        if (!response.ok) {
+          throw new Error('Failed to create subscription session - Backend API required');
+        }
+        
+        const data = await response.json();
+        
+        if (data.url) {
+          // Redirect to Stripe Checkout
+          window.location.href = data.url;
+        } else if (data.sessionId && stripe) {
+          const result = await stripe.redirectToCheckout({
+            sessionId: data.sessionId
+          });
+          if (result.error) {
+            throw new Error(result.error.message);
+          }
+        } else {
+          throw new Error('No checkout URL or session ID returned');
+        }
+      } catch (error) {
+        console.error('❌ Error creating VRM subscription:', error);
+        alert(`Error: ${error.message}`);
       }
     }
     
