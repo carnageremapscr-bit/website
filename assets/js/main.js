@@ -8050,6 +8050,83 @@ I would like to request a quote for tuning this vehicle.`,
       });
     }
 
+    // VRM Lookup Embed Generator
+    const generateVrmEmbedBtn = document.getElementById('generate-vrm-embed-btn');
+    const vrmLogoUrl = document.getElementById('vrm-logo-url');
+    const vrmAccentColor = document.getElementById('vrm-accent-color');
+    const vrmAccentColorText = document.getElementById('vrm-accent-color-text');
+    const vrmBgColor = document.getElementById('vrm-bg-color');
+    const vrmBgColorText = document.getElementById('vrm-bg-color-text');
+    const vrmWhatsapp = document.getElementById('vrm-whatsapp');
+    const vrmEmail = document.getElementById('vrm-email');
+    const vrmEmbedCodeContainer = document.getElementById('vrm-embed-code-container');
+    const vrmEmbedCodeOutput = document.getElementById('vrm-embed-code-output');
+    const copyVrmEmbedBtn = document.getElementById('copy-vrm-embed-btn');
+
+    // Sync VRM color inputs
+    if (vrmAccentColor && vrmAccentColorText) {
+      vrmAccentColor.addEventListener('input', (e) => {
+        vrmAccentColorText.value = e.target.value;
+      });
+      vrmAccentColorText.addEventListener('input', (e) => {
+        if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+          vrmAccentColor.value = e.target.value;
+        }
+      });
+    }
+
+    if (vrmBgColor && vrmBgColorText) {
+      vrmBgColor.addEventListener('input', (e) => {
+        vrmBgColorText.value = e.target.value;
+      });
+      vrmBgColorText.addEventListener('input', (e) => {
+        if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+          vrmBgColor.value = e.target.value;
+        }
+      });
+    }
+
+    // Generate VRM embed code
+    if (generateVrmEmbedBtn) {
+      generateVrmEmbedBtn.addEventListener('click', async () => {
+        const accentColor = vrmAccentColorText?.value || '#dc2626';
+        const bgColor = vrmBgColorText?.value || '#0f172a';
+        const logoVal = (vrmLogoUrl?.value || '').trim();
+        const waVal = (vrmWhatsapp?.value || '').trim();
+        const emailVal = (vrmEmail?.value || '').trim();
+
+        const baseUrl = 'https://web-production-df12d.up.railway.app';
+        
+        const params = [
+          `color=${encodeURIComponent(accentColor)}`,
+          `bg=${encodeURIComponent(bgColor)}`,
+          logoVal ? `logo=${encodeURIComponent(logoVal)}` : '',
+          waVal ? `wa=${encodeURIComponent(waVal)}` : '',
+          emailVal ? `email=${encodeURIComponent(emailVal)}` : ''
+        ].filter(Boolean).join('&');
+
+        const embedCode = `<iframe src="${baseUrl}/test-vrm.html?${params}" width="100%" height="600" style="border:none;border-radius:12px;max-width:100%;" title="VRM Lookup" loading="lazy"></iframe>`;
+
+        if (vrmEmbedCodeOutput) vrmEmbedCodeOutput.value = embedCode;
+        if (vrmEmbedCodeContainer) {
+          vrmEmbedCodeContainer.style.display = 'block';
+          vrmEmbedCodeContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      });
+    }
+
+    // Copy VRM embed code
+    if (copyVrmEmbedBtn && vrmEmbedCodeOutput) {
+      copyVrmEmbedBtn.addEventListener('click', () => {
+        vrmEmbedCodeOutput.select();
+        document.execCommand('copy');
+        copyVrmEmbedBtn.textContent = '✓ Copied!';
+        setTimeout(() => {
+          copyVrmEmbedBtn.textContent = '📋 Copy';
+        }, 2000);
+      });
+    }
+
     // Copy embed code
     if (copyEmbedBtn) {
       copyEmbedBtn.addEventListener('click', () => {

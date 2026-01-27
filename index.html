@@ -1769,170 +1769,233 @@
 
     <!-- Settings Tab -->
     <section id="settings-tab" class="cr-tab">
-      <h2>⚙️ Vehicle Search Settings</h2>
-      <p class="muted">Customize your vehicle search embed and appearance</p>
+      <h2>⚙️ Widget Settings</h2>
+      <p class="muted">Configure and embed your vehicle widgets</p>
 
       <div class="settings-container" style="display:grid;gap:2rem;margin-top:2rem">
         
-        <!-- Embed Code Generator -->
+        <!-- VRM Lookup Widget Settings -->
         <div class="settings-card">
-          <h3 style="margin-bottom:1rem">📋 Embed Code Generator</h3>
-          <p class="muted" style="margin-bottom:1.5rem">Embed the vehicle search on your website with custom branding</p>
+          <h3 style="margin-bottom:1rem">🚗 VRM Lookup Widget</h3>
+          <p class="muted" style="margin-bottom:1.5rem">Configure and embed the UK vehicle registration lookup widget</p>
           
           <div style="display:grid;gap:1.5rem">
             <!-- Logo URL -->
             <div>
               <label style="display:block;margin-bottom:0.5rem;font-weight:500">Logo URL</label>
-              <div style="display:flex;gap:0.5rem;align-items:center">
-                <input type="url" id="embed-logo-url" placeholder="https://example.com/logo.png" 
-                       style="flex:1;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff">
-                <button class="btn small" id="upload-logo-btn" type="button">⬆️ Upload</button>
-              </div>
-              <small class="muted">Enter a public image URL or upload a file to host here</small>
+              <input type="url" id="vrm-logo-url" placeholder="https://example.com/logo.png" 
+                     style="width:100%;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff">
+              <small class="muted">Optional logo to display in the VRM widget header</small>
             </div>
 
-            <!-- Primary Color -->
+            <!-- Color Settings Grid -->
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
               <div>
-                <label style="display:block;margin-bottom:0.5rem;font-weight:500">Primary Color</label>
+                <label style="display:block;margin-bottom:0.5rem;font-weight:500">Accent Color</label>
                 <div style="display:flex;gap:0.5rem;align-items:center">
-                  <input type="color" id="embed-primary-color" value="#dc2626" 
+                  <input type="color" id="vrm-accent-color" value="#dc2626" 
                          style="width:60px;height:40px;border:none;border-radius:8px;cursor:pointer">
-                  <input type="text" id="embed-primary-color-text" value="#dc2626" 
+                  <input type="text" id="vrm-accent-color-text" value="#dc2626" 
                          style="flex:1;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff">
                 </div>
               </div>
-              
-              <!-- Background Color -->
               <div>
-                <label style="display:block;margin-bottom:0.5rem;font-weight:500">Background Color</label>
+                <label style="display:block;margin-bottom:0.5rem;font-weight:500">Background</label>
                 <div style="display:flex;gap:0.5rem;align-items:center">
-                  <input type="color" id="embed-bg-color" value="#1a1a1a" 
+                  <input type="color" id="vrm-bg-color" value="#0f172a" 
                          style="width:60px;height:40px;border:none;border-radius:8px;cursor:pointer">
-                  <input type="text" id="embed-bg-color-text" value="#1a1a1a" 
+                  <input type="text" id="vrm-bg-color-text" value="#0f172a" 
                          style="flex:1;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff">
                 </div>
               </div>
             </div>
 
-            <!-- Embed Width -->
-            <div>
-              <label for="embed-width" style="display:block;margin-bottom:0.5rem;font-weight:500">Embed Width</label>
-              <select id="embed-width" style="width:100%;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff" title="Select embed width" aria-label="Embed widget width">
-                <option value="100%">Full Width (100%)</option>
-                <option value="1200px">Large (1200px)</option>
-                <option value="900px">Medium (900px)</option>
-                <option value="600px">Small (600px)</option>
-              </select>
+            <!-- Contact Settings -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+              <div>
+                <label style="display:block;margin-bottom:0.5rem;font-weight:500">WhatsApp Number</label>
+                <input type="tel" id="vrm-whatsapp" value="07546371963" 
+                       style="width:100%;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff">
+              </div>
+              <div>
+                <label style="display:block;margin-bottom:0.5rem;font-weight:500">Email</label>
+                <input type="email" id="vrm-email" value="carnageremaps@gmail.com" 
+                       style="width:100%;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff">
+              </div>
             </div>
 
-            <!-- Generate Button -->
-            <button class="btn primary" id="generate-embed-btn" style="margin-top:0.5rem">
-              <span>🔗 Generate Embed Code</span>
+            <!-- Generate VRM Embed Button -->
+            <button class="btn primary" id="generate-vrm-embed-btn" style="margin-top:0.5rem">
+              <span>🔗 Generate VRM Lookup Embed Code</span>
             </button>
 
-            <!-- Generated Code -->
-            <div id="embed-code-container" style="display:none;margin-top:1rem">
-              <label style="display:block;margin-bottom:0.5rem;font-weight:500">Your Embed Code</label>
+            <!-- VRM Embed Code Output -->
+            <div id="vrm-embed-code-container" style="display:none;margin-top:1rem">
+              <label style="display:block;margin-bottom:0.5rem;font-weight:500">VRM Lookup Embed Code</label>
               <div style="position:relative">
-                <textarea id="embed-code-output" readonly 
-                          style="width:100%;min-height:200px;padding:1rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#0f0;font-family:monospace;font-size:0.875rem;resize:vertical"></textarea>
-                <button class="btn small" id="copy-embed-btn" 
+                <textarea id="vrm-embed-code-output" readonly 
+                          style="width:100%;min-height:120px;padding:1rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#0f0;font-family:monospace;font-size:0.875rem;resize:vertical"></textarea>
+                <button class="btn small" id="copy-vrm-embed-btn" 
                         style="position:absolute;top:0.5rem;right:0.5rem">
                   📋 Copy
                 </button>
               </div>
-              <small class="muted">Copy and paste this code into your website's HTML</small>
+              <small class="muted">Copy and paste this iframe into your website</small>
+            </div>
+          </div>
+        </div>
 
-              <div style="margin-top:1rem">
-                <label style="display:block;margin-bottom:0.5rem;font-weight:500">Compact One-Line Iframe</label>
+        <!-- Vehicle Search Widget Settings -->
+        <div class="settings-card">
+          <h3 style="margin-bottom:1rem">🔍 Vehicle Performance Search Widget</h3>
+          <p class="muted" style="margin-bottom:1.5rem">Configure and embed the ECU tuning database search widget</p>
+          
+          <div style="display:grid;gap:1.5rem">
+            <!-- Logo & Colors in Grid -->
+            <div style="display:grid;gap:1rem">
+              <div>
+                <label style="display:block;margin-bottom:0.5rem;font-weight:500">Logo URL</label>
+                <div style="display:flex;gap:0.5rem;align-items:center">
+                  <input type="url" id="embed-logo-url" placeholder="https://example.com/logo.png" 
+                         style="flex:1;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff">
+                  <button class="btn small" id="upload-logo-btn" type="button">⬆️ Upload</button>
+                </div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem">
+                <div>
+                  <label style="display:block;margin-bottom:0.5rem;font-weight:500">Primary Color</label>
+                  <div style="display:flex;gap:0.5rem;align-items:center">
+                    <input type="color" id="embed-primary-color" value="#dc2626" 
+                           style="width:40px;height:40px;border:none;border-radius:8px;cursor:pointer">
+                    <input type="text" id="embed-primary-color-text" value="#dc2626" 
+                           style="flex:1;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff;font-size:0.875rem">
+                  </div>
+                </div>
+                
+                <div>
+                  <label style="display:block;margin-bottom:0.5rem;font-weight:500">Background</label>
+                  <div style="display:flex;gap:0.5rem;align-items:center">
+                    <input type="color" id="embed-bg-color" value="#1a1a1a" 
+                           style="width:40px;height:40px;border:none;border-radius:8px;cursor:pointer">
+                    <input type="text" id="embed-bg-color-text" value="#1a1a1a" 
+                           style="flex:1;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff;font-size:0.875rem">
+                  </div>
+                </div>
+
+                <div>
+                  <label for="embed-width" style="display:block;margin-bottom:0.5rem;font-weight:500">Width</label>
+                  <select id="embed-width" style="width:100%;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff">
+                    <option value="100%">Full (100%)</option>
+                    <option value="1200px">1200px</option>
+                    <option value="900px">900px</option>
+                    <option value="600px">600px</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Appearance Options -->
+            <div>
+              <label style="display:block;margin-bottom:0.75rem;font-weight:500">Widget Features</label>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.75rem">
+                <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.9rem">
+                  <input type="checkbox" id="show-year-dropdown" checked style="width:18px;height:18px;cursor:pointer">
+                  <span>Year Dropdown</span>
+                </label>
+                
+                <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.9rem">
+                  <input type="checkbox" id="show-performance-badges" checked style="width:18px;height:18px;cursor:pointer">
+                  <span>Performance Badges</span>
+                </label>
+                
+                <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.9rem">
+                  <input type="checkbox" id="show-stage-cards" checked style="width:18px;height:18px;cursor:pointer">
+                  <span>All Stage Cards</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Generate Button -->
+            <button class="btn primary" id="generate-embed-btn">
+              <span>🔗 Generate Vehicle Search Embed Code</span>
+            </button>
+
+            <!-- Generated Code -->
+            <div id="embed-code-container" style="display:none;margin-top:0.5rem">
+              <div style="display:grid;gap:1rem">
                 <div style="position:relative">
-                  <textarea id="embed-code-output-compact" readonly 
-                            style="width:100%;min-height:80px;padding:1rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#0f0;font-family:monospace;font-size:0.875rem;resize:vertical"></textarea>
-                  <button class="btn small" id="copy-embed-compact-btn" 
-                          style="position:absolute;top:0.5rem;right:0.5rem">
+                  <label style="display:block;margin-bottom:0.5rem;font-weight:500;font-size:0.9rem">Full Embed Code</label>
+                  <textarea id="embed-code-output" readonly 
+                            style="width:100%;min-height:150px;padding:1rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#0f0;font-family:monospace;font-size:0.8rem;resize:vertical"></textarea>
+                  <button class="btn small" id="copy-embed-btn" 
+                          style="position:absolute;top:2rem;right:0.5rem">
                     📋 Copy
                   </button>
                 </div>
-                <small class="muted">Single-line version for editors that strip whitespace.</small>
+
+                <div style="position:relative">
+                  <label style="display:block;margin-bottom:0.5rem;font-weight:500;font-size:0.9rem">One-Line Iframe</label>
+                  <textarea id="embed-code-output-compact" readonly 
+                            style="width:100%;min-height:60px;padding:1rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#0f0;font-family:monospace;font-size:0.8rem;resize:vertical"></textarea>
+                  <button class="btn small" id="copy-embed-compact-btn" 
+                          style="position:absolute;top:2rem;right:0.5rem">
+                    📋 Copy
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Appearance Settings -->
+        <!-- Global Contact & Appearance Settings -->
         <div class="settings-card">
-          <h3 style="margin-bottom:1rem">🎨 Appearance Customization</h3>
-          <p class="muted" style="margin-bottom:1.5rem">Customize how the vehicle search looks on this portal</p>
+          <h3 style="margin-bottom:1rem">🎨 Global Widget Settings</h3>
+          <p class="muted" style="margin-bottom:1.5rem">Default settings for both widgets</p>
           
           <div style="display:grid;gap:1.5rem">
-            <!-- Search Title -->
-            <div>
-              <label style="display:block;margin-bottom:0.5rem;font-weight:500">Search Section Title</label>
-              <input type="text" id="search-title" value="🔍 Vehicle Search" 
-                     style="width:100%;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff">
+            <!-- Contact Info Grid -->
+            <!-- Contact Info Grid -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+              <div>
+                <label style="display:block;margin-bottom:0.5rem;font-weight:500">WhatsApp Number</label>
+                <input type="tel" id="settings-whatsapp" value="07546371963" 
+                       style="width:100%;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff">
+                <small class="muted">No spaces or special characters</small>
+              </div>
+
+              <div>
+                <label style="display:block;margin-bottom:0.5rem;font-weight:500">Quote Email</label>
+                <input type="email" id="settings-email" value="carnageremaps@gmail.com" 
+                       style="width:100%;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff">
+                <small class="muted">For email quote requests</small>
+              </div>
             </div>
 
-            <!-- Search Description -->
-            <div>
-              <label style="display:block;margin-bottom:0.5rem;font-weight:500">Search Description</label>
-              <input type="text" id="search-description" value="Search our database for detailed vehicle information, ECU compatibility, and performance gains" 
-                     style="width:100%;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff">
+            <!-- Widget Titles -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+              <div>
+                <label style="display:block;margin-bottom:0.5rem;font-weight:500">Search Title</label>
+                <input type="text" id="search-title" value="🔍 Vehicle Search" 
+                       style="width:100%;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff">
+              </div>
+
+              <div>
+                <label style="display:block;margin-bottom:0.5rem;font-weight:500">Search Description</label>
+                <input type="text" id="search-description" value="Search our database for detailed vehicle information" 
+                       style="width:100%;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff">
+              </div>
             </div>
 
-            <!-- Show/Hide Options -->
-            <div style="display:grid;gap:1rem">
-              <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer">
-                <input type="checkbox" id="show-year-dropdown" checked style="width:18px;height:18px;cursor:pointer">
-                <span>Show Year Dropdown</span>
-              </label>
-              
-              <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer">
-                <input type="checkbox" id="show-performance-badges" checked style="width:18px;height:18px;cursor:pointer">
-                <span>Show Performance Option Badges</span>
-              </label>
-              
-              <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer">
-                <input type="checkbox" id="show-stage-cards" checked style="width:18px;height:18px;cursor:pointer">
-                <span>Show All Stage Cards (Stock, 1, 2, 3)</span>
-              </label>
+            <!-- Save Buttons -->
+            <div style="display:flex;gap:1rem">
+              <button class="btn success" id="apply-appearance-btn" style="flex:1">
+                <span>✓ Apply Widget Settings</span>
+              </button>
+              <button class="btn primary" id="save-contact-settings-btn" style="flex:1">
+                <span>💾 Save Contact Details</span>
+              </button>
             </div>
-
-            <!-- Apply Button -->
-            <button class="btn success" id="apply-appearance-btn" style="margin-top:0.5rem">
-              <span>✓ Apply Changes</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Contact Settings -->
-        <div class="settings-card">
-          <h3 style="margin-bottom:1rem">📱 Contact & Quote Settings</h3>
-          <p class="muted" style="margin-bottom:1.5rem">Configure contact details for quote requests</p>
-          
-          <div style="display:grid;gap:1.5rem">
-            <!-- WhatsApp Number -->
-            <div>
-              <label style="display:block;margin-bottom:0.5rem;font-weight:500">WhatsApp Number</label>
-              <input type="tel" id="settings-whatsapp" value="07546371963" 
-                     style="width:100%;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff"
-                     placeholder="e.g. 07546371963">
-              <small class="muted">Used for WhatsApp quote button (no spaces or special characters)</small>
-            </div>
-
-            <!-- Email Address -->
-            <div>
-              <label style="display:block;margin-bottom:0.5rem;font-weight:500">Quote Email Address</label>
-              <input type="email" id="settings-email" value="carnageremaps@gmail.com" 
-                     style="width:100%;padding:0.75rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);border-radius:8px;color:#fff"
-                     placeholder="e.g. quotes@example.com">
-              <small class="muted">Used for email quote button</small>
-            </div>
-
-            <!-- Save Button -->
-            <button class="btn primary" id="save-contact-settings-btn" style="margin-top:0.5rem">
-              <span>💾 Save Contact Settings</span>
-            </button>
             
             <div id="contact-settings-message" style="display:none;padding:1rem;border-radius:8px;text-align:center"></div>
           </div>
@@ -1943,59 +2006,39 @@
           <h3 style="margin-bottom:1rem">📊 Database Coverage</h3>
           <p class="muted" style="margin-bottom:1.5rem">Current vehicle database statistics</p>
           
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">
-            <div class="stat-box" style="background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);padding:1rem;border-radius:8px">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem">
+            <div class="stat-box" style="background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);padding:1rem;border-radius:8px;text-align:center">
               <div style="font-size:2rem;font-weight:bold;color:#3b82f6" id="stat-manufacturers">21</div>
-              <div class="muted">Manufacturers</div>
+              <div class="muted" style="font-size:0.875rem">Manufacturers</div>
+            </div>
+            <div class="stat-box" style="background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);padding:1rem;border-radius:8px;text-align:center">
+              <div style="font-size:2rem;font-weight:bold;color:#3b82f6" id="stat-manufacturers">21</div>
+              <div class="muted" style="font-size:0.875rem">Manufacturers</div>
             </div>
             
-            <div class="stat-box" style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);padding:1rem;border-radius:8px">
+            <div class="stat-box" style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);padding:1rem;border-radius:8px;text-align:center">
               <div style="font-size:2rem;font-weight:bold;color:#10b981" id="stat-models">63+</div>
-              <div class="muted">Vehicle Models</div>
+              <div class="muted" style="font-size:0.875rem">Models</div>
             </div>
             
-            <div class="stat-box" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);padding:1rem;border-radius:8px">
+            <div class="stat-box" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);padding:1rem;border-radius:8px;text-align:center">
               <div style="font-size:2rem;font-weight:bold;color:#f59e0b" id="stat-year-ranges">200+</div>
-              <div class="muted">Year Ranges</div>
+              <div class="muted" style="font-size:0.875rem">Year Ranges</div>
             </div>
             
-            <div class="stat-box" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);padding:1rem;border-radius:8px">
+            <div class="stat-box" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);padding:1rem;border-radius:8px;text-align:center">
               <div style="font-size:2rem;font-weight:bold;color:#ef4444" id="stat-engines">200+</div>
-              <div class="muted">Engine Profiles</div>
+              <div class="muted" style="font-size:0.875rem">Engines</div>
             </div>
           </div>
 
-          <!-- Coverage List -->
-          <div style="margin-top:1.5rem;padding:1rem;background:rgba(255,255,255,0.03);border-radius:8px">
-            <h4 style="margin-bottom:0.75rem">✅ Manufacturers with Complete Data (All 21):</h4>
-            <div style="display:flex;flex-wrap:wrap;gap:0.5rem" id="covered-manufacturers">
-              <span class="badge">Alfa Romeo</span>
-              <span class="badge">Audi</span>
-              <span class="badge">BMW</span>
-              <span class="badge">Citroen</span>
-              <span class="badge">Fiat</span>
-              <span class="badge">Ford</span>
-              <span class="badge">Honda</span>
-              <span class="badge">Hyundai</span>
-              <span class="badge">Kia</span>
-              <span class="badge">Land Rover</span>
-              <span class="badge">Mazda</span>
-              <span class="badge">Mercedes-Benz</span>
-              <span class="badge">Nissan</span>
-              <span class="badge">Peugeot</span>
-              <span class="badge">Renault</span>
-              <span class="badge">Seat</span>
-              <span class="badge">Skoda</span>
-              <span class="badge">Toyota</span>
-              <span class="badge">Vauxhall</span>
-              <span class="badge">Volkswagen</span>
-              <span class="badge">Volvo</span>
-            </div>
-          </div>
-
+          <!-- Compact Coverage Summary -->
           <div style="margin-top:1rem;padding:1rem;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:8px">
-            <h4 style="margin-bottom:0.5rem;color:#10b981">✨ Database Complete!</h4>
-            <p class="muted" style="margin:0;font-size:0.9rem">All major European & Asian manufacturers covered with comprehensive ECU and performance data from 2005-2024</p>
+            <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">
+              <span style="font-size:1.25rem">✨</span>
+              <h4 style="margin:0;color:#10b981">Database Complete</h4>
+            </div>
+            <p class="muted" style="margin:0;font-size:0.9rem">All 21 major manufacturers covered with ECU and performance data from 2005-2024</p>
           </div>
         </div>
 
