@@ -101,12 +101,18 @@ const upload = multer({
 // Supports: Resend API (recommended for Railway), or Nodemailer with Gmail
 const nodemailer = require('nodemailer');
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'carnageremaps@gmail.com';
+// Support multiple admin emails (comma-separated). Default includes both accounts.
+const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || `${ADMIN_EMAIL},rgolubovas@gmail.com`)
+  .split(',')
+  .map(e => e.trim().toLowerCase())
+  .filter(Boolean);
 const EMAIL_USER = process.env.EMAIL_USER || 'carnageremaps@gmail.com';
 const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD || '';
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 
 console.log('=== Email Configuration ===');
 console.log('ADMIN_EMAIL:', ADMIN_EMAIL);
+console.log('ADMIN_EMAILS:', ADMIN_EMAILS);
 console.log('EMAIL_USER:', EMAIL_USER);
 console.log('EMAIL_PASSWORD set:', !!EMAIL_PASSWORD);
 console.log('RESEND_API_KEY set:', !!RESEND_API_KEY);
@@ -1315,7 +1321,7 @@ app.get('/api/check-embed-subscription', async (req, res) => {
     if (token) {
       const { data: { user }, error } = await supabase.auth.getUser(token);
       if (!error && user) {
-        if (user.email === ADMIN_EMAIL) {
+        if (ADMIN_EMAILS.includes(user.email.toLowerCase())) {
           console.log('✅ Admin user bypassing embed subscription check');
           return res.json({ hasSubscription: true, locked, iframeId: trackedIframeId });
         }
@@ -1436,7 +1442,7 @@ app.get('/api/check-vrm-subscription', async (req, res) => {
     if (token) {
       const { data: { user }, error } = await supabase.auth.getUser(token);
       if (!error && user) {
-        if (user.email === ADMIN_EMAIL) {
+        if (ADMIN_EMAILS.includes(user.email.toLowerCase())) {
           console.log('✅ Admin user bypassing VRM subscription check');
           return res.json({ hasSubscription: true, locked, iframeId: trackedIframeId });
         }
