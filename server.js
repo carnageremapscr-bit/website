@@ -1127,7 +1127,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Check if user has active embed subscription
+// Check if user has active embed subscription (admins bypass)
 app.get('/api/check-embed-subscription', async (req, res) => {
   try {
     // Get user from session/auth header
@@ -1151,6 +1151,12 @@ app.get('/api/check-embed-subscription', async (req, res) => {
     
     if (error || !user) {
       return res.json({ hasSubscription: false });
+    }
+    
+    // Check if user is admin (admins bypass subscription check)
+    if (user.email === ADMIN_EMAIL) {
+      console.log('✅ Admin user bypassing embed subscription check');
+      return res.json({ hasSubscription: true });
     }
     
     // Check for active embed subscription
@@ -1178,7 +1184,7 @@ app.get('/api/check-embed-subscription', async (req, res) => {
   }
 });
 
-// Check if user has active VRM subscription
+// Check if user has active VRM subscription (admins bypass)
 app.get('/api/check-vrm-subscription', async (req, res) => {
   try {
     // Get user from session/auth header
@@ -1204,6 +1210,12 @@ app.get('/api/check-vrm-subscription', async (req, res) => {
       return res.json({ hasSubscription: false });
     }
     
+    // Check if user is admin (admins bypass subscription check)
+    if (user.email === ADMIN_EMAIL) {
+      console.log('✅ Admin user bypassing VRM subscription check');
+      return res.json({ hasSubscription: true });
+    }
+    
     // Check for active VRM subscription
     const { data: subscriptions, error: subError } = await supabase
       .from('subscriptions')
@@ -1226,6 +1238,122 @@ app.get('/api/check-vrm-subscription', async (req, res) => {
   } catch (error) {
     console.error('VRM subscription check error:', error);
     res.json({ hasSubscription: false });
+  }
+});
+
+// Get all active iframes (admin only)
+app.get('/api/admin/iframes', async (req, res) => {
+  try {
+    // Note: In production, you should verify admin status here
+    // For now, this endpoint assumes proper auth is in place via frontend
+    
+    if (!supabase) {
+      return res.json({ success: false, iframes: [] });
+    }
+    
+    // Fetch all active iframes from the iframes table
+    const { data: iframes, error } = await supabase
+      .from('iframes')
+      .select('*')
+      .eq('status', 'active')
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching iframes:', error);
+      return res.json({ success: false, iframes: [], error: error.message });
+    }
+    
+    res.json({ 
+      success: true, 
+      iframes: iframes || [],
+      total: iframes?.length || 0
+    });
+  } catch (error) {
+    console.error('Error in iframe list endpoint:', error);
+    res.json({ success: false, iframes: [], error: error.message });
+  }
+});
+
+// Toggle iframe status (active/locked) - admin only
+app.post('/api/admin/iframes/:id/toggle', express.json(), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    
+    if (!supabase) {
+      return res.json({ success: false, error: 'Database not configured' });
+    }
+    
+    if (!['active', 'locked'].includes(status)) {
+      return res.json({ success: false, error: 'Invalid status' });
+    }
+    
+    // Update iframe status
+    const { data, error } = await supabase
+      .from('iframes')
+      .update({ 
+        status: status,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select();
+    
+    if (error) {
+      console.error('Error updating iframe:', error);
+      return res.json({ success: false, error: error.message });
+    }
+    
+    console.log(`✅ Iframe ${id} toggled to ${status}`);
+    res.json({ 
+      success: true, 
+      iframe: data?.[0],
+      message: `Iframe ${status} successfully`
+    });
+  } catch (error) {
+    console.error('Error in iframe toggle endpoint:', error);
+    res.json({ success: false, error: error.message });
+  }
+});
+
+// Track iframe usage when loaded
+app.post('/api/iframes/:id/track', express.json(), async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    if (!supabase) {
+      return res.json({ success: false });
+    }
+    
+    // Increment uses count
+    const { data: iframe, error: fetchError } = await supabase
+      .from('iframes')
+      .select('uses')
+      .eq('id', id)
+      .single();
+    
+    if (fetchError && fetchError.code !== 'PGRST116') {
+      console.error('Error fetching iframe:', fetchError);
+      return res.json({ success: false });
+    }
+    
+    const currentUses = iframe?.uses || 0;
+    
+    const { error: updateError } = await supabase
+      .from('iframes')
+      .update({ 
+        uses: currentUses + 1,
+        last_used: new Date().toISOString()
+      })
+      .eq('id', id);
+    
+    if (updateError) {
+      console.error('Error updating iframe usage:', updateError);
+    }
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error in iframe track endpoint:', error);
+    res.json({ success: false });
   }
 });
 

@@ -9496,7 +9496,7 @@ I would like to request a quote for tuning this vehicle.`,
     try {
       container.innerHTML = '<tr><td colspan="5" class="empty-cell">Loading iframes...</td></tr>';
 
-      const response = await fetch('/api/iframes');
+      const response = await fetch('/api/admin/iframes');
 
       if (!response.ok) throw new Error('Failed to fetch iframes');
 
@@ -9504,8 +9504,8 @@ I would like to request a quote for tuning this vehicle.`,
 
       // Update counts
       document.getElementById('iframe-total-count').textContent = iframes.length;
-      document.getElementById('iframe-active-count').textContent = iframes.filter(i => !i.locked).length;
-      document.getElementById('iframe-locked-count').textContent = iframes.filter(i => i.locked).length;
+      document.getElementById('iframe-active-count').textContent = iframes.filter(i => i.status !== 'locked').length;
+      document.getElementById('iframe-locked-count').textContent = iframes.filter(i => i.status === 'locked').length;
 
       if (iframes.length === 0) {
         container.innerHTML = '<tr><td colspan="5" class="empty-cell">No iframes created yet</td></tr>';
@@ -9514,29 +9514,27 @@ I would like to request a quote for tuning this vehicle.`,
 
       container.innerHTML = iframes.map(iframe => {
         const created = new Date(iframe.created_at).toLocaleDateString();
-        const status = iframe.locked ? '🔒 Locked' : '🔓 Active';
-        const statusColor = iframe.locked ? '#ef4444' : '#22c55e';
+        const isLocked = iframe.status === 'locked';
+        const status = isLocked ? '🔒 Locked' : '🔓 Active';
+        const statusColor = isLocked ? '#ef4444' : '#22c55e';
         
         return `
           <tr>
             <td>
               <code style="font-size:0.75rem;color:#0f0;background:rgba(0,0,0,0.3);padding:0.35rem 0.6rem;border-radius:6px;display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-                test-vrm.html
+                ${iframe.type || 'embed'}
               </code>
             </td>
             <td>
-              <span style="background:${iframe.locked ? 'rgba(239,68,68,0.15)' : 'rgba(34,197,94,0.15)'};color:${statusColor};padding:0.3rem 0.75rem;border-radius:6px;font-size:0.8rem;font-weight:600;display:inline-block;">
+              <span style="background:${isLocked ? 'rgba(239,68,68,0.15)' : 'rgba(34,197,94,0.15)'};color:${statusColor};padding:0.3rem 0.75rem;border-radius:6px;font-size:0.8rem;font-weight:600;display:inline-block;">
                 ${status}
               </span>
             </td>
             <td style="font-size:0.85rem;color:#cbd5e1;">${created}</td>
-            <td style="font-size:0.85rem;color:#cbd5e1;font-weight:600;"><span style="background:rgba(100,116,139,0.2);padding:0.25rem 0.5rem;border-radius:4px;">${iframe.usage_count || 0}</span></td>
+            <td style="font-size:0.85rem;color:#cbd5e1;font-weight:600;"><span style="background:rgba(100,116,139,0.2);padding:0.25rem 0.5rem;border-radius:4px;">${iframe.uses || 0}</span></td>
             <td style="text-align:center;">
-              <button onclick="toggleIframelock('${iframe.id}', ${iframe.locked})" style="background:${iframe.locked ? '#22c55e' : '#ef4444'};color:#fff;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;margin-right:0.5rem;font-weight:600;">
-                ${iframe.locked ? '🔓 Unlock' : '🔒 Lock'}
-              </button>
-              <button onclick="deleteIframe('${iframe.id}')" style="background:#64748b;color:#fff;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;font-weight:600;">
-                🗑️ Delete
+              <button onclick="toggleIframeStatus('${iframe.id}', '${iframe.status}')" style="background:${isLocked ? '#22c55e' : '#ef4444'};color:#fff;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;margin-right:0.5rem;font-weight:600;">
+                ${isLocked ? '🔓 Unlock' : '🔒 Lock'}
               </button>
             </td>
           </tr>
@@ -9548,37 +9546,27 @@ I would like to request a quote for tuning this vehicle.`,
     }
   }
 
-  // Toggle iframe lock
-  async function toggleIframelock(iframeId, currentLocked) {
+  // Toggle iframe status
+  async function toggleIframeStatus(iframeId, currentStatus) {
     try {
-      const response = await fetch(`/api/iframes/${iframeId}/lock`, {
-        method: 'PUT',
+      const newStatus = currentStatus === 'locked' ? 'active' : 'locked';
+      
+      const response = await fetch(`/api/admin/iframes/${iframeId}/toggle`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ locked: !currentLocked })
+        body: JSON.stringify({ status: newStatus })
       });
 
       if (!response.ok) throw new Error('Failed to update iframe');
 
-      loadAdminIframes();
-    } catch (error) {
-      alert('Error: ' + error.message);
-    }
-  }
-
-  // Delete iframe
-  async function deleteIframe(iframeId) {
-    if (!confirm('Are you sure you want to delete this iframe? It cannot be undone.')) return;
-
-    try {
-      const response = await fetch(`/api/iframes/${iframeId}`, {
-        method: 'DELETE'
-      });
-
-      if (!response.ok) throw new Error('Failed to delete iframe');
-
-      loadAdminIframes();
+      const data = await response.json();
+      if (data.success) {
+        loadAdminIframes();
+      } else {
+        alert('Error: ' + (data.message || 'Unknown error'));
+      }
     } catch (error) {
       alert('Error: ' + error.message);
     }
