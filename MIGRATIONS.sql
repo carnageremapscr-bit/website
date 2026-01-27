@@ -209,3 +209,54 @@ CREATE POLICY "Service role can manage notifications" ON admin_notifications
 CREATE INDEX idx_admin_notifications_type ON admin_notifications(type);
 CREATE INDEX idx_admin_notifications_created_at ON admin_notifications(created_at DESC);
 CREATE INDEX idx_admin_notifications_user_email ON admin_notifications(user_email);
+
+-- ============================================
+-- Migration: Service Status table for feature flags
+-- Allows admins to enable/disable services
+-- ============================================
+
+CREATE TABLE IF NOT EXISTS service_status (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  service_name TEXT NOT NULL UNIQUE,
+  is_enabled BOOLEAN NOT NULL DEFAULT true,
+  disabled_reason TEXT,
+  disabled_by TEXT,
+  disabled_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Enable RLS
+ALTER TABLE service_status ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can view service status (public read)
+CREATE POLICY "Anyone can view service status" ON service_status
+  FOR SELECT USING (true);
+
+-- Admins only can update service status (optimized with SELECT wrapper)
+CREATE POLICY "Admins can update service status" ON service_status
+  FOR UPDATE USING (
+    (SELECT email FROM auth.users WHERE id = (SELECT auth.uid())) IN (SELECT email FROM users WHERE role = 'admin')
+  )
+  WITH CHECK (
+    (SELECT email FROM auth.users WHERE id = (SELECT auth.uid())) IN (SELECT email FROM users WHERE role = 'admin')
+  );
+
+-- Service role can manage service status (for automated updates)
+CREATE POLICY "Service role can manage service status" ON service_status
+  AS PERMISSIVE
+  FOR ALL
+  TO service_role
+  USING (true)
+  WITH CHECK (true);
+
+-- Create index for faster lookups
+CREATE INDEX idx_service_status_name ON service_status(service_name);
+
+-- Insert default services
+INSERT INTO service_status (service_name, is_enabled) VALUES
+  ('vrm_lookup', true),
+  ('vehicle_search', true),
+  ('file_upload', true),
+  ('stripe_checkout', true),
+  ('email_notifications', true)
+ON CONFLICT (service_name) DO NOTHING;

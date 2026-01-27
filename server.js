@@ -1112,6 +1112,93 @@ app.use(express.static(__dirname, {
   }
 })); // Serve static files from project directory
 
+// SERVICE STATUS ENDPOINT - Check if a service is enabled/disabled
+app.get('/api/service-status/:serviceName', async (req, res) => {
+  try {
+    if (!supabase) {
+      return res.status(500).json({ error: 'Database not configured' });
+    }
+    
+    const serviceName = decodeURIComponent(req.params.serviceName).toLowerCase();
+    console.log('🔍 Checking service status:', serviceName);
+    
+    const { data, error } = await supabase
+      .from('service_status')
+      .select('*')
+      .eq('service_name', serviceName)
+      .single();
+    
+    if (error) {
+      // Service not found - assume enabled by default
+      if (error.code === 'PGRST116') {
+        return res.json({ 
+          success: true,
+          service: serviceName,
+          is_enabled: true,
+          disabled_reason: null
+        });
+      }
+      console.error('Error checking service status:', error);
+      return res.status(500).json({ error: error.message });
+    }
+    
+    res.json({ 
+      success: true, 
+      service: serviceName,
+      is_enabled: data?.is_enabled || false,
+      disabled_reason: data?.disabled_reason || null,
+      disabled_by: data?.disabled_by || null,
+      disabled_at: data?.disabled_at || null
+    });
+  } catch (err) {
+    console.error('Error checking service status:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ADMIN: UPDATE SERVICE STATUS
+app.post('/api/admin/service-status/:serviceName', async (req, res) => {
+  try {
+    if (!supabase) {
+      return res.status(500).json({ error: 'Database not configured' });
+    }
+    
+    const serviceName = decodeURIComponent(req.params.serviceName).toLowerCase();
+    const { is_enabled, disabled_reason } = req.body;
+    
+    console.log(`🔧 Updating service status: ${serviceName} => ${is_enabled}`);
+    
+    // Update service status
+    const { data, error } = await supabase
+      .from('service_status')
+      .upsert({
+        service_name: serviceName,
+        is_enabled: is_enabled === true,
+        disabled_reason: is_enabled ? null : (disabled_reason || 'Disabled by admin'),
+        disabled_by: req.body.adminEmail || 'admin',
+        disabled_at: is_enabled ? null : new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'service_name' })
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error updating service status:', error);
+      return res.status(500).json({ error: error.message });
+    }
+    
+    res.json({ 
+      success: true, 
+      service: serviceName,
+      is_enabled: data.is_enabled,
+      message: is_enabled ? `${serviceName} service enabled` : `${serviceName} service disabled`
+    });
+  } catch (err) {
+    console.error('Error updating service status:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Health check endpoint - SECURE: No sensitive data exposed
 app.get('/api/health', (req, res) => {
   res.json({ 
@@ -1905,6 +1992,24 @@ function normalizeVehicleResponse(data) {
 
 app.get('/api/vrm-lookup', async (req, res) => {
   try {
+    // Check if VRM lookup service is enabled
+    if (supabase) {
+      const { data, error } = await supabase
+        .from('service_status')
+        .select('is_enabled, disabled_reason')
+        .eq('service_name', 'vrm_lookup')
+        .single();
+      
+      if (!error && data && !data.is_enabled) {
+        console.log('🚫 VRM Lookup service is disabled');
+        return res.status(403).json({ 
+          error: 'This service is temporarily turned off by the admin.',
+          disabled: true,
+          reason: data.disabled_reason || 'VRM Lookup service is currently disabled'
+        });
+      }
+    }
+    
     // Prefer env key; if missing, fall back to provided test key (letters must include 'A')
     const apiKey = CHECKCAR_API_KEY || 'e80ce7141c39ae0b111a1999f6a0891b';
     const vrmRaw = (req.query.vrm || '').toString().trim();
@@ -2006,6 +2111,24 @@ async function getDvlaJwtToken() {
 // Step 2: Lookup vehicle information via DVLA API
 app.get('/api/dvla-lookup', async (req, res) => {
   try {
+    // Check if VRM lookup service is enabled
+    if (supabase) {
+      const { data, error } = await supabase
+        .from('service_status')
+        .select('is_enabled, disabled_reason')
+        .eq('service_name', 'vrm_lookup')
+        .single();
+      
+      if (!error && data && !data.is_enabled) {
+        console.log('🚫 VRM Lookup service is disabled');
+        return res.status(403).json({ 
+          error: 'This service is temporarily turned off by the admin.',
+          disabled: true,
+          reason: data.disabled_reason || 'VRM Lookup service is currently disabled'
+        });
+      }
+    }
+    
     const vrmRaw = (req.query.vrm || '').toString().trim();
 
     if (!vrmRaw) {
