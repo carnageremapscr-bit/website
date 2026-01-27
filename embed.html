@@ -646,8 +646,18 @@
       try {
         // Attempt to check for active embed subscription
         // This works by trying to access the API with any auth context available
-        const iframeId = new URLSearchParams(window.location.search).get('iframeId');
-        const subUrl = iframeId ? `/api/check-embed-subscription?iframeId=${encodeURIComponent(iframeId)}` : '/api/check-embed-subscription';
+        const urlParams = new URLSearchParams(window.location.search);
+        const iframeId = urlParams.get('iframeId');
+        const emailParam = urlParams.get('email');
+        const currentUrl = window.location.href.split('?')[0]; // URL without query params
+        
+        let subUrl = '/api/check-embed-subscription';
+        const params = new URLSearchParams();
+        if (iframeId) params.append('iframeId', iframeId);
+        if (emailParam) params.append('email', emailParam);
+        params.append('url', currentUrl); // Pass URL for tracking
+        if (params.toString()) subUrl += '?' + params.toString();
+        
         const response = await fetch(subUrl, {
           method: 'GET',
           credentials: 'include', // Include cookies if any exist

@@ -1258,12 +1258,48 @@ app.get('/api/check-embed-subscription', async (req, res) => {
   try {
     const iframeId = req.query.iframeId;
     const emailParam = req.query.email || req.headers['x-user-email'];
+    const currentUrl = req.query.url || req.headers.referer || 'unknown';
     const authHeader = req.headers.authorization;
     const token = authHeader ? authHeader.replace('Bearer ', '') : null;
 
     if (!supabase) {
       console.log('Supabase not configured - allowing embed access');
       return res.json({ hasSubscription: true });
+    }
+
+    // Auto-track: Create or update iframe record when widget loads
+    if (emailParam && currentUrl !== 'unknown') {
+      try {
+        // Check if iframe record exists for this email + URL
+        const { data: existingIframe } = await supabase
+          .from('iframes')
+          .select('*')
+          .eq('email', emailParam)
+          .eq('url', currentUrl)
+          .single();
+
+        if (!existingIframe) {
+          console.log(`📝 Auto-creating embed iframe record for ${emailParam} at ${currentUrl}`);
+          await supabase
+            .from('iframes')
+            .insert({
+              email: emailParam,
+              url: currentUrl,
+              type: 'embed-widget',
+              status: 'active',
+              created_at: new Date().toISOString()
+            });
+        } else {
+          // Update last_accessed
+          await supabase
+            .from('iframes')
+            .update({ last_accessed: new Date().toISOString() })
+            .eq('id', existingIframe.id);
+        }
+      } catch (trackError) {
+        console.error('Failed to track iframe:', trackError);
+        // Don't fail the subscription check if tracking fails
+      }
     }
 
     // Authenticated path
@@ -1333,6 +1369,7 @@ app.get('/api/check-vrm-subscription', async (req, res) => {
   try {
     const iframeId = req.query.iframeId;
     const emailParam = req.query.email || req.headers['x-user-email'];
+    const currentUrl = req.query.url || req.headers.referer || 'unknown';
     const authHeader = req.headers.authorization;
     const token = authHeader ? authHeader.replace('Bearer ', '') : null;
 
@@ -1341,6 +1378,41 @@ app.get('/api/check-vrm-subscription', async (req, res) => {
     if (!supabase) {
       console.log('Supabase not configured - allowing VRM access');
       return res.json({ hasSubscription: true });
+    }
+
+    // Auto-track: Create or update iframe record when widget loads
+    if (emailParam && currentUrl !== 'unknown') {
+      try {
+        // Check if iframe record exists for this email + URL
+        const { data: existingIframe } = await supabase
+          .from('iframes')
+          .select('*')
+          .eq('email', emailParam)
+          .eq('url', currentUrl)
+          .single();
+
+        if (!existingIframe) {
+          console.log(`📝 Auto-creating VRM iframe record for ${emailParam} at ${currentUrl}`);
+          await supabase
+            .from('iframes')
+            .insert({
+              email: emailParam,
+              url: currentUrl,
+              type: 'vrm-lookup',
+              status: 'active',
+              created_at: new Date().toISOString()
+            });
+        } else {
+          // Update last_accessed
+          await supabase
+            .from('iframes')
+            .update({ last_accessed: new Date().toISOString() })
+            .eq('id', existingIframe.id);
+        }
+      } catch (trackError) {
+        console.error('Failed to track iframe:', trackError);
+        // Don't fail the subscription check if tracking fails
+      }
     }
 
     // Authenticated path
