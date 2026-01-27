@@ -9159,7 +9159,11 @@ I would like to request a quote for tuning this vehicle.`,
       const active = subscriptions.filter(s => s.status === 'active');
       const pastdue = subscriptions.filter(s => s.status === 'past_due');
       const cancelled = subscriptions.filter(s => s.status === 'cancelled');
-      const monthlyRevenue = active.reduce((sum, s) => sum + (s.price_amount || 999), 0) / 100;
+      const monthlyRevenue = active.reduce((sum, s) => {
+        const typeKey = (s.type || '').toLowerCase();
+        const fallbackAmount = typeKey.includes('vrm') ? 1799 : 999;
+        return sum + (s.price_amount || fallbackAmount);
+      }, 0) / 100;
       
       if (activeCount) activeCount.textContent = active.length;
       if (pastdueCount) pastdueCount.textContent = pastdue.length;
@@ -9167,7 +9171,7 @@ I would like to request a quote for tuning this vehicle.`,
       if (revenueEl) revenueEl.textContent = '£' + monthlyRevenue.toFixed(2);
       
       if (subscriptions.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="padding: 2rem; text-align: center; color: #9ca3af;">No subscriptions yet. Subscriptions will appear here when users subscribe to the embed widget.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="padding: 2rem; text-align: center; color: #9ca3af;">No subscriptions yet. Subscriptions will appear here when users subscribe to the embed widget or the VRM lookup.</td></tr>';
         return;
       }
       
@@ -9178,8 +9182,23 @@ I would like to request a quote for tuning this vehicle.`,
           'cancelled': '#ef4444',
           'inactive': '#6b7280'
         };
+        const typeColors = {
+          'embed': '#3b82f6',
+          'premium': '#a855f7',
+          'vrm': '#22c55e'
+        };
+        const typeLabels = {
+          'embed': 'Embed Widget',
+          'premium': 'Premium',
+          'vrm': 'VRM Lookup'
+        };
         const statusColor = statusColors[sub.status] || '#6b7280';
-        const amount = sub.price_amount ? '£' + (sub.price_amount / 100).toFixed(2) : '£9.99';
+        const typeKey = (sub.type || 'embed').toLowerCase();
+        const typeColor = typeColors[typeKey] || '#9ca3af';
+        const typeLabel = typeLabels[typeKey] || (sub.type || 'Subscription');
+        const fallbackAmount = typeKey.includes('vrm') ? 1799 : 999;
+        const priceAmount = sub.price_amount || fallbackAmount;
+        const amount = '£' + (priceAmount / 100).toFixed(2);
         const periodEnd = sub.current_period_end ? new Date(sub.current_period_end).toLocaleDateString() : '-';
         const created = sub.created_at ? new Date(sub.created_at).toLocaleDateString() : '-';
         const isActive = sub.status === 'active';
@@ -9192,7 +9211,11 @@ I would like to request a quote for tuning this vehicle.`,
                 ${sub.status}
               </span>
             </td>
-            <td style="padding: 12px; text-align: center; color: #9ca3af;">${sub.type || 'embed'}</td>
+            <td style="padding: 12px; text-align: center;">
+              <span style="background:${typeColor}20;color:${typeColor};padding:4px 12px;border-radius:12px;font-size:0.75rem;font-weight:600;text-transform:uppercase;">
+                ${typeLabel}
+              </span>
+            </td>
             <td style="padding: 12px; text-align: right; font-weight: 600; color: #fff;">${amount}/mo</td>
             <td style="padding: 12px; text-align: center; color: #9ca3af;">${periodEnd}</td>
             <td style="padding: 12px; text-align: center;">

@@ -63,9 +63,9 @@ CREATE POLICY "Users can request top-ups" ON top_up_requests
   );
 
 -- Create index for faster queries
-CREATE INDEX idx_top_up_requests_status ON top_up_requests(status);
-CREATE INDEX idx_top_up_requests_user_id ON top_up_requests(user_id);
-CREATE INDEX idx_top_up_requests_requested_at ON top_up_requests(requested_at DESC);
+CREATE INDEX IF NOT EXISTS idx_top_up_requests_status ON top_up_requests(status);
+CREATE INDEX IF NOT EXISTS idx_top_up_requests_user_id ON top_up_requests(user_id);
+CREATE INDEX IF NOT EXISTS idx_top_up_requests_requested_at ON top_up_requests(requested_at DESC);
 
 -- ============================================
 -- Migration: Subscriptions table for Stripe subscriptions
@@ -150,10 +150,10 @@ CREATE POLICY "Service role can manage subscriptions" ON subscriptions
   WITH CHECK (true);
 
 -- Create indexes for faster queries
-CREATE INDEX idx_subscriptions_email ON subscriptions(email);
-CREATE INDEX idx_subscriptions_user_id ON subscriptions(user_id);
-CREATE INDEX idx_subscriptions_status ON subscriptions(status);
-CREATE INDEX idx_subscriptions_stripe_sub_id ON subscriptions(stripe_subscription_id);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_email ON subscriptions(email);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_user_id ON subscriptions(user_id);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_status ON subscriptions(status);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_stripe_sub_id ON subscriptions(stripe_subscription_id);
 
 -- ============================================
 -- Migration: Transactions table for payment history
@@ -212,10 +212,10 @@ CREATE POLICY "Service role can manage transactions" ON transactions
   WITH CHECK (true);
 
 -- Create indexes
-CREATE INDEX idx_transactions_user_id ON transactions(user_id);
-CREATE INDEX idx_transactions_email ON transactions(email);
-CREATE INDEX idx_transactions_type ON transactions(type);
-CREATE INDEX idx_transactions_created_at ON transactions(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_transactions_user_id ON transactions(user_id);
+CREATE INDEX IF NOT EXISTS idx_transactions_email ON transactions(email);
+CREATE INDEX IF NOT EXISTS idx_transactions_type ON transactions(type);
+CREATE INDEX IF NOT EXISTS idx_transactions_created_at ON transactions(created_at DESC);
 
 -- ============================================
 -- Migration: Admin Notifications table
@@ -272,6 +272,6 @@ CREATE POLICY "Service role can manage notifications" ON admin_notifications
   WITH CHECK (true);
 
 -- Create indexes for faster queries
-CREATE INDEX idx_admin_notifications_type ON admin_notifications(type);
-CREATE INDEX idx_admin_notifications_created_at ON admin_notifications(created_at DESC);
-CREATE INDEX idx_admin_notifications_user_email ON admin_notifications(user_email);
+CREATE INDEX IF NOT EXISTS idx_admin_notifications_type ON admin_notifications(type);
+CREATE INDEX IF NOT EXISTS idx_admin_notifications_created_at ON admin_notifications(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_admin_notifications_user_email ON admin_notifications(user_email);

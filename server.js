@@ -2423,6 +2423,8 @@ app.post('/api/admin/activate-subscription', async (req, res) => {
     
     const subscriptionType = type || 'embed';
     const subscriptionDays = parseInt(days) || 30;
+    const isVrm = subscriptionType.toLowerCase().includes('vrm');
+    const priceAmount = isVrm ? 1799 : 999;
     
     console.log('🔧 Manually activating subscription for:', email, 'Type:', subscriptionType, 'Days:', subscriptionDays);
     
@@ -2442,6 +2444,7 @@ app.post('/api/admin/activate-subscription', async (req, res) => {
         .update({
           type: subscriptionType,
           status: 'active',
+          price_amount: priceAmount,
           current_period_start: new Date().toISOString(),
           current_period_end: new Date(Date.now() + subscriptionDays * 24 * 60 * 60 * 1000).toISOString(),
           updated_at: new Date().toISOString()
@@ -2461,7 +2464,7 @@ app.post('/api/admin/activate-subscription', async (req, res) => {
           stripe_subscription_id: manualSubId,
           type: subscriptionType,
           status: 'active',
-          price_amount: 999,
+          price_amount: priceAmount,
           currency: 'gbp',
           current_period_start: new Date().toISOString(),
           current_period_end: new Date(Date.now() + subscriptionDays * 24 * 60 * 60 * 1000).toISOString()
@@ -2490,9 +2493,15 @@ app.post('/api/admin/activate-subscription', async (req, res) => {
             <div style="background:#262626;padding:20px;border-radius:8px;margin:20px 0">
               <h3 style="color:#eab308;margin-top:0">You now have access to:</h3>
               <ul style="color:#d1d5db;padding-left:20px">
-                <li>Embed vehicle lookup widget on your website</li>
-                <li>Customizable colors and branding</li>
-                <li>Real-time vehicle data lookup</li>
+                ${isVrm ? `
+                  <li>VRM (registration) lookup for UK vehicles</li>
+                  <li>Embed-ready iframe code for your site</li>
+                  <li>Custom branding and colors</li>
+                ` : `
+                  <li>Embed vehicle lookup widget on your website</li>
+                  <li>Customizable colors and branding</li>
+                  <li>Real-time vehicle data lookup</li>
+                `}
               </ul>
             </div>
             <div style="text-align:center;margin-top:30px">
