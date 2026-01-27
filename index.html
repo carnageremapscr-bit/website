@@ -1955,7 +1955,6 @@
           
           <div style="display:grid;gap:1.5rem">
             <!-- Contact Info Grid -->
-            <!-- Contact Info Grid -->
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
               <div>
                 <label style="display:block;margin-bottom:0.5rem;font-weight:500">WhatsApp Number</label>
@@ -2007,10 +2006,6 @@
           <p class="muted" style="margin-bottom:1.5rem">Current vehicle database statistics</p>
           
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem">
-            <div class="stat-box" style="background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);padding:1rem;border-radius:8px;text-align:center">
-              <div style="font-size:2rem;font-weight:bold;color:#3b82f6" id="stat-manufacturers">21</div>
-              <div class="muted" style="font-size:0.875rem">Manufacturers</div>
-            </div>
             <div class="stat-box" style="background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);padding:1rem;border-radius:8px;text-align:center">
               <div style="font-size:2rem;font-weight:bold;color:#3b82f6" id="stat-manufacturers">21</div>
               <div class="muted" style="font-size:0.875rem">Manufacturers</div>
@@ -2206,7 +2201,6 @@
         <button class="admin-tab-btn" data-admin-tab="tickets">Tickets</button>
         <button class="admin-tab-btn" data-admin-tab="files">Files</button>
         <button class="admin-tab-btn" data-admin-tab="notifications">🔔 Notifications</button>
-        <button class="admin-tab-btn" data-admin-tab="vrm">🔍 VRM Lookup</button>
         <button class="admin-tab-btn" data-admin-tab="iframes">📋 Embed Tracker</button>
       </div>
       
@@ -2476,108 +2470,6 @@
         </div>
       </div>
 
-      <!-- VRM Lookup Panel -->
-      <div id="admin-vrm" class="admin-panel">
-        <div class="admin-section">
-          <div class="section-header" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem;">
-            <div>
-              <h3 style="margin:0;color:#fff;font-size:1.4rem;">🔍 VRM Lookup & Embed</h3>
-              <p class="muted" style="margin:0.5rem 0 0;font-size:0.9rem;">Test plate lookup and configure colours for your iframe embed</p>
-            </div>
-          </div>
-
-          <div class="admin-vrm-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.5rem;align-items:start;">
-            <!-- Preview / Live Lookup -->
-            <div id="admin-vrm-preview" class="settings-card" style="background:linear-gradient(135deg, #0f172a, #1a2a3a);border:2px solid rgba(59,130,246,0.15);box-shadow:0 0 30px rgba(59,130,246,0.08);padding:1.25rem;">
-              <h4 style="margin:0 0 0.5rem 0;color:#93c5fd;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.5px;display:flex;align-items:center;gap:0.5rem;"><span>🔍</span> Live VRM Lookup</h4>
-              <p class="muted" style="margin:0 0 1.25rem 0;font-size:0.85rem;">Test with real DVLA + CheckCar enrichment</p>
-              <div class="registration-row" style="margin-bottom:0.75rem;">
-                <div class="uk-plate">
-                  <div class="plate-flag">
-                    <span class="flag-text">🇬🇧 UK</span>
-                  </div>
-                  <input type="text" id="admin-vrm-input" class="plate-input" maxlength="8" placeholder="AB12 CDE" aria-label="VRM lookup (admin)" autocomplete="off">
-                </div>
-                <button type="button" class="vrm-lookup-btn" id="admin-vrm-btn">Find</button>
-              </div>
-              <p id="admin-vrm-status" class="vrm-status" style="margin-bottom:0.75rem;font-size:0.85rem;min-height:1.1rem;" aria-live="polite"></p>
-              <div id="admin-vrm-result" style="border-radius:12px;border:1px solid rgba(255,255,255,0.08);min-height:240px;color:#e2e8f0;font-size:0.9rem;max-height:520px;overflow-y:auto;"></div>
-            </div>
-
-            <!-- Settings Column -->
-            <div style="display:flex;flex-direction:column;gap:1.5rem;">
-              <!-- Colour Settings -->
-              <div class="settings-card" style="background:linear-gradient(135deg, #0f172a, #1a2a3a);border:2px solid rgba(168,85,247,0.15);box-shadow:0 0 30px rgba(168,85,247,0.08);padding:1.25rem;">
-                <h4 style="margin:0 0 0.5rem 0;color:#d8b4fe;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.5px;display:flex;align-items:center;gap:0.5rem;"><span>🎨</span> Plate Colours</h4>
-                <p class="muted" style="margin:0 0 1rem 0;font-size:0.85rem;">Customize plate & button appearance</p>
-                <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.75rem;margin-bottom:1rem;">
-                  <div>
-                    <label class="muted" for="admin-plate-bg" style="font-size:0.8rem;font-weight:600;">Plate BG</label>
-                    <input type="color" id="admin-plate-bg" value="#ffcc00" style="width:100%;height:40px;border:none;border-radius:8px;background:transparent;cursor:pointer;box-shadow:0 0 0 2px rgba(255,255,255,0.1);transition:box-shadow 0.2s;margin-top:0.35rem;">
-                  </div>
-                  <div>
-                    <label class="muted" for="admin-plate-text" style="font-size:0.8rem;font-weight:600;">Plate Text</label>
-                    <input type="color" id="admin-plate-text" value="#000000" style="width:100%;height:40px;border:none;border-radius:8px;background:transparent;cursor:pointer;box-shadow:0 0 0 2px rgba(255,255,255,0.1);transition:box-shadow 0.2s;margin-top:0.35rem;">
-                  </div>
-                  <div>
-                    <label class="muted" for="admin-flag-bg" style="font-size:0.8rem;font-weight:600;">Flag BG</label>
-                    <input type="color" id="admin-flag-bg" value="#003399" style="width:100%;height:40px;border:none;border-radius:8px;background:transparent;cursor:pointer;box-shadow:0 0 0 2px rgba(255,255,255,0.1);transition:box-shadow 0.2s;margin-top:0.35rem;">
-                  </div>
-                  <div>
-                    <label class="muted" for="admin-btn-start" style="font-size:0.8rem;font-weight:600;">Button Colour</label>
-                    <input type="color" id="admin-btn-start" value="#00bcd4" style="width:100%;height:40px;border:none;border-radius:8px;background:transparent;cursor:pointer;box-shadow:0 0 0 2px rgba(255,255,255,0.1);transition:box-shadow 0.2s;margin-top:0.35rem;">
-                  </div>
-                  <div>
-                    <label class="muted" for="admin-accent-light" style="font-size:0.8rem;font-weight:600;">Accent Light</label>
-                    <input type="color" id="admin-accent-light" value="#ef4444" style="width:100%;height:40px;border:none;border-radius:8px;background:transparent;cursor:pointer;box-shadow:0 0 0 2px rgba(255,255,255,0.1);transition:box-shadow 0.2s;margin-top:0.35rem;">
-                  </div>
-                  <div>
-                    <label class="muted" for="admin-gold" style="font-size:0.8rem;font-weight:600;">Highlight (Gold)</label>
-                    <input type="color" id="admin-gold" value="#ffc107" style="width:100%;height:40px;border:none;border-radius:8px;background:transparent;cursor:pointer;box-shadow:0 0 0 2px rgba(255,255,255,0.1);transition:box-shadow 0.2s;margin-top:0.35rem;">
-                  </div>
-                  <div>
-                    <label class="muted" for="admin-bg-dark" style="font-size:0.8rem;font-weight:600;">Background</label>
-                    <input type="color" id="admin-bg-dark" value="#0f172a" style="width:100%;height:40px;border:none;border-radius:8px;background:transparent;cursor:pointer;box-shadow:0 0 0 2px rgba(255,255,255,0.1);transition:box-shadow 0.2s;margin-top:0.35rem;">
-                  </div>
-                  <div>
-                    <label class="muted" for="admin-bg-panel" style="font-size:0.8rem;font-weight:600;">Panel BG</label>
-                    <input type="color" id="admin-bg-panel" value="#1e293b" style="width:100%;height:40px;border:none;border-radius:8px;background:transparent;cursor:pointer;box-shadow:0 0 0 2px rgba(255,255,255,0.1);transition:box-shadow 0.2s;margin-top:0.35rem;">
-                  </div>
-                </div>
-                <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-                  <button class="btn" id="admin-apply-vrm-theme" type="button" style="flex:1;min-width:100px;background:#a855f7;border:none;font-weight:600;color:#fff;padding:0.7rem;border-radius:8px;cursor:pointer;transition:background 0.2s;">Apply</button>
-                  <button class="btn" id="admin-reset-vrm-theme" type="button" style="flex:1;min-width:100px;background:transparent;border:2px solid rgba(255,255,255,0.1);color:#e2e8f0;font-weight:600;padding:0.65rem;border-radius:8px;cursor:pointer;transition:all 0.2s;">Reset</button>
-                </div>
-              </div>
-
-              <!-- Embed Code -->
-              <div class="settings-card" style="background:linear-gradient(135deg, #0f172a, #1a2a3a);border:2px solid rgba(59,130,246,0.15);box-shadow:0 0 30px rgba(59,130,246,0.08);padding:1.25rem;">
-                <h4 style="margin:0 0 0.5rem 0;color:#bfdbfe;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.5px;display:flex;align-items:center;gap:0.5rem;"><span>☎️</span> Contact Buttons</h4>
-                <p class="muted" style="margin:0 0 0.75rem 0;font-size:0.85rem;">Set the contact details that appear inside the VRM iframe (WhatsApp/mobile and email). Leave blank to hide a button.</p>
-                <div style="display:flex;flex-direction:column;gap:0.75rem;">
-                  <div>
-                    <label class="muted" for="admin-contact-phone" style="font-size:0.8rem;font-weight:600;">WhatsApp / Mobile</label>
-                    <input type="text" id="admin-contact-phone" class="form-input" placeholder="07546 371963" style="margin-top:0.35rem;" autocomplete="tel">
-                  </div>
-                  <div>
-                    <label class="muted" for="admin-contact-email" style="font-size:0.8rem;font-weight:600;">Email</label>
-                    <input type="email" id="admin-contact-email" class="form-input" placeholder="carnageremaps@gmail.com" style="margin-top:0.35rem;" autocomplete="email">
-                  </div>
-                  <p class="muted" style="margin:0;font-size:0.8rem;">These values are embedded into the iframe URL so the buttons work on client sites.</p>
-                </div>
-              </div>
-
-              <!-- Embed Code -->
-              <div class="settings-card" style="background:linear-gradient(135deg, #0f172a, #1a2a3a);border:2px solid rgba(34,197,94,0.15);box-shadow:0 0 30px rgba(34,197,94,0.08);padding:1.25rem;">
-                <h4 style="margin:0 0 0.5rem 0;color:#86efac;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.5px;display:flex;align-items:center;gap:0.5rem;"><span>📋</span> Iframe Code</h4>
-                <p class="muted" style="margin:0 0 0.75rem 0;font-size:0.85rem;">Copy & paste to embed on external sites</p>
-                <textarea id="admin-vrm-embed-output" readonly style="width:100%;min-height:100px;padding:0.75rem;border:1px solid rgba(255,255,255,0.12);background:rgba(0,0,0,0.3);color:#0f0;border-radius:8px;font-family:monospace;font-size:0.8rem;resize:none;margin-bottom:0.75rem;"></textarea>
-                <button class="btn primary" id="admin-vrm-copy-btn" type="button" style="width:100%;background:#22c55e;border:none;font-weight:600;color:#fff;padding:0.8rem;border-radius:8px;cursor:pointer;transition:background 0.2s;">📋 Copy Code</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <!-- Iframe Tracker Panel -->
       <div id="admin-iframes" class="admin-panel">
