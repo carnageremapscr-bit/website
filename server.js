@@ -1132,54 +1132,70 @@ app.get('/api/health', (req, res) => {
 // Check if user has active embed subscription (admins bypass)
 app.get('/api/check-embed-subscription', async (req, res) => {
   try {
-    // Get user from session/auth header
+    const iframeId = req.query.iframeId;
+    const emailParam = req.query.email || req.headers['x-user-email'];
     const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      return res.json({ hasSubscription: false });
-    }
-    
-    // Extract user from Bearer token or session
-    const token = authHeader.replace('Bearer ', '');
-    
-    // For embedded iframes without auth context, we check the parent domain
-    // If the request includes user identification (via cookie or header), check subscriptions
+    const token = authHeader ? authHeader.replace('Bearer ', '') : null;
+
     if (!supabase) {
       console.log('Supabase not configured - allowing embed access');
       return res.json({ hasSubscription: true });
     }
-    
-    // Try to get user from Supabase auth
-    const { data: { user }, error } = await supabase.auth.getUser(token);
-    
-    if (error || !user) {
-      return res.json({ hasSubscription: false });
+
+    // Authenticated path
+    if (token) {
+      const { data: { user }, error } = await supabase.auth.getUser(token);
+      if (!error && user) {
+        if (user.email === ADMIN_EMAIL) {
+          console.log('✅ Admin user bypassing embed subscription check');
+          return res.json({ hasSubscription: true });
+        }
+
+        const { data: subscriptions, error: subError } = await supabase
+          .from('subscriptions')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('status', 'active');
+
+        if (subError) {
+          console.error('Error checking subscriptions:', subError);
+          return res.json({ hasSubscription: false });
+        }
+
+        const validTypes = ['embed', 'embed-widget', 'embed_widget'];
+        const hasEmbedSub = subscriptions && subscriptions.some(sub => 
+          validTypes.includes(sub.type) || (sub.type && sub.type.includes('embed'))
+        );
+        if (hasEmbedSub) return res.json({ hasSubscription: true });
+      }
     }
-    
-    // Check if user is admin (admins bypass subscription check)
-    if (user.email === ADMIN_EMAIL) {
-      console.log('✅ Admin user bypassing embed subscription check');
-      return res.json({ hasSubscription: true });
+
+    // Fallback: iframe record or email-based check
+    if (iframeId) {
+      const { data: iframe, error: iframeErr } = await supabase
+        .from('iframes')
+        .select('has_active_subscription, subscription_type, subscription_expires, status')
+        .eq('id', iframeId)
+        .single();
+      if (!iframeErr && iframe) {
+        return res.json({ hasSubscription: !!iframe.has_active_subscription });
+      }
     }
-    
-    // Check for active embed subscription
-    const { data: subscriptions, error: subError } = await supabase
-      .from('subscriptions')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('status', 'active');
-    
-    if (subError) {
-      console.error('Error checking subscriptions:', subError);
-      return res.json({ hasSubscription: false });
+
+    if (emailParam) {
+      const { data: subsByEmail, error: emailErr } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('email', emailParam)
+        .eq('status', 'active');
+      if (!emailErr && subsByEmail) {
+        const validTypes = ['embed', 'embed-widget', 'embed_widget'];
+        const hasEmbedSub = subsByEmail.some(sub => validTypes.includes(sub.type) || (sub.type && sub.type.includes('embed')));
+        return res.json({ hasSubscription: hasEmbedSub });
+      }
     }
-    
-    // Check for embed-related subscription types
-    const validTypes = ['embed', 'embed-widget', 'embed_widget'];
-    const hasEmbedSub = subscriptions && subscriptions.some(sub => 
-      validTypes.includes(sub.type) || (sub.type && sub.type.includes('embed'))
-    );
-    
-    res.json({ hasSubscription: hasEmbedSub || false });
+
+    return res.json({ hasSubscription: false });
   } catch (error) {
     console.error('Embed subscription check error:', error);
     res.json({ hasSubscription: false });
@@ -1189,54 +1205,70 @@ app.get('/api/check-embed-subscription', async (req, res) => {
 // Check if user has active VRM subscription (admins bypass)
 app.get('/api/check-vrm-subscription', async (req, res) => {
   try {
-    // Get user from session/auth header
+    const iframeId = req.query.iframeId;
+    const emailParam = req.query.email || req.headers['x-user-email'];
     const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      return res.json({ hasSubscription: false });
-    }
-    
-    // Extract user from Bearer token or session
-    const token = authHeader.replace('Bearer ', '');
-    
-    // For embedded iframes without auth context, we check the parent domain
-    // If the request includes user identification (via cookie or header), check subscriptions
+    const token = authHeader ? authHeader.replace('Bearer ', '') : null;
+
     if (!supabase) {
       console.log('Supabase not configured - allowing VRM access');
       return res.json({ hasSubscription: true });
     }
-    
-    // Try to get user from Supabase auth
-    const { data: { user }, error } = await supabase.auth.getUser(token);
-    
-    if (error || !user) {
-      return res.json({ hasSubscription: false });
+
+    // Authenticated path
+    if (token) {
+      const { data: { user }, error } = await supabase.auth.getUser(token);
+      if (!error && user) {
+        if (user.email === ADMIN_EMAIL) {
+          console.log('✅ Admin user bypassing VRM subscription check');
+          return res.json({ hasSubscription: true });
+        }
+
+        const { data: subscriptions, error: subError } = await supabase
+          .from('subscriptions')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('status', 'active');
+
+        if (subError) {
+          console.error('Error checking VRM subscriptions:', subError);
+          return res.json({ hasSubscription: false });
+        }
+
+        const validTypes = ['vrm', 'vrm-lookup', 'vrm_lookup'];
+        const hasVrmSub = subscriptions && subscriptions.some(sub => 
+          validTypes.includes(sub.type) || (sub.type && sub.type.includes('vrm'))
+        );
+        if (hasVrmSub) return res.json({ hasSubscription: true });
+      }
     }
-    
-    // Check if user is admin (admins bypass subscription check)
-    if (user.email === ADMIN_EMAIL) {
-      console.log('✅ Admin user bypassing VRM subscription check');
-      return res.json({ hasSubscription: true });
+
+    // Fallback: iframe record or email-based check
+    if (iframeId) {
+      const { data: iframe, error: iframeErr } = await supabase
+        .from('iframes')
+        .select('has_active_subscription, subscription_type, subscription_expires, status')
+        .eq('id', iframeId)
+        .single();
+      if (!iframeErr && iframe) {
+        return res.json({ hasSubscription: !!iframe.has_active_subscription });
+      }
     }
-    
-    // Check for active VRM subscription
-    const { data: subscriptions, error: subError } = await supabase
-      .from('subscriptions')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('status', 'active');
-    
-    if (subError) {
-      console.error('Error checking VRM subscriptions:', subError);
-      return res.json({ hasSubscription: false });
+
+    if (emailParam) {
+      const { data: subsByEmail, error: emailErr } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('email', emailParam)
+        .eq('status', 'active');
+      if (!emailErr && subsByEmail) {
+        const validTypes = ['vrm', 'vrm-lookup', 'vrm_lookup'];
+        const hasVrmSub = subsByEmail.some(sub => validTypes.includes(sub.type) || (sub.type && sub.type.includes('vrm')));
+        return res.json({ hasSubscription: hasVrmSub });
+      }
     }
-    
-    // Check for VRM-related subscription types
-    const validTypes = ['vrm', 'vrm-lookup', 'vrm_lookup'];
-    const hasVrmSub = subscriptions && subscriptions.some(sub => 
-      validTypes.includes(sub.type) || (sub.type && sub.type.includes('vrm'))
-    );
-    
-    res.json({ hasSubscription: hasVrmSub || false });
+
+    return res.json({ hasSubscription: false });
   } catch (error) {
     console.error('VRM subscription check error:', error);
     res.json({ hasSubscription: false });

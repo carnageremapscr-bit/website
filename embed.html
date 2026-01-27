@@ -646,7 +646,9 @@
       try {
         // Attempt to check for active embed subscription
         // This works by trying to access the API with any auth context available
-        const response = await fetch('/api/check-embed-subscription', {
+        const iframeId = new URLSearchParams(window.location.search).get('iframeId');
+        const subUrl = iframeId ? `/api/check-embed-subscription?iframeId=${encodeURIComponent(iframeId)}` : '/api/check-embed-subscription';
+        const response = await fetch(subUrl, {
           method: 'GET',
           credentials: 'include', // Include cookies if any exist
           headers: { 'Content-Type': 'application/json' }
