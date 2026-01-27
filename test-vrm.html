@@ -455,9 +455,24 @@
     }
 
     async function fetchVehicle(vrm) {
-      const resp = await fetch(`/api/vrm-lookup?vrm=${encodeURIComponent(vrm)}&datapoint=vehiclespecs`);
+      let url = `/api/vrm-lookup?vrm=${encodeURIComponent(vrm)}&datapoint=vehiclespecs`;
+      if (userEmail) {
+        url += `&email=${encodeURIComponent(userEmail)}`;
+      }
+      if (iframeId) {
+        url += `&iframeId=${iframeId}`;
+      }
+      
+      console.log('VRM Lookup request:', { vrm, email: userEmail, iframeId });
+      const resp = await fetch(url);
       const json = await resp.json();
-      if (resp.ok && json.success && json.vehicle) return json.vehicle;
+      
+      if (!resp.ok) {
+        console.error('VRM Lookup failed:', json);
+        throw new Error(json.error || json.message || 'Lookup failed');
+      }
+      
+      if (json.success && json.vehicle) return json.vehicle;
       throw new Error(json.error || 'Lookup failed');
     }
 

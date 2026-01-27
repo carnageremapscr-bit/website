@@ -1114,6 +1114,130 @@ app.use(express.static(__dirname, {
   }
 })); // Serve static files from project directory
 
+// ============================================
+// Unified Iframe/API Authentication Middleware
+// ============================================
+// Authenticates and tracks iframe embeds and API calls
+async function authenticateIframeOrApi(req, res, next) {
+  try {
+    const email = req.query.email || req.headers['x-user-email'];
+    const iframeId = req.query.iframeId || req.headers['x-iframe-id'];
+    const currentUrl = req.query.url || req.headers.referer || 'unknown';
+
+    if (!email && !iframeId) {
+      return res.status(401).json({ 
+        error: 'Authentication required', 
+        message: 'Please provide email parameter or iframeId' 
+      });
+    }
+
+    if (!supabase) {
+      console.log('⚠️ Supabase not configured - allowing access');
+      req.userEmail = email;
+      req.iframeId = iframeId;
+      return next();
+    }
+
+    let iframe = null;
+
+    // Try to find or create iframe record
+    if (iframeId) {
+      const { data } = await supabase
+        .from('iframes')
+        .select('*')
+        .eq('id', iframeId)
+        .single();
+      iframe = data;
+    }
+
+    // If no iframe found but email provided, find or create by email + URL
+    if (!iframe && email) {
+      const { data } = await supabase
+        .from('iframes')
+        .select('*')
+        .eq('email', email)
+        .eq('url', currentUrl)
+        .single();
+      
+      iframe = data;
+
+      // Auto-create iframe record if doesn't exist
+      if (!iframe) {
+        console.log(`📝 Auto-creating iframe record for ${email} at ${currentUrl}`);
+        const { data: newIframe, error } = await supabase
+          .from('iframes')
+          .insert({
+            email,
+            url: currentUrl,
+            type: req.path.includes('vrm') ? 'vrm-lookup' : 'embed-widget',
+            status: 'active',
+            created_at: new Date().toISOString()
+          })
+          .select()
+          .single();
+
+        if (error) {
+          console.error('Failed to create iframe:', error);
+        } else {
+          iframe = newIframe;
+          console.log(`✅ Created iframe #${iframe.id} for ${email}`);
+        }
+      }
+    }
+
+    // Check if iframe is locked
+    if (iframe && iframe.status === 'locked') {
+      return res.status(403).json({ 
+        error: 'Access denied', 
+        message: 'This iframe has been disabled by the administrator' 
+      });
+    }
+
+    // Check subscription status
+    const userEmail = iframe?.email || email;
+    if (userEmail) {
+      const { data: subscription } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('email', userEmail)
+        .in('type', ['vrm', 'vrm-lookup', 'embed', 'embed-widget', 'premium', 'all-access'])
+        .eq('status', 'active')
+        .gt('current_period_end', new Date().toISOString())
+        .single();
+
+      if (!subscription) {
+        return res.status(403).json({ 
+          error: 'Subscription required', 
+          message: 'Active subscription needed to access this service',
+          userEmail 
+        });
+      }
+
+      console.log(`✅ Authenticated ${userEmail} with ${subscription.type} subscription`);
+      req.subscription = subscription;
+    }
+
+    // Track the request
+    if (iframe) {
+      await supabase
+        .from('iframes')
+        .update({ 
+          last_accessed: new Date().toISOString(),
+          access_count: (iframe.access_count || 0) + 1
+        })
+        .eq('id', iframe.id);
+    }
+
+    req.userEmail = userEmail;
+    req.iframeId = iframe?.id || iframeId;
+    req.iframe = iframe;
+    next();
+  } catch (error) {
+    console.error('Authentication error:', error);
+    return res.status(500).json({ error: 'Authentication failed', details: error.message });
+  }
+}
+
 // Health check endpoint - SECURE: No sensitive data exposed
 app.get('/api/health', (req, res) => {
   res.json({ 
@@ -2277,7 +2401,10 @@ function normalizeVehicleResponse(data) {
   return vehicle;
 }
 
-app.get('/api/vrm-lookup', async (req, res) => {
+// ============================================
+// VRM Lookup Endpoint (Protected)
+// ============================================
+app.get('/api/vrm-lookup', authenticateIframeOrApi, async (req, res) => {
   try {
     // Prefer env key; if missing, fall back to provided test key (letters must include 'A')
     const apiKey = CHECKCAR_API_KEY || 'e80ce7141c39ae0b111a1999f6a0891b';
@@ -2297,7 +2424,7 @@ app.get('/api/vrm-lookup', async (req, res) => {
     const datapoint = (req.query.datapoint || 'vehiclespecs').toString().trim();
     const url = `https://api.checkcardetails.co.uk/vehicledata/${encodeURIComponent(datapoint)}?apikey=${encodeURIComponent(apiKey)}&vrm=${encodeURIComponent(vrm)}`;
 
-    console.log(`📍 VRM Lookup: ${vrm} via ${datapoint}`);
+    console.log(`📍 VRM Lookup: ${vrm} via ${datapoint} for ${req.userEmail}`);
 
     const providerResp = await fetch(url, { headers: { 'Accept': 'application/json' } });
     const rawText = await providerResp.text();
@@ -2327,7 +2454,8 @@ app.get('/api/vrm-lookup', async (req, res) => {
       datapoint,
       provider: 'checkcardetails',
       vehicle,
-      providerStatus: providerResp.status
+      providerStatus: providerResp.status,
+      authenticatedUser: req.userEmail
     });
   } catch (err) {
     console.error('❌ VRM lookup error:', err);
