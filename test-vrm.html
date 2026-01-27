@@ -525,8 +525,17 @@
     (async function() {
       try {
         // FIRST: Check for active VRM subscription
-        const iframeId = new URLSearchParams(window.location.search).get('iframeId');
-        const subUrl = iframeId ? `/api/check-vrm-subscription?iframeId=${encodeURIComponent(iframeId)}` : '/api/check-vrm-subscription';
+        const urlParams = new URLSearchParams(window.location.search);
+        const iframeId = urlParams.get('iframeId');
+        const emailParam = urlParams.get('email');
+        
+        let subUrl = '/api/check-vrm-subscription';
+        const params = new URLSearchParams();
+        if (iframeId) params.append('iframeId', iframeId);
+        if (emailParam) params.append('email', emailParam);
+        if (params.toString()) subUrl += '?' + params.toString();
+        
+        console.log('VRM subscription check URL:', subUrl);
         const response = await fetch(subUrl, {
           method: 'GET',
           credentials: 'include', // Include cookies if any exist
