@@ -1270,28 +1270,24 @@ app.post('/api/admin/vrm-status', express.json(), (req, res) => {
   }
 });
 
-// Get all active iframes (admin only)
+// Get all iframes (admin only)
 app.get('/api/admin/iframes', async (req, res) => {
   try {
-    // Note: In production, you should verify admin status here
-    // For now, this endpoint assumes proper auth is in place via frontend
-    
+    // TODO: enforce admin auth
     if (!supabase) {
       return res.json({ success: false, iframes: [] });
     }
-    
-    // Fetch all active iframes from the iframes table
+
     const { data: iframes, error } = await supabase
       .from('iframes')
       .select('*')
-      .eq('status', 'active')
       .order('created_at', { ascending: false });
-    
+
     if (error) {
       console.error('Error fetching iframes:', error);
       return res.json({ success: false, iframes: [], error: error.message });
     }
-    
+
     res.json({ 
       success: true, 
       iframes: iframes || [],
@@ -2989,36 +2985,67 @@ app.post('/api/verify-payment', async (req, res) => {
 // Track/create a new iframe embed
 app.post('/api/iframes/create', async (req, res) => {
   try {
-    const { url } = req.body;
-    
-    if (!url) {
-    return res.status(400).json({ error: 'URL is required' });
+    if (!supabase) {
+      return res.status(500).json({ error: 'Database not configured' });
     }
 
-    // Insert into iframes table (user_id can be null for now)
+    const {
+      url,
+      type,
+      email,
+      user_id,
+      title,
+      color_accent,
+      color_bg,
+      logo_url,
+      whatsapp,
+      contact_email
+    } = req.body || {};
+
+    if (!url || !email) {
+      return res.status(400).json({ error: 'URL and email are required' });
+    }
+
+    const iframeType = (type || 'embed').toLowerCase();
+
+    const insertPayload = {
+      url: url,
+      type: ['vrm', 'vrm-lookup', 'vrm_lookup'].includes(iframeType) ? 'vrm' : 'embed',
+      email: email,
+      user_id: user_id || null,
+      status: 'active',
+      title: title || null,
+      color_accent: color_accent || null,
+      color_bg: color_bg || null,
+      logo_url: logo_url || null,
+      whatsapp: whatsapp || null,
+      contact_email: contact_email || null,
+      uses: 0,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
     const { data, error } = await supabase
       .from('iframes')
-      .insert({
-        user_id: null,
-        url: url,
-        locked: false,
-        usage_count: 0,
-        created_at: new Date().toISOString(),
-      })
+      .insert(insertPayload)
       .select();
 
     if (error) throw error;
 
-    res.json({ success: true, iframe: data[0] });
+    res.json({ success: true, iframe: data?.[0] });
   } catch (error) {
     console.error('Error creating iframe record:', error);
     res.status(500).json({ error: error.message || 'Failed to create iframe record' });
   }
 });
 
-// Get all iframes for admin
+// Get all iframes (non-admin diagnostic)
 app.get('/api/iframes', async (req, res) => {
   try {
+    if (!supabase) {
+      return res.status(500).json({ error: 'Database not configured' });
+    }
+
     const { data, error } = await supabase
       .from('iframes')
       .select('*')
@@ -3033,24 +3060,30 @@ app.get('/api/iframes', async (req, res) => {
   }
 });
 
-// Lock/unlock an iframe
+// Lock/unlock an iframe (legacy path)
 app.put('/api/iframes/:id/lock', async (req, res) => {
   try {
+    if (!supabase) {
+      return res.status(500).json({ error: 'Database not configured' });
+    }
+
     const { id } = req.params;
     const { locked } = req.body;
+    const status = locked ? 'locked' : 'active';
 
     const { data, error } = await supabase
       .from('iframes')
       .update({
-        locked: locked,
-        locked_at: locked ? new Date().toISOString() : null,
+        status,
+        updated_at: new Date().toISOString(),
+        last_used: locked ? new Date().toISOString() : null
       })
       .eq('id', id)
       .select();
 
     if (error) throw error;
 
-    res.json({ success: true, iframe: data[0] });
+    res.json({ success: true, iframe: data?.[0] });
   } catch (error) {
     console.error('Error updating iframe lock:', error);
     res.status(500).json({ error: error.message || 'Failed to update iframe' });
@@ -3060,6 +3093,10 @@ app.put('/api/iframes/:id/lock', async (req, res) => {
 // Delete an iframe
 app.delete('/api/iframes/:id', async (req, res) => {
   try {
+    if (!supabase) {
+      return res.status(500).json({ error: 'Database not configured' });
+    }
+
     const { id } = req.params;
 
     const { error } = await supabase

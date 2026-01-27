@@ -8025,12 +8025,30 @@ I would like to request a quote for tuning this vehicle.`,
           `showStages=${showStageCardsVal}`
         ].filter(Boolean).join('&');
 
+        const baseSrc = `${baseUrl}/embed.html?${params}`;
+        let iframeId = null;
+
+        try {
+          iframeId = await createIframeRecord('embed', baseSrc, {
+            title: searchTitleVal || 'Vehicle Search Widget',
+            colorAccent: primaryColor,
+            colorBg: bgColor,
+            logoUrl: embedLogoVal,
+            whatsapp: settingsWhatsappVal,
+            contactEmail: settingsEmailVal
+          });
+        } catch (err) {
+          console.log('Iframe create note:', err.message);
+        }
+
+        const srcWithId = iframeId ? `${baseSrc}&iframeId=${encodeURIComponent(iframeId)}` : baseSrc;
+
         const embedCode = `<!-- Carnage Remaps Vehicle Search Widget -->
 <!-- Works with: Wix, WordPress, Squarespace, Shopify, any HTML site -->
 <!-- Just copy and paste this code into an HTML embed element -->
 
 <iframe 
-  src="${baseUrl}/embed.html?${params}" 
+  src="${srcWithId}" 
   width="${width}" 
   height="550" 
   style="border:none;border-radius:12px;max-width:100%;" 
@@ -8039,7 +8057,7 @@ I would like to request a quote for tuning this vehicle.`,
 </iframe>
 
 <!-- End Carnage Remaps Widget -->`;
-        const compactCode = `<iframe src="${baseUrl}/embed.html?${params}" width="${width}" height="550" style="border:none;border-radius:12px;max-width:100%;" title="Carnage Remaps Vehicle Search" loading="lazy"></iframe>`;
+        const compactCode = `<iframe src="${srcWithId}" width="${width}" height="550" style="border:none;border-radius:12px;max-width:100%;" title="Carnage Remaps Vehicle Search" loading="lazy"></iframe>`;
 
         if (embedCodeOutput) embedCodeOutput.value = embedCode;
         if (embedCodeOutputCompact) embedCodeOutputCompact.value = compactCode;
@@ -8048,6 +8066,37 @@ I would like to request a quote for tuning this vehicle.`,
           embedCodeContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
       });
+    }
+
+    // Shared helper: create iframe record in Supabase
+    async function createIframeRecord(type, url, meta = {}) {
+      const email = meta.email || sessionStorage.getItem('userEmail') || '';
+      const userId = sessionStorage.getItem('userId');
+      if (!email) return null; // avoid failing silently on backend validation
+
+      const payload = {
+        type,
+        url,
+        email,
+        user_id: userId ? parseInt(userId) : null,
+        title: meta.title || null,
+        color_accent: meta.colorAccent || null,
+        color_bg: meta.colorBg || null,
+        logo_url: meta.logoUrl || null,
+        whatsapp: meta.whatsapp || null,
+        contact_email: meta.contactEmail || null
+      };
+
+      const resp = await fetch('/api/iframes/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await resp.json();
+      if (resp.ok && data.success && data.iframe?.id) return data.iframe.id;
+      console.warn('Iframe record not created:', data.error || data.message || resp.statusText);
+      return null;
     }
 
     // VRM Lookup Embed Generator
@@ -8128,7 +8177,24 @@ I would like to request a quote for tuning this vehicle.`,
           emailVal ? `email=${encodeURIComponent(emailVal)}` : ''
         ].filter(Boolean).join('&');
 
-        const embedCode = `<iframe src="${baseUrl}/test-vrm.html?${params}" width="100%" height="600" style="border:none;border-radius:12px;max-width:100%;" title="VRM Lookup" loading="lazy"></iframe>`;
+        const baseSrc = `${baseUrl}/test-vrm.html?${params}`;
+        let iframeId = null;
+
+        try {
+          iframeId = await createIframeRecord('vrm', baseSrc, {
+            title: 'VRM Lookup Widget',
+            colorAccent: accentColor,
+            colorBg: bgColor,
+            logoUrl: logoVal,
+            whatsapp: waVal,
+            contactEmail: emailVal
+          });
+        } catch (err) {
+          console.log('Iframe create note:', err.message);
+        }
+
+        const srcWithId = iframeId ? `${baseSrc}&iframeId=${encodeURIComponent(iframeId)}` : baseSrc;
+        const embedCode = `<iframe src="${srcWithId}" width="100%" height="600" style="border:none;border-radius:12px;max-width:100%;" title="VRM Lookup" loading="lazy"></iframe>`;
 
         if (vrmEmbedCodeOutput) vrmEmbedCodeOutput.value = embedCode;
         if (vrmEmbedCodeContainer) {
@@ -9118,23 +9184,32 @@ I would like to request a quote for tuning this vehicle.`,
     if (copyEmbedBtn) {
       copyEmbedBtn.addEventListener('click', async () => {
         if (!embedOutput) return;
-        embedOutput.select();
-        document.execCommand('copy');
-        copyEmbedBtn.textContent = '✓ Copied!';
-        
-        // Track iframe creation
+
         try {
-          await fetch('/api/iframes/create', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ url: 'https://web-production-df12d.up.railway.app/test-vrm.html' })
-          });
+          const match = embedOutput.value.match(/src="([^"]+)"/);
+          const src = match?.[1];
+          if (src) {
+            const iframeId = await createIframeRecord('vrm', src, {
+              title: 'VRM Lookup Widget',
+              logoUrl: logoUrl?.value || null,
+              whatsapp: contactPhone?.value || CONTACT_SETTINGS.whatsappNumber || null,
+              contactEmail: contactEmail?.value || CONTACT_SETTINGS.email || null,
+              colorAccent: btnStart?.value || null,
+              colorBg: bgDark?.value || null
+            });
+
+            if (iframeId) {
+              const srcWithId = src.includes('iframeId=') ? src : `${src}${src.includes('?') ? '&' : '?'}iframeId=${encodeURIComponent(iframeId)}`;
+              embedOutput.value = embedOutput.value.replace(src, srcWithId);
+            }
+          }
         } catch (err) {
           console.log('Iframe tracking note:', err.message);
         }
-        
+
+        embedOutput.select();
+        document.execCommand('copy');
+        copyEmbedBtn.textContent = '✓ Copied!';
         setTimeout(() => { copyEmbedBtn.textContent = '📋 Copy Code'; }, 1800);
       });
     }
@@ -9540,13 +9615,16 @@ I would like to request a quote for tuning this vehicle.`,
         const isLocked = iframe.status === 'locked';
         const status = isLocked ? '🔒 Locked' : '🔓 Active';
         const statusColor = isLocked ? '#ef4444' : '#22c55e';
+        const urlPreview = iframe.url || iframe.embed_url || '';
+        const shortUrl = urlPreview ? urlPreview.replace(/^https?:\/\//, '').slice(0, 80) : '—';
         
         return `
           <tr>
             <td>
-              <code style="font-size:0.75rem;color:#0f0;background:rgba(0,0,0,0.3);padding:0.35rem 0.6rem;border-radius:6px;display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-                ${iframe.type || 'embed'}
-              </code>
+              <div style="display:flex;flex-direction:column;gap:6px;max-width:340px;">
+                <span style="font-size:0.8rem;color:#e2e8f0;font-weight:700;">${(iframe.type || 'embed').toUpperCase()}</span>
+                <a href="${urlPreview || '#'}" target="_blank" rel="noopener" style="font-size:0.8rem;color:#93c5fd;text-decoration:${urlPreview ? 'underline' : 'none'};word-break:break-all;">${shortUrl}</a>
+              </div>
             </td>
             <td>
               <span style="background:${isLocked ? 'rgba(239,68,68,0.15)' : 'rgba(34,197,94,0.15)'};color:${statusColor};padding:0.3rem 0.75rem;border-radius:6px;font-size:0.8rem;font-weight:600;display:inline-block;">

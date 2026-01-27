@@ -679,5 +679,19 @@
       }
     })();
   </script>
+
+  <script>
+    // Track iframe usage when the embed loads
+    (function() {
+      try {
+        const iframeId = new URLSearchParams(window.location.search).get('iframeId');
+        if (iframeId) {
+          fetch(`/api/iframes/${iframeId}/track`, { method: 'POST' }).catch(() => {});
+        }
+      } catch (err) {
+        console.log('Iframe track note:', err.message);
+      }
+    })();
+  </script>
 </body>
 </html>
