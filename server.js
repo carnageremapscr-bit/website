@@ -1369,24 +1369,18 @@ app.get('/api/check-embed-subscription', async (req, res) => {
       }
     }
 
-    if (emailToCheck) {
-      const { data: subsByEmail, error: emailErr } = await supabase
-        .from('subscriptions')
-        .select('*')
-        .eq('email', emailToCheck)
-        .eq('status', 'active');
-      if (!emailErr && subsByEmail) {
-        const validTypes = ['embed', 'embed-widget', 'embed_widget', 'premium', 'all-access', 'premium-access'];
-        const hasEmbedSub = subsByEmail.some(sub => validTypes.includes(sub.type) || (sub.type && sub.type.includes('embed')) || (sub.type && sub.type.includes('premium')));
-        console.log(`✅ Embed subscription check for ${emailToCheck}: ${hasEmbedSub}`);
-        return res.json({ hasSubscription: hasEmbedSub, locked, iframeId: trackedIframeId });
-      }
+    // NO SUBSCRIPTION REQUIRED - Allow all embeds by default
+    // Only block if explicitly locked by admin
+    if (locked) {
+      console.log('🔒 Iframe is locked by admin');
+      return res.json({ hasSubscription: false, locked: true, iframeId: trackedIframeId });
     }
 
-    return res.json({ hasSubscription: false, locked, iframeId: trackedIframeId });
+    console.log('✅ Embed access allowed (no subscription required)');
+    return res.json({ hasSubscription: true, locked: false, iframeId: trackedIframeId });
   } catch (error) {
     console.error('Embed subscription check error:', error);
-    res.json({ hasSubscription: false, locked: false });
+    res.json({ hasSubscription: true, locked: false });
   }
 });
 
@@ -1518,11 +1512,18 @@ app.get('/api/check-vrm-subscription', async (req, res) => {
       console.log('❌ No email to check');
     }
 
-    console.log('❌ No subscription found - returning false');
-    return res.json({ hasSubscription: false, locked, iframeId: trackedIframeId });
+    // NO SUBSCRIPTION REQUIRED - Allow all VRM lookups by default
+    // Only block if explicitly locked by admin
+    if (locked) {
+      console.log('🔒 VRM iframe is locked by admin');
+      return res.json({ hasSubscription: false, locked: true, iframeId: trackedIframeId });
+    }
+
+    console.log('✅ VRM access allowed (no subscription required)');
+    return res.json({ hasSubscription: true, locked: false, iframeId: trackedIframeId });
   } catch (error) {
     console.error('VRM subscription check error:', error);
-    res.json({ hasSubscription: false, locked: false });
+    res.json({ hasSubscription: true, locked: false });
   }
 });
 

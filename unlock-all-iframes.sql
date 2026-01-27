@@ -1,11 +1,9 @@
--- Unlock all iframes (set status to 'active')
+-- Unlock ALL iframes (set all to active, no locks)
 UPDATE iframes 
 SET status = 'active', 
-    updated_at = NOW()
-WHERE status = 'locked';
+    updated_at = NOW();
 
--- Verify the update
+-- Verify all are now active
 SELECT id, email, url, status, updated_at 
 FROM iframes 
-ORDER BY updated_at DESC 
-LIMIT 20;
+ORDER BY updated_at DESC;
