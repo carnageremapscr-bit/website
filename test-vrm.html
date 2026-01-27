@@ -524,7 +524,56 @@
   <script>
     (async function() {
       try {
-        // Check if VRM is enabled
+        // FIRST: Check for active VRM subscription
+        const iframeId = new URLSearchParams(window.location.search).get('iframeId');
+        const subUrl = iframeId ? `/api/check-vrm-subscription?iframeId=${encodeURIComponent(iframeId)}` : '/api/check-vrm-subscription';
+        const response = await fetch(subUrl, {
+          method: 'GET',
+          credentials: 'include', // Include cookies if any exist
+          headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (!response.ok) {
+          // No subscription - check if VRM is enabled globally
+          try {
+            const statusResp = await fetch('/api/vrm-status');
+            if (statusResp.ok) {
+              const statusData = await statusResp.json();
+              if (!statusData.enabled) {
+                const overlay = document.getElementById('vrm-disabled');
+                const shell = document.querySelector('.shell');
+                if (overlay && shell) {
+                  overlay.style.display = 'flex';
+                  shell.style.display = 'none';
+                }
+                return;
+              }
+            }
+          } catch (err) {
+            console.log('VRM status check failed; defaulting to enabled');
+          }
+
+          // No subscription and VRM disabled - show subscription overlay
+          const overlay = document.getElementById('subscription-check');
+          const shell = document.querySelector('.shell');
+          if (overlay && shell) {
+            overlay.style.display = 'flex';
+            shell.style.display = 'none';
+          }
+          return;
+        }
+        
+        const data = await response.json();
+        
+        // If HAS subscription, bypass VRM enabled check and allow access
+        if (data.hasSubscription) {
+          console.log('✅ Active VRM subscription - allowing access');
+          const overlay = document.getElementById('subscription-check');
+          if (overlay) overlay.style.display = 'none';
+          return;
+        }
+        
+        // No subscription - check if VRM is enabled globally
         try {
           const statusResp = await fetch('/api/vrm-status');
           if (statusResp.ok) {
@@ -543,43 +592,13 @@
           console.log('VRM status check failed; defaulting to enabled');
         }
 
-        // Attempt to check for active VRM subscription
-        // This works by trying to access the API with any auth context available
-        const iframeId = new URLSearchParams(window.location.search).get('iframeId');
-        const subUrl = iframeId ? `/api/check-vrm-subscription?iframeId=${encodeURIComponent(iframeId)}` : '/api/check-vrm-subscription';
-        const response = await fetch(subUrl, {
-          method: 'GET',
-          credentials: 'include', // Include cookies if any exist
-          headers: { 'Content-Type': 'application/json' }
-        });
-        
-        if (!response.ok) {
-          // No subscription - show overlay
-          const overlay = document.getElementById('subscription-check');
-          const shell = document.querySelector('.shell');
-          if (overlay && shell) {
-            overlay.style.display = 'flex';
-            shell.style.display = 'none';
-          }
-          return;
-        }
-        
-        const data = await response.json();
-        
-        // If no active subscription found, show overlay
-        if (!data.hasSubscription) {
-          const overlay = document.getElementById('subscription-check');
-          const shell = document.querySelector('.shell');
-          if (overlay && shell) {
-            overlay.style.display = 'flex';
-            shell.style.display = 'none';
-          }
-          return;
-        }
-        
-        // Has subscription - widget displays normally
+        // No subscription found - show subscription overlay
         const overlay = document.getElementById('subscription-check');
-        if (overlay) overlay.style.display = 'none';
+        const shell = document.querySelector('.shell');
+        if (overlay && shell) {
+          overlay.style.display = 'flex';
+          shell.style.display = 'none';
+        }
         
       } catch (error) {
         console.log('VRM subscription check error:', error);
