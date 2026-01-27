@@ -1275,7 +1275,7 @@ app.get('/api/check-embed-subscription', async (req, res) => {
 
     if (!supabase) {
       console.log('Supabase not configured - allowing embed access');
-      return res.json({ hasSubscription: true });
+      return res.json({ hasSubscription: true, locked: false, iframeId: null });
     }
 
     // Auto-track: Create or update iframe record when widget loads
@@ -1345,14 +1345,14 @@ app.get('/api/check-embed-subscription', async (req, res) => {
 
         if (subError) {
           console.error('Error checking subscriptions:', subError);
-          return res.json({ hasSubscription: false });
+          return res.json({ hasSubscription: false, locked, iframeId: trackedIframeId });
         }
 
         const validTypes = ['embed', 'embed-widget', 'embed_widget', 'premium', 'all-access', 'premium-access'];
         const hasEmbedSub = subscriptions && subscriptions.some(sub => 
           validTypes.includes(sub.type) || (sub.type && sub.type.includes('embed')) || (sub.type && sub.type.includes('premium'))
         );
-        if (hasEmbedSub) return res.json({ hasSubscription: true });
+        if (hasEmbedSub) return res.json({ hasSubscription: true, locked, iframeId: trackedIframeId });
       }
     }
 
