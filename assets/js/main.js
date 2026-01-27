@@ -9707,8 +9707,8 @@ I would like to request a quote for tuning this vehicle.`,
     }
   }
 
-  // Toggle iframe status
-  async function toggleIframeStatus(iframeId, currentStatus) {
+  // Toggle iframe status (exposed globally)
+  window.toggleIframeStatus = async function(iframeId, currentStatus) {
     try {
       const newStatus = currentStatus === 'locked' ? 'active' : 'locked';
       
@@ -9724,14 +9724,16 @@ I would like to request a quote for tuning this vehicle.`,
 
       const data = await response.json();
       if (data.success) {
+        console.log(`✅ Iframe ${iframeId} toggled to ${newStatus}`);
         loadAdminIframes();
       } else {
         alert('Error: ' + (data.message || 'Unknown error'));
       }
     } catch (error) {
+      console.error('Toggle error:', error);
       alert('Error: ' + error.message);
     }
-  }
+  };
 
   // Initialize iframe tracking when admin iframes tab is clicked
   document.addEventListener('DOMContentLoaded', () => {
