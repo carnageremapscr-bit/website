@@ -16,6 +16,9 @@ CREATE TABLE IF NOT EXISTS iframes (
   logo_url TEXT,
   whatsapp TEXT,
   contact_email TEXT,
+  has_active_subscription BOOLEAN DEFAULT false,
+  subscription_type TEXT,
+  subscription_expires TIMESTAMPTZ,
   uses INTEGER DEFAULT 0,
   last_used TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT now(),
@@ -35,6 +38,29 @@ BEGIN
     ALTER TABLE iframes ADD COLUMN url TEXT;
     UPDATE iframes SET url = 'https://web-production-df12d.up.railway.app/embed.html' WHERE url IS NULL;
     ALTER TABLE iframes ALTER COLUMN url SET NOT NULL;
+  END IF;
+END $$;
+
+-- Backfill: add subscription columns if missing
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'iframes' AND column_name = 'has_active_subscription'
+  ) THEN
+    ALTER TABLE iframes ADD COLUMN has_active_subscription BOOLEAN DEFAULT false;
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'iframes' AND column_name = 'subscription_type'
+  ) THEN
+    ALTER TABLE iframes ADD COLUMN subscription_type TEXT;
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'iframes' AND column_name = 'subscription_expires'
+  ) THEN
+    ALTER TABLE iframes ADD COLUMN subscription_expires TIMESTAMPTZ;
   END IF;
 END $$;
 

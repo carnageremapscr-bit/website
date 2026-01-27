@@ -3008,6 +3008,26 @@ app.post('/api/iframes/create', async (req, res) => {
 
     const iframeType = (type || 'embed').toLowerCase();
 
+    // Look up active subscription for the owner email
+    let hasActiveSubscription = false;
+    let subscriptionType = null;
+    let subscriptionExpires = null;
+    try {
+      const { data: subs, error: subError } = await supabase
+        .from('subscriptions')
+        .select('type,current_period_end,status')
+        .eq('email', email)
+        .eq('status', 'active')
+        .limit(1);
+      if (!subError && subs && subs.length > 0) {
+        hasActiveSubscription = true;
+        subscriptionType = subs[0]?.type || null;
+        subscriptionExpires = subs[0]?.current_period_end || null;
+      }
+    } catch (err) {
+      console.log('Subscription lookup warning:', err.message);
+    }
+
     const insertPayload = {
       url: url,
       type: ['vrm', 'vrm-lookup', 'vrm_lookup'].includes(iframeType) ? 'vrm' : 'embed',
@@ -3020,6 +3040,9 @@ app.post('/api/iframes/create', async (req, res) => {
       logo_url: logo_url || null,
       whatsapp: whatsapp || null,
       contact_email: contact_email || null,
+      has_active_subscription: hasActiveSubscription,
+      subscription_type: subscriptionType,
+      subscription_expires: subscriptionExpires,
       uses: 0,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()

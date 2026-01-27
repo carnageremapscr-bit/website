@@ -9592,7 +9592,7 @@ I would like to request a quote for tuning this vehicle.`,
     if (!container) return;
 
     try {
-      container.innerHTML = '<tr><td colspan="5" class="empty-cell">Loading iframes...</td></tr>';
+      container.innerHTML = '<tr><td colspan="6" class="empty-cell">Loading iframes...</td></tr>';
 
       const response = await fetch('/api/admin/iframes');
 
@@ -9606,7 +9606,7 @@ I would like to request a quote for tuning this vehicle.`,
       document.getElementById('iframe-locked-count').textContent = iframes.filter(i => i.status === 'locked').length;
 
       if (iframes.length === 0) {
-        container.innerHTML = '<tr><td colspan="5" class="empty-cell">No iframes created yet</td></tr>';
+        container.innerHTML = '<tr><td colspan="6" class="empty-cell">No iframes created yet</td></tr>';
         return;
       }
 
@@ -9617,6 +9617,12 @@ I would like to request a quote for tuning this vehicle.`,
         const statusColor = isLocked ? '#ef4444' : '#22c55e';
         const urlPreview = iframe.url || iframe.embed_url || '';
         const shortUrl = urlPreview ? urlPreview.replace(/^https?:\/\//, '').slice(0, 80) : '—';
+        const subActive = iframe.has_active_subscription;
+        const subType = iframe.subscription_type || (iframe.type === 'vrm' ? 'vrm' : 'embed');
+        const subBadge = subActive ? `Active ${subType}` : 'No active sub';
+        const subColor = subActive ? '#22c55e' : '#f97316';
+        const expiry = iframe.subscription_expires ? new Date(iframe.subscription_expires).toLocaleDateString() : null;
+        const creatorEmail = iframe.email || iframe.contact_email || '—';
         
         return `
           <tr>
@@ -9624,6 +9630,16 @@ I would like to request a quote for tuning this vehicle.`,
               <div style="display:flex;flex-direction:column;gap:6px;max-width:340px;">
                 <span style="font-size:0.8rem;color:#e2e8f0;font-weight:700;">${(iframe.type || 'embed').toUpperCase()}</span>
                 <a href="${urlPreview || '#'}" target="_blank" rel="noopener" style="font-size:0.8rem;color:#93c5fd;text-decoration:${urlPreview ? 'underline' : 'none'};word-break:break-all;">${shortUrl}</a>
+                <span style="display:inline-flex;gap:6px;align-items:center;font-size:0.8rem;color:${subColor};font-weight:700;">
+                  <span style="background:${subColor}20;color:${subColor};padding:0.25rem 0.55rem;border-radius:999px;">${subBadge}</span>
+                  ${expiry ? `<span style=\"color:#94a3b8;font-weight:600;\">exp ${expiry}</span>` : ''}
+                </span>
+              </div>
+            </td>
+            <td>
+              <div style="display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:0.9rem;color:#e2e8f0;font-weight:700;">${creatorEmail}</span>
+                ${iframe.user_id ? `<span style=\"font-size:0.75rem;color:#94a3b8;\">ID: ${iframe.user_id}</span>` : ''}
               </div>
             </td>
             <td>
@@ -9643,7 +9659,7 @@ I would like to request a quote for tuning this vehicle.`,
       }).join('');
     } catch (error) {
       console.error('Error loading iframes:', error);
-      container.innerHTML = `<tr><td colspan="5" class="empty-cell" style="color:#dc2626;">Error loading iframes: ${error.message}</td></tr>`;
+      container.innerHTML = `<tr><td colspan="6" class="empty-cell" style="color:#dc2626;">Error loading iframes: ${error.message}</td></tr>`;
     }
   }
 
