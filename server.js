@@ -61,6 +61,8 @@ console.log('================================');
 
 const app = express();
 const PORT = process.env.PORT || 3002;
+// Feature flag for VRM lookup availability
+let vrmLookupEnabled = true;
 
 // Trust proxy - REQUIRED for Railway/Heroku/etc that use reverse proxies
 // This fixes the X-Forwarded-For header issue with express-rate-limit
@@ -1238,6 +1240,33 @@ app.get('/api/check-vrm-subscription', async (req, res) => {
   } catch (error) {
     console.error('VRM subscription check error:', error);
     res.json({ hasSubscription: false });
+  }
+});
+
+// Public endpoint to read VRM availability
+app.get('/api/vrm-status', (req, res) => {
+  res.json({ enabled: vrmLookupEnabled });
+});
+
+// Admin endpoint to toggle VRM availability
+app.post('/api/admin/vrm-status', express.json(), (req, res) => {
+  try {
+    const adminHeader = req.headers['x-admin-email'];
+    if (!ADMIN_EMAIL || adminHeader !== ADMIN_EMAIL) {
+      return res.status(403).json({ success: false, error: 'Forbidden' });
+    }
+
+    const { enabled } = req.body;
+    if (typeof enabled !== 'boolean') {
+      return res.status(400).json({ success: false, error: 'enabled must be boolean' });
+    }
+
+    vrmLookupEnabled = enabled;
+    console.log('🔧 VRM lookup toggled:', vrmLookupEnabled);
+    return res.json({ success: true, enabled: vrmLookupEnabled });
+  } catch (error) {
+    console.error('Error toggling VRM status:', error);
+    return res.status(500).json({ success: false, error: 'Server error' });
   }
 });
 

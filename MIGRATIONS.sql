@@ -3,7 +3,8 @@
 
 CREATE TABLE IF NOT EXISTS top_up_requests (
   id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  -- users.id is BIGINT in current schema
+  user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   email TEXT NOT NULL,
   user_name TEXT,
   amount DECIMAL(10,2) NOT NULL CHECK (amount > 0),
@@ -16,26 +17,49 @@ CREATE TABLE IF NOT EXISTS top_up_requests (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- Ensure user_id column is BIGINT if the table already existed with UUID
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public'
+      AND table_name = 'top_up_requests'
+      AND column_name = 'user_id'
+      AND data_type = 'uuid'
+  ) THEN
+    ALTER TABLE top_up_requests DROP COLUMN user_id;
+    ALTER TABLE top_up_requests
+      ADD COLUMN user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE;
+  END IF;
+END $$;
+
 -- Enable RLS
 ALTER TABLE top_up_requests ENABLE ROW LEVEL SECURITY;
 
--- Allow users to view their own requests (optimized with SELECT wrapper)
+-- Allow users to view their own requests (email match to avoid UUID/BIGINT mismatch)
 CREATE POLICY "Users can view own top-up requests" ON top_up_requests
   FOR SELECT USING (
-    (SELECT auth.uid()) = user_id 
+    EXISTS (
+      SELECT 1 FROM users u
+      WHERE u.id = user_id
+      AND u.email = (SELECT email FROM auth.users WHERE id = (SELECT auth.uid()))
+    )
     OR (SELECT email FROM auth.users WHERE id = (SELECT auth.uid())) IN (SELECT email FROM users WHERE role = 'admin')
   );
 
--- Allow admins to view all requests (optimized with SELECT wrapper)
+-- Allow admins to view/manage all requests
 CREATE POLICY "Admins can manage top-up requests" ON top_up_requests
   FOR ALL USING (
     (SELECT email FROM auth.users WHERE id = (SELECT auth.uid())) IN (SELECT email FROM users WHERE role = 'admin')
   );
 
--- Allow users to insert their own requests (optimized with SELECT wrapper)
+-- Allow users to insert their own requests
 CREATE POLICY "Users can request top-ups" ON top_up_requests
   FOR INSERT WITH CHECK (
-    (SELECT auth.uid()) = user_id
+    user_id IN (
+      SELECT u.id FROM users u
+      WHERE u.email = (SELECT email FROM auth.users WHERE id = (SELECT auth.uid()))
+    )
   );
 
 -- Create index for faster queries
@@ -50,7 +74,8 @@ CREATE INDEX idx_top_up_requests_requested_at ON top_up_requests(requested_at DE
 
 CREATE TABLE IF NOT EXISTS subscriptions (
   id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  -- users.id is BIGINT in current schema
+  user_id BIGINT REFERENCES users(id) ON DELETE SET NULL,
   email TEXT NOT NULL,
   stripe_customer_id TEXT,
   stripe_subscription_id TEXT UNIQUE,
@@ -64,13 +89,33 @@ CREATE TABLE IF NOT EXISTS subscriptions (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- Ensure user_id column is BIGINT if the table already existed with UUID
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public'
+      AND table_name = 'subscriptions'
+      AND column_name = 'user_id'
+      AND data_type = 'uuid'
+  ) THEN
+    ALTER TABLE subscriptions DROP COLUMN user_id;
+    ALTER TABLE subscriptions
+      ADD COLUMN user_id BIGINT REFERENCES users(id) ON DELETE SET NULL;
+  END IF;
+END $$;
+
 -- Enable RLS
 ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
 
--- Allow users to view their own subscriptions (optimized with SELECT wrapper)
+-- Allow users to view their own subscriptions (email match to avoid UUID/BIGINT mismatch)
 CREATE POLICY "Users can view own subscriptions" ON subscriptions
   FOR SELECT USING (
-    (SELECT auth.uid()) = user_id 
+    EXISTS (
+      SELECT 1 FROM users u
+      WHERE u.id = user_id
+      AND u.email = (SELECT email FROM auth.users WHERE id = (SELECT auth.uid()))
+    )
     OR email = (SELECT email FROM auth.users WHERE id = (SELECT auth.uid()))
     OR email IN (SELECT email FROM users WHERE role = 'admin')
   );
@@ -116,7 +161,8 @@ CREATE INDEX idx_subscriptions_stripe_sub_id ON subscriptions(stripe_subscriptio
 
 CREATE TABLE IF NOT EXISTS transactions (
   id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  -- users.id is BIGINT in current schema
+  user_id BIGINT REFERENCES users(id) ON DELETE SET NULL,
   email TEXT,
   type TEXT NOT NULL CHECK (type IN ('topup', 'subscription', 'file_service', 'refund')),
   amount DECIMAL(10,2) NOT NULL,
@@ -127,13 +173,33 @@ CREATE TABLE IF NOT EXISTS transactions (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- Ensure user_id column is BIGINT if the table already existed with UUID
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public'
+      AND table_name = 'transactions'
+      AND column_name = 'user_id'
+      AND data_type = 'uuid'
+  ) THEN
+    ALTER TABLE transactions DROP COLUMN user_id;
+    ALTER TABLE transactions
+      ADD COLUMN user_id BIGINT REFERENCES users(id) ON DELETE SET NULL;
+  END IF;
+END $$;
+
 -- Enable RLS
 ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
 
--- Allow users to view their own transactions (optimized with SELECT wrapper)
+-- Allow users to view their own transactions (email match to avoid UUID/BIGINT mismatch)
 CREATE POLICY "Users can view own transactions" ON transactions
   FOR SELECT USING (
-    (SELECT auth.uid()) = user_id 
+    EXISTS (
+      SELECT 1 FROM users u
+      WHERE u.id = user_id
+      AND u.email = (SELECT email FROM auth.users WHERE id = (SELECT auth.uid()))
+    )
     OR email IN (SELECT email FROM users WHERE role = 'admin')
   );
 

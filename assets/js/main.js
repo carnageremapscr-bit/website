@@ -9546,6 +9546,50 @@ I would like to request a quote for tuning this vehicle.`,
     }
   }
 
+  // VRM availability toggle (admin)
+  async function loadVrmStatus() {
+    const statusText = document.getElementById('vrm-status-text');
+    const btn = document.getElementById('vrm-toggle-btn');
+    if (!statusText || !btn) return;
+
+    try {
+      const resp = await fetch('/api/vrm-status');
+      const data = resp.ok ? await resp.json() : { enabled: true };
+      const enabled = !!data.enabled;
+      statusText.textContent = enabled ? 'VRM lookup is ENABLED' : 'VRM lookup is DISABLED';
+      statusText.style.color = enabled ? '#34d399' : '#f87171';
+      btn.textContent = enabled ? 'Disable VRM' : 'Enable VRM';
+      btn.style.background = enabled ? '#ef4444' : '#22c55e';
+      btn.style.color = '#0b0f19';
+    } catch (err) {
+      statusText.textContent = 'Unable to load status';
+      statusText.style.color = '#fbbf24';
+    }
+  }
+
+  async function toggleVrmStatus() {
+    const statusText = document.getElementById('vrm-status-text');
+    const btn = document.getElementById('vrm-toggle-btn');
+    if (!btn) return;
+
+    try {
+      const current = statusText?.textContent?.includes('ENABLED');
+      const resp = await fetch('/api/admin/vrm-status', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-email': sessionStorage.getItem('userEmail') || ''
+        },
+        body: JSON.stringify({ enabled: !current })
+      });
+
+      if (!resp.ok) throw new Error('Failed to toggle');
+      await loadVrmStatus();
+    } catch (err) {
+      alert('Unable to toggle VRM: ' + err.message);
+    }
+  }
+
   // Toggle iframe status
   async function toggleIframeStatus(iframeId, currentStatus) {
     try {
@@ -9578,12 +9622,18 @@ I would like to request a quote for tuning this vehicle.`,
     if (refreshBtn) {
       refreshBtn.onclick = loadAdminIframes;
     }
+    const vrmToggleBtn = document.getElementById('vrm-toggle-btn');
+    if (vrmToggleBtn) {
+      vrmToggleBtn.onclick = toggleVrmStatus;
+      loadVrmStatus();
+    }
   });
 
   // Load iframes when tab is selected
   document.addEventListener('tabselected', (e) => {
     if (e.detail?.tabId === 'admin-iframes') {
       loadAdminIframes();
+      loadVrmStatus();
     }
   });
 

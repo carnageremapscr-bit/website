@@ -219,6 +219,16 @@
     </div>
   </div>
 
+  <!-- VRM Disabled Overlay -->
+  <div id="vrm-disabled" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;z-index:10000;font-family:inherit">
+    <div style="background:#0f172a;border:1px solid #f97316;border-radius:12px;padding:40px;text-align:center;max-width:420px;color:#fff">
+      <div style="font-size:3rem;margin-bottom:1rem">⏸️</div>
+      <h2 style="margin-bottom:1rem;font-size:1.5rem">VRM Lookup Disabled</h2>
+      <p style="color:#fcd34d;margin-bottom:1.5rem;line-height:1.6">This service is temporarily turned off by the admin.</p>
+      <p style="color:#94a3b8;font-size:0.9rem">Please check back later.</p>
+    </div>
+  </div>
+
   <div class="shell">
     <h1>VRM Lookup Service</h1>
     <div class="subtitle">Enter a UK vehicle registration number to get instant vehicle information</div>
@@ -485,6 +495,25 @@
   <script>
     (async function() {
       try {
+        // Check if VRM is enabled
+        try {
+          const statusResp = await fetch('/api/vrm-status');
+          if (statusResp.ok) {
+            const statusData = await statusResp.json();
+            if (!statusData.enabled) {
+              const overlay = document.getElementById('vrm-disabled');
+              const shell = document.querySelector('.shell');
+              if (overlay && shell) {
+                overlay.style.display = 'flex';
+                shell.style.display = 'none';
+              }
+              return;
+            }
+          }
+        } catch (err) {
+          console.log('VRM status check failed; defaulting to enabled');
+        }
+
         // Attempt to check for active VRM subscription
         // This works by trying to access the API with any auth context available
         const response = await fetch('/api/check-vrm-subscription', {
