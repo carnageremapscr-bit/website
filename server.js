@@ -1320,10 +1320,43 @@ app.get('/api/admin/iframes', async (req, res) => {
       return res.json({ success: false, iframes: [], error: error.message });
     }
 
+    // Enrich with live subscription status
+    const enrichedIframes = await Promise.all((iframes || []).map(async (iframe) => {
+      try {
+        const { data: subs, error: subErr } = await supabase
+          .from('subscriptions')
+          .select('type, status, current_period_end')
+          .eq('email', iframe.email)
+          .eq('status', 'active');
+        
+        if (!subErr && subs && subs.length > 0) {
+          const relevantTypes = iframe.type === 'vrm' 
+            ? ['vrm', 'vrm-lookup', 'vrm_lookup']
+            : ['embed', 'embed-widget', 'embed_widget'];
+          
+          const activeSub = subs.find(s => relevantTypes.includes(s.type) || 
+            (s.type && (iframe.type === 'vrm' ? s.type.includes('vrm') : s.type.includes('embed'))));
+          
+          if (activeSub) {
+            iframe.has_active_subscription = true;
+            iframe.subscription_type = activeSub.type;
+            iframe.subscription_expires = activeSub.current_period_end;
+          } else {
+            iframe.has_active_subscription = false;
+          }
+        } else {
+          iframe.has_active_subscription = false;
+        }
+      } catch (err) {
+        console.warn('Subscription lookup failed for iframe:', iframe.id, err.message);
+      }
+      return iframe;
+    }));
+
     res.json({ 
       success: true, 
-      iframes: iframes || [],
-      total: iframes?.length || 0
+      iframes: enrichedIframes,
+      total: enrichedIframes.length
     });
   } catch (error) {
     console.error('Error in iframe list endpoint:', error);
