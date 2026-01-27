@@ -10,13 +10,13 @@ const { createClient } = require('@supabase/supabase-js');
 // Initialize Supabase client (use service role for webhook access)
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://iffsmbsxwhxehsigtqoe.supabase.co';
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const supabaseConfigured = SUPABASE_URL && SUPABASE_SERVICE_KEY;
+const supabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_SERVICE_KEY);
 const supabase = supabaseConfigured ? createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY) : null;
 
 console.log('=== Supabase Configuration ===');
 console.log('SUPABASE_URL set:', !!SUPABASE_URL);
 console.log('SUPABASE_SERVICE_ROLE_KEY set:', !!SUPABASE_SERVICE_KEY);
-console.log('Supabase configured:', supabaseConfigured);
+console.log('Supabase configured:', !!supabaseConfigured);
 console.log('==============================');
 
 // Check if Stripe key is configured
