@@ -34,6 +34,8 @@ const DVLA_API_KEY = process.env.DVLA_API_KEY || '';
 const DVLA_API_BASE_URL = process.env.DVLA_API_BASE_URL || 'https://driver-vehicle-licensing.api.gov.uk';
 const DVLA_USERNAME = process.env.DVLA_USERNAME || '';
 const DVLA_PASSWORD = process.env.DVLA_PASSWORD || '';
+// Emergency override to ignore iframe lock (set to 'true' to disable all locks)
+const OVERRIDE_IFRAME_LOCK = (process.env.OVERRIDE_IFRAME_LOCK || 'false').toLowerCase() === 'true';
 
 // JWT token cache for DVLA (valid for 1 hour)
 let dvlaJwtToken = null;
@@ -58,6 +60,9 @@ console.log('CHECKCAR_DATAPOINT:', CHECKCAR_DATAPOINT);
 console.log('DVLA_API_KEY set:', !!DVLA_API_KEY);
 console.log('DVLA_API_BASE_URL:', DVLA_API_BASE_URL);
 console.log('================================');
+console.log('=== Safety/Overrides ===');
+console.log('OVERRIDE_IFRAME_LOCK:', OVERRIDE_IFRAME_LOCK);
+console.log('==============================');
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -1317,6 +1322,12 @@ app.get('/api/check-embed-subscription', async (req, res) => {
       }
     }
 
+    // Emergency override disables lock everywhere
+    if (OVERRIDE_IFRAME_LOCK) locked = false;
+
+    // Emergency override disables lock everywhere
+    if (OVERRIDE_IFRAME_LOCK) locked = false;
+
     // Authenticated path
     if (token) {
       const { data: { user }, error } = await supabase.auth.getUser(token);
@@ -1643,6 +1654,38 @@ app.post('/api/admin/iframes/:id/toggle', express.json(), async (req, res) => {
   } catch (error) {
     console.error('Error in iframe toggle endpoint:', error);
     res.json({ success: false, error: error.message });
+  }
+});
+
+// Emergency: Unlock all iframes (admin-only)
+app.post('/api/admin/iframes/unlock-all', express.json(), async (req, res) => {
+  try {
+    const adminHeader = (req.headers['x-admin-email'] || '').toString().toLowerCase();
+    if (!ADMIN_EMAILS.includes(adminHeader)) {
+      return res.status(403).json({ success: false, error: 'Forbidden' });
+    }
+
+    if (!supabase) {
+      return res.status(500).json({ success: false, error: 'Database not configured' });
+    }
+
+    const { email } = req.body || {};
+    let query = supabase.from('iframes').update({ status: 'active', updated_at: new Date().toISOString() });
+    if (email) {
+      query = query.eq('email', email);
+    }
+
+    const { data, error } = await query.select();
+    if (error) {
+      console.error('Error unlocking iframes:', error);
+      return res.status(500).json({ success: false, error: error.message });
+    }
+
+    console.log(`✅ Unlocked ${data?.length || 0} iframes${email ? ` for ${email}` : ''}`);
+    return res.json({ success: true, count: data?.length || 0, iframes: data });
+  } catch (err) {
+    console.error('Error in unlock-all endpoint:', err);
+    return res.status(500).json({ success: false, error: 'Server error' });
   }
 });
 
@@ -3370,7 +3413,7 @@ app.post('/api/iframes/create', async (req, res) => {
       console.log('Subscription lookup warning:', err.message);
     }
 
-    const insertPayload = {
+    const basePayload = {
       url: url,
       type: ['vrm', 'vrm-lookup', 'vrm_lookup'].includes(iframeType) ? 'vrm' : 'embed',
       email: email,
@@ -3382,20 +3425,36 @@ app.post('/api/iframes/create', async (req, res) => {
       logo_url: logo_url || null,
       whatsapp: whatsapp || null,
       contact_email: contact_email || null,
-      has_active_subscription: hasActiveSubscription,
-      subscription_type: subscriptionType,
-      subscription_expires: subscriptionExpires,
       uses: 0,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
 
-    const { data, error } = await supabase
-      .from('iframes')
-      .insert(insertPayload)
-      .select();
-
-    if (error) throw error;
+    // Try inserting with optional subscription fields; if the table doesn't
+    // have these columns, retry without them to avoid schema errors.
+    let data = null;
+    try {
+      const insertPayload = {
+        ...basePayload,
+        has_active_subscription: hasActiveSubscription,
+        subscription_type: subscriptionType,
+        subscription_expires: subscriptionExpires,
+      };
+      const result = await supabase
+        .from('iframes')
+        .insert(insertPayload)
+        .select();
+      data = result.data;
+      if (result.error) throw result.error;
+    } catch (firstErr) {
+      console.warn('Iframe insert with subscription fields failed, retrying without optional columns:', firstErr.message);
+      const result2 = await supabase
+        .from('iframes')
+        .insert(basePayload)
+        .select();
+      data = result2.data;
+      if (result2.error) throw result2.error;
+    }
 
     res.json({ success: true, iframe: data?.[0] });
   } catch (error) {
