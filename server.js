@@ -1127,6 +1127,108 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Check if user has active embed subscription
+app.get('/api/check-embed-subscription', async (req, res) => {
+  try {
+    // Get user from session/auth header
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.json({ hasSubscription: false });
+    }
+    
+    // Extract user from Bearer token or session
+    const token = authHeader.replace('Bearer ', '');
+    
+    // For embedded iframes without auth context, we check the parent domain
+    // If the request includes user identification (via cookie or header), check subscriptions
+    if (!supabase) {
+      console.log('Supabase not configured - allowing embed access');
+      return res.json({ hasSubscription: true });
+    }
+    
+    // Try to get user from Supabase auth
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    
+    if (error || !user) {
+      return res.json({ hasSubscription: false });
+    }
+    
+    // Check for active embed subscription
+    const { data: subscriptions, error: subError } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('status', 'active');
+    
+    if (subError) {
+      console.error('Error checking subscriptions:', subError);
+      return res.json({ hasSubscription: false });
+    }
+    
+    // Check for embed-related subscription types
+    const validTypes = ['embed', 'embed-widget', 'embed_widget'];
+    const hasEmbedSub = subscriptions && subscriptions.some(sub => 
+      validTypes.includes(sub.type) || (sub.type && sub.type.includes('embed'))
+    );
+    
+    res.json({ hasSubscription: hasEmbedSub || false });
+  } catch (error) {
+    console.error('Embed subscription check error:', error);
+    res.json({ hasSubscription: false });
+  }
+});
+
+// Check if user has active VRM subscription
+app.get('/api/check-vrm-subscription', async (req, res) => {
+  try {
+    // Get user from session/auth header
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.json({ hasSubscription: false });
+    }
+    
+    // Extract user from Bearer token or session
+    const token = authHeader.replace('Bearer ', '');
+    
+    // For embedded iframes without auth context, we check the parent domain
+    // If the request includes user identification (via cookie or header), check subscriptions
+    if (!supabase) {
+      console.log('Supabase not configured - allowing VRM access');
+      return res.json({ hasSubscription: true });
+    }
+    
+    // Try to get user from Supabase auth
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    
+    if (error || !user) {
+      return res.json({ hasSubscription: false });
+    }
+    
+    // Check for active VRM subscription
+    const { data: subscriptions, error: subError } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('status', 'active');
+    
+    if (subError) {
+      console.error('Error checking VRM subscriptions:', subError);
+      return res.json({ hasSubscription: false });
+    }
+    
+    // Check for VRM-related subscription types
+    const validTypes = ['vrm', 'vrm-lookup', 'vrm_lookup'];
+    const hasVrmSub = subscriptions && subscriptions.some(sub => 
+      validTypes.includes(sub.type) || (sub.type && sub.type.includes('vrm'))
+    );
+    
+    res.json({ hasSubscription: hasVrmSub || false });
+  } catch (error) {
+    console.error('VRM subscription check error:', error);
+    res.json({ hasSubscription: false });
+  }
+});
+
 // Get admin notifications endpoint
 app.get('/api/admin/notifications', async (req, res) => {
   try {
