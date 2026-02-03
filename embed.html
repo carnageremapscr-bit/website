@@ -851,69 +851,25 @@
   <script>
     (async function() {
       try {
-        // Attempt to check for active embed subscription
-        // This works by trying to access the API with any auth context available
+        // Extract URL parameters for tracking
         const urlParams = new URLSearchParams(window.location.search);
         const iframeId = urlParams.get('iframeId');
         const emailParam = urlParams.get('email');
-        const currentUrl = window.location.href.split('?')[0]; // URL without query params
         
-        let subUrl = '/api/check-embed-subscription';
-        const params = new URLSearchParams();
-        if (iframeId) params.append('iframeId', iframeId);
-        if (emailParam) params.append('email', emailParam);
-        params.append('url', currentUrl); // Pass URL for tracking
-        if (params.toString()) subUrl += '?' + params.toString();
+        // Store for potential future use
+        window.iframeId = iframeId;
+        window.userEmail = emailParam;
         
-        const response = await fetch(subUrl, {
-          method: 'GET',
-          credentials: 'include', // Include cookies if any exist
-          headers: { 'Content-Type': 'application/json' }
-        });
+        // Service access is now handled by backend APIs
+        // No frontend subscription checks needed
         
-        if (!response.ok) {
-          // No subscription - show overlay
-          const overlay = document.getElementById('subscription-check');
-          const widget = document.getElementById('widget');
-          if (overlay && widget) {
-            overlay.style.display = 'flex';
-            widget.style.display = 'none';
-          }
-          return;
-        }
-        
-        const data = await response.json();
-
-        // If iframe is locked, show locked overlay regardless of subscription
-        if (data.locked) {
-          const overlay = document.getElementById('iframe-locked');
-          const widget = document.getElementById('widget');
-          if (overlay && widget) {
-            overlay.style.display = 'flex';
-            widget.style.display = 'none';
-          }
-          return;
-        }
-
-        // If no active subscription found, show overlay
-        if (!data.hasSubscription) {
-          const overlay = document.getElementById('subscription-check');
-          const widget = document.getElementById('widget');
-          if (overlay && widget) {
-            overlay.style.display = 'flex';
-            widget.style.display = 'none';
-          }
-          return;
-        }
-        
-        // Has subscription - widget displays normally
+        // Hide loading overlays
         const overlay = document.getElementById('subscription-check');
         if (overlay) overlay.style.display = 'none';
         
       } catch (error) {
-        console.log('Subscription check error (embed):', error);
-        // On error, show widget (assume subscription is valid or there's a backend issue)
-        // This prevents false negatives
+        console.log('Initialization error (embed):', error);
+        // On error, show widget anyway
         const overlay = document.getElementById('subscription-check');
         if (overlay) overlay.style.display = 'none';
       }

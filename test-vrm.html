@@ -539,45 +539,17 @@
   <script>
     (async function() {
       try {
-        // FIRST: Check for active VRM subscription
+        // Extract URL parameters for tracking
         const urlParams = new URLSearchParams(window.location.search);
         const iframeId = urlParams.get('iframeId');
         const emailParam = urlParams.get('email');
-        const currentUrl = window.location.href.split('?')[0]; // URL without query params
         
-        let subUrl = '/api/check-vrm-subscription';
-        const params = new URLSearchParams();
-        if (iframeId) params.append('iframeId', iframeId);
-        if (emailParam) params.append('email', emailParam);
-        params.append('url', currentUrl); // Pass URL for tracking
-        if (params.toString()) subUrl += '?' + params.toString();
+        // Store for use in fetch requests
+        window.userEmail = emailParam;
+        window.iframeId = iframeId;
         
-        console.log('VRM subscription check URL:', subUrl);
-        const response = await fetch(subUrl, {
-          method: 'GET',
-          credentials: 'include', // Include cookies if any exist
-          headers: { 'Content-Type': 'application/json' }
-        });
-        
-        if (!response.ok) {
-          // No subscription - check if VRM is enabled globally
-          try {
-            const statusResp = await fetch('/api/vrm-status');
-            if (statusResp.ok) {
-              const statusData = await statusResp.json();
-              if (!statusData.enabled) {
-                const overlay = document.getElementById('vrm-disabled');
-                const shell = document.querySelector('.shell');
-                if (overlay && shell) {
-                  overlay.style.display = 'flex';
-                  shell.style.display = 'none';
-                }
-                return;
-              }
-            }
-          } catch (err) {
-            console.log('VRM status check failed; defaulting to enabled');
-          }
+        // Service status is now checked by the backend API itself
+        // No need for frontend checks - the /api/vrm-lookup endpoint will return an error if disabled
 
           // No subscription and VRM disabled - show subscription overlay
           const overlay = document.getElementById('subscription-check');
@@ -605,42 +577,14 @@
           }
 
           console.log('✅ Active VRM subscription - allowing access');
-          const overlay = document.getElementById('subscription-check');
-          if (overlay) overlay.style.display = 'none';
-          return;
-        }
         
-        // No subscription - check if VRM is enabled globally
-        try {
-          const statusResp = await fetch('/api/vrm-status');
-          if (statusResp.ok) {
-            const statusData = await statusResp.json();
-            if (!statusData.enabled) {
-              const overlay = document.getElementById('vrm-disabled');
-              const shell = document.querySelector('.shell');
-              if (overlay && shell) {
-                overlay.style.display = 'flex';
-                shell.style.display = 'none';
-              }
-              return;
-            }
-          }
-        } catch (err) {
-          console.log('VRM status check failed; defaulting to enabled');
-        }
-
-        // No subscription found - show subscription overlay
+        // Hide any loading overlays
         const overlay = document.getElementById('subscription-check');
-        const shell = document.querySelector('.shell');
-        if (overlay && shell) {
-          overlay.style.display = 'flex';
-          shell.style.display = 'none';
-        }
+        if (overlay) overlay.style.display = 'none';
         
       } catch (error) {
-        console.log('VRM subscription check error:', error);
-        // On error, show widget (assume subscription is valid or there's a backend issue)
-        // This prevents false negatives
+        console.log('VRM initialization error:', error);
+        // On error, show widget anyway
         const overlay = document.getElementById('subscription-check');
         if (overlay) overlay.style.display = 'none';
       }
