@@ -2051,6 +2051,96 @@ function normalizeVehicleResponse(data) {
 
 app.get('/api/vrm-lookup', async (req, res) => {
   try {
+    const vrmRaw = (req.query.vrm || '').toString().trim();
+    const email = (req.query.email || '').toString().trim();
+    const iframeId = (req.query.iframeId || '').toString().trim();
+
+    if (!vrmRaw) {
+      return res.status(400).json({ error: 'vrm is required' });
+    }
+
+    // Check if iframe is locked
+    if (iframeId) {
+      try {
+        const { data: iframe, error: iframeError } = await supabase
+          .from('iframes')
+          .select('id, status, email')
+          .eq('id', iframeId)
+          .single();
+
+        if (!iframeError && iframe && iframe.status === 'locked') {
+          console.log(`🔒 VRM Lookup blocked - iframe ${iframeId} is locked`);
+          return res.status(403).json({ 
+            error: 'This widget has been locked by an admin',
+            locked: true
+          });
+        }
+      } catch (err) {
+        console.warn('Error checking iframe lock status:', err);
+        // Continue - don't block on database errors
+      }
+    } else if (email) {
+      // Check email-based lock status if no iframeId
+      try {
+        const { data: lockedIframe, error: lockedError } = await supabase
+          .from('iframes')
+          .select('id, status')
+          .eq('email', email)
+          .eq('status', 'locked')
+          .eq('type', 'vrm')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
+
+        if (!lockedError && lockedIframe) {
+          console.log(`🔒 VRM Lookup blocked - email ${email} has locked iframe`);
+          return res.status(403).json({ 
+            error: 'This widget has been locked by an admin',
+            locked: true
+          });
+        }
+      } catch (err) {
+        console.warn('Error checking email lock status:', err);
+        // Continue - don't block on database errors
+      }
+    }
+
+    // Check VRM subscription
+    if (email) {
+      try {
+        const { data: subs, error: subError } = await supabase
+          .from('subscriptions')
+          .select('id, status, subscription_type')
+          .eq('email', email)
+          .eq('subscription_type', 'vrm')
+          .eq('status', 'active');
+
+        if (subError) {
+          console.error('Error checking subscriptions:', subError);
+        } else if (!subs || subs.length === 0) {
+          console.log(`❌ VRM Lookup blocked - no active VRM subscription for ${email}`);
+          return res.status(403).json({ 
+            error: 'VRM Lookup requires an active subscription (£17.99/month)',
+            needsSubscription: true,
+            subscriptionType: 'vrm'
+          });
+        } else {
+          console.log(`✅ VRM Lookup allowed - active subscription found for ${email}`);
+        }
+      } catch (err) {
+        console.error('Subscription check error:', err);
+        // Don't block on subscription check errors
+      }
+    } else {
+      // No email provided - block access
+      console.log('❌ VRM Lookup blocked - no email provided');
+      return res.status(403).json({ 
+        error: 'VRM Lookup requires an active subscription',
+        needsSubscription: true,
+        subscriptionType: 'vrm'
+      });
+    }
+
     // Service status check temporarily disabled - always allow VRM lookups
     // TODO: Re-enable when service_status table is properly populated
     /*
@@ -2074,11 +2164,6 @@ app.get('/api/vrm-lookup', async (req, res) => {
     
     // Prefer env key; if missing, fall back to provided test key (letters must include 'A')
     const apiKey = CHECKCAR_API_KEY || 'e80ce7141c39ae0b111a1999f6a0891b';
-    const vrmRaw = (req.query.vrm || '').toString().trim();
-
-    if (!vrmRaw) {
-      return res.status(400).json({ error: 'vrm is required' });
-    }
 
     if (!apiKey) {
       console.warn('⚠️ CHECKCAR_API_KEY not configured');

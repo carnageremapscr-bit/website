@@ -9725,20 +9725,20 @@ I would like to request a quote for tuning this vehicle.`,
   // Toggle iframe status (exposed globally)
   window.toggleIframeStatus = async function(iframeId, currentStatus) {
     try {
-      const newStatus = currentStatus === 'locked' ? 'active' : 'locked';
-      
+      // Note: backend expects current status, will toggle it
       const response = await fetch(`/api/admin/iframes/${iframeId}/toggle`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ status: newStatus })
+        body: JSON.stringify({ status: currentStatus })
       });
 
       if (!response.ok) throw new Error('Failed to update iframe');
 
       const data = await response.json();
       if (data.success) {
+        const newStatus = currentStatus === 'locked' ? 'active' : 'locked';
         console.log(`✅ Iframe ${iframeId} toggled to ${newStatus}`);
         loadAdminIframes();
       } else {
