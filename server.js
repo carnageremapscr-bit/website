@@ -2891,10 +2891,11 @@ app.get('/api/iframes', async (req, res) => {
   } catch (error) {
     console.error('Error fetching iframes:', error);
     res.status(500).json({ error: error.message || 'Failed to fetch iframes' });
-  });
+  }
+});
 
-  // Get iframe status by ID
-  app.get('/api/iframes/:id/status', async (req, res) => {
+// Get iframe status by ID
+app.get('/api/iframes/:id/status', async (req, res) => {
     try {
       const { id } = req.params;
 
@@ -2925,8 +2926,6 @@ app.get('/api/iframes', async (req, res) => {
       res.status(500).json({ error: error.message || 'Failed to fetch iframe status' });
     }
   });
-  }
-});
 
 // Lock/unlock an iframe
 app.put('/api/iframes/:id/lock', async (req, res) => {
