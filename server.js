@@ -1440,6 +1440,9 @@ app.get('/api/check-vrm-subscription', async (req, res) => {
       }
     }
 
+    // Emergency override disables lock everywhere
+    if (OVERRIDE_IFRAME_LOCK) locked = false;
+
     // Authenticated path
     if (token) {
       const { data: { user }, error } = await supabase.auth.getUser(token);
@@ -3586,7 +3589,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start server (close any unclosed block)
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`\n🚀 Carnage Remaps API Server running on http://localhost:${PORT}`);
   console.log(`📝 API Endpoints:`);
   console.log(`   - POST http://localhost:${PORT}/api/create-checkout-session`);
@@ -3594,5 +3597,25 @@ app.listen(PORT, () => {
   console.log(`   - POST http://localhost:${PORT}/api/webhook`);
   console.log(`   - POST http://localhost:${PORT}/api/verify-payment`);
   console.log(`\n⚠️  Don't forget to set your Stripe keys in .env file!\n`);
+
+  // Startup migration: Unlock all iframes if override is enabled
+  if (OVERRIDE_IFRAME_LOCK && supabase) {
+    try {
+      console.log('🔓 Startup: Unlocking all iframes (OVERRIDE_IFRAME_LOCK is enabled)...');
+      const { data, error } = await supabase
+        .from('iframes')
+        .update({ status: 'active', updated_at: new Date().toISOString() })
+        .eq('status', 'locked')
+        .select();
+      
+      if (error) {
+        console.error('❌ Error unlocking iframes:', error.message);
+      } else {
+        console.log(`✅ Unlocked ${data?.length || 0} iframes on startup`);
+      }
+    } catch (err) {
+      console.error('⚠️ Startup iframe unlock failed:', err.message);
+    }
+  }
 });
 
