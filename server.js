@@ -3246,29 +3246,25 @@ app.get('/api/iframes/status-by-email', async (req, res) => {
 
     console.log(`[IFRAME STATUS BY EMAIL] Checking email: ${email}, type: ${type || 'ANY'}`);
 
-    // First, check for ANY locked iframe with this email
-    // If type is specified, filter by it; otherwise get ANY locked iframe for this email
-    let lockedQuery = supabase
+    // CRITICAL: Check for ANY locked iframe for this email, REGARDLESS of type
+    // This ensures if ANY embed/vrm is locked, the lock shows
+    let allLockedQuery = supabase
       .from('iframes')
       .select('id, status, email, url, created_at, last_used, user_id, type')
       .eq('email', email)
       .eq('status', 'locked');
 
-    if (type) {
-      lockedQuery = lockedQuery.eq('type', type);
-    }
+    const { data: allLockedRows, error: allLockedError } = await allLockedQuery;
 
-    const { data: lockedRows, error: lockedError } = await lockedQuery;
+    console.log(`[IFRAME STATUS BY EMAIL] ANY type locked check - error: ${allLockedError ? allLockedError.message : 'none'}, found: ${allLockedRows?.length || 0}`);
 
-    console.log(`[IFRAME STATUS BY EMAIL] Locked check (type=${type || 'ANY'}) - error: ${lockedError ? lockedError.message : 'none'}, found: ${lockedRows?.length || 0}`);
-
-    if (!lockedError && lockedRows && lockedRows.length > 0) {
-      const lockedRow = lockedRows[0];
+    if (!allLockedError && allLockedRows && allLockedRows.length > 0) {
+      const lockedRow = allLockedRows[0];
       console.log(`[IFRAME STATUS BY EMAIL] ✅ Found locked iframe: ${lockedRow.id}, type: ${lockedRow.type}`);
       return res.json({ success: true, iframe: { ...lockedRow, locked: true } });
     }
 
-    // If no locked iframe, check for active iframe of the requested type
+    // If no locked iframe found, check for active iframe of the requested type
     let query = supabase
       .from('iframes')
       .select('id, status, email, url, created_at, last_used, user_id, type')
@@ -3287,11 +3283,11 @@ app.get('/api/iframes/status-by-email', async (req, res) => {
 
     if (!activeError && activeRows && activeRows.length > 0) {
       const data = activeRows[0];
-      console.log(`[IFRAME STATUS BY EMAIL] Found active iframe: ${data.id}, type: ${data.type}`);
+      console.log(`[IFRAME STATUS BY EMAIL] Found active iframe: ${data.id}, type: ${data.type}, status: ${data.status}`);
       return res.json({ success: true, iframe: { ...data, locked: false } });
     }
 
-    console.log(`[IFRAME STATUS BY EMAIL] No records found for ${email} (type=${type || 'ANY'}) - returning active`);
+    console.log(`[IFRAME STATUS BY EMAIL] No records found for ${email} (type=${type || 'ANY'}) - returning default active`);
     res.json({ success: true, iframe: { status: 'active', locked: false } });
   } catch (error) {
     console.error('Error fetching iframe status by email:', error);
