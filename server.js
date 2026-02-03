@@ -2891,6 +2891,40 @@ app.get('/api/iframes', async (req, res) => {
   } catch (error) {
     console.error('Error fetching iframes:', error);
     res.status(500).json({ error: error.message || 'Failed to fetch iframes' });
+  });
+
+  // Get iframe status by ID
+  app.get('/api/iframes/:id/status', async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const { data, error } = await supabase
+        .from('iframes')
+        .select('id, status, locked, email, url, created_at, last_accessed')
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        // If iframe doesn't exist, return active status (don't block)
+        if (error.code === 'PGRST116') {
+          return res.json({ 
+            success: true, 
+            iframe: { 
+              id, 
+              status: 'active', 
+              locked: false 
+            } 
+          });
+        }
+        throw error;
+      }
+
+      res.json({ success: true, iframe: data });
+    } catch (error) {
+      console.error('Error fetching iframe status:', error);
+      res.status(500).json({ error: error.message || 'Failed to fetch iframe status' });
+    }
+  });
   }
 });
 
