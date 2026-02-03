@@ -522,56 +522,243 @@ const CarnageVehicleDB = {
       gearbox: ['DQ38x', 'DQ500', 'DL501', 'DL800']
     },
 
-    // Continental/Siemens ECU Types
+    // Continental/Siemens ECU Types - ENHANCED
     continental: {
-      // Simos (VW/Audi/Skoda/Seat)
+      // Simos (VW/Audi/Skoda/Seat) - ENHANCED with detailed data
       simos: [
-        'Simos6.2', 'Simos6.3',
-        'Simos8.2', 'Simos8.3', 'Simos8.4', 'Simos8.5',
-        'Simos10.11', 'Simos10.20', 'Simos10.22', 'Simos10.x',
-        'Simos12.1', 'Simos12.2',
-        'Simos16.11', 'Simos16.21',
-        'Simos18.1', 'Simos18.2', 'Simos18.3', 'Simos18.4', 'Simos18.6', 'Simos18.10',
-        'Simos19.2', 'Simos19.3', 'Simos19.6', 'Simos19.7', 'Simos19.8'
+        {name: 'Simos6.2', protocol: ['OBD', 'BDM'], years: '2002-2006', capability: 'Full tuning', read: 'BDM100', flash: 'Yes', vehicles: 'VW/Audi'},
+        {name: 'Simos6.3', protocol: ['OBD', 'BDM'], years: '2002-2007', capability: 'Full tuning', read: 'BDM100', flash: 'Yes', vehicles: 'VW/Audi'},
+        {name: 'Simos8.2', protocol: ['OBD', 'BDM'], years: '2006-2010', capability: 'Full tuning', read: 'K-TAG/BDM', flash: 'Yes', vehicles: 'VW/Audi/Seat/Skoda'},
+        {name: 'Simos8.3', protocol: ['OBD', 'BDM'], years: '2007-2011', capability: 'Full tuning', read: 'K-TAG/BDM', flash: 'Yes', vehicles: 'VW/Audi/Seat/Skoda'},
+        {name: 'Simos8.4', protocol: ['OBD', 'BDM'], years: '2007-2011', capability: 'Full tuning', read: 'K-TAG/BDM', flash: 'Yes', vehicles: 'VW/Audi/Seat/Skoda'},
+        {name: 'Simos8.5', protocol: ['OBD', 'BDM'], years: '2008-2012', capability: 'Full tuning', read: 'K-TAG/BDM', flash: 'Yes', vehicles: 'VW/Audi/Seat/Skoda'},
+        {name: 'Simos8.6', protocol: ['OBD', 'BDM'], years: '2008-2012', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'VW Group'},
+        {name: 'Simos10.11', protocol: ['OBD', 'Boot'], years: '2009-2013', capability: 'Full tuning', read: 'Kess3/K-TAG', flash: 'Yes', vehicles: 'VW/Audi'},
+        {name: 'Simos10.20', protocol: ['OBD', 'Boot'], years: '2009-2013', capability: 'Full tuning', read: 'Kess3/K-TAG', flash: 'Yes', vehicles: 'VW/Audi'},
+        {name: 'Simos10.22', protocol: ['OBD', 'Boot'], years: '2010-2014', capability: 'Full tuning', read: 'Kess3/K-TAG', flash: 'Yes', vehicles: 'VW/Audi'},
+        {name: 'Simos10.x', protocol: ['OBD', 'Boot'], years: '2009-2014', capability: 'Full tuning', read: 'Kess3/K-TAG', flash: 'Yes', vehicles: 'VW Group'},
+        {name: 'Simos12.1', protocol: ['OBD', 'Boot'], years: '2012-2016', capability: 'Full tuning', read: 'Kess3/K-TAG', flash: 'Yes', vehicles: 'VW/Audi'},
+        {name: 'Simos12.2', protocol: ['OBD', 'Boot'], years: '2013-2017', capability: 'Full tuning', read: 'Kess3/K-TAG', flash: 'Yes', vehicles: 'VW/Audi'},
+        {name: 'Simos16.11', protocol: ['OBD', 'Boot'], years: '2012-2016', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'VW/Audi/Seat/Skoda'},
+        {name: 'Simos16.21', protocol: ['OBD', 'Boot'], years: '2013-2017', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'VW/Audi'},
+        {name: 'Simos18.1', protocol: ['OBD', 'Boot'], years: '2015-2020', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'VW/Audi/Seat/Skoda'},
+        {name: 'Simos18.2', protocol: ['OBD', 'Boot'], years: '2016-2021', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'VW/Audi'},
+        {name: 'Simos18.3', protocol: ['OBD', 'Boot'], years: '2016-2021', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'VW/Audi'},
+        {name: 'Simos18.4', protocol: ['OBD', 'Boot'], years: '2017-2022', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'VW/Audi'},
+        {name: 'Simos18.6', protocol: ['OBD', 'Boot'], years: '2018-2023', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'VW/Audi'},
+        {name: 'Simos18.10', protocol: ['OBD', 'Boot'], years: '2019-2024', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'VW/Audi'},
+        {name: 'Simos19.2', protocol: ['OBD', 'Boot'], years: '2019-2024', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'VW/Audi'},
+        {name: 'Simos19.3', protocol: ['OBD', 'Boot'], years: '2020-2024', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'VW/Audi'},
+        {name: 'Simos19.6', protocol: ['OBD', 'Boot'], years: '2020-2024', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'VW/Audi'},
+        {name: 'Simos19.7', protocol: ['OBD', 'Boot'], years: '2021-2024', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'VW/Audi'},
+        {name: 'Simos19.8', protocol: ['OBD', 'Boot'], years: '2022-2024', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'VW/Audi'}
       ],
-      // SID (Diesel)
-      sid: ['SID201', 'SID202', 'SID203', 'SID204', 'SID206', 'SID208', 'SID209', 'SID211', 'SID212', 'SID212evo', 'SID213', 'SID301', 'SID305/6', 'SID307', 'SID309', 'SID310', 'SID803', 'SID803A', 'SID806', 'SID807', 'SID807evo', 'SID83A', 'SID83M'],
-      // EMS (Engine Management System)
-      ems: ['EMS2101', 'EMS2102', 'EMS2103', 'EMS2106', 'EMS2204', 'EMS2205', 'EMS2208', 'EMS2211', 'EMS2301', 'EMS2302', 'EMS24xx', 'EMS2510', 'EMS2511', 'EMS2512', 'EMS2513', 'EMS2701', 'EMS2910', 'EMS2916', 'EMS3110', 'EMS3125', 'EMS3140', 'EMS3141', 'EMS3142', 'EMS3150', 'EMS3155', 'EMS3160', 'EMS3161', 'EMS3180'],
-      // SIM2K (Hyundai/Kia)
-      sim2k: ['SIM2K-141', 'SIM2K-142', 'SIM2K-240', 'SIM2K-240R', 'SIM2K-241', 'SIM2K-242', 'SIM2K-245', 'SIM2K-250', 'SIM2K-251', 'SIM2K-253', 'SIM2K-259', 'SIM2K-260', 'SIM2K-261', 'SIM2K-305'],
+      // SID (Diesel) - ENHANCED
+      sid: [
+        {name: 'SID201', protocol: ['OBD', 'BDM'], years: '2004-2009', capability: 'Full tuning', read: 'BDM100/K-TAG', flash: 'Yes', vehicles: 'PSA Group'},
+        {name: 'SID202', protocol: ['OBD', 'BDM'], years: '2005-2010', capability: 'Full tuning', read: 'BDM100/K-TAG', flash: 'Yes', vehicles: 'PSA Group'},
+        {name: 'SID203', protocol: ['OBD', 'BDM'], years: '2006-2010', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'PSA/Ford'},
+        {name: 'SID204', protocol: ['OBD', 'BDM'], years: '2007-2011', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'PSA Group'},
+        {name: 'SID206', protocol: ['OBD', 'Boot'], years: '2008-2012', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'PSA/Ford/Volvo'},
+        {name: 'SID208', protocol: ['OBD', 'Boot'], years: '2009-2013', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'PSA/Ford'},
+        {name: 'SID209', protocol: ['OBD', 'Boot'], years: '2010-2014', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'PSA Group'},
+        {name: 'SID211', protocol: ['OBD', 'Boot'], years: '2011-2015', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'PSA Group'},
+        {name: 'SID212', protocol: ['OBD', 'Boot'], years: '2012-2016', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'PSA Group'},
+        {name: 'SID212evo', protocol: ['OBD', 'Boot'], years: '2013-2017', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'PSA Group'},
+        {name: 'SID213', protocol: ['OBD', 'Boot'], years: '2014-2018', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'PSA Group'},
+        {name: 'SID301', protocol: ['OBD', 'Boot'], years: '2009-2013', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'Renault/Nissan'},
+        {name: 'SID305', protocol: ['OBD', 'Boot'], years: '2010-2014', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Renault/Nissan'},
+        {name: 'SID306', protocol: ['OBD', 'Boot'], years: '2010-2014', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Renault/Nissan'},
+        {name: 'SID307', protocol: ['OBD', 'Boot'], years: '2011-2015', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Renault/Nissan'},
+        {name: 'SID309', protocol: ['OBD', 'Boot'], years: '2012-2016', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Renault/Nissan/Dacia'},
+        {name: 'SID310', protocol: ['OBD', 'Boot'], years: '2013-2017', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Renault/Nissan'},
+        {name: 'SID803', protocol: ['OBD', 'Boot'], years: '2006-2010', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'PSA/Ford'},
+        {name: 'SID803A', protocol: ['OBD', 'Boot'], years: '2007-2011', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'PSA/Ford'},
+        {name: 'SID806', protocol: ['OBD', 'Boot'], years: '2008-2012', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'PSA Group'},
+        {name: 'SID807', protocol: ['OBD', 'Boot'], years: '2009-2014', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'PSA Group'},
+        {name: 'SID807evo', protocol: ['OBD', 'Boot'], years: '2010-2015', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'PSA Group'},
+        {name: 'SID83A', protocol: ['OBD', 'Boot'], years: '2007-2011', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'PSA Group'},
+        {name: 'SID83M', protocol: ['OBD', 'Boot'], years: '2008-2012', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'PSA Group'}
+      ],
+      // EMS (Engine Management System) - ENHANCED
+      ems: [
+        {name: 'EMS2101', protocol: ['OBD', 'Boot'], years: '2004-2009', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'Ford'},
+        {name: 'EMS2102', protocol: ['OBD', 'Boot'], years: '2005-2009', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'Ford/Mazda'},
+        {name: 'EMS2103', protocol: ['OBD', 'Boot'], years: '2005-2010', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'Ford'},
+        {name: 'EMS2106', protocol: ['OBD', 'Boot'], years: '2006-2010', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'Ford/Volvo'},
+        {name: 'EMS2204', protocol: ['OBD', 'Boot'], years: '2007-2011', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'Ford'},
+        {name: 'EMS2205', protocol: ['OBD', 'Boot'], years: '2007-2011', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'Ford/Volvo'},
+        {name: 'EMS2208', protocol: ['OBD', 'Boot'], years: '2008-2012', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'Ford'},
+        {name: 'EMS2211', protocol: ['OBD', 'Boot'], years: '2009-2013', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Ford/Mazda'},
+        {name: 'EMS2301', protocol: ['OBD', 'Boot'], years: '2007-2011', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'Ford'},
+        {name: 'EMS2302', protocol: ['OBD', 'Boot'], years: '2008-2012', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'Ford'},
+        {name: 'EMS24xx', protocol: ['OBD', 'Boot'], years: '2009-2013', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Ford'},
+        {name: 'EMS2510', protocol: ['OBD', 'Boot'], years: '2010-2014', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Ford/Mazda'},
+        {name: 'EMS2511', protocol: ['OBD', 'Boot'], years: '2011-2015', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Ford'},
+        {name: 'EMS2512', protocol: ['OBD', 'Boot'], years: '2011-2015', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Ford/Volvo'},
+        {name: 'EMS2513', protocol: ['OBD', 'Boot'], years: '2012-2016', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Ford'},
+        {name: 'EMS2701', protocol: ['OBD', 'Boot'], years: '2012-2017', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Ford Diesel'},
+        {name: 'EMS2910', protocol: ['OBD', 'Boot'], years: '2013-2017', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Ford'},
+        {name: 'EMS2916', protocol: ['OBD', 'Boot'], years: '2014-2018', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Ford'},
+        {name: 'EMS3110', protocol: ['OBD', 'Boot'], years: '2015-2019', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Ford'},
+        {name: 'EMS3125', protocol: ['OBD', 'Boot'], years: '2016-2020', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Ford'},
+        {name: 'EMS3140', protocol: ['OBD', 'Boot'], years: '2017-2021', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Ford'},
+        {name: 'EMS3141', protocol: ['OBD', 'Boot'], years: '2017-2021', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Ford'},
+        {name: 'EMS3142', protocol: ['OBD', 'Boot'], years: '2018-2022', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Ford'},
+        {name: 'EMS3150', protocol: ['OBD', 'Boot'], years: '2018-2022', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Ford'},
+        {name: 'EMS3155', protocol: ['OBD', 'Boot'], years: '2019-2023', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Ford'},
+        {name: 'EMS3160', protocol: ['OBD', 'Boot'], years: '2019-2023', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Ford'},
+        {name: 'EMS3161', protocol: ['OBD', 'Boot'], years: '2020-2024', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Ford'},
+        {name: 'EMS3180', protocol: ['OBD', 'Boot'], years: '2021-2024', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Ford'}
+      ],
+      // SIM2K (Hyundai/Kia) - ENHANCED
+      sim2k: [
+        {name: 'SIM2K-141', protocol: ['OBD', 'Boot'], years: '2008-2012', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'Hyundai/Kia'},
+        {name: 'SIM2K-142', protocol: ['OBD', 'Boot'], years: '2009-2013', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'Hyundai/Kia'},
+        {name: 'SIM2K-240', protocol: ['OBD', 'Boot'], years: '2010-2014', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Hyundai/Kia'},
+        {name: 'SIM2K-240R', protocol: ['OBD', 'Boot'], years: '2010-2014', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Hyundai/Kia'},
+        {name: 'SIM2K-241', protocol: ['OBD', 'Boot'], years: '2011-2015', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Hyundai/Kia'},
+        {name: 'SIM2K-242', protocol: ['OBD', 'Boot'], years: '2012-2016', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Hyundai/Kia'},
+        {name: 'SIM2K-245', protocol: ['OBD', 'Boot'], years: '2013-2017', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Hyundai/Kia'},
+        {name: 'SIM2K-250', protocol: ['OBD', 'Boot'], years: '2014-2018', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Hyundai/Kia'},
+        {name: 'SIM2K-251', protocol: ['OBD', 'Boot'], years: '2015-2019', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Hyundai/Kia'},
+        {name: 'SIM2K-253', protocol: ['OBD', 'Boot'], years: '2016-2020', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Hyundai/Kia'},
+        {name: 'SIM2K-259', protocol: ['OBD', 'Boot'], years: '2017-2021', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Hyundai/Kia'},
+        {name: 'SIM2K-260', protocol: ['OBD', 'Boot'], years: '2018-2022', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Hyundai/Kia'},
+        {name: 'SIM2K-261', protocol: ['OBD', 'Boot'], years: '2019-2023', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Hyundai/Kia'},
+        {name: 'SIM2K-305', protocol: ['OBD', 'Boot'], years: '2020-2024', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Hyundai/Kia/Genesis'}
+      ],
       // GPEC (GM Powertrain)
-      gpec: ['GPEC2', 'GPEC2A', 'GPEC3', 'GPEC4', 'GPEC4LM'],
-      // Gearbox
-      gearbox: ['DL382', 'DL500', 'DL501gen1', 'DL501gen2', 'DL800', 'DQ200', 'DQ200G2', 'DQ250', 'DQ250E', 'DQ250F', 'DQ400E', 'DQ500', 'ASG1'],
+      gpec: [
+        {name: 'GPEC2', protocol: ['OBD', 'BDM'], years: '2004-2009', capability: 'Full tuning', read: 'BDM100', flash: 'Yes', vehicles: 'Opel/Vauxhall'},
+        {name: 'GPEC2A', protocol: ['OBD', 'BDM'], years: '2005-2010', capability: 'Full tuning', read: 'BDM100', flash: 'Yes', vehicles: 'Opel/Vauxhall'},
+        {name: 'GPEC3', protocol: ['OBD', 'Boot'], years: '2006-2011', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'Opel/Vauxhall'},
+        {name: 'GPEC4', protocol: ['OBD', 'Boot'], years: '2007-2012', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'Opel/Vauxhall'},
+        {name: 'GPEC4LM', protocol: ['OBD', 'Boot'], years: '2008-2013', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Opel/Vauxhall'}
+      ],
+      // Gearbox - ENHANCED
+      gearbox: [
+        {name: 'DL382', protocol: ['OBD', 'Boot'], years: '2009-2020', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'VW/Audi DSG'},
+        {name: 'DL500', protocol: ['OBD', 'Boot'], years: '2008-2018', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'VW/Audi'},
+        {name: 'DL501gen1', protocol: ['OBD', 'Boot'], years: '2008-2014', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'VW/Audi DSG'},
+        {name: 'DL501gen2', protocol: ['OBD', 'Boot'], years: '2014-2024', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'VW/Audi DSG'},
+        {name: 'DL800', protocol: ['OBD', 'Boot'], years: '2012-2024', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'VW/Audi/Porsche'},
+        {name: 'DQ200', protocol: ['OBD', 'Boot'], years: '2008-2018', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'VW/Seat/Skoda DSG'},
+        {name: 'DQ200G2', protocol: ['OBD', 'Boot'], years: '2015-2024', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'VW/Seat/Skoda DSG'},
+        {name: 'DQ250', protocol: ['OBD', 'Boot'], years: '2003-2015', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'VW/Audi DSG'},
+        {name: 'DQ250E', protocol: ['OBD', 'Boot'], years: '2008-2018', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'VW/Audi DSG'},
+        {name: 'DQ250F', protocol: ['OBD', 'Boot'], years: '2010-2020', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'VW/Audi DSG'},
+        {name: 'DQ400E', protocol: ['OBD', 'Boot'], years: '2012-2024', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'VW/Audi/Seat/Skoda'},
+        {name: 'DQ500', protocol: ['OBD', 'Boot'], years: '2009-2024', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'VW/Audi DSG'},
+        {name: 'ASG1', protocol: ['OBD', 'Boot'], years: '2005-2010', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'VW Group'}
+      ],
       // Valvetronic
-      valvetronic: ['V56.12', 'VD56.1']
+      valvetronic: [
+        {name: 'V56.12', protocol: ['OBD'], years: '2001-2008', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'BMW'},
+        {name: 'VD56.1', protocol: ['OBD'], years: '2005-2012', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'BMW'}
+      ]
     },
 
-    // Siemens (BMW specific)
+    // Siemens (BMW specific) - ENHANCED
     siemens: {
-      bmw: ['MS43', 'MS45', 'MSD80', 'MSD81', 'MSD81.2', 'MSD85', 'MSD87', 'MSS52', 'MSS54', 'MSS54HP', 'MSS60', 'MSS65', 'MSS70', 'MSV70', 'MSV80', 'MSV90'],
-      ppd: ['PPD1.x'],
-      pcr: ['PCR2.1'],
-      simtec: ['SIMTEC76']
+      bmw: [
+        {name: 'MS43', protocol: ['OBD', 'BDM'], years: '2001-2006', capability: 'Full tuning', read: 'BDM100', flash: 'Yes', vehicles: 'BMW E46/E39'},
+        {name: 'MS45', protocol: ['OBD', 'BDM'], years: '2002-2007', capability: 'Full tuning', read: 'BDM100/K-TAG', flash: 'Yes', vehicles: 'BMW E46'},
+        {name: 'MSD80', protocol: ['OBD', 'Boot'], years: '2006-2010', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'BMW E90/E60'},
+        {name: 'MSD81', protocol: ['OBD', 'Boot'], years: '2007-2011', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'BMW E90/E60'},
+        {name: 'MSD81.2', protocol: ['OBD', 'Boot'], years: '2008-2012', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'BMW E90/E60'},
+        {name: 'MSD85', protocol: ['OBD', 'Boot'], years: '2008-2013', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'BMW E90/E92 M3'},
+        {name: 'MSD87', protocol: ['OBD', 'Boot'], years: '2010-2015', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'BMW F-Series'},
+        {name: 'MSS52', protocol: ['OBD', 'BDM'], years: '2000-2003', capability: 'Full tuning', read: 'BDM100', flash: 'Yes', vehicles: 'BMW E46 M3'},
+        {name: 'MSS54', protocol: ['OBD', 'BDM'], years: '2000-2005', capability: 'Full tuning', read: 'BDM100', flash: 'Yes', vehicles: 'BMW M5/M6'},
+        {name: 'MSS54HP', protocol: ['OBD', 'BDM'], years: '2003-2006', capability: 'Full tuning', read: 'BDM100', flash: 'Yes', vehicles: 'BMW M5/M6'},
+        {name: 'MSS60', protocol: ['OBD', 'Boot'], years: '2005-2010', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'BMW M5/M6'},
+        {name: 'MSS65', protocol: ['OBD', 'Boot'], years: '2005-2010', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'BMW M5/M6'},
+        {name: 'MSS70', protocol: ['OBD', 'Boot'], years: '2008-2012', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'BMW X5M/X6M'},
+        {name: 'MSV70', protocol: ['OBD', 'Boot'], years: '2010-2013', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'BMW F-Series'},
+        {name: 'MSV80', protocol: ['OBD', 'Boot'], years: '2011-2015', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'BMW F-Series'},
+        {name: 'MSV90', protocol: ['OBD', 'Boot'], years: '2015-2024', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'BMW G-Series'}
+      ],
+      ppd: [{name: 'PPD1.x', protocol: ['OBD'], years: '2004-2010', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'BMW Diesel'}],
+      pcr: [{name: 'PCR2.1', protocol: ['OBD', 'Boot'], years: '2006-2012', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'BMW/Mini'}],
+      simtec: [{name: 'SIMTEC76', protocol: ['OBD'], years: '2005-2010', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'BMW/Mini Diesel'}]
     },
 
-    // Delphi ECU Types
+    // Delphi ECU Types - ENHANCED
     delphi: {
-      diesel: ['DCM1.2', 'DCM3.2AP', 'DCM3.4', 'DCM3.4(+)', 'DCM3.5', 'DCM3.7AP', 'DCM6.1', 'DCM6.2A', 'DCM6.2AP', 'DCM6.2AP-6D', 'DCM6.2C', 'DCM6.2V', 'DCM7.1A', 'DCM7.1B', 'CRD3.30', 'CRD3.7A', 'CRD3.N5'],
-      motorcycle: ['MT05', 'MT05.2', 'MT05.3', 'MT21M', 'HD1-CAN', 'HD2-CAN', 'HD3-CAN']
+      diesel: [
+        {name: 'DCM1.2', protocol: ['OBD', 'BDM'], years: '2002-2007', capability: 'Full tuning', read: 'BDM100', flash: 'Yes', vehicles: 'Renault'},
+        {name: 'DCM3.2AP', protocol: ['OBD', 'BDM'], years: '2006-2010', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'Renault/Nissan'},
+        {name: 'DCM3.4', protocol: ['OBD', 'BDM'], years: '2007-2011', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'Renault/Nissan'},
+        {name: 'DCM3.4(+)', protocol: ['OBD', 'Boot'], years: '2008-2012', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'Renault/Nissan'},
+        {name: 'DCM3.5', protocol: ['OBD', 'Boot'], years: '2009-2013', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Renault/Nissan/Dacia'},
+        {name: 'DCM3.7AP', protocol: ['OBD', 'Boot'], years: '2010-2014', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Hyundai/Kia'},
+        {name: 'DCM6.1', protocol: ['OBD', 'Boot'], years: '2009-2013', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'Vauxhall/Opel'},
+        {name: 'DCM6.2A', protocol: ['OBD', 'Boot'], years: '2011-2016', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Vauxhall/Opel'},
+        {name: 'DCM6.2AP', protocol: ['OBD', 'Boot'], years: '2012-2017', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Vauxhall/Opel/Chevrolet'},
+        {name: 'DCM6.2AP-6D', protocol: ['OBD', 'Boot'], years: '2013-2018', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Vauxhall/Opel'},
+        {name: 'DCM6.2C', protocol: ['OBD', 'Boot'], years: '2014-2018', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Vauxhall/Opel'},
+        {name: 'DCM6.2V', protocol: ['OBD', 'Boot'], years: '2015-2019', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Vauxhall/Opel'},
+        {name: 'DCM7.1A', protocol: ['OBD', 'Boot'], years: '2016-2020', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Vauxhall/Opel'},
+        {name: 'DCM7.1B', protocol: ['OBD', 'Boot'], years: '2017-2021', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Vauxhall/Opel'},
+        {name: 'CRD3.30', protocol: ['OBD', 'Boot'], years: '2006-2012', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'Mercedes CDI'},
+        {name: 'CRD3.7A', protocol: ['OBD', 'Boot'], years: '2007-2013', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Mercedes CDI'},
+        {name: 'CRD3.N5', protocol: ['OBD', 'Boot'], years: '2008-2014', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Mercedes CDI'}
+      ],
+      motorcycle: [
+        {name: 'MT05', protocol: ['OBD'], years: '2002-2008', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'Harley Davidson'},
+        {name: 'MT05.2', protocol: ['OBD'], years: '2008-2014', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'Harley Davidson'},
+        {name: 'MT05.3', protocol: ['OBD'], years: '2014-2020', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Harley Davidson'},
+        {name: 'MT21M', protocol: ['OBD'], years: '2016-2024', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Harley Davidson'},
+        {name: 'HD1-CAN', protocol: ['OBD', 'CAN'], years: '2002-2007', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'Harley Davidson'},
+        {name: 'HD2-CAN', protocol: ['OBD', 'CAN'], years: '2007-2013', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'Harley Davidson'},
+        {name: 'HD3-CAN', protocol: ['OBD', 'CAN'], years: '2014-2024', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Harley Davidson'}
+      ]
     },
 
-    // Marelli ECU Types
+    // Marelli ECU Types - ENHANCED
     marelli: {
-      diesel: ['MJD6', 'MJD8F2', 'MJD8F3', 'MJD9DF'],
-      petrol: ['8GMC', '8GMF', 'MK', '8GMK.Fx', '8GML', '8GMW', '8GSF', '8GSW', '9GF', 'IAW'],
-      motorcycle: ['11MP']
+      diesel: [
+        {name: 'MJD6', protocol: ['OBD', 'BDM'], years: '2002-2008', capability: 'Full tuning', read: 'BDM100', flash: 'Yes', vehicles: 'Fiat/Alfa/Lancia'},
+        {name: 'MJD8F2', protocol: ['OBD', 'Boot'], years: '2007-2012', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'Fiat/Alfa/Lancia'},
+        {name: 'MJD8F3', protocol: ['OBD', 'Boot'], years: '2009-2014', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Fiat/Alfa/Lancia'},
+        {name: 'MJD9DF', protocol: ['OBD', 'Boot'], years: '2011-2024', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Fiat/Alfa/Jeep/Lancia'}
+      ],
+      petrol: [
+        {name: '8GMC', protocol: ['OBD', 'Boot'], years: '2005-2010', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'Fiat/Alfa'},
+        {name: '8GMF', protocol: ['OBD', 'Boot'], years: '2006-2011', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'Fiat/Alfa'},
+        {name: 'MK', protocol: ['OBD', 'Boot'], years: '2004-2009', capability: 'Full tuning', read: 'K-TAG', flash: 'Yes', vehicles: 'Fiat/Alfa'},
+        {name: '8GMK.Fx', protocol: ['OBD', 'Boot'], years: '2007-2012', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'Fiat/Alfa'},
+        {name: '8GML', protocol: ['OBD', 'Boot'], years: '2008-2013', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Fiat/Alfa/Lancia'},
+        {name: '8GMW', protocol: ['OBD', 'Boot'], years: '2009-2015', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Fiat/Alfa'},
+        {name: '8GSF', protocol: ['OBD', 'Boot'], years: '2010-2016', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Fiat/Alfa'},
+        {name: '8GSW', protocol: ['OBD', 'Boot'], years: '2011-2017', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Fiat/Alfa'},
+        {name: '9GF', protocol: ['OBD', 'Boot'], years: '2012-2024', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'Fiat/Alfa/Jeep'},
+        {name: 'IAW', protocol: ['OBD', 'BDM'], years: '1998-2008', capability: 'Full tuning', read: 'BDM100/K-TAG', flash: 'Yes', vehicles: 'Fiat/Alfa/Lancia'}
+      ],
+      motorcycle: [{name: '11MP', protocol: ['OBD'], years: '2008-2020', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'Ducati/Aprilia'}]
     },
 
-    // Delco (GM) ECU Types
+    // Delco (GM) ECU Types - ENHANCED
     delco: {
-      all: ['E38', 'E39', 'E39A', 'E67', 'E78', 'E80', 'E81', 'E82', 'E83', 'E84', 'E87', 'E92', 'E98', 'T87', 'T87A', 'T93']
+      all: [
+        {name: 'E38', protocol: ['OBD', 'Boot'], years: '2005-2012', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'GM LS Engines'},
+        {name: 'E39', protocol: ['OBD', 'Boot'], years: '2006-2013', capability: 'Full tuning', read: 'K-TAG/Kess3', flash: 'Yes', vehicles: 'GM Trucks'},
+        {name: 'E39A', protocol: ['OBD', 'Boot'], years: '2007-2014', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'GM Trucks'},
+        {name: 'E67', protocol: ['OBD', 'Boot'], years: '2008-2015', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'GM Diesel'},
+        {name: 'E78', protocol: ['OBD', 'Boot'], years: '2009-2016', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'GM/Vauxhall/Opel'},
+        {name: 'E80', protocol: ['OBD', 'Boot'], years: '2010-2017', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'GM Trucks'},
+        {name: 'E81', protocol: ['OBD', 'Boot'], years: '2011-2018', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'GM Cars'},
+        {name: 'E82', protocol: ['OBD', 'Boot'], years: '2012-2019', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'GM/Vauxhall/Opel'},
+        {name: 'E83', protocol: ['OBD', 'Boot'], years: '2013-2020', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'GM/Vauxhall/Opel'},
+        {name: 'E84', protocol: ['OBD', 'Boot'], years: '2014-2021', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'GM'},
+        {name: 'E87', protocol: ['OBD', 'Boot'], years: '2015-2022', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'GM Cars'},
+        {name: 'E92', protocol: ['OBD', 'Boot'], years: '2016-2023', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'GM/Chevrolet'},
+        {name: 'E98', protocol: ['OBD', 'Boot'], years: '2017-2024', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'GM/Chevrolet'},
+        {name: 'T87', protocol: ['OBD', 'Boot'], years: '2016-2023', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'GM Transmission'},
+        {name: 'T87A', protocol: ['OBD', 'Boot'], years: '2017-2024', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'GM Transmission'},
+        {name: 'T93', protocol: ['OBD', 'Boot'], years: '2020-2024', capability: 'Full tuning', read: 'Kess3', flash: 'Yes', vehicles: 'GM 10-Speed Trans'}
+      ]
     },
 
     // Denso ECU Types
