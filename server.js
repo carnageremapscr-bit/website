@@ -2954,7 +2954,6 @@ app.put('/api/iframes/:id/lock', async (req, res) => {
       .from('iframes')
       .update({
         status: status,
-        locked_at: locked ? new Date().toISOString() : null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
@@ -2980,7 +2979,6 @@ app.post('/api/admin/iframes/:id/toggle', async (req, res) => {
       .from('iframes')
       .update({
         status: nextStatus,
-        locked_at: nextStatus === 'locked' ? new Date().toISOString() : null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
