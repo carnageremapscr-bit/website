@@ -2918,7 +2918,7 @@ app.get('/api/iframes/:id/status', async (req, res) => {
 
       const { data, error } = await supabase
         .from('iframes')
-        .select('id, status, locked, email, url, created_at, last_accessed')
+        .select('id, status, email, url, created_at, last_used')
         .eq('id', id)
         .single();
 
@@ -2929,8 +2929,7 @@ app.get('/api/iframes/:id/status', async (req, res) => {
             success: true, 
             iframe: { 
               id, 
-              status: 'active', 
-              locked: false 
+              status: 'active'
             } 
           });
         }
@@ -2949,12 +2948,14 @@ app.put('/api/iframes/:id/lock', async (req, res) => {
   try {
     const { id } = req.params;
     const { locked } = req.body;
+    const status = locked ? 'locked' : 'active';
 
     const { data, error } = await supabase
       .from('iframes')
       .update({
-        locked: locked,
+        status: status,
         locked_at: locked ? new Date().toISOString() : null,
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select();
@@ -2964,6 +2965,33 @@ app.put('/api/iframes/:id/lock', async (req, res) => {
     res.json({ success: true, iframe: data[0] });
   } catch (error) {
     console.error('Error updating iframe lock:', error);
+    res.status(500).json({ error: error.message || 'Failed to update iframe' });
+  }
+});
+
+// Admin toggle iframe status
+app.post('/api/admin/iframes/:id/toggle', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    const nextStatus = status === 'locked' ? 'locked' : 'active';
+
+    const { data, error } = await supabase
+      .from('iframes')
+      .update({
+        status: nextStatus,
+        locked_at: nextStatus === 'locked' ? new Date().toISOString() : null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    res.json({ success: true, iframe: data });
+  } catch (error) {
+    console.error('Error toggling iframe status:', error);
     res.status(500).json({ error: error.message || 'Failed to update iframe' });
   }
 });
