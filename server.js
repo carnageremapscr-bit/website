@@ -2929,6 +2929,8 @@ app.post('/api/iframes/create', async (req, res) => {
       return res.status(400).json({ error: 'Email is required' });
     }
 
+    console.log(`[IFRAME CREATE] Creating ${type || 'embed'} iframe for email: ${email}`);
+
     // Insert into iframes table (user_id can be null for now)
     const { data, error } = await supabase
       .from('iframes')
@@ -2953,9 +2955,10 @@ app.post('/api/iframes/create', async (req, res) => {
 
     if (error) throw error;
 
+    console.log(`[IFRAME CREATE] Success - created iframe with ID: ${data[0].id}`);
     res.json({ success: true, iframe: data[0] });
   } catch (error) {
-    console.error('Error creating iframe record:', error);
+    console.error('[IFRAME CREATE] Error:', error);
     res.status(500).json({ error: error.message || 'Failed to create iframe record' });
   }
 });
@@ -3074,7 +3077,7 @@ app.get('/api/iframes/:id/status', async (req, res) => {
       const { id } = req.params;
 
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-      const baseSelect = 'id, status, email, url, created_at, last_used, user_id';
+      const baseSelect = 'id, status, email, url, created_at, last_used, user_id, type';
 
       const query = isUuid
         ? supabase.from('iframes').select(baseSelect).eq('id', id).single()
@@ -3085,17 +3088,20 @@ app.get('/api/iframes/:id/status', async (req, res) => {
       if (error) {
         // If iframe doesn't exist, return active status (don't block)
         if (error.code === 'PGRST116') {
+          console.log(`[IFRAME STATUS] No record found for ${isUuid ? 'UUID' : 'user_id'}: ${id} - returning active`);
           return res.json({ 
             success: true, 
             iframe: { 
               id, 
-              status: 'active'
+              status: 'active',
+              locked: false
             } 
           });
         }
         throw error;
       }
 
+      console.log(`[IFRAME STATUS] Found iframe: ${data.id}, status: ${data.status}, type: ${data.type}`);
       res.json({ success: true, iframe: { ...data, locked: data?.status === 'locked' } });
     } catch (error) {
       console.error('Error fetching iframe status:', error);
@@ -3113,9 +3119,11 @@ app.get('/api/iframes/status-by-email', async (req, res) => {
       return res.status(400).json({ error: 'email is required' });
     }
 
+    console.log(`[IFRAME STATUS BY EMAIL] Checking email: ${email}, type: ${type}`);
+
     let lockedQuery = supabase
       .from('iframes')
-      .select('id, status, email, url, created_at, last_used, user_id')
+      .select('id, status, email, url, created_at, last_used, user_id, type')
       .eq('email', email)
       .eq('status', 'locked')
       .order('created_at', { ascending: false })
@@ -3128,12 +3136,13 @@ app.get('/api/iframes/status-by-email', async (req, res) => {
     const { data: lockedRow, error: lockedError } = await lockedQuery.single();
 
     if (!lockedError && lockedRow) {
+      console.log(`[IFRAME STATUS BY EMAIL] Found locked iframe: ${lockedRow.id}`);
       return res.json({ success: true, iframe: { ...lockedRow, locked: true } });
     }
 
     let query = supabase
       .from('iframes')
-      .select('id, status, email, url, created_at, last_used, user_id')
+      .select('id, status, email, url, created_at, last_used, user_id, type')
       .eq('email', email)
       .order('created_at', { ascending: false })
       .limit(1);
@@ -3146,11 +3155,13 @@ app.get('/api/iframes/status-by-email', async (req, res) => {
 
     if (error) {
       if (error.code === 'PGRST116') {
+        console.log(`[IFRAME STATUS BY EMAIL] No record found for ${email} - returning active`);
         return res.json({ success: true, iframe: { status: 'active', locked: false } });
       }
       throw error;
     }
 
+    console.log(`[IFRAME STATUS BY EMAIL] Found iframe: ${data.id}, status: ${data.status}`);
     res.json({ success: true, iframe: { ...data, locked: data?.status === 'locked' } });
   } catch (error) {
     console.error('Error fetching iframe status by email:', error);
@@ -3188,7 +3199,11 @@ app.post('/api/admin/iframes/:id/toggle', async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
-    const nextStatus = status === 'locked' ? 'locked' : 'active';
+    
+    // Toggle: if current status is locked, change to active; if active, change to locked
+    const nextStatus = status === 'locked' ? 'active' : 'locked';
+    
+    console.log(`[IFRAME TOGGLE] Toggling iframe ${id}: ${status} -> ${nextStatus}`);
 
     const { data, error } = await supabase
       .from('iframes')
@@ -3202,6 +3217,7 @@ app.post('/api/admin/iframes/:id/toggle', async (req, res) => {
 
     if (error) throw error;
 
+    console.log(`[IFRAME TOGGLE] Success - iframe ${id} now has status: ${nextStatus}`);
     res.json({ success: true, iframe: data });
   } catch (error) {
     console.error('Error toggling iframe status:', error);
