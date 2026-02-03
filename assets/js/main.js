@@ -9612,7 +9612,8 @@ I would like to request a quote for tuning this vehicle.`,
 
       container.innerHTML = iframes.map(iframe => {
         const created = new Date(iframe.created_at).toLocaleDateString();
-        const isLocked = iframe.status === 'locked';
+        const statusValue = iframe.status || (iframe.locked ? 'locked' : 'active');
+        const isLocked = statusValue === 'locked';
         const status = isLocked ? '🔒 Locked' : '🔓 Active';
         const statusColor = isLocked ? '#ef4444' : '#22c55e';
         const urlPreview = iframe.url || iframe.embed_url || '';
@@ -9650,7 +9651,7 @@ I would like to request a quote for tuning this vehicle.`,
             <td style="font-size:0.85rem;color:#cbd5e1;">${created}</td>
             <td style="font-size:0.85rem;color:#cbd5e1;font-weight:600;"><span style="background:rgba(100,116,139,0.2);padding:0.25rem 0.5rem;border-radius:4px;">${iframe.uses || 0}</span></td>
             <td style="text-align:center;">
-              <button onclick="toggleIframeStatus('${iframe.id}', '${iframe.status}')" style="background:${isLocked ? '#22c55e' : '#ef4444'};color:#fff;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;margin-right:0.5rem;font-weight:600;">
+              <button onclick="toggleIframeStatus('${iframe.id}', '${statusValue}')" style="background:${isLocked ? '#22c55e' : '#ef4444'};color:#fff;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;margin-right:0.5rem;font-weight:600;">
                 ${isLocked ? '🔓 Unlock' : '🔒 Lock'}
               </button>
             </td>
