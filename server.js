@@ -1992,7 +1992,9 @@ function normalizeVehicleResponse(data) {
 
 app.get('/api/vrm-lookup', async (req, res) => {
   try {
-    // Check if VRM lookup service is enabled
+    // Service status check temporarily disabled - always allow VRM lookups
+    // TODO: Re-enable when service_status table is properly populated
+    /*
     if (supabase) {
       const { data, error } = await supabase
         .from('service_status')
@@ -2009,6 +2011,7 @@ app.get('/api/vrm-lookup', async (req, res) => {
         });
       }
     }
+    */
     
     // Prefer env key; if missing, fall back to provided test key (letters must include 'A')
     const apiKey = CHECKCAR_API_KEY || 'e80ce7141c39ae0b111a1999f6a0891b';
@@ -2111,7 +2114,9 @@ async function getDvlaJwtToken() {
 // Step 2: Lookup vehicle information via DVLA API
 app.get('/api/dvla-lookup', async (req, res) => {
   try {
+    // TEMPORARILY DISABLED - Service status check
     // Check if VRM lookup service is enabled
+    /*
     if (supabase) {
       const { data, error } = await supabase
         .from('service_status')
@@ -2128,6 +2133,7 @@ app.get('/api/dvla-lookup', async (req, res) => {
         });
       }
     }
+    */
     
     const vrmRaw = (req.query.vrm || '').toString().trim();
 
