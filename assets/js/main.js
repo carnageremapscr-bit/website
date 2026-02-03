@@ -8142,7 +8142,15 @@ I would like to request a quote for tuning this vehicle.`,
     if (generateVrmEmbedBtn) {
       generateVrmEmbedBtn.addEventListener('click', async () => {
         // Check if user has active VRM subscription (admins bypass)
-        const isAdminUser = sessionStorage.getItem('isAdmin') === 'true';
+        let isAdminUser = sessionStorage.getItem('isAdmin') === 'true';
+        try {
+          if (!isAdminUser && typeof CarnageAuth !== 'undefined' && CarnageAuth?.isAdmin) {
+            isAdminUser = await CarnageAuth.isAdmin();
+          }
+        } catch (err) {
+          console.warn('Admin check failed:', err);
+        }
+
         const hasSubscription = isAdminUser || await hasActiveVrmSubscription();
         
         if (!hasSubscription) {
