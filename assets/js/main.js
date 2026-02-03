@@ -8110,7 +8110,7 @@ I would like to request a quote for tuning this vehicle.`,
     const vrmBgColor = document.getElementById('vrm-bg-color');
     const vrmBgColorText = document.getElementById('vrm-bg-color-text');
     const vrmWhatsapp = document.getElementById('vrm-whatsapp');
-    const vrmEmail = document.getElementById('vrm-email');
+    const vrmEmailInput = document.getElementById('vrm-email');
     const vrmEmbedCodeContainer = document.getElementById('vrm-embed-code-container');
     const vrmEmbedCodeOutput = document.getElementById('vrm-embed-code-output');
     const copyVrmEmbedBtn = document.getElementById('copy-vrm-embed-btn');
@@ -8176,19 +8176,19 @@ I would like to request a quote for tuning this vehicle.`,
         const bgColor = vrmBgColorText?.value || '#0f172a';
         const logoVal = (vrmLogoUrl?.value || '').trim();
         const waVal = (vrmWhatsapp?.value || '').trim();
-        const emailVal = (vrmEmail?.value || '').trim();
+        const emailVal = (vrmEmailInput?.value || '').trim();
 
         const baseUrl = 'https://web-production-df12d.up.railway.app';
         
         const fallbackEmail = sessionStorage.getItem('userEmail') || '';
-        const vrmEmail = emailVal || fallbackEmail;
+        const vrmEmailParam = emailVal || fallbackEmail;
 
         const params = [
           `color=${encodeURIComponent(accentColor)}`,
           `bg=${encodeURIComponent(bgColor)}`,
           logoVal ? `logo=${encodeURIComponent(logoVal)}` : '',
           waVal ? `wa=${encodeURIComponent(waVal)}` : '',
-          vrmEmail ? `email=${encodeURIComponent(vrmEmail)}` : ''
+          vrmEmailParam ? `email=${encodeURIComponent(vrmEmailParam)}` : ''
         ].filter(Boolean).join('&');
 
         const baseSrc = `${baseUrl}/test-vrm.html?${params}`;
