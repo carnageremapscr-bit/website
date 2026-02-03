@@ -880,7 +880,9 @@
     // Track iframe usage when the embed loads
     (async function() {
       try {
-        const iframeId = new URLSearchParams(window.location.search).get('iframeId');
+        const params = new URLSearchParams(window.location.search);
+        const iframeId = params.get('iframeId');
+        const emailParam = params.get('email');
         if (iframeId) {
           try {
             const statusResp = await fetch(`/api/iframes/${iframeId}/status`, { cache: 'no-store' });
@@ -900,6 +902,22 @@
           }
 
           fetch(`/api/iframes/${iframeId}/track`, { method: 'POST' }).catch(() => {});
+        } else if (emailParam) {
+          try {
+            const statusResp = await fetch(`/api/iframes/status-by-email?email=${encodeURIComponent(emailParam)}&type=embed`, { cache: 'no-store' });
+            const statusData = statusResp.ok ? await statusResp.json() : null;
+            const locked = statusData?.iframe?.status === 'locked' || statusData?.iframe?.locked === true;
+            if (locked) {
+              const overlay = document.getElementById('iframe-locked');
+              const widget = document.getElementById('widget');
+              if (overlay && widget) {
+                overlay.style.display = 'flex';
+                widget.style.display = 'none';
+              }
+            }
+          } catch (err) {
+            console.warn('Iframe email status check failed', err);
+          }
         }
       } catch (err) {
         console.log('Iframe track note:', err.message);

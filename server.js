@@ -2946,6 +2946,43 @@ app.get('/api/iframes/:id/status', async (req, res) => {
     }
   });
 
+// Get iframe status by email (fallback when iframeId is missing)
+app.get('/api/iframes/status-by-email', async (req, res) => {
+  try {
+    const email = (req.query.email || '').toString().trim();
+    const type = (req.query.type || '').toString().trim();
+
+    if (!email) {
+      return res.status(400).json({ error: 'email is required' });
+    }
+
+    let query = supabase
+      .from('iframes')
+      .select('id, status, email, url, created_at, last_used, user_id')
+      .eq('email', email)
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    if (type) {
+      query = query.eq('type', type);
+    }
+
+    const { data, error } = await query.single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return res.json({ success: true, iframe: { status: 'active', locked: false } });
+      }
+      throw error;
+    }
+
+    res.json({ success: true, iframe: { ...data, locked: data?.status === 'locked' } });
+  } catch (error) {
+    console.error('Error fetching iframe status by email:', error);
+    res.status(500).json({ error: error.message || 'Failed to fetch iframe status' });
+  }
+});
+
 // Lock/unlock an iframe
 app.put('/api/iframes/:id/lock', async (req, res) => {
   try {
