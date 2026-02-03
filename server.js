@@ -3054,6 +3054,24 @@ app.get('/api/iframes/status-by-email', async (req, res) => {
       return res.status(400).json({ error: 'email is required' });
     }
 
+    let lockedQuery = supabase
+      .from('iframes')
+      .select('id, status, email, url, created_at, last_used, user_id')
+      .eq('email', email)
+      .eq('status', 'locked')
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    if (type) {
+      lockedQuery = lockedQuery.eq('type', type);
+    }
+
+    const { data: lockedRow, error: lockedError } = await lockedQuery.single();
+
+    if (!lockedError && lockedRow) {
+      return res.json({ success: true, iframe: { ...lockedRow, locked: true } });
+    }
+
     let query = supabase
       .from('iframes')
       .select('id, status, email, url, created_at, last_used, user_id')
