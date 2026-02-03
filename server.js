@@ -10,13 +10,13 @@ const { createClient } = require('@supabase/supabase-js');
 // Initialize Supabase client (use service role for webhook access)
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://iffsmbsxwhxehsigtqoe.supabase.co';
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const supabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_SERVICE_KEY);
+const supabaseConfigured = SUPABASE_URL && SUPABASE_SERVICE_KEY;
 const supabase = supabaseConfigured ? createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY) : null;
 
 console.log('=== Supabase Configuration ===');
 console.log('SUPABASE_URL set:', !!SUPABASE_URL);
 console.log('SUPABASE_SERVICE_ROLE_KEY set:', !!SUPABASE_SERVICE_KEY);
-console.log('Supabase configured:', !!supabaseConfigured);
+console.log('Supabase configured:', supabaseConfigured);
 console.log('==============================');
 
 // Check if Stripe key is configured
@@ -34,8 +34,6 @@ const DVLA_API_KEY = process.env.DVLA_API_KEY || '';
 const DVLA_API_BASE_URL = process.env.DVLA_API_BASE_URL || 'https://driver-vehicle-licensing.api.gov.uk';
 const DVLA_USERNAME = process.env.DVLA_USERNAME || '';
 const DVLA_PASSWORD = process.env.DVLA_PASSWORD || '';
-// Emergency override to ignore iframe lock (set to 'true' to disable all locks)
-const OVERRIDE_IFRAME_LOCK = (process.env.OVERRIDE_IFRAME_LOCK || 'true').toLowerCase() === 'true';
 
 // JWT token cache for DVLA (valid for 1 hour)
 let dvlaJwtToken = null;
@@ -60,14 +58,9 @@ console.log('CHECKCAR_DATAPOINT:', CHECKCAR_DATAPOINT);
 console.log('DVLA_API_KEY set:', !!DVLA_API_KEY);
 console.log('DVLA_API_BASE_URL:', DVLA_API_BASE_URL);
 console.log('================================');
-console.log('=== Safety/Overrides ===');
-console.log('OVERRIDE_IFRAME_LOCK:', OVERRIDE_IFRAME_LOCK);
-console.log('==============================');
 
 const app = express();
 const PORT = process.env.PORT || 3002;
-// Feature flag for VRM lookup availability
-let vrmLookupEnabled = true;
 
 // Trust proxy - REQUIRED for Railway/Heroku/etc that use reverse proxies
 // This fixes the X-Forwarded-For header issue with express-rate-limit
@@ -106,18 +99,12 @@ const upload = multer({
 // Supports: Resend API (recommended for Railway), or Nodemailer with Gmail
 const nodemailer = require('nodemailer');
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'carnageremaps@gmail.com';
-// Support multiple admin emails (comma-separated). Default includes both accounts.
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || `${ADMIN_EMAIL},rgolubovas@gmail.com`)
-  .split(',')
-  .map(e => e.trim().toLowerCase())
-  .filter(Boolean);
 const EMAIL_USER = process.env.EMAIL_USER || 'carnageremaps@gmail.com';
 const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD || '';
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 
 console.log('=== Email Configuration ===');
 console.log('ADMIN_EMAIL:', ADMIN_EMAIL);
-console.log('ADMIN_EMAILS:', ADMIN_EMAILS);
 console.log('EMAIL_USER:', EMAIL_USER);
 console.log('EMAIL_PASSWORD set:', !!EMAIL_PASSWORD);
 console.log('RESEND_API_KEY set:', !!RESEND_API_KEY);
@@ -1125,129 +1112,92 @@ app.use(express.static(__dirname, {
   }
 })); // Serve static files from project directory
 
-// ============================================
-// Unified Iframe/API Authentication Middleware
-// ============================================
-// Authenticates and tracks iframe embeds and API calls
-async function authenticateIframeOrApi(req, res, next) {
+// SERVICE STATUS ENDPOINT - Check if a service is enabled/disabled
+app.get('/api/service-status/:serviceName', async (req, res) => {
   try {
-    const email = req.query.email || req.headers['x-user-email'];
-    const iframeId = req.query.iframeId || req.headers['x-iframe-id'];
-    const currentUrl = req.query.url || req.headers.referer || 'unknown';
-
-    if (!email && !iframeId) {
-      return res.status(401).json({ 
-        error: 'Authentication required', 
-        message: 'Please provide email parameter or iframeId' 
-      });
-    }
-
     if (!supabase) {
-      console.log('⚠️ Supabase not configured - allowing access');
-      req.userEmail = email;
-      req.iframeId = iframeId;
-      return next();
+      return res.status(500).json({ error: 'Database not configured' });
     }
-
-    let iframe = null;
-
-    // Try to find or create iframe record
-    if (iframeId) {
-      const { data } = await supabase
-        .from('iframes')
-        .select('*')
-        .eq('id', iframeId)
-        .single();
-      iframe = data;
-    }
-
-    // If no iframe found but email provided, find or create by email + URL
-    if (!iframe && email) {
-      const { data } = await supabase
-        .from('iframes')
-        .select('*')
-        .eq('email', email)
-        .eq('url', currentUrl)
-        .single();
-      
-      iframe = data;
-
-      // Auto-create iframe record if doesn't exist
-      if (!iframe) {
-        console.log(`📝 Auto-creating iframe record for ${email} at ${currentUrl}`);
-        const { data: newIframe, error } = await supabase
-          .from('iframes')
-          .insert({
-            email,
-            url: currentUrl,
-            type: req.path.includes('vrm') ? 'vrm-lookup' : 'embed-widget',
-            status: 'active',
-            created_at: new Date().toISOString()
-          })
-          .select()
-          .single();
-
-        if (error) {
-          console.error('Failed to create iframe:', error);
-        } else {
-          iframe = newIframe;
-          console.log(`✅ Created iframe #${iframe.id} for ${email}`);
-        }
-      }
-    }
-
-    // Check if iframe is locked
-    if (iframe && iframe.status === 'locked') {
-      return res.status(403).json({ 
-        error: 'Access denied', 
-        message: 'This iframe has been disabled by the administrator' 
-      });
-    }
-
-    // Check subscription status
-    const userEmail = iframe?.email || email;
-    if (userEmail) {
-      const { data: subscription } = await supabase
-        .from('subscriptions')
-        .select('*')
-        .eq('email', userEmail)
-        .in('type', ['vrm', 'vrm-lookup', 'embed', 'embed-widget', 'premium', 'all-access'])
-        .eq('status', 'active')
-        .gt('current_period_end', new Date().toISOString())
-        .single();
-
-      if (!subscription) {
-        return res.status(403).json({ 
-          error: 'Subscription required', 
-          message: 'Active subscription needed to access this service',
-          userEmail 
+    
+    const serviceName = decodeURIComponent(req.params.serviceName).toLowerCase();
+    console.log('🔍 Checking service status:', serviceName);
+    
+    const { data, error } = await supabase
+      .from('service_status')
+      .select('*')
+      .eq('service_name', serviceName)
+      .single();
+    
+    if (error) {
+      // Service not found - assume enabled by default
+      if (error.code === 'PGRST116') {
+        return res.json({ 
+          success: true,
+          service: serviceName,
+          is_enabled: true,
+          disabled_reason: null
         });
       }
-
-      console.log(`✅ Authenticated ${userEmail} with ${subscription.type} subscription`);
-      req.subscription = subscription;
+      console.error('Error checking service status:', error);
+      return res.status(500).json({ error: error.message });
     }
-
-    // Track the request
-    if (iframe) {
-      await supabase
-        .from('iframes')
-        .update({ 
-          last_accessed: new Date().toISOString(),
-          access_count: (iframe.access_count || 0) + 1
-        })
-        .eq('id', iframe.id);
-    }
-
-    req.userEmail = userEmail;
-    req.iframeId = iframe?.id || iframeId;
-    req.iframe = iframe;
-    next();
-  } catch (error) {
-    console.error('Authentication error:', error);
-    return res.status(500).json({ error: 'Authentication failed', details: error.message });
+    
+    res.json({ 
+      success: true, 
+      service: serviceName,
+      is_enabled: data?.is_enabled || false,
+      disabled_reason: data?.disabled_reason || null,
+      disabled_by: data?.disabled_by || null,
+      disabled_at: data?.disabled_at || null
+    });
+  } catch (err) {
+    console.error('Error checking service status:', err);
+    res.status(500).json({ error: err.message });
   }
-}
+});
+
+// ADMIN: UPDATE SERVICE STATUS
+app.post('/api/admin/service-status/:serviceName', async (req, res) => {
+  try {
+    if (!supabase) {
+      return res.status(500).json({ error: 'Database not configured' });
+    }
+    
+    const serviceName = decodeURIComponent(req.params.serviceName).toLowerCase();
+    const { is_enabled, disabled_reason } = req.body;
+    
+    console.log(`🔧 Updating service status: ${serviceName} => ${is_enabled}`);
+    
+    // Update service status
+    const { data, error } = await supabase
+      .from('service_status')
+      .upsert({
+        service_name: serviceName,
+        is_enabled: is_enabled === true,
+        disabled_reason: is_enabled ? null : (disabled_reason || 'Disabled by admin'),
+        disabled_by: req.body.adminEmail || 'admin',
+        disabled_at: is_enabled ? null : new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'service_name' })
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error updating service status:', error);
+      return res.status(500).json({ error: error.message });
+    }
+    
+    res.json({ 
+      success: true, 
+      service: serviceName,
+      is_enabled: data.is_enabled,
+      message: is_enabled ? `${serviceName} service enabled` : `${serviceName} service disabled`
+    });
+  } catch (err) {
+    console.error('Error updating service status:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // Health check endpoint - SECURE: No sensitive data exposed
 app.get('/api/health', (req, res) => {
@@ -1262,514 +1212,6 @@ app.get('/api/health', (req, res) => {
       database: supabaseConfigured ? 'configured' : 'not configured'
     }
   });
-});
-
-// Check if user has active embed subscription (admins bypass)
-app.get('/api/check-embed-subscription', async (req, res) => {
-  try {
-    const iframeId = req.query.iframeId;
-    const emailParam = req.query.email || req.headers['x-user-email'];
-    const currentUrl = req.query.url || req.headers.referer || 'unknown';
-    const authHeader = req.headers.authorization;
-    const token = authHeader ? authHeader.replace('Bearer ', '') : null;
-
-    if (!supabase) {
-      console.log('Supabase not configured - allowing embed access');
-      return res.json({ hasSubscription: true, locked: false, iframeId: null });
-    }
-
-    // Auto-track: Create or update iframe record when widget loads
-    let locked = false;
-    let trackedIframeId = null;
-
-    if (emailParam && currentUrl !== 'unknown') {
-      try {
-        // Check if iframe record exists for this email + URL
-        const { data: existingIframe } = await supabase
-          .from('iframes')
-          .select('*')
-          .eq('email', emailParam)
-          .eq('url', currentUrl)
-          .single();
-
-        if (!existingIframe) {
-          console.log(`📝 Auto-creating embed iframe record for ${emailParam} at ${currentUrl}`);
-          const { data: created } = await supabase
-            .from('iframes')
-            .insert({
-              email: emailParam,
-              url: currentUrl,
-              type: 'embed-widget',
-              status: 'active',
-              created_at: new Date().toISOString()
-            })
-            .select()
-            .single();
-          trackedIframeId = created?.id || null;
-          locked = created?.status === 'locked';
-        } else {
-          // Update last_accessed
-          await supabase
-            .from('iframes')
-            .update({ last_accessed: new Date().toISOString() })
-            .eq('id', existingIframe.id);
-          trackedIframeId = existingIframe.id;
-          locked = existingIframe.status === 'locked';
-        }
-      } catch (trackError) {
-        console.error('Failed to track iframe:', trackError);
-        // Don't fail the subscription check if tracking fails
-      }
-    }
-
-    // Emergency override disables lock everywhere
-    if (OVERRIDE_IFRAME_LOCK) locked = false;
-
-    // Authenticated path
-    if (token) {
-      const { data: { user }, error } = await supabase.auth.getUser(token);
-      if (!error && user) {
-        if (ADMIN_EMAILS.includes(user.email.toLowerCase())) {
-          console.log('✅ Admin user bypassing embed subscription check');
-          return res.json({ hasSubscription: true, locked, iframeId: trackedIframeId });
-        }
-
-        const { data: subscriptions, error: subError } = await supabase
-          .from('subscriptions')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('status', 'active');
-
-        if (subError) {
-          console.error('Error checking subscriptions:', subError);
-          return res.json({ hasSubscription: false, locked, iframeId: trackedIframeId });
-        }
-
-        const validTypes = ['embed', 'embed-widget', 'embed_widget', 'premium', 'all-access', 'premium-access'];
-        const hasEmbedSub = subscriptions && subscriptions.some(sub => 
-          validTypes.includes(sub.type) || (sub.type && sub.type.includes('embed')) || (sub.type && sub.type.includes('premium'))
-        );
-        if (hasEmbedSub) return res.json({ hasSubscription: true, locked, iframeId: trackedIframeId });
-      }
-    }
-
-    // Fallback: get email from iframe record, then do LIVE subscription check
-    let emailToCheck = emailParam;
-    if (iframeId && !emailToCheck) {
-      const { data: iframe, error: iframeErr } = await supabase
-        .from('iframes')
-        .select('email')
-        .eq('id', iframeId)
-        .single();
-      if (!iframeErr && iframe) {
-        emailToCheck = iframe.email;
-      }
-    }
-
-    // NO SUBSCRIPTION REQUIRED - Allow all embeds by default
-    // Only block if explicitly locked by admin
-    if (locked) {
-      console.log('🔒 Iframe is locked by admin');
-      return res.json({ hasSubscription: false, locked: true, iframeId: trackedIframeId });
-    }
-
-    console.log('✅ Embed access allowed (no subscription required)');
-    return res.json({ hasSubscription: true, locked: false, iframeId: trackedIframeId });
-  } catch (error) {
-    console.error('Embed subscription check error:', error);
-    res.json({ hasSubscription: true, locked: false });
-  }
-});
-
-// Check if user has active VRM subscription (admins bypass)
-app.get('/api/check-vrm-subscription', async (req, res) => {
-  try {
-    const iframeId = req.query.iframeId;
-    const emailParam = req.query.email || req.headers['x-user-email'];
-    const currentUrl = req.query.url || req.headers.referer || 'unknown';
-    const authHeader = req.headers.authorization;
-    const token = authHeader ? authHeader.replace('Bearer ', '') : null;
-
-    console.log('🔍 VRM subscription check - iframeId:', iframeId, 'emailParam:', emailParam);
-
-    if (!supabase) {
-      console.log('Supabase not configured - allowing VRM access');
-      return res.json({ hasSubscription: true, locked: false });
-    }
-
-    // Auto-track: Create or update iframe record when widget loads
-    let locked = false;
-    let trackedIframeId = null;
-    if (emailParam && currentUrl !== 'unknown') {
-      try {
-        // Check if iframe record exists for this email + URL
-        const { data: existingIframe } = await supabase
-          .from('iframes')
-          .select('*')
-          .eq('email', emailParam)
-          .eq('url', currentUrl)
-          .single();
-
-        if (!existingIframe) {
-          console.log(`📝 Auto-creating VRM iframe record for ${emailParam} at ${currentUrl}`);
-          const { data: created } = await supabase
-            .from('iframes')
-            .insert({
-              email: emailParam,
-              url: currentUrl,
-              type: 'vrm-lookup',
-              status: 'active',
-              created_at: new Date().toISOString()
-            })
-            .select()
-            .single();
-          trackedIframeId = created?.id || null;
-          locked = created?.status === 'locked';
-        } else {
-          // Update last_accessed
-          await supabase
-            .from('iframes')
-            .update({ last_accessed: new Date().toISOString() })
-            .eq('id', existingIframe.id);
-          trackedIframeId = existingIframe.id;
-          locked = existingIframe.status === 'locked';
-        }
-      } catch (trackError) {
-        console.error('Failed to track iframe:', trackError);
-        // Don't fail the subscription check if tracking fails
-      }
-    }
-
-    // Emergency override disables lock everywhere
-    if (OVERRIDE_IFRAME_LOCK) locked = false;
-
-    // Authenticated path
-    if (token) {
-      const { data: { user }, error } = await supabase.auth.getUser(token);
-      if (!error && user) {
-        if (ADMIN_EMAILS.includes(user.email.toLowerCase())) {
-          console.log('✅ Admin user bypassing VRM subscription check');
-          return res.json({ hasSubscription: true, locked, iframeId: trackedIframeId });
-        }
-
-        const { data: subscriptions, error: subError } = await supabase
-          .from('subscriptions')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('status', 'active');
-
-        if (subError) {
-          console.error('Error checking VRM subscriptions:', subError);
-          return res.json({ hasSubscription: false });
-        }
-
-        const validTypes = ['vrm', 'vrm-lookup', 'vrm_lookup', 'premium', 'all-access', 'premium-access'];
-        const hasVrmSub = subscriptions && subscriptions.some(sub => 
-          validTypes.includes(sub.type) || (sub.type && sub.type.includes('vrm')) || (sub.type && sub.type.includes('premium'))
-        );
-        if (hasVrmSub) {
-          console.log('✅ Found VRM subscription via token');
-          return res.json({ hasSubscription: true, locked, iframeId: trackedIframeId });
-        }
-      }
-    }
-
-    // Fallback: get email from iframe record, then do LIVE subscription check
-    let emailToCheck = emailParam;
-    if (iframeId && !emailToCheck) {
-      const { data: iframe, error: iframeErr } = await supabase
-        .from('iframes')
-        .select('email')
-        .eq('id', iframeId)
-        .single();
-      if (!iframeErr && iframe) {
-        emailToCheck = iframe.email;
-        console.log('📧 Found email from iframe:', emailToCheck);
-      } else {
-        console.log('⚠️ Could not find iframe or email:', iframeErr?.message);
-      }
-    }
-
-    if (emailToCheck) {
-      console.log('🔍 Checking subscriptions for email:', emailToCheck);
-      const { data: subsByEmail, error: emailErr } = await supabase
-        .from('subscriptions')
-        .select('*')
-        .eq('email', emailToCheck)
-        .eq('status', 'active');
-      
-      console.log('📊 Found subscriptions:', subsByEmail?.length || 0, subsByEmail?.map(s => s.type));
-      
-      if (!emailErr && subsByEmail) {
-        const validTypes = ['vrm', 'vrm-lookup', 'vrm_lookup', 'premium', 'all-access', 'premium-access'];
-        const hasVrmSub = subsByEmail.some(sub => validTypes.includes(sub.type) || (sub.type && sub.type.includes('vrm')) || (sub.type && sub.type.includes('premium')));
-        console.log(`✅ VRM subscription check for ${emailToCheck}: ${hasVrmSub}`);
-        return res.json({ hasSubscription: hasVrmSub, locked, iframeId: trackedIframeId });
-      } else {
-        console.log('❌ Error fetching subscriptions:', emailErr?.message);
-      }
-    } else {
-      console.log('❌ No email to check');
-    }
-
-    // NO SUBSCRIPTION REQUIRED - Allow all VRM lookups by default
-    // Only block if explicitly locked by admin
-    if (locked) {
-      console.log('🔒 VRM iframe is locked by admin');
-      return res.json({ hasSubscription: false, locked: true, iframeId: trackedIframeId });
-    }
-
-    console.log('✅ VRM access allowed (no subscription required)');
-    return res.json({ hasSubscription: true, locked: false, iframeId: trackedIframeId });
-  } catch (error) {
-    console.error('VRM subscription check error:', error);
-    res.json({ hasSubscription: true, locked: false });
-  }
-});
-
-// Public endpoint to read VRM availability
-app.get('/api/vrm-status', (req, res) => {
-  res.json({ enabled: vrmLookupEnabled });
-});
-
-// Admin endpoint to toggle VRM availability
-app.post('/api/admin/vrm-status', express.json(), (req, res) => {
-  try {
-    const adminHeader = req.headers['x-admin-email'];
-    if (!ADMIN_EMAIL || adminHeader !== ADMIN_EMAIL) {
-      return res.status(403).json({ success: false, error: 'Forbidden' });
-    }
-
-    const { enabled } = req.body;
-    if (typeof enabled !== 'boolean') {
-      return res.status(400).json({ success: false, error: 'enabled must be boolean' });
-    }
-
-    vrmLookupEnabled = enabled;
-    console.log('🔧 VRM lookup toggled:', vrmLookupEnabled);
-    return res.json({ success: true, enabled: vrmLookupEnabled });
-  } catch (error) {
-    console.error('Error toggling VRM status:', error);
-    return res.status(500).json({ success: false, error: 'Server error' });
-  }
-});
-
-// Get all iframes (admin only)
-app.get('/api/admin/iframes', async (req, res) => {
-  try {
-    // TODO: enforce admin auth
-    if (!supabase) {
-      return res.json({ success: false, iframes: [] });
-    }
-
-    const { data: iframes, error } = await supabase
-      .from('iframes')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching iframes:', error);
-      return res.json({ success: false, iframes: [], error: error.message });
-    }
-
-    // Enrich with live subscription status
-    const enrichedIframes = await Promise.all((iframes || []).map(async (iframe) => {
-      try {
-        const { data: subs, error: subErr } = await supabase
-          .from('subscriptions')
-          .select('type, status, current_period_end')
-          .eq('email', iframe.email)
-          .eq('status', 'active');
-        
-        if (!subErr && subs && subs.length > 0) {
-          const relevantTypes = iframe.type === 'vrm' 
-            ? ['vrm', 'vrm-lookup', 'vrm_lookup', 'premium', 'all-access', 'premium-access']
-            : ['embed', 'embed-widget', 'embed_widget', 'premium', 'all-access', 'premium-access'];
-          
-          const activeSub = subs.find(s => relevantTypes.includes(s.type) || 
-            (s.type && s.type.includes('premium')) ||
-            (s.type && (iframe.type === 'vrm' ? s.type.includes('vrm') : s.type.includes('embed'))));
-          
-          if (activeSub) {
-            iframe.has_active_subscription = true;
-            iframe.subscription_type = activeSub.type;
-            iframe.subscription_expires = activeSub.current_period_end;
-          } else {
-            iframe.has_active_subscription = false;
-          }
-        } else {
-          iframe.has_active_subscription = false;
-        }
-      } catch (err) {
-        console.warn('Subscription lookup failed for iframe:', iframe.id, err.message);
-      }
-      return iframe;
-    }));
-
-    res.json({ 
-      success: true, 
-      iframes: enrichedIframes,
-      total: enrichedIframes.length
-    });
-  } catch (error) {
-    console.error('Error in iframe list endpoint:', error);
-    res.json({ success: false, iframes: [], error: error.message });
-  }
-});
-
-// Toggle iframe status (active/locked) - admin only
-app.post('/api/admin/iframes/:id/toggle', express.json(), async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { status } = req.body;
-    
-    if (!supabase) {
-      return res.json({ success: false, error: 'Database not configured' });
-    }
-    
-    if (!['active', 'locked'].includes(status)) {
-      return res.json({ success: false, error: 'Invalid status' });
-    }
-    
-    // Update iframe status
-    const { data, error } = await supabase
-      .from('iframes')
-      .update({ 
-        status: status,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', id)
-      .select();
-    
-    if (error) {
-      console.error('Error updating iframe:', error);
-      return res.json({ success: false, error: error.message });
-    }
-    
-    console.log(`✅ Iframe ${id} toggled to ${status}`);
-    res.json({ 
-      success: true, 
-      iframe: data?.[0],
-      message: `Iframe ${status} successfully`
-    });
-  } catch (error) {
-    console.error('Error in iframe toggle endpoint:', error);
-    res.json({ success: false, error: error.message });
-  }
-});
-
-// Emergency: Unlock all iframes (admin-only)
-app.post('/api/admin/iframes/unlock-all', express.json(), async (req, res) => {
-  try {
-    const adminHeader = (req.headers['x-admin-email'] || '').toString().toLowerCase();
-    if (!ADMIN_EMAILS.includes(adminHeader)) {
-      return res.status(403).json({ success: false, error: 'Forbidden' });
-    }
-
-    if (!supabase) {
-      return res.status(500).json({ success: false, error: 'Database not configured' });
-    }
-
-    const { email } = req.body || {};
-    
-    // Build the update query
-    let updateQuery = supabase.from('iframes').update({ 
-      status: 'active', 
-      updated_at: new Date().toISOString() 
-    });
-    
-    // If email provided, only unlock that user's iframes
-    if (email) {
-      updateQuery = updateQuery.eq('email', email);
-    }
-    
-    const { data, error } = await updateQuery.select();
-    
-    if (error) {
-      console.error('Error unlocking iframes:', error);
-      return res.status(500).json({ success: false, error: error.message });
-    }
-
-    console.log(`✅ Unlocked ${data?.length || 0} iframes${email ? ` for ${email}` : ''}`);
-    return res.json({ success: true, count: data?.length || 0, iframes: data });
-  } catch (err) {
-    console.error('Error in unlock-all endpoint:', err);
-    return res.status(500).json({ success: false, error: err.message || 'Server error' });
-  }
-});
-
-// Fetch iframe status/details (used by embeds to respect lock state)
-app.get('/api/iframes/:id/status', async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    if (!supabase) {
-      return res.status(500).json({ success: false, error: 'Database not configured' });
-    }
-
-    const { data, error } = await supabase
-      .from('iframes')
-      .select('id, status, type, has_active_subscription, subscription_type, subscription_expires')
-      .eq('id', id)
-      .single();
-
-    if (error) {
-      console.error('Error fetching iframe status:', error);
-      return res.status(404).json({ success: false, error: 'Not found' });
-    }
-
-    return res.json({ success: true, iframe: data });
-  } catch (err) {
-    console.error('Error in iframe status endpoint:', err);
-    return res.status(500).json({ success: false, error: 'Server error' });
-  }
-});
-
-// Track iframe usage when loaded (skips if locked)
-app.post('/api/iframes/:id/track', express.json(), async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    if (!supabase) {
-      return res.json({ success: false });
-    }
-    
-    // Fetch current status/uses
-    const { data: iframe, error: fetchError } = await supabase
-      .from('iframes')
-      .select('uses, status')
-      .eq('id', id)
-      .single();
-    
-    if (fetchError && fetchError.code !== 'PGRST116') {
-      console.error('Error fetching iframe:', fetchError);
-      return res.json({ success: false });
-    }
-
-    // If locked, do not count usage
-    if (!iframe || iframe.status === 'locked') {
-      return res.status(403).json({ success: false, status: 'locked' });
-    }
-    
-    const currentUses = iframe?.uses || 0;
-    
-    const { error: updateError } = await supabase
-      .from('iframes')
-      .update({ 
-        uses: currentUses + 1,
-        last_used: new Date().toISOString()
-      })
-      .eq('id', id);
-    
-    if (updateError) {
-      console.error('Error updating iframe usage:', updateError);
-    }
-    
-    res.json({ success: true });
-  } catch (error) {
-    console.error('Error in iframe track endpoint:', error);
-    res.json({ success: false });
-  }
 });
 
 // Get admin notifications endpoint
@@ -2548,11 +1990,26 @@ function normalizeVehicleResponse(data) {
   return vehicle;
 }
 
-// ============================================
-// VRM Lookup Endpoint (Protected)
-// ============================================
-app.get('/api/vrm-lookup', authenticateIframeOrApi, async (req, res) => {
+app.get('/api/vrm-lookup', async (req, res) => {
   try {
+    // Check if VRM lookup service is enabled
+    if (supabase) {
+      const { data, error } = await supabase
+        .from('service_status')
+        .select('is_enabled, disabled_reason')
+        .eq('service_name', 'vrm_lookup')
+        .single();
+      
+      if (!error && data && !data.is_enabled) {
+        console.log('🚫 VRM Lookup service is disabled');
+        return res.status(403).json({ 
+          error: 'This service is temporarily turned off by the admin.',
+          disabled: true,
+          reason: data.disabled_reason || 'VRM Lookup service is currently disabled'
+        });
+      }
+    }
+    
     // Prefer env key; if missing, fall back to provided test key (letters must include 'A')
     const apiKey = CHECKCAR_API_KEY || 'e80ce7141c39ae0b111a1999f6a0891b';
     const vrmRaw = (req.query.vrm || '').toString().trim();
@@ -2571,7 +2028,7 @@ app.get('/api/vrm-lookup', authenticateIframeOrApi, async (req, res) => {
     const datapoint = (req.query.datapoint || 'vehiclespecs').toString().trim();
     const url = `https://api.checkcardetails.co.uk/vehicledata/${encodeURIComponent(datapoint)}?apikey=${encodeURIComponent(apiKey)}&vrm=${encodeURIComponent(vrm)}`;
 
-    console.log(`📍 VRM Lookup: ${vrm} via ${datapoint} for ${req.userEmail}`);
+    console.log(`📍 VRM Lookup: ${vrm} via ${datapoint}`);
 
     const providerResp = await fetch(url, { headers: { 'Accept': 'application/json' } });
     const rawText = await providerResp.text();
@@ -2601,8 +2058,7 @@ app.get('/api/vrm-lookup', authenticateIframeOrApi, async (req, res) => {
       datapoint,
       provider: 'checkcardetails',
       vehicle,
-      providerStatus: providerResp.status,
-      authenticatedUser: req.userEmail
+      providerStatus: providerResp.status
     });
   } catch (err) {
     console.error('❌ VRM lookup error:', err);
@@ -2655,6 +2111,24 @@ async function getDvlaJwtToken() {
 // Step 2: Lookup vehicle information via DVLA API
 app.get('/api/dvla-lookup', async (req, res) => {
   try {
+    // Check if VRM lookup service is enabled
+    if (supabase) {
+      const { data, error } = await supabase
+        .from('service_status')
+        .select('is_enabled, disabled_reason')
+        .eq('service_name', 'vrm_lookup')
+        .single();
+      
+      if (!error && data && !data.is_enabled) {
+        console.log('🚫 VRM Lookup service is disabled');
+        return res.status(403).json({ 
+          error: 'This service is temporarily turned off by the admin.',
+          disabled: true,
+          reason: data.disabled_reason || 'VRM Lookup service is currently disabled'
+        });
+      }
+    }
+    
     const vrmRaw = (req.query.vrm || '').toString().trim();
 
     if (!vrmRaw) {
@@ -2813,8 +2287,6 @@ app.post('/api/admin/activate-subscription', async (req, res) => {
     
     const subscriptionType = type || 'embed';
     const subscriptionDays = parseInt(days) || 30;
-    const isVrm = subscriptionType.toLowerCase().includes('vrm');
-    const priceAmount = isVrm ? 1799 : 999;
     
     console.log('🔧 Manually activating subscription for:', email, 'Type:', subscriptionType, 'Days:', subscriptionDays);
     
@@ -2834,7 +2306,6 @@ app.post('/api/admin/activate-subscription', async (req, res) => {
         .update({
           type: subscriptionType,
           status: 'active',
-          price_amount: priceAmount,
           current_period_start: new Date().toISOString(),
           current_period_end: new Date(Date.now() + subscriptionDays * 24 * 60 * 60 * 1000).toISOString(),
           updated_at: new Date().toISOString()
@@ -2854,7 +2325,7 @@ app.post('/api/admin/activate-subscription', async (req, res) => {
           stripe_subscription_id: manualSubId,
           type: subscriptionType,
           status: 'active',
-          price_amount: priceAmount,
+          price_amount: 999,
           currency: 'gbp',
           current_period_start: new Date().toISOString(),
           current_period_end: new Date(Date.now() + subscriptionDays * 24 * 60 * 60 * 1000).toISOString()
@@ -2883,15 +2354,9 @@ app.post('/api/admin/activate-subscription', async (req, res) => {
             <div style="background:#262626;padding:20px;border-radius:8px;margin:20px 0">
               <h3 style="color:#eab308;margin-top:0">You now have access to:</h3>
               <ul style="color:#d1d5db;padding-left:20px">
-                ${isVrm ? `
-                  <li>VRM (registration) lookup for UK vehicles</li>
-                  <li>Embed-ready iframe code for your site</li>
-                  <li>Custom branding and colors</li>
-                ` : `
-                  <li>Embed vehicle lookup widget on your website</li>
-                  <li>Customizable colors and branding</li>
-                  <li>Real-time vehicle data lookup</li>
-                `}
+                <li>Embed vehicle lookup widget on your website</li>
+                <li>Customizable colors and branding</li>
+                <li>Real-time vehicle data lookup</li>
               </ul>
             </div>
             <div style="text-align:center;margin-top:30px">
@@ -3379,106 +2844,36 @@ app.post('/api/verify-payment', async (req, res) => {
 // Track/create a new iframe embed
 app.post('/api/iframes/create', async (req, res) => {
   try {
-    if (!supabase) {
-      return res.status(500).json({ error: 'Database not configured' });
+    const { url } = req.body;
+    
+    if (!url) {
+    return res.status(400).json({ error: 'URL is required' });
     }
 
-    const {
-      url,
-      type,
-      email,
-      user_id,
-      title,
-      color_accent,
-      color_bg,
-      logo_url,
-      whatsapp,
-      contact_email
-    } = req.body || {};
+    // Insert into iframes table (user_id can be null for now)
+    const { data, error } = await supabase
+      .from('iframes')
+      .insert({
+        user_id: null,
+        url: url,
+        locked: false,
+        usage_count: 0,
+        created_at: new Date().toISOString(),
+      })
+      .select();
 
-    if (!url || !email) {
-      return res.status(400).json({ error: 'URL and email are required' });
-    }
+    if (error) throw error;
 
-    const iframeType = (type || 'embed').toLowerCase();
-
-    // Look up active subscription for the owner email
-    let hasActiveSubscription = false;
-    let subscriptionType = null;
-    let subscriptionExpires = null;
-    try {
-      const { data: subs, error: subError } = await supabase
-        .from('subscriptions')
-        .select('type,current_period_end,status')
-        .eq('email', email)
-        .eq('status', 'active')
-        .limit(1);
-      if (!subError && subs && subs.length > 0) {
-        hasActiveSubscription = true;
-        subscriptionType = subs[0]?.type || null;
-        subscriptionExpires = subs[0]?.current_period_end || null;
-      }
-    } catch (err) {
-      console.log('Subscription lookup warning:', err.message);
-    }
-
-    const basePayload = {
-      url: url,
-      type: ['vrm', 'vrm-lookup', 'vrm_lookup'].includes(iframeType) ? 'vrm' : 'embed',
-      email: email,
-      user_id: user_id || null,
-      status: 'active',
-      title: title || null,
-      color_accent: color_accent || null,
-      color_bg: color_bg || null,
-      logo_url: logo_url || null,
-      whatsapp: whatsapp || null,
-      contact_email: contact_email || null,
-      uses: 0,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
-
-    // Try inserting with optional subscription fields; if the table doesn't
-    // have these columns, retry without them to avoid schema errors.
-    let data = null;
-    try {
-      const insertPayload = {
-        ...basePayload,
-        has_active_subscription: hasActiveSubscription,
-        subscription_type: subscriptionType,
-        subscription_expires: subscriptionExpires,
-      };
-      const result = await supabase
-        .from('iframes')
-        .insert(insertPayload)
-        .select();
-      data = result.data;
-      if (result.error) throw result.error;
-    } catch (firstErr) {
-      console.warn('Iframe insert with subscription fields failed, retrying without optional columns:', firstErr.message);
-      const result2 = await supabase
-        .from('iframes')
-        .insert(basePayload)
-        .select();
-      data = result2.data;
-      if (result2.error) throw result2.error;
-    }
-
-    res.json({ success: true, iframe: data?.[0] });
+    res.json({ success: true, iframe: data[0] });
   } catch (error) {
     console.error('Error creating iframe record:', error);
     res.status(500).json({ error: error.message || 'Failed to create iframe record' });
   }
 });
 
-// Get all iframes (non-admin diagnostic)
+// Get all iframes for admin
 app.get('/api/iframes', async (req, res) => {
   try {
-    if (!supabase) {
-      return res.status(500).json({ error: 'Database not configured' });
-    }
-
     const { data, error } = await supabase
       .from('iframes')
       .select('*')
@@ -3493,30 +2888,24 @@ app.get('/api/iframes', async (req, res) => {
   }
 });
 
-// Lock/unlock an iframe (legacy path)
+// Lock/unlock an iframe
 app.put('/api/iframes/:id/lock', async (req, res) => {
   try {
-    if (!supabase) {
-      return res.status(500).json({ error: 'Database not configured' });
-    }
-
     const { id } = req.params;
     const { locked } = req.body;
-    const status = locked ? 'locked' : 'active';
 
     const { data, error } = await supabase
       .from('iframes')
       .update({
-        status,
-        updated_at: new Date().toISOString(),
-        last_used: locked ? new Date().toISOString() : null
+        locked: locked,
+        locked_at: locked ? new Date().toISOString() : null,
       })
       .eq('id', id)
       .select();
 
     if (error) throw error;
 
-    res.json({ success: true, iframe: data?.[0] });
+    res.json({ success: true, iframe: data[0] });
   } catch (error) {
     console.error('Error updating iframe lock:', error);
     res.status(500).json({ error: error.message || 'Failed to update iframe' });
@@ -3526,10 +2915,6 @@ app.put('/api/iframes/:id/lock', async (req, res) => {
 // Delete an iframe
 app.delete('/api/iframes/:id', async (req, res) => {
   try {
-    if (!supabase) {
-      return res.status(500).json({ error: 'Database not configured' });
-    }
-
     const { id } = req.params;
 
     const { error } = await supabase
@@ -3589,7 +2974,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start server (close any unclosed block)
-app.listen(PORT, async () => {
+app.listen(PORT, () => {
   console.log(`\n🚀 Carnage Remaps API Server running on http://localhost:${PORT}`);
   console.log(`📝 API Endpoints:`);
   console.log(`   - POST http://localhost:${PORT}/api/create-checkout-session`);
@@ -3597,25 +2982,5 @@ app.listen(PORT, async () => {
   console.log(`   - POST http://localhost:${PORT}/api/webhook`);
   console.log(`   - POST http://localhost:${PORT}/api/verify-payment`);
   console.log(`\n⚠️  Don't forget to set your Stripe keys in .env file!\n`);
-
-  // Startup migration: Unlock all iframes if override is enabled
-  if (OVERRIDE_IFRAME_LOCK && supabase) {
-    try {
-      console.log('🔓 Startup: Unlocking all iframes (OVERRIDE_IFRAME_LOCK is enabled)...');
-      const { data, error } = await supabase
-        .from('iframes')
-        .update({ status: 'active', updated_at: new Date().toISOString() })
-        .eq('status', 'locked')
-        .select();
-      
-      if (error) {
-        console.error('❌ Error unlocking iframes:', error.message);
-      } else {
-        console.log(`✅ Unlocked ${data?.length || 0} iframes on startup`);
-      }
-    } catch (err) {
-      console.error('⚠️ Startup iframe unlock failed:', err.message);
-    }
-  }
 });
 
