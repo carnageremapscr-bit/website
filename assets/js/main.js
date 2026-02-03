@@ -9665,13 +9665,23 @@ I would like to request a quote for tuning this vehicle.`,
             <td style="font-size:0.85rem;color:#cbd5e1;">${created}</td>
             <td style="font-size:0.85rem;color:#cbd5e1;font-weight:600;"><span style="background:rgba(100,116,139,0.2);padding:0.25rem 0.5rem;border-radius:4px;">${iframe.uses || 0}</span></td>
             <td style="text-align:center;">
-              <button onclick="toggleIframeStatus('${iframe.id}', '${statusValue}')" style="background:${isLocked ? '#22c55e' : '#ef4444'};color:#fff;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;margin-right:0.5rem;font-weight:600;">
+              <button class="toggle-iframe-btn" data-iframe-id="${iframe.id}" data-current-status="${statusValue}" style="background:${isLocked ? '#22c55e' : '#ef4444'};color:#fff;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;margin-right:0.5rem;font-weight:600;">
                 ${isLocked ? '🔓 Unlock' : '🔒 Lock'}
               </button>
             </td>
           </tr>
         `;
       }).join('');
+      
+      // Attach event listeners to toggle buttons
+      document.querySelectorAll('.toggle-iframe-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const iframeId = this.dataset.iframeId;
+          const currentStatus = this.dataset.currentStatus;
+          console.log(`Toggling iframe ${iframeId} from status: ${currentStatus}`);
+          window.toggleIframeStatus(iframeId, currentStatus);
+        });
+      });
     } catch (error) {
       console.error('Error loading iframes:', error);
       container.innerHTML = `<tr><td colspan="6" class="empty-cell" style="color:#dc2626;">Error loading iframes: ${error.message}</td></tr>`;
@@ -9725,27 +9735,50 @@ I would like to request a quote for tuning this vehicle.`,
   // Toggle iframe status (exposed globally)
   window.toggleIframeStatus = async function(iframeId, currentStatus) {
     try {
+      console.log(`🔄 Starting toggle: iframeId=${iframeId}, currentStatus=${currentStatus}`);
+      
+      if (!iframeId) {
+        throw new Error('No iframe ID provided');
+      }
+      
+      if (!currentStatus) {
+        throw new Error('No current status provided');
+      }
+      
       // Note: backend expects current status, will toggle it
+      const payload = { status: currentStatus };
+      console.log(`📤 Sending payload:`, payload);
+      
       const response = await fetch(`/api/admin/iframes/${iframeId}/toggle`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ status: currentStatus })
+        body: JSON.stringify(payload)
       });
 
-      if (!response.ok) throw new Error('Failed to update iframe');
+      console.log(`📥 Response status: ${response.status}`);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Server error: ${errorData.error || response.statusText}`);
+      }
 
       const data = await response.json();
+      console.log(`📦 Response data:`, data);
+      
       if (data.success) {
         const newStatus = currentStatus === 'locked' ? 'active' : 'locked';
         console.log(`✅ Iframe ${iframeId} toggled to ${newStatus}`);
+        
+        // Refresh the list
+        await new Promise(resolve => setTimeout(resolve, 500)); // Wait 500ms for DB to settle
         loadAdminIframes();
       } else {
         alert('Error: ' + (data.message || 'Unknown error'));
       }
     } catch (error) {
-      console.error('Toggle error:', error);
+      console.error('❌ Toggle error:', error);
       alert('Error: ' + error.message);
     }
   };
