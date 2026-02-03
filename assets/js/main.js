@@ -9673,15 +9673,27 @@ I would like to request a quote for tuning this vehicle.`,
         `;
       }).join('');
       
-      // Attach event listeners to toggle buttons
-      document.querySelectorAll('.toggle-iframe-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-          const iframeId = this.dataset.iframeId;
-          const currentStatus = this.dataset.currentStatus;
-          console.log(`Toggling iframe ${iframeId} from status: ${currentStatus}`);
-          window.toggleIframeStatus(iframeId, currentStatus);
+      // Attach event listeners to toggle buttons - do this AFTER setting innerHTML
+      console.log('📍 Looking for toggle buttons...');
+      const toggleButtons = document.querySelectorAll('.toggle-iframe-btn');
+      console.log(`Found ${toggleButtons.length} toggle buttons`);
+      
+      toggleButtons.forEach((btn, index) => {
+        const iframeId = btn.dataset.iframeId;
+        const currentStatus = btn.dataset.currentStatus;
+        console.log(`Attaching listener to button ${index}: iframe=${iframeId}, status=${currentStatus}`);
+        
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const id = this.dataset.iframeId;
+          const status = this.dataset.currentStatus;
+          console.log(`🖱️ Button clicked! iframe=${id}, status=${status}`);
+          window.toggleIframeStatus(id, status);
         });
       });
+      
+      console.log(`✅ Attached listeners to all ${toggleButtons.length} buttons`);
     } catch (error) {
       console.error('Error loading iframes:', error);
       container.innerHTML = `<tr><td colspan="6" class="empty-cell" style="color:#dc2626;">Error loading iframes: ${error.message}</td></tr>`;
