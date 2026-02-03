@@ -3156,6 +3156,46 @@ app.get('/api/admin/iframes', async (req, res) => {
   }
 });
 
+// Debug endpoint - get specific iframe by UUID
+app.get('/api/iframes/debug/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    console.log(`[DEBUG] Fetching iframe: ${id}`);
+    
+    const { data, error } = await supabase
+      .from('iframes')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    if (error) {
+      console.log(`[DEBUG] Error fetching: ${error.code} - ${error.message}`);
+      return res.json({ 
+        success: false, 
+        error: error.message,
+        errorCode: error.code,
+        id: id
+      });
+    }
+    
+    console.log(`[DEBUG] Found iframe:`, {
+      id: data.id,
+      email: data.email,
+      status: data.status,
+      type: data.type,
+      url: data.url,
+      created_at: data.created_at,
+      updated_at: data.updated_at
+    });
+    
+    res.json({ success: true, iframe: data });
+  } catch (err) {
+    console.error('[DEBUG] Error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Get iframe status by ID
 app.get('/api/iframes/:id/status', async (req, res) => {
     try {
@@ -3290,6 +3330,20 @@ app.post('/api/admin/iframes/:id/toggle', async (req, res) => {
     
     console.log(`[IFRAME TOGGLE] Toggling iframe ${id}: ${status} -> ${nextStatus}`);
 
+    // First, verify the iframe exists
+    const { data: existing, error: fetchError } = await supabase
+      .from('iframes')
+      .select('id, status, email')
+      .eq('id', id)
+      .single();
+
+    if (fetchError) {
+      console.error(`[IFRAME TOGGLE] Failed to fetch iframe: ${fetchError.message}`);
+      return res.status(404).json({ error: 'Iframe not found', fetchError: fetchError.message });
+    }
+
+    console.log(`[IFRAME TOGGLE] Found iframe - current status: ${existing.status}`);
+
     const { data, error } = await supabase
       .from('iframes')
       .update({
@@ -3300,9 +3354,17 @@ app.post('/api/admin/iframes/:id/toggle', async (req, res) => {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error(`[IFRAME TOGGLE] Update failed: ${error.message}`);
+      throw error;
+    }
 
-    console.log(`[IFRAME TOGGLE] Success - iframe ${id} now has status: ${nextStatus}`);
+    if (!data) {
+      console.error(`[IFRAME TOGGLE] Update returned no data`);
+      return res.status(500).json({ error: 'Update failed - no data returned' });
+    }
+
+    console.log(`[IFRAME TOGGLE] Success - iframe ${id} now has status: ${data.status}`);
     res.json({ success: true, iframe: data });
   } catch (error) {
     console.error('Error toggling iframe status:', error);
