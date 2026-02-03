@@ -35,7 +35,7 @@ const DVLA_API_BASE_URL = process.env.DVLA_API_BASE_URL || 'https://driver-vehic
 const DVLA_USERNAME = process.env.DVLA_USERNAME || '';
 const DVLA_PASSWORD = process.env.DVLA_PASSWORD || '';
 // Emergency override to ignore iframe lock (set to 'true' to disable all locks)
-const OVERRIDE_IFRAME_LOCK = (process.env.OVERRIDE_IFRAME_LOCK || 'false').toLowerCase() === 'true';
+const OVERRIDE_IFRAME_LOCK = (process.env.OVERRIDE_IFRAME_LOCK || 'true').toLowerCase() === 'true';
 
 // JWT token cache for DVLA (valid for 1 hour)
 let dvlaJwtToken = null;
@@ -1321,9 +1321,6 @@ app.get('/api/check-embed-subscription', async (req, res) => {
         // Don't fail the subscription check if tracking fails
       }
     }
-
-    // Emergency override disables lock everywhere
-    if (OVERRIDE_IFRAME_LOCK) locked = false;
 
     // Emergency override disables lock everywhere
     if (OVERRIDE_IFRAME_LOCK) locked = false;

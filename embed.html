@@ -54,6 +54,8 @@
       padding: 1.25rem;
       color: var(--text, #fff);
       width: 100%;
+      max-width: 100%;
+      overflow: hidden;
     }
     .header {
       text-align: center;
@@ -68,11 +70,13 @@
       margin: 0 0 0.5rem;
       font-size: 1.5rem;
       color: var(--text, #fff);
+      word-break: break-word;
     }
     .header p {
       color: var(--muted, #94a3b8);
       margin: 0;
       font-size: 1rem;
+      word-break: break-word;
     }
     .form {
       display: grid;
@@ -80,8 +84,51 @@
       gap: 1rem;
       margin-bottom: 1.5rem;
     }
+    @media (max-width: 768px) {
+      .widget {
+        padding: 1rem;
+        border-radius: 12px;
+      }
+      .header {
+        margin-bottom: 1rem;
+      }
+      .header h2 {
+        font-size: 1.2rem;
+      }
+      .header p {
+        font-size: 0.9rem;
+      }
+      .logo {
+        max-width: 120px;
+      }
+      .form {
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+      }
+    }
     @media (max-width: 500px) {
-      .form { grid-template-columns: 1fr; gap: 0.75rem; }
+      .widget {
+        padding: 0.875rem;
+        border-radius: 10px;
+      }
+      .form { 
+        grid-template-columns: 1fr; 
+        gap: 0.75rem; 
+        margin-bottom: 0.875rem;
+      }
+      .header {
+        margin-bottom: 0.75rem;
+      }
+      .header h2 {
+        font-size: 1rem;
+      }
+      .header p {
+        font-size: 0.8rem;
+      }
+      .logo {
+        max-width: 100px;
+        margin-bottom: 0.5rem;
+      }
     }
     select {
       padding: 1rem;
@@ -100,7 +147,11 @@
     }
     select:disabled { opacity: 0.5; cursor: not-allowed; }
     option { background: #1a1a1a; color: #fff; }
-    .btn-row { display: flex; gap: 0.75rem; }
+    .btn-row { 
+      display: flex; 
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
     button {
       padding: 1rem 1.5rem;
       background: var(--accent, #dc2626);
@@ -117,6 +168,40 @@
     }
     button:hover { opacity: 0.9; }
     button:disabled { opacity: 0.5; cursor: not-allowed; }
+    @media (max-width: 768px) {
+      select {
+        padding: 0.875rem;
+        font-size: 16px;
+        min-height: 48px;
+      }
+      button {
+        padding: 0.875rem 1.25rem;
+        font-size: 1rem;
+        min-height: 48px;
+      }
+      .btn-row {
+        gap: 0.625rem;
+      }
+    }
+    @media (max-width: 500px) {
+      select {
+        padding: 0.75rem;
+        font-size: 16px;
+        min-height: 44px;
+      }
+      button {
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        min-height: 44px;
+      }
+      .btn-row {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .btn-row button {
+        width: 100%;
+      }
+    }
     .info { color: var(--muted, #94a3b8); font-size: 0.85rem; text-align: center; margin-top: 1rem; }
 
     /* Results */
@@ -130,6 +215,7 @@
       font-size: 1.4rem;
       font-weight: 700;
       margin-bottom: 0.75rem;
+      word-break: break-word;
     }
     .engine-badge {
       background: color-mix(in srgb, var(--accent, #dc2626) 20%, transparent);
@@ -138,6 +224,8 @@
       padding: 0.75rem;
       margin-bottom: 1rem;
       font-size: 1rem;
+      overflow: hidden;
+      word-break: break-word;
     }
     .stage-card {
       background: linear-gradient(135deg, color-mix(in srgb, var(--stage1, #22c55e) 15%, transparent), color-mix(in srgb, var(--stage1, #22c55e) 5%, transparent));
@@ -151,6 +239,8 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
     }
     .stage-name { font-weight: 700; color: var(--stage1, #22c55e); font-size: 1.1rem; }
     .stage-method { font-size: 0.9rem; color: var(--muted, #94a3b8); }
@@ -165,13 +255,81 @@
       padding: 0.75rem;
       text-align: center;
     }
-    .perf-label { font-size: 0.8rem; color: var(--muted, #94a3b8); margin-bottom: 0.3rem; }
+    .perf-label { font-size: 0.8rem; color: var(--muted, #94a3b8); margin-bottom: 0.3rem; word-break: break-word; }
     .perf-row { display: flex; justify-content: space-between; align-items: center; font-size: 1rem; }
     .stock { color: var(--muted, #94a3b8); }
     .arrow { color: var(--stage1, #22c55e); }
     .tuned { color: var(--stage1, #22c55e); font-weight: 700; }
     .gain { color: var(--stage1, #22c55e); font-size: 0.9rem; margin-top: 0.25rem; }
     .back-btn { margin-top: 1rem; background: rgba(255,255,255,0.1); }
+    
+    @media (max-width: 768px) {
+      .vehicle-title {
+        font-size: 1.1rem;
+      }
+      .engine-badge {
+        padding: 0.625rem;
+        font-size: 0.9rem;
+      }
+      .stage-card {
+        padding: 0.875rem;
+        margin-bottom: 0.625rem;
+      }
+      .stage-name {
+        font-size: 1rem;
+      }
+      .stage-method {
+        font-size: 0.8rem;
+      }
+      .perf-box {
+        padding: 0.625rem;
+      }
+      .perf-label {
+        font-size: 0.75rem;
+      }
+      .perf-row {
+        font-size: 0.95rem;
+      }
+    }
+    @media (max-width: 500px) {
+      .vehicle-title {
+        font-size: 1rem;
+      }
+      .engine-badge {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+        margin-bottom: 0.75rem;
+      }
+      .stage-card {
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+      }
+      .stage-header {
+        gap: 0.25rem;
+      }
+      .stage-name {
+        font-size: 0.95rem;
+      }
+      .stage-method {
+        font-size: 0.75rem;
+      }
+      .perf-grid {
+        gap: 0.5rem;
+      }
+      .perf-box {
+        padding: 0.5rem;
+      }
+      .perf-label {
+        font-size: 0.65rem;
+        margin-bottom: 0.2rem;
+      }
+      .perf-row {
+        font-size: 0.85rem;
+      }
+      .gain {
+        font-size: 0.75rem;
+      }
+    }
     
     /* Quote buttons section */
     .quote-section {
@@ -214,6 +372,55 @@
     .quote-btn.email { background: #EA4335; }
     .quote-btn.sms { background: #0088cc; }
     .quote-btn:hover { opacity: 0.9; }
+    
+    @media (max-width: 768px) {
+      .quote-section {
+        padding: 0.875rem;
+        margin-top: 0.875rem;
+        border-radius: 8px;
+      }
+      .quote-title {
+        font-size: 0.95rem;
+      }
+      .quote-subtitle {
+        font-size: 0.7rem;
+      }
+      .quote-buttons {
+        gap: 0.375rem;
+      }
+      .quote-btn {
+        padding: 0.5rem 0.625rem;
+        font-size: 0.7rem;
+        min-width: 70px;
+        max-width: 100px;
+      }
+    }
+    @media (max-width: 500px) {
+      .quote-section {
+        padding: 0.75rem;
+        margin-top: 0.75rem;
+        border-radius: 8px;
+      }
+      .quote-title {
+        font-size: 0.9rem;
+        margin-bottom: 0.375rem;
+      }
+      .quote-subtitle {
+        font-size: 0.65rem;
+        margin-bottom: 0.625rem;
+      }
+      .quote-buttons {
+        gap: 0.25rem;
+        flex-direction: column;
+      }
+      .quote-btn {
+        padding: 0.5rem 0.625rem;
+        font-size: 0.65rem;
+        min-width: unset;
+        max-width: unset;
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
