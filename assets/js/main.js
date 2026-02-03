@@ -9992,21 +9992,48 @@ I would like to request a quote for tuning this vehicle.`,
       
       files.sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
       
+      // Status color mapping
+      const statusColors = {
+        'queued': '#6b7280',
+        'in-progress': '#3b82f6',
+        'completed': '#10b981',
+        'returned': '#8b5cf6',
+        'pending': '#f59e0b'
+      };
+      
+      const getStatusBadge = (status) => {
+        const displayStatus = status || 'queued';
+        const color = statusColors[displayStatus] || '#6b7280';
+        return `<span style="display:inline-block;background:${color};color:white;padding:4px 8px;border-radius:4px;font-size:0.75rem;font-weight:600;">${capitalizeStatus(displayStatus)}</span>`;
+      };
+      
       container.innerHTML = files.map(file => {
         const messageCount = file.messages ? file.messages.length : 0;
         const messageBadge = messageCount > 0 
           ? `<span style="position:absolute;top:-8px;right:-8px;background:#10b981;color:white;padding:4px 8px;border-radius:12px;font-size:0.75rem;font-weight:600;box-shadow:0 2px 4px rgba(0,0,0,0.1);">${messageCount}</span>` 
           : '';
         
+        const status = file.status || 'queued';
+        
         return `
           <div class="file-card" style="position:relative;">
             ${messageBadge}
-            <div class="file-card-icon">${getFileExtension(file.name).substring(0, 3)}</div>
+            <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:0.5rem;">
+              <div class="file-card-icon">${getFileExtension(file.name).substring(0, 3)}</div>
+              ${getStatusBadge(status)}
+            </div>
             <h3 class="file-card-name">${escapeHtml(file.name)}</h3>
             <p class="file-card-meta">
               ${escapeHtml(file.customerName || 'Unknown')} • ${formatFileSize(file.size)} • ${new Date(file.uploadDate).toLocaleDateString()}
             </p>
             ${messageCount > 0 ? `<p style="color:#10b981;font-size:0.875rem;margin:0.5rem 0;">💬 ${messageCount} message${messageCount > 1 ? 's' : ''}</p>` : ''}
+            
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin:0.75rem 0;">
+              <button class="status-btn" data-file-id="${file.id}" data-status="in-progress" style="background:#3b82f6;color:white;border:none;padding:0.4rem 0.75rem;border-radius:4px;cursor:pointer;font-size:0.875rem;">🔄 In Progress</button>
+              <button class="status-btn" data-file-id="${file.id}" data-status="completed" style="background:#10b981;color:white;border:none;padding:0.4rem 0.75rem;border-radius:4px;cursor:pointer;font-size:0.875rem;">✅ Completed</button>
+              <button class="status-btn" data-file-id="${file.id}" data-status="returned" style="background:#8b5cf6;color:white;border:none;padding:0.4rem 0.75rem;border-radius:4px;cursor:pointer;font-size:0.875rem;">↩️ Returned</button>
+            </div>
+            
             <div class="file-card-actions">
               <button class="btn small primary view-admin-file-btn" data-file-id="${file.id}">View & Respond</button>
               <button class="btn small secondary download-btn" data-file-id="${file.id}">Download</button>
@@ -10016,7 +10043,17 @@ I would like to request a quote for tuning this vehicle.`,
         `;
       }).join('');
       
-      // Bind buttons
+      // Bind status buttons
+      container.querySelectorAll('.status-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const fileId = parseInt(btn.dataset.fileId);
+          const newStatus = btn.dataset.status;
+          await changeFileStatus(fileId, newStatus);
+          await loadAdminFiles(); // Refresh list
+        });
+      });
+      
+      // Bind action buttons
       container.querySelectorAll('.view-admin-file-btn').forEach(btn => {
         btn.addEventListener('click', () => viewFileDetails(parseInt(btn.dataset.fileId)));
       });
