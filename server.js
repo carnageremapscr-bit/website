@@ -3246,25 +3246,28 @@ app.get('/api/iframes/status-by-email', async (req, res) => {
 
     console.log(`[IFRAME STATUS BY EMAIL] Checking email: ${email}, type: ${type}`);
 
+    // First, check for ANY locked iframe with this email/type
     let lockedQuery = supabase
       .from('iframes')
       .select('id, status, email, url, created_at, last_used, user_id, type')
       .eq('email', email)
-      .eq('status', 'locked')
-      .order('created_at', { ascending: false })
-      .limit(1);
+      .eq('status', 'locked');
 
     if (type) {
       lockedQuery = lockedQuery.eq('type', type);
     }
 
-    const { data: lockedRow, error: lockedError } = await lockedQuery.single();
+    const { data: lockedRows, error: lockedError } = await lockedQuery;
 
-    if (!lockedError && lockedRow) {
+    console.log(`[IFRAME STATUS BY EMAIL] Locked check - error: ${lockedError ? lockedError.message : 'none'}, found: ${lockedRows?.length || 0}`);
+
+    if (!lockedError && lockedRows && lockedRows.length > 0) {
+      const lockedRow = lockedRows[0];
       console.log(`[IFRAME STATUS BY EMAIL] Found locked iframe: ${lockedRow.id}`);
       return res.json({ success: true, iframe: { ...lockedRow, locked: true } });
     }
 
+    // If no locked iframe, get the most recent active one
     let query = supabase
       .from('iframes')
       .select('id, status, email, url, created_at, last_used, user_id, type')
@@ -3276,17 +3279,20 @@ app.get('/api/iframes/status-by-email', async (req, res) => {
       query = query.eq('type', type);
     }
 
-    const { data, error } = await query.single();
+    const { data: activeRows, error: activeError } = await query;
 
-    if (error) {
-      if (error.code === 'PGRST116') {
-        console.log(`[IFRAME STATUS BY EMAIL] No record found for ${email} - returning active`);
-        return res.json({ success: true, iframe: { status: 'active', locked: false } });
-      }
-      throw error;
+    if (activeError) {
+      console.log(`[IFRAME STATUS BY EMAIL] Active check error: ${activeError.message}`);
+      return res.json({ success: true, iframe: { status: 'active', locked: false } });
     }
 
-    console.log(`[IFRAME STATUS BY EMAIL] Found iframe: ${data.id}, status: ${data.status}`);
+    if (!activeRows || activeRows.length === 0) {
+      console.log(`[IFRAME STATUS BY EMAIL] No records found for ${email} - returning active`);
+      return res.json({ success: true, iframe: { status: 'active', locked: false } });
+    }
+
+    const data = activeRows[0];
+    console.log(`[IFRAME STATUS BY EMAIL] Found active iframe: ${data.id}, status: ${data.status}`);
     res.json({ success: true, iframe: { ...data, locked: data?.status === 'locked' } });
   } catch (error) {
     console.error('Error fetching iframe status by email:', error);
