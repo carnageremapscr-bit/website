@@ -2105,12 +2105,12 @@ app.get('/api/vrm-lookup', async (req, res) => {
       }
     }
 
-    // Check VRM subscription
+    // Check VRM subscription (including expiry date)
     if (email) {
       try {
         const { data: subs, error: subError } = await supabase
           .from('subscriptions')
-          .select('id, status, subscription_type')
+          .select('id, status, subscription_type, current_period_end')
           .eq('email', email)
           .eq('subscription_type', 'vrm')
           .eq('status', 'active');
@@ -2125,7 +2125,22 @@ app.get('/api/vrm-lookup', async (req, res) => {
             subscriptionType: 'vrm'
           });
         } else {
-          console.log(`✅ VRM Lookup allowed - active subscription found for ${email}`);
+          // Check if subscription has expired
+          const sub = subs[0];
+          const expiryDate = new Date(sub.current_period_end);
+          const now = new Date();
+          
+          if (expiryDate < now) {
+            console.log(`❌ VRM Lookup blocked - subscription expired on ${expiryDate.toISOString()} for ${email}`);
+            return res.status(403).json({ 
+              error: 'VRM Lookup subscription expired. Please renew your subscription.',
+              needsSubscription: true,
+              subscriptionType: 'vrm',
+              expiredDate: expiryDate.toISOString()
+            });
+          }
+          
+          console.log(`✅ VRM Lookup allowed - active subscription for ${email}, expires ${expiryDate.toISOString()}`);
         }
       } catch (err) {
         console.error('Subscription check error:', err);
@@ -2415,7 +2430,23 @@ app.get('/api/admin/check-subscription/:email', async (req, res) => {
       return res.status(500).json({ error: error.message });
     }
     
-    res.json({ email, subscriptions: data || [] });
+    // Enrich with expiry status
+    const now = new Date();
+    const enriched = (data || []).map(sub => {
+      const expiryDate = new Date(sub.current_period_end);
+      const isExpired = expiryDate < now;
+      const daysUntilExpiry = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+      
+      return {
+        ...sub,
+        is_expired: isExpired,
+        days_until_expiry: isExpired ? 0 : daysUntilExpiry,
+        expiry_date_readable: expiryDate.toLocaleDateString(),
+        payment_interval: 'monthly' // Stripe handles monthly billing
+      };
+    });
+    
+    res.json({ email, subscriptions: enriched || [] });
   } catch (err) {
     console.error('Error:', err);
     res.status(500).json({ error: err.message });
