@@ -14419,7 +14419,7 @@ Thank you for choosing Carnage Remaps!
         console.log('📋 Raw subscriptions received:', subscriptions);
         // Accept 'vrm', 'vrm-lookup', 'vrm_lookup' types for VRM access
         const validTypes = ['vrm', 'vrm-lookup', 'vrm_lookup'];
-        const hasValid = subscriptions.some(sub => {
+        const hasValid = (subscriptions || []).some(sub => {
           const typeMatch = validTypes.includes(sub.type) || (sub.type && sub.type.includes('vrm'));
           console.log('🔍 Checking VRM subscription:', {
             id: sub.id,
@@ -14431,7 +14431,25 @@ Thank you for choosing Carnage Remaps!
           return typeMatch && sub.status === 'active';
         });
         console.log('✅ VRM Subscription check result:', subscriptions.length, 'found, hasValid:', hasValid);
-        return hasValid;
+        if (hasValid) return true;
+
+        const userEmail = sessionStorage.getItem('userEmail');
+        if (!userEmail) return false;
+
+        try {
+          const resp = await fetch(`${API_URL}/api/check-subscription/${encodeURIComponent(userEmail)}`);
+          const data = resp.ok ? await resp.json() : null;
+          const subs = data?.subscriptions || [];
+          const fallbackValid = subs.some(sub => {
+            const typeMatch = validTypes.includes(sub.type) || (sub.type && sub.type.includes('vrm'));
+            return typeMatch && sub.status === 'active';
+          });
+          console.log('✅ VRM Subscription fallback result:', fallbackValid);
+          return fallbackValid;
+        } catch (fallbackError) {
+          console.warn('VRM subscription fallback failed:', fallbackError);
+          return false;
+        }
       } catch (error) {
         console.error('❌ Error checking VRM subscription:', error);
         return false;
