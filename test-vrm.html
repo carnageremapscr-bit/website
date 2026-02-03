@@ -207,6 +207,18 @@
     .gain { color: #22c55e; font-weight: 800; }
     .muted { color: #94a3b8; font-size: 0.9rem; }
 
+    #iframe-locked,
+    #subscription-check,
+    #vrm-disabled {
+      display: none !important;
+    }
+
+    #iframe-locked.show,
+    #subscription-check.show,
+    #vrm-disabled.show {
+      display: flex !important;
+    }
+
     @media (max-width: 600px) {
       body { padding: 20px 12px 32px; }
       .shell { width: 100%; }
@@ -228,7 +240,7 @@
 </head>
 <body>
   <!-- Subscription Check Overlay -->
-  <div id="subscription-check" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;z-index:10000;font-family:inherit">
+  <div id="subscription-check" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);align-items:center;justify-content:center;z-index:10000;font-family:inherit">
     <div style="background:#0f172a;border:1px solid #22c55e;border-radius:12px;padding:40px;text-align:center;max-width:400px;color:#fff">
       <div style="font-size:3rem;margin-bottom:1rem">🔒</div>
       <h2 style="margin-bottom:1rem;font-size:1.5rem">Subscription Required</h2>
@@ -238,7 +250,7 @@
   </div>
 
   <!-- Iframe Locked Overlay -->
-  <div id="iframe-locked" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;z-index:10000;font-family:inherit">
+  <div id="iframe-locked" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);align-items:center;justify-content:center;z-index:10000;font-family:inherit">
     <div style="background:#0f172a;border:1px solid #f97316;border-radius:12px;padding:40px;text-align:center;max-width:420px;color:#fff">
       <div style="font-size:3rem;margin-bottom:1rem">⏸️</div>
       <h2 style="margin-bottom:1rem;font-size:1.5rem">Widget Locked</h2>
@@ -248,7 +260,7 @@
   </div>
 
   <!-- VRM Disabled Overlay -->
-  <div id="vrm-disabled" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);align-items:center;justify-content:center;z-index:10000;font-family:inherit">
+  <div id="vrm-disabled" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);align-items:center;justify-content:center;z-index:10000;font-family:inherit">
     <div style="background:#0f172a;border:1px solid #f97316;border-radius:12px;padding:40px;text-align:center;max-width:420px;color:#fff">
       <div style="font-size:3rem;margin-bottom:1rem">⏸️</div>
       <h2 style="margin-bottom:1rem;font-size:1.5rem">VRM Lookup Disabled</h2>
@@ -567,9 +579,7 @@
           const overlay = document.getElementById('iframe-locked');
           const shell = document.querySelector('.shell');
           if (overlay) {
-            overlay.style.display = 'flex';
-            overlay.style.position = 'fixed';
-            overlay.style.zIndex = '10000';
+            overlay.classList.add('show');
           }
           if (shell) {
             shell.style.display = 'none';
@@ -581,7 +591,7 @@
         // If not locked, ensure overlay stays hidden
         const overlay = document.getElementById('iframe-locked');
         if (overlay) {
-          overlay.style.display = 'none';
+          overlay.classList.remove('show');
         }
         
         // Track iframe usage if iframeId present
