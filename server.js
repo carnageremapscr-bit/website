@@ -2864,7 +2864,10 @@ app.post('/api/iframes/create', async (req, res) => {
     } = req.body;
     
     if (!url) {
-    return res.status(400).json({ error: 'URL is required' });
+      return res.status(400).json({ error: 'URL is required' });
+    }
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
     }
 
     // Insert into iframes table (user_id can be null for now)
@@ -2872,18 +2875,18 @@ app.post('/api/iframes/create', async (req, res) => {
       .from('iframes')
       .insert({
         user_id: user_id || null,
-        email: email || null,
+        email: email,
         url: url,
         type: type || 'embed',
         status: 'active',
-        locked: false,
         title: title || null,
         color_accent: color_accent || null,
         color_bg: color_bg || null,
         logo_url: logo_url || null,
         whatsapp: whatsapp || null,
         contact_email: contact_email || null,
-        usage_count: 0,
+        uses: 0,
+        last_used: null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
@@ -3156,18 +3159,18 @@ app.post('/api/iframes/:id/use', async (req, res) => {
     // Get current usage count
     const { data: current, error: fetchError } = await supabase
       .from('iframes')
-      .select('usage_count')
+      .select('uses')
       .eq('id', id)
       .single();
 
     if (fetchError) throw fetchError;
 
-    const newCount = (current?.usage_count || 0) + 1;
+    const newCount = (current?.uses || 0) + 1;
 
     const { data, error } = await supabase
       .from('iframes')
       .update({
-        usage_count: newCount,
+        uses: newCount,
         last_used: new Date().toISOString(),
       })
       .eq('id', id)
