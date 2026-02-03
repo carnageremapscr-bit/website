@@ -206,6 +206,24 @@
     .vals { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
     .gain { color: #22c55e; font-weight: 800; }
     .muted { color: #94a3b8; font-size: 0.9rem; }
+
+    @media (max-width: 600px) {
+      body { padding: 20px 12px 32px; }
+      .shell { width: 100%; }
+      .panel { padding: 16px; }
+      .panel-header { flex-wrap: wrap; }
+      .lookup-row { gap: 10px; }
+      .plate-wrap { flex: 1 1 100%; min-height: 60px; }
+      .flag { width: 72px; font-size: 0.95rem; }
+      .plate-input { font-size: 1.05rem; letter-spacing: 3px; padding: 0 12px; }
+      .btn { width: 100%; padding: 14px 18px; font-size: 1rem; }
+      .spec-grid { grid-template-columns: 1fr; gap: 6px; }
+      .spec-label { font-size: 0.7rem; }
+      .spec-value { word-break: break-word; }
+      .perf-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+      .boxgrid { grid-template-columns: 1fr; }
+      .results { gap: 12px; }
+    }
   </style>
 </head>
 <body>
