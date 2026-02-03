@@ -2916,11 +2916,14 @@ app.get('/api/iframes/:id/status', async (req, res) => {
     try {
       const { id } = req.params;
 
-      const { data, error } = await supabase
-        .from('iframes')
-        .select('id, status, email, url, created_at, last_used')
-        .eq('id', id)
-        .single();
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+      const baseSelect = 'id, status, email, url, created_at, last_used, user_id';
+
+      const query = isUuid
+        ? supabase.from('iframes').select(baseSelect).eq('id', id).single()
+        : supabase.from('iframes').select(baseSelect).eq('user_id', Number(id)).order('created_at', { ascending: false }).limit(1).single();
+
+      const { data, error } = await query;
 
       if (error) {
         // If iframe doesn't exist, return active status (don't block)
@@ -2936,7 +2939,7 @@ app.get('/api/iframes/:id/status', async (req, res) => {
         throw error;
       }
 
-      res.json({ success: true, iframe: data });
+      res.json({ success: true, iframe: { ...data, locked: data?.status === 'locked' } });
     } catch (error) {
       console.error('Error fetching iframe status:', error);
       res.status(500).json({ error: error.message || 'Failed to fetch iframe status' });

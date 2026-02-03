@@ -885,7 +885,7 @@
           try {
             const statusResp = await fetch(`/api/iframes/${iframeId}/status`, { cache: 'no-store' });
             const statusData = statusResp.ok ? await statusResp.json() : null;
-            const locked = statusData?.iframe?.status === 'locked';
+            const locked = statusData?.iframe?.status === 'locked' || statusData?.iframe?.locked === true;
             if (locked) {
               const overlay = document.getElementById('iframe-locked');
               const widget = document.getElementById('widget');
