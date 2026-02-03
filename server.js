@@ -2850,7 +2850,18 @@ app.post('/api/verify-payment', async (req, res) => {
 // Track/create a new iframe embed
 app.post('/api/iframes/create', async (req, res) => {
   try {
-    const { url } = req.body;
+    const {
+      url,
+      email,
+      user_id,
+      type,
+      title,
+      color_accent,
+      color_bg,
+      logo_url,
+      whatsapp,
+      contact_email
+    } = req.body;
     
     if (!url) {
     return res.status(400).json({ error: 'URL is required' });
@@ -2860,11 +2871,21 @@ app.post('/api/iframes/create', async (req, res) => {
     const { data, error } = await supabase
       .from('iframes')
       .insert({
-        user_id: null,
+        user_id: user_id || null,
+        email: email || null,
         url: url,
+        type: type || 'embed',
+        status: 'active',
         locked: false,
+        title: title || null,
+        color_accent: color_accent || null,
+        color_bg: color_bg || null,
+        logo_url: logo_url || null,
+        whatsapp: whatsapp || null,
+        contact_email: contact_email || null,
         usage_count: 0,
         created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       })
       .select();
 
@@ -2887,7 +2908,44 @@ app.get('/api/iframes', async (req, res) => {
 
     if (error) throw error;
 
-    res.json({ iframes: data || [] });
+    const iframes = data || [];
+    const emails = [...new Set(iframes.map(i => i.email).filter(Boolean))];
+    let subsByEmail = {};
+
+    if (emails.length) {
+      const { data: subs, error: subsError } = await supabase
+        .from('subscriptions')
+        .select('email,type,status,current_period_end')
+        .in('email', emails)
+        .eq('status', 'active');
+
+      if (!subsError && subs) {
+        const now = new Date();
+        subs.forEach(sub => {
+          const end = sub.current_period_end ? new Date(sub.current_period_end) : null;
+          const isActive = !end || end > now;
+          if (!isActive) return;
+          const existing = subsByEmail[sub.email];
+          if (!existing || (existing.current_period_end || '') < (sub.current_period_end || '')) {
+            subsByEmail[sub.email] = sub;
+          }
+        });
+      }
+    }
+
+    const enriched = iframes.map(i => {
+      const sub = subsByEmail[i.email];
+      const end = sub?.current_period_end || null;
+      const active = !!sub && (!end || new Date(end) > new Date());
+      return {
+        ...i,
+        has_active_subscription: active,
+        subscription_type: sub?.type || null,
+        subscription_expires: end
+      };
+    });
+
+    res.json({ iframes: enriched });
   } catch (error) {
     console.error('Error fetching iframes:', error);
     res.status(500).json({ error: error.message || 'Failed to fetch iframes' });
@@ -2904,7 +2962,44 @@ app.get('/api/admin/iframes', async (req, res) => {
 
     if (error) throw error;
 
-    res.json({ iframes: data || [] });
+    const iframes = data || [];
+    const emails = [...new Set(iframes.map(i => i.email).filter(Boolean))];
+    let subsByEmail = {};
+
+    if (emails.length) {
+      const { data: subs, error: subsError } = await supabase
+        .from('subscriptions')
+        .select('email,type,status,current_period_end')
+        .in('email', emails)
+        .eq('status', 'active');
+
+      if (!subsError && subs) {
+        const now = new Date();
+        subs.forEach(sub => {
+          const end = sub.current_period_end ? new Date(sub.current_period_end) : null;
+          const isActive = !end || end > now;
+          if (!isActive) return;
+          const existing = subsByEmail[sub.email];
+          if (!existing || (existing.current_period_end || '') < (sub.current_period_end || '')) {
+            subsByEmail[sub.email] = sub;
+          }
+        });
+      }
+    }
+
+    const enriched = iframes.map(i => {
+      const sub = subsByEmail[i.email];
+      const end = sub?.current_period_end || null;
+      const active = !!sub && (!end || new Date(end) > new Date());
+      return {
+        ...i,
+        has_active_subscription: active,
+        subscription_type: sub?.type || null,
+        subscription_expires: end
+      };
+    });
+
+    res.json({ iframes: enriched });
   } catch (error) {
     console.error('Error fetching admin iframes:', error);
     res.status(500).json({ error: error.message || 'Failed to fetch iframes' });
