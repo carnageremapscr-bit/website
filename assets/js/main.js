@@ -8011,6 +8011,9 @@ I would like to request a quote for tuning this vehicle.`,
         const embedVersion = '4';
 
         // Build query string with all settings (include branding/contact when present)
+        const fallbackEmail = sessionStorage.getItem('userEmail') || '';
+        const embedEmail = settingsEmailVal || fallbackEmail;
+
         const params = [
           `v=${embedVersion}`,
           `color=${encodeURIComponent(primaryColor)}`,
@@ -8019,7 +8022,7 @@ I would like to request a quote for tuning this vehicle.`,
           searchDescVal ? `desc=${encodeURIComponent(searchDescVal)}` : '',
           embedLogoVal ? `logo=${encodeURIComponent(embedLogoVal)}` : '',
           settingsWhatsappVal ? `wa=${encodeURIComponent(settingsWhatsappVal)}` : '',
-          settingsEmailVal ? `email=${encodeURIComponent(settingsEmailVal)}` : '',
+          embedEmail ? `email=${encodeURIComponent(embedEmail)}` : '',
           `showYear=${showYearDropdownVal}`,
           `showPerf=${showPerformanceBadgesVal}`,
           `showStages=${showStageCardsVal}`
@@ -8169,12 +8172,15 @@ I would like to request a quote for tuning this vehicle.`,
 
         const baseUrl = 'https://web-production-df12d.up.railway.app';
         
+        const fallbackEmail = sessionStorage.getItem('userEmail') || '';
+        const vrmEmail = emailVal || fallbackEmail;
+
         const params = [
           `color=${encodeURIComponent(accentColor)}`,
           `bg=${encodeURIComponent(bgColor)}`,
           logoVal ? `logo=${encodeURIComponent(logoVal)}` : '',
           waVal ? `wa=${encodeURIComponent(waVal)}` : '',
-          emailVal ? `email=${encodeURIComponent(emailVal)}` : ''
+          vrmEmail ? `email=${encodeURIComponent(vrmEmail)}` : ''
         ].filter(Boolean).join('&');
 
         const baseSrc = `${baseUrl}/test-vrm.html?${params}`;
