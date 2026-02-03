@@ -1199,6 +1199,65 @@ app.post('/api/admin/service-status/:serviceName', async (req, res) => {
   }
 });
 
+// Legacy VRM status endpoint (admin UI)
+app.get('/api/vrm-status', async (req, res) => {
+  try {
+    if (!supabase) {
+      return res.json({ enabled: true });
+    }
+
+    const { data, error } = await supabase
+      .from('service_status')
+      .select('is_enabled')
+      .eq('service_name', 'vrm_lookup')
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return res.json({ enabled: true });
+      }
+      throw error;
+    }
+
+    res.json({ enabled: data?.is_enabled !== false });
+  } catch (err) {
+    console.error('Error loading VRM status:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Legacy admin toggle VRM status (admin UI)
+app.post('/api/admin/vrm-status', async (req, res) => {
+  try {
+    if (!supabase) {
+      return res.status(500).json({ error: 'Database not configured' });
+    }
+
+    const { enabled } = req.body;
+    const isEnabled = enabled === true;
+
+    const { data, error } = await supabase
+      .from('service_status')
+      .upsert({
+        service_name: 'vrm_lookup',
+        is_enabled: isEnabled,
+        disabled_reason: isEnabled ? null : 'Disabled by admin',
+        disabled_by: req.body.adminEmail || 'admin',
+        disabled_at: isEnabled ? null : new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'service_name' })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    res.json({ success: true, enabled: data?.is_enabled !== false });
+  } catch (err) {
+    console.error('Error toggling VRM status:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Health check endpoint - SECURE: No sensitive data exposed
 app.get('/api/health', (req, res) => {
   res.json({ 
