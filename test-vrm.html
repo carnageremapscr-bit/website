@@ -192,11 +192,11 @@
     .perf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
     .stage {
       padding: 12px;
-      border-radius: 12px;255, 193, 7, 0.3);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 193, 7, 0.3);
       background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(15,23,42,0.35));
     }
     .stage.orange { border-color: rgba(220, 38, 38, 0.35); background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(15,23,42,0.35)); }
-    .stage.red { border-color: rgba(220, 38, 38, 0.4); background: linear-gradient(135deg, rgba(220, 38, 38, 0.154), rgba(15,23,42,0.35)); }
     .stage.red { border-color: rgba(248,113,113,0.35); background: linear-gradient(135deg, rgba(248,113,113,0.14), rgba(15,23,42,0.35)); }
     .stage-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: 800; }
     .req { font-size: 0.72rem; background: rgba(255,255,255,0.08); padding: 4px 8px; border-radius: 6px; color: #cbd5e1; border: 1px solid rgba(255,255,255,0.12); }
@@ -550,33 +550,6 @@
         
         // Service status is now checked by the backend API itself
         // No need for frontend checks - the /api/vrm-lookup endpoint will return an error if disabled
-
-          // No subscription and VRM disabled - show subscription overlay
-          const overlay = document.getElementById('subscription-check');
-          const shell = document.querySelector('.shell');
-          if (overlay && shell) {
-            overlay.style.display = 'flex';
-            shell.style.display = 'none';
-          }
-          return;
-        }
-        
-        const data = await response.json();
-        
-        // If HAS subscription
-        if (data.hasSubscription) {
-          if (data.locked) {
-            console.log('🔒 Iframe is locked by admin');
-            const overlay = document.getElementById('iframe-locked');
-            const shell = document.querySelector('.shell');
-            if (overlay && shell) {
-              overlay.style.display = 'flex';
-              shell.style.display = 'none';
-            }
-            return;
-          }
-
-          console.log('✅ Active VRM subscription - allowing access');
         
         // Hide any loading overlays
         const overlay = document.getElementById('subscription-check');
