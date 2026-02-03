@@ -238,7 +238,7 @@
   </div>
 
   <!-- Iframe Locked Overlay -->
-  <div id="iframe-locked" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);align-items:center;justify-content:center;z-index:10000;font-family:inherit">
+  <div id="iframe-locked" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;z-index:10000;font-family:inherit">
     <div style="background:#0f172a;border:1px solid #f97316;border-radius:12px;padding:40px;text-align:center;max-width:420px;color:#fff">
       <div style="font-size:3rem;margin-bottom:1rem">⏸️</div>
       <h2 style="margin-bottom:1rem;font-size:1.5rem">Widget Locked</h2>
@@ -527,69 +527,71 @@
     lookupBtn.addEventListener('click', handleLookup);
     vrmInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLookup(); });
 
-    // Track iframe usage (get from parent or use default)
+    // Track iframe usage and check lock status
     (async () => {
-      const params = new URLSearchParams(window.location.search);
-      const iframeId = params.get('iframeId');
-      const emailParam = params.get('email');
-      if (iframeId) {
-        try {
-          const statusResp = await fetch(`/api/iframes/${iframeId}/status`, { cache: 'no-store' });
-          const statusData = statusResp.ok ? await statusResp.json() : null;
-          const locked = statusData?.iframe?.status === 'locked' || statusData?.iframe?.locked === true;
-          if (locked) {
-            const overlay = document.getElementById('iframe-locked');
-            const shell = document.querySelector('.shell');
-            if (overlay && shell) {
-              overlay.style.display = 'flex';
-              shell.style.display = 'none';
-            }
-            return;
-          }
-        } catch (err) {
-          console.warn('Iframe status check failed', err);
-        }
-
-        fetch(`/api/iframes/${iframeId}/track`, { method: 'POST' }).catch(() => {});
-      } else if (emailParam) {
-        try {
-          const statusResp = await fetch(`/api/iframes/status-by-email?email=${encodeURIComponent(emailParam)}&type=vrm`, { cache: 'no-store' });
-          const statusData = statusResp.ok ? await statusResp.json() : null;
-          const locked = statusData?.iframe?.status === 'locked' || statusData?.iframe?.locked === true;
-          if (locked) {
-            const overlay = document.getElementById('iframe-locked');
-            const shell = document.querySelector('.shell');
-            if (overlay && shell) {
-              overlay.style.display = 'flex';
-              shell.style.display = 'none';
-            }
-          }
-        } catch (err) {
-          console.warn('Iframe email status check failed', err);
-        }
-      }
-    })();
-  </script>
-
-  <!-- VRM Subscription Check Script -->
-  <script>
-    (async function() {
       try {
         // Extract URL parameters for tracking
-        const urlParams = new URLSearchParams(window.location.search);
-        const iframeId = urlParams.get('iframeId');
-        const emailParam = urlParams.get('email');
+        const params = new URLSearchParams(window.location.search);
+        const iframeId = params.get('iframeId');
+        const emailParam = params.get('email');
         
         // Store for use in fetch requests
         window.userEmail = emailParam;
         window.iframeId = iframeId;
         
-        // Service status is now checked by the backend API itself
-        // No need for frontend checks - the /api/vrm-lookup endpoint will return an error if disabled
+        // Check iframe lock status
+        let locked = false;
         
-        // Hide any loading overlays
-        const overlay = document.getElementById('subscription-check');
-        if (overlay) overlay.style.display = 'none';
+        if (iframeId) {
+          try {
+            const statusResp = await fetch(`/api/iframes/${iframeId}/status`, { cache: 'no-store' });
+            const statusData = statusResp.ok ? await statusResp.json() : null;
+            locked = statusData?.iframe?.status === 'locked' || statusData?.iframe?.locked === true;
+            console.log('Iframe lock status (by ID):', { iframeId, locked, status: statusData?.iframe?.status });
+          } catch (err) {
+            console.warn('Iframe status check failed', err);
+          }
+        } else if (emailParam) {
+          try {
+            const statusResp = await fetch(`/api/iframes/status-by-email?email=${encodeURIComponent(emailParam)}&type=vrm`, { cache: 'no-store' });
+            const statusData = statusResp.ok ? await statusResp.json() : null;
+            locked = statusData?.iframe?.status === 'locked' || statusData?.iframe?.locked === true;
+            console.log('Iframe lock status (by email):', { emailParam, locked, status: statusData?.iframe?.status });
+          } catch (err) {
+            console.warn('Iframe email status check failed', err);
+          }
+        }
+        
+        // If locked, show overlay and hide content persistently
+        if (locked) {
+          const overlay = document.getElementById('iframe-locked');
+          const shell = document.querySelector('.shell');
+          if (overlay) {
+            overlay.style.display = 'flex';
+            overlay.style.position = 'fixed';
+            overlay.style.zIndex = '10000';
+          }
+          if (shell) {
+            shell.style.display = 'none';
+          }
+          console.log('iframe-locked overlay displayed');
+          return; // Exit early - don't track usage or continue
+        }
+        
+        // If not locked, ensure overlay stays hidden
+        const overlay = document.getElementById('iframe-locked');
+        if (overlay) {
+          overlay.style.display = 'none';
+        }
+        
+        // Track iframe usage if iframeId present
+        if (iframeId) {
+          fetch(`/api/iframes/${iframeId}/track`, { method: 'POST' }).catch(() => {});
+        }
+        
+        // Hide subscription check overlay
+        const subOverlay = document.getElementById('subscription-check');
+        if (subOverlay) subOverlay.style.display = 'none';
         
       } catch (error) {
         console.log('VRM initialization error:', error);

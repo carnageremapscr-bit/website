@@ -435,7 +435,7 @@
   </div>
 
   <!-- Iframe Locked Overlay -->
-  <div id="iframe-locked" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);align-items:center;justify-content:center;z-index:10000;font-family:inherit">
+  <div id="iframe-locked" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:10000;font-family:inherit">
     <div style="background:#1a1a1a;border:1px solid #ef4444;border-radius:12px;padding:40px;text-align:center;max-width:420px;color:#fff">
       <div style="font-size:3rem;margin-bottom:1rem">⏸️</div>
       <h2 style="margin-bottom:1rem;font-size:1.5rem">Widget Locked</h2>
@@ -877,50 +877,69 @@
   </script>
 
   <script>
-    // Track iframe usage when the embed loads
+    // Track iframe usage and check lock status when the embed loads
     (async function() {
       try {
         const params = new URLSearchParams(window.location.search);
         const iframeId = params.get('iframeId');
         const emailParam = params.get('email');
+        
+        // Store for potential use
+        window.userEmail = emailParam;
+        window.iframeId = iframeId;
+        
+        // Check iframe lock status
+        let locked = false;
+        
         if (iframeId) {
           try {
             const statusResp = await fetch(`/api/iframes/${iframeId}/status`, { cache: 'no-store' });
             const statusData = statusResp.ok ? await statusResp.json() : null;
-            const locked = statusData?.iframe?.status === 'locked' || statusData?.iframe?.locked === true;
-            if (locked) {
-              const overlay = document.getElementById('iframe-locked');
-              const widget = document.getElementById('widget');
-              if (overlay && widget) {
-                overlay.style.display = 'flex';
-                widget.style.display = 'none';
-              }
-              return;
-            }
+            locked = statusData?.iframe?.status === 'locked' || statusData?.iframe?.locked === true;
+            console.log('Embed lock status (by ID):', { iframeId, locked, status: statusData?.iframe?.status });
           } catch (err) {
             console.warn('Iframe status check failed', err);
           }
-
-          fetch(`/api/iframes/${iframeId}/track`, { method: 'POST' }).catch(() => {});
         } else if (emailParam) {
           try {
             const statusResp = await fetch(`/api/iframes/status-by-email?email=${encodeURIComponent(emailParam)}&type=embed`, { cache: 'no-store' });
             const statusData = statusResp.ok ? await statusResp.json() : null;
-            const locked = statusData?.iframe?.status === 'locked' || statusData?.iframe?.locked === true;
-            if (locked) {
-              const overlay = document.getElementById('iframe-locked');
-              const widget = document.getElementById('widget');
-              if (overlay && widget) {
-                overlay.style.display = 'flex';
-                widget.style.display = 'none';
-              }
-            }
+            locked = statusData?.iframe?.status === 'locked' || statusData?.iframe?.locked === true;
+            console.log('Embed lock status (by email):', { emailParam, locked, status: statusData?.iframe?.status });
           } catch (err) {
             console.warn('Iframe email status check failed', err);
           }
         }
+        
+        // If locked, show overlay and hide widget persistently
+        if (locked) {
+          const overlay = document.getElementById('iframe-locked');
+          const widget = document.getElementById('widget');
+          if (overlay) {
+            overlay.style.display = 'flex';
+            overlay.style.position = 'fixed';
+            overlay.style.zIndex = '10000';
+          }
+          if (widget) {
+            widget.style.display = 'none';
+          }
+          console.log('iframe-locked overlay displayed');
+          return; // Exit early - don't track usage or continue
+        }
+        
+        // If not locked, ensure overlay stays hidden
+        const overlay = document.getElementById('iframe-locked');
+        if (overlay) {
+          overlay.style.display = 'none';
+        }
+        
+        // Track iframe usage if iframeId present
+        if (iframeId) {
+          fetch(`/api/iframes/${iframeId}/track`, { method: 'POST' }).catch(() => {});
+        }
+        
       } catch (err) {
-        console.log('Iframe track note:', err.message);
+        console.log('Embed initialization error:', err.message);
       }
     })();
   </script>
