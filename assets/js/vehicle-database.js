@@ -4,7 +4,7 @@
  * ============================================
  * Single source of truth for all vehicle data
  * Used by: Main upload form, Vehicle search, Embed widget
- * Last Updated: January 9, 2026
+ * Last Updated: Synced from main.js export (2026-02-21)
  * ============================================
  */
 
@@ -14,353 +14,9201 @@ const CarnageVehicleDB = {
    * VEHICLE MODELS DATABASE
    * Maps manufacturer to array of models
    */
-  VEHICLE_DATABASE: {
-    'audi': ['A1', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'Q2', 'Q3', 'Q5', 'Q7', 'Q8', 'TT', 'R8', 'e-tron', 'RS3', 'RS4', 'RS5', 'RS6', 'RS7', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8', 'SQ5', 'SQ7', 'SQ8'],
-    'bmw': ['1 Series', '2 Series', '3 Series', '4 Series', '5 Series', '6 Series', '7 Series', '8 Series', 'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X7', 'Z4', 'i3', 'i4', 'iX', 'iX3', 'M2', 'M3', 'M4', 'M5', 'M8', 'X3 M', 'X4 M', 'X5 M', 'X6 M'],
-    'mercedes': ['A-Class', 'B-Class', 'C-Class', 'CLA', 'CLS', 'E-Class', 'S-Class', 'GLA', 'GLB', 'GLC', 'GLE', 'GLS', 'G-Class', 'V-Class', 'Sprinter', 'Vito', 'EQA', 'EQB', 'EQC', 'EQE', 'EQS', 'AMG GT', 'SL', 'SLC'],
-    'volkswagen': ['Polo', 'Golf', 'Jetta', 'Passat', 'Arteon', 'T-Cross', 'T-Roc', 'Tiguan', 'Touareg', 'Caddy', 'Transporter', 'Crafter', 'ID.3', 'ID.4', 'ID.5', 'ID.Buzz', 'Golf GTI', 'Golf R', 'Scirocco', 'Beetle', 'Sharan', 'up!', 'Amarok'],
-    'ford': ['Fiesta', 'Focus', 'Mondeo', 'Mustang', 'EcoSport', 'Puma', 'Kuga', 'Edge', 'Explorer', 'Transit', 'Transit Custom', 'Ranger', 'F-150', 'S-Max', 'Galaxy', 'Tourneo', 'Fiesta ST', 'Focus ST', 'Focus RS', 'Mustang Mach-E', 'Bronco'],
-    'vauxhall': ['Corsa', 'Astra', 'Insignia', 'Mokka', 'Crossland', 'Grandland', 'Combo', 'Vivaro', 'Movano', 'Corsa-e', 'Mokka-e', 'Zafira', 'Ampera', 'Corsa VXR', 'Astra VXR'],
-    'land-rover': ['Defender', 'Discovery', 'Discovery Sport', 'Range Rover', 'Range Rover Sport', 'Range Rover Evoque', 'Range Rover Velar', 'Freelander', 'Range Rover Autobiography', 'Range Rover SVR'],
-    'nissan': ['Micra', 'Note', 'Pulsar', 'Juke', 'Qashqai', 'X-Trail', 'Leaf', 'GT-R', 'Navara', 'NV200', 'NV300', 'NV400', 'Ariya', '370Z', '350Z', 'Patrol', 'Pathfinder', 'Primastar', 'Interstar', 'Pixo'],
-    'toyota': ['Aygo', 'Yaris', 'Corolla', 'Prius', 'Camry', 'C-HR', 'RAV4', 'Highlander', 'Land Cruiser', 'Hilux', 'Proace', 'Avensis', 'Auris', 'Verso', 'Supra', 'GT86', 'bZ4X', 'Mirai', 'Yaris GR'],
-    'peugeot': ['108', '208', '308', '508', '2008', '3008', '5008', 'Rifter', 'Partner', 'Boxer', 'e-208', 'e-2008', '307', '407', '4007', 'Expert', '208 GTi', '308 GTi', 'RCZ'],
-    'renault': ['Twingo', 'Clio', 'Captur', 'Megane', 'Kadjar', 'Koleos', 'Scenic', 'Kangoo', 'Trafic', 'Master', 'Zoe', 'Arkana', 'Espace', 'Laguna', 'Fluence', 'Wind', 'Twizy', 'Clio RS', 'Megane RS'],
-    'citroen': ['C1', 'C3', 'C4', 'C5', 'C3 Aircross', 'C5 Aircross', 'Berlingo', 'Dispatch', 'Relay', 'C5 X', 'C4 Cactus', 'C3 Picasso', 'C4 Picasso', 'C4 Grand Picasso', 'Nemo', 'Jumpy', 'e-Berlingo', 'e-C4'],
-    'seat': ['Ibiza', 'Leon', 'Arona', 'Ateca', 'Tarraco', 'Alhambra', 'Mii', 'Toledo', 'Leon Cupra', 'Ibiza Cupra', 'Exeo'],
-    'skoda': ['Fabia', 'Scala', 'Octavia', 'Superb', 'Kamiq', 'Karoq', 'Kodiaq', 'Enyaq iV', 'Citigo', 'Rapid', 'Yeti', 'Roomster', 'Octavia vRS', 'Superb Scout'],
-    'volvo': ['S60', 'S90', 'V40', 'V60', 'V90', 'XC40', 'XC60', 'XC90', 'C30', 'C40', 'C70', 'V50', 'V70', 'S40', 'S80', 'XC70', 'XC40 Recharge', 'C40 Recharge'],
-    'mazda': ['Mazda2', 'Mazda3', 'Mazda6', 'CX-3', 'CX-30', 'CX-5', 'CX-60', 'MX-5', 'CX-7', 'CX-9', 'RX-8', 'MX-30', 'Bongo'],
-    'honda': ['Jazz', 'Civic', 'Accord', 'CR-V', 'HR-V', 'e', 'Civic Type R', 'NSX', 'Insight', 'Legend', 'FR-V', 'Stream', 'CR-Z', 'S2000', 'ZR-V'],
-    'hyundai': ['i10', 'i20', 'i30', 'i40', 'Kona', 'Tucson', 'Santa Fe', 'Ioniq', 'Ioniq 5', 'Ioniq 6', 'ix35', 'ix20', 'Veloster', 'Genesis', 'i30 N', 'Kona N', 'Bayon', 'Palisade', 'Nexo'],
-    'kia': ['Picanto', 'Rio', 'Ceed', 'Stonic', 'Niro', 'Sportage', 'Sorento', 'EV6', 'XCeed', 'ProCeed', 'Venga', 'Soul', 'Optima', 'Stinger', 'EV9', 'Carnival', 'Ceed GT'],
-    'fiat': ['500', 'Panda', 'Tipo', '500X', '500L', 'Ducato', 'Doblo', 'Punto', 'Bravo', 'Qubo', 'Fiorino', 'Talento', '500e', '600e'],
-    'alfa-romeo': ['Mito', 'Giulietta', 'Giulia', 'Stelvio', 'Tonale', '159', 'Brera', 'Spider', 'GT', '147', '156', 'Giulia Quadrifoglio', 'Stelvio Quadrifoglio'],
-    'jeep': ['Renegade', 'Compass', 'Cherokee', 'Grand Cherokee', 'Wrangler', 'Gladiator', 'Avenger', 'Commander', 'Liberty', 'Patriot'],
-    'mini': ['Hatch', 'Clubman', 'Countryman', 'Convertible', 'Paceman', 'Coupe', 'Roadster', 'JCW', 'Cooper S', 'Electric'],
-    'porsche': ['718 Cayman', '718 Boxster', '911', 'Panamera', 'Macan', 'Cayenne', 'Taycan', '911 Turbo', '911 GT3', 'Carrera', 'Cayman GT4', 'Boxster Spyder'],
-    'lexus': ['CT', 'IS', 'ES', 'GS', 'LS', 'UX', 'NX', 'RX', 'LC', 'LX', 'RC', 'RC F', 'GS F', 'IS F', 'LFA'],
-    'jaguar': ['XE', 'XF', 'XJ', 'F-Type', 'E-Pace', 'F-Pace', 'I-Pace', 'X-Type', 'S-Type', 'XK', 'XFR', 'XKR', 'F-Type R', 'F-Pace SVR'],
-    'dacia': ['Sandero', 'Logan', 'Duster', 'Jogger', 'Spring', 'Dokker', 'Lodgy'],
-    'suzuki': ['Ignis', 'Swift', 'Baleno', 'Vitara', 'S-Cross', 'Jimny', 'Celerio', 'SX4', 'Grand Vitara', 'Splash', 'Alto', 'Swift Sport'],
-    'subaru': ['Impreza', 'Legacy', 'Outback', 'Forester', 'XV', 'BRZ', 'Levorg', 'WRX', 'WRX STI', 'Tribeca', 'Solterra'],
-    'mitsubishi': ['Mirage', 'Eclipse Cross', 'Outlander', 'ASX', 'L200', 'Colt', 'Lancer', 'Shogun', 'Pajero', 'Space Star', 'Outlander PHEV'],
-    'tesla': ['Model 3', 'Model S', 'Model X', 'Model Y', 'Roadster', 'Cybertruck'],
-    'bentley': ['Continental GT', 'Flying Spur', 'Bentayga', 'Mulsanne', 'Continental GTC'],
-    'maserati': ['Ghibli', 'Quattroporte', 'Levante', 'MC20', 'GranTurismo', 'GranCabrio', 'Grecale'],
-    'abarth': ['595', '695', '500e', '124 Spider', 'Grande Punto', 'Punto Evo'],
-    'ds': ['DS 3', 'DS 4', 'DS 7', 'DS 9', 'DS 3 Crossback', 'DS 5'],
-    'smart': ['Fortwo', 'Forfour', 'EQ', 'Roadster', '#1', '#3'],
-    'ssangyong': ['Tivoli', 'Korando', 'Rexton', 'Musso', 'Rodius', 'Kyron', 'Actyon'],
-    'infiniti': ['Q30', 'Q50', 'Q60', 'QX30', 'QX50', 'QX70', 'Q70', 'QX80', 'FX', 'G'],
-    'iveco': ['Daily', 'Eurocargo', 'Stralis', 'S-Way', 'Trakker', 'X-Way'],
-    'dodge': ['Challenger', 'Charger', 'Durango', 'Ram 1500', 'Ram 2500', 'Ram 3500', 'Journey', 'Grand Caravan', 'Viper', 'Nitro'],
-    'chevrolet': ['Spark', 'Cruze', 'Malibu', 'Camaro', 'Corvette', 'Equinox', 'Traverse', 'Silverado', 'Tahoe', 'Suburban', 'Colorado', 'Trax', 'Blazer', 'Volt', 'Bolt'],
-    'chrysler': ['300', 'Pacifica', 'Voyager', 'Sebring', 'PT Cruiser', 'Grand Voyager'],
-    'opel': ['Corsa', 'Astra', 'Insignia', 'Mokka', 'Crossland', 'Grandland', 'Combo', 'Vivaro', 'Movano', 'Meriva', 'Antara', 'Agila', 'Adam', 'Karl', 'Cascada'],
-    'mg': ['MG3', 'MG4', 'MG5', 'HS', 'ZS', 'ZS EV', 'MG4 EV', 'Marvel R', 'MG TF', 'MG ZT'],
-    'cupra': ['Formentor', 'Leon', 'Ateca', 'Born', 'Tavascan'],
-    'genesis': ['G70', 'G80', 'G90', 'GV60', 'GV70', 'GV80'],
-    'polestar': ['Polestar 1', 'Polestar 2', 'Polestar 3', 'Polestar 4'],
-    'lotus': ['Elise', 'Exige', 'Evora', 'Emira', 'Eletre'],
-    'aston-martin': ['Vantage', 'DB11', 'DBS', 'DBX', 'Rapide'],
-    'mclaren': ['540C', '570S', '720S', '765LT', 'GT', 'Artura'],
-    'ferrari': ['488', 'F8 Tributo', 'SF90', 'Roma', 'Portofino', '812 Superfast', 'Purosangue'],
-    'lamborghini': ['Huracan', 'Aventador', 'Urus'],
-    'rolls-royce': ['Ghost', 'Wraith', 'Dawn', 'Phantom', 'Cullinan', 'Spectre'],
-    'bugatti': ['Chiron', 'Veyron', 'Divo'],
-    'gmc': ['Sierra', 'Canyon', 'Yukon', 'Terrain', 'Acadia'],
-    'cadillac': ['CT4', 'CT5', 'CT6', 'XT4', 'XT5', 'XT6', 'Escalade', 'Lyriq'],
-    'buick': ['Encore', 'Envision', 'Enclave', 'Regal'],
-    'lincoln': ['Corsair', 'Nautilus', 'Aviator', 'Navigator'],
-    'ram': ['1500', '2500', '3500', 'ProMaster'],
-    'hummer': ['EV', 'H2', 'H3'],
-    'saab': ['9-3', '9-5'],
-    'lancia': ['Ypsilon', 'Delta', 'Musa', 'Thema'],
-    'alpine': ['A110'],
-    'greatwall': ['Steed', 'Voleex C10'],
-    'proton': ['Persona', 'Saga', 'Exora', 'Preve'],
-    'perodua': ['Myvi', 'Axia', 'Bezza', 'Aruz']
-  },
+    VEHICLE_DATABASE: {
+  "audi": [
+    "A1",
+    "A3",
+    "A4",
+    "A5",
+    "A6",
+    "A7",
+    "A8",
+    "Q2",
+    "Q3",
+    "Q5",
+    "Q7",
+    "Q8",
+    "TT",
+    "R8",
+    "e-tron",
+    "Q4 e-tron",
+    "RS3",
+    "RS4",
+    "RS5",
+    "RS6",
+    "RS7",
+    "RSQ8"
+  ],
+  "bmw": [
+    "1 Series",
+    "2 Series",
+    "3 Series",
+    "4 Series",
+    "5 Series",
+    "6 Series",
+    "7 Series",
+    "8 Series",
+    "X1",
+    "X2",
+    "X3",
+    "X4",
+    "X5",
+    "X6",
+    "X7",
+    "Z4",
+    "i3",
+    "i4",
+    "i8",
+    "iX",
+    "M2",
+    "M3",
+    "M4",
+    "M5",
+    "M8",
+    "X3 M",
+    "X4 M",
+    "X5 M",
+    "X6 M"
+  ],
+  "mercedes": [
+    "A-Class",
+    "B-Class",
+    "C-Class",
+    "E-Class",
+    "S-Class",
+    "CLA",
+    "CLS",
+    "GLA",
+    "GLB",
+    "GLC",
+    "GLE",
+    "GLS",
+    "G-Class",
+    "SL",
+    "SLC",
+    "AMG GT",
+    "EQC",
+    "EQA",
+    "EQB",
+    "EQS",
+    "EQE",
+    "V-Class",
+    "Vito",
+    "Sprinter",
+    "A35 AMG",
+    "A45 AMG",
+    "C43 AMG",
+    "C63 AMG",
+    "E43 AMG",
+    "E63 AMG",
+    "GLC43 AMG",
+    "GLC63 AMG",
+    "GLE43 AMG",
+    "GLE63 AMG"
+  ],
+  "volkswagen": [
+    "Polo",
+    "Golf",
+    "Jetta",
+    "Passat",
+    "Arteon",
+    "T-Cross",
+    "T-Roc",
+    "Tiguan",
+    "Touareg",
+    "Caddy",
+    "Transporter",
+    "Crafter",
+    "ID.3",
+    "ID.4",
+    "ID.5",
+    "ID.Buzz",
+    "Golf GTI",
+    "Golf R",
+    "Scirocco",
+    "Beetle",
+    "Sharan",
+    "up!",
+    "Amarok"
+  ],
+  "ford": [
+    "Fiesta",
+    "Focus",
+    "Mondeo",
+    "Mustang",
+    "EcoSport",
+    "Puma",
+    "Kuga",
+    "Edge",
+    "Explorer",
+    "Transit",
+    "Transit Custom",
+    "Ranger",
+    "F-150",
+    "S-Max",
+    "Galaxy",
+    "Tourneo",
+    "Fiesta ST",
+    "Focus ST",
+    "Focus RS",
+    "Mustang Mach-E",
+    "Bronco"
+  ],
+  "vauxhall": [
+    "Corsa",
+    "Astra",
+    "Insignia",
+    "Mokka",
+    "Crossland",
+    "Grandland",
+    "Combo",
+    "Vivaro",
+    "Movano",
+    "Corsa-e",
+    "Mokka-e",
+    "Zafira",
+    "Ampera",
+    "Corsa VXR",
+    "Astra VXR"
+  ],
+  "land-rover": [
+    "Defender",
+    "Discovery",
+    "Discovery Sport",
+    "Range Rover",
+    "Range Rover Sport",
+    "Range Rover Evoque",
+    "Range Rover Velar",
+    "Freelander",
+    "Range Rover Autobiography",
+    "Range Rover SVR"
+  ],
+  "nissan": [
+    "Micra",
+    "Note",
+    "Pulsar",
+    "Juke",
+    "Qashqai",
+    "X-Trail",
+    "Leaf",
+    "GT-R",
+    "Navara",
+    "NV200",
+    "NV300",
+    "NV400",
+    "Ariya",
+    "370Z",
+    "350Z",
+    "Patrol",
+    "Pathfinder",
+    "Primastar",
+    "Interstar",
+    "Pixo"
+  ],
+  "toyota": [
+    "Aygo",
+    "Yaris",
+    "Corolla",
+    "Prius",
+    "Camry",
+    "C-HR",
+    "RAV4",
+    "Highlander",
+    "Land Cruiser",
+    "Hilux",
+    "Proace",
+    "Avensis",
+    "Auris",
+    "Verso",
+    "Supra",
+    "GT86",
+    "bZ4X",
+    "Mirai",
+    "Yaris GR"
+  ],
+  "peugeot": [
+    "108",
+    "208",
+    "308",
+    "508",
+    "2008",
+    "3008",
+    "5008",
+    "Rifter",
+    "Partner",
+    "Boxer",
+    "e-208",
+    "e-2008",
+    "307",
+    "407",
+    "4007",
+    "Expert",
+    "208 GTi",
+    "308 GTi",
+    "RCZ"
+  ],
+  "renault": [
+    "Twingo",
+    "Clio",
+    "Captur",
+    "Megane",
+    "Kadjar",
+    "Koleos",
+    "Scenic",
+    "Kangoo",
+    "Trafic",
+    "Master",
+    "Zoe",
+    "Arkana",
+    "Espace",
+    "Laguna",
+    "Fluence",
+    "Wind",
+    "Twizy",
+    "Clio RS",
+    "Megane RS"
+  ],
+  "citroen": [
+    "C1",
+    "C3",
+    "C4",
+    "C5",
+    "C3 Aircross",
+    "C5 Aircross",
+    "Berlingo",
+    "Dispatch",
+    "Relay",
+    "C5 X",
+    "C4 Cactus",
+    "C3 Picasso",
+    "C4 Picasso",
+    "C4 Grand Picasso",
+    "Nemo",
+    "Jumpy",
+    "e-Berlingo",
+    "e-C4"
+  ],
+  "seat": [
+    "Ibiza",
+    "Leon",
+    "Arona",
+    "Ateca",
+    "Tarraco",
+    "Alhambra",
+    "Mii",
+    "Toledo",
+    "Leon Cupra",
+    "Ibiza Cupra",
+    "Exeo"
+  ],
+  "skoda": [
+    "Fabia",
+    "Scala",
+    "Octavia",
+    "Superb",
+    "Kamiq",
+    "Karoq",
+    "Kodiaq",
+    "Enyaq iV",
+    "Citigo",
+    "Rapid",
+    "Yeti",
+    "Roomster",
+    "Octavia vRS",
+    "Superb Scout"
+  ],
+  "volvo": [
+    "S60",
+    "S90",
+    "V40",
+    "V60",
+    "V90",
+    "XC40",
+    "XC60",
+    "XC90",
+    "C30",
+    "C40",
+    "C70",
+    "V50",
+    "V70",
+    "S40",
+    "S80",
+    "XC70",
+    "XC40 Recharge",
+    "C40 Recharge"
+  ],
+  "mazda": [
+    "Mazda2",
+    "Mazda3",
+    "Mazda6",
+    "CX-3",
+    "CX-30",
+    "CX-5",
+    "CX-60",
+    "MX-5",
+    "CX-7",
+    "CX-9",
+    "RX-8",
+    "MX-30",
+    "Bongo"
+  ],
+  "honda": [
+    "Jazz",
+    "Civic",
+    "Accord",
+    "CR-V",
+    "HR-V",
+    "e",
+    "Civic Type R",
+    "NSX",
+    "Insight",
+    "Legend",
+    "FR-V",
+    "Stream",
+    "CR-Z",
+    "S2000",
+    "ZR-V"
+  ],
+  "hyundai": [
+    "i10",
+    "i20",
+    "i30",
+    "i40",
+    "Kona",
+    "Tucson",
+    "Santa Fe",
+    "Ioniq",
+    "Ioniq 5",
+    "Ioniq 6",
+    "ix35",
+    "ix20",
+    "Veloster",
+    "Genesis",
+    "i30 N",
+    "Kona N",
+    "Bayon",
+    "Palisade",
+    "Nexo"
+  ],
+  "kia": [
+    "Picanto",
+    "Rio",
+    "Ceed",
+    "Stonic",
+    "Niro",
+    "Sportage",
+    "Sorento",
+    "EV6",
+    "XCeed",
+    "ProCeed",
+    "Venga",
+    "Soul",
+    "Optima",
+    "Stinger",
+    "EV9",
+    "Carnival",
+    "Ceed GT"
+  ],
+  "fiat": [
+    "500",
+    "Panda",
+    "Tipo",
+    "500X",
+    "500L",
+    "Ducato",
+    "Doblo",
+    "Punto",
+    "Bravo",
+    "Qubo",
+    "Fiorino",
+    "Talento",
+    "500e",
+    "600e"
+  ],
+  "alfa-romeo": [
+    "Mito",
+    "Giulietta",
+    "Giulia",
+    "Stelvio",
+    "Tonale",
+    "159",
+    "Brera",
+    "Spider",
+    "GT",
+    "147",
+    "156",
+    "Giulia Quadrifoglio",
+    "Stelvio Quadrifoglio"
+  ],
+  "jeep": [
+    "Renegade",
+    "Compass",
+    "Cherokee",
+    "Grand Cherokee",
+    "Wrangler",
+    "Gladiator",
+    "Avenger",
+    "Commander",
+    "Liberty",
+    "Patriot"
+  ],
+  "mini": [
+    "Hatch",
+    "Clubman",
+    "Countryman",
+    "Convertible",
+    "Paceman",
+    "Coupe",
+    "Roadster",
+    "JCW",
+    "Cooper S",
+    "Electric"
+  ],
+  "porsche": [
+    "718 Cayman",
+    "718 Boxster",
+    "911",
+    "Panamera",
+    "Macan",
+    "Cayenne",
+    "Taycan",
+    "911 Turbo",
+    "911 GT3",
+    "Carrera",
+    "Cayman GT4",
+    "Boxster Spyder"
+  ],
+  "lexus": [
+    "CT",
+    "IS",
+    "ES",
+    "GS",
+    "LS",
+    "UX",
+    "NX",
+    "RX",
+    "LC",
+    "LX",
+    "RC",
+    "RC F",
+    "GS F",
+    "IS F",
+    "LFA"
+  ],
+  "jaguar": [
+    "XE",
+    "XF",
+    "XJ",
+    "F-Type",
+    "E-Pace",
+    "F-Pace",
+    "I-Pace",
+    "X-Type",
+    "S-Type",
+    "XK",
+    "XFR",
+    "XKR",
+    "F-Type R",
+    "F-Pace SVR"
+  ],
+  "dacia": [
+    "Sandero",
+    "Logan",
+    "Duster",
+    "Jogger",
+    "Spring",
+    "Dokker",
+    "Lodgy"
+  ],
+  "suzuki": [
+    "Ignis",
+    "Swift",
+    "Baleno",
+    "Vitara",
+    "S-Cross",
+    "Jimny",
+    "Celerio",
+    "SX4",
+    "Grand Vitara",
+    "Splash",
+    "Alto",
+    "Swift Sport"
+  ],
+  "subaru": [
+    "Impreza",
+    "Legacy",
+    "Outback",
+    "Forester",
+    "XV",
+    "BRZ",
+    "Levorg",
+    "WRX",
+    "WRX STI",
+    "Tribeca",
+    "Solterra"
+  ],
+  "mitsubishi": [
+    "Mirage",
+    "Eclipse Cross",
+    "Outlander",
+    "ASX",
+    "L200",
+    "Colt",
+    "Lancer",
+    "Shogun",
+    "Pajero",
+    "Space Star",
+    "Outlander PHEV"
+  ],
+  "tesla": [
+    "Model 3",
+    "Model S",
+    "Model X",
+    "Model Y",
+    "Roadster",
+    "Cybertruck"
+  ],
+  "bentley": [
+    "Continental GT",
+    "Flying Spur",
+    "Bentayga",
+    "Mulsanne",
+    "Continental GTC"
+  ],
+  "maserati": [
+    "Ghibli",
+    "Quattroporte",
+    "Levante",
+    "MC20",
+    "GranTurismo",
+    "GranCabrio",
+    "Grecale"
+  ],
+  "abarth": [
+    "595",
+    "695",
+    "500e",
+    "124 Spider",
+    "Grande Punto",
+    "Punto Evo"
+  ],
+  "ds": [
+    "DS 3",
+    "DS 4",
+    "DS 7",
+    "DS 9",
+    "DS 3 Crossback",
+    "DS 5"
+  ],
+  "smart": [
+    "Fortwo",
+    "Forfour",
+    "EQ",
+    "Roadster",
+    "#1",
+    "#3"
+  ],
+  "ssangyong": [
+    "Tivoli",
+    "Korando",
+    "Rexton",
+    "Musso",
+    "Rodius",
+    "Kyron",
+    "Actyon"
+  ],
+  "infiniti": [
+    "Q30",
+    "Q50",
+    "Q60",
+    "QX30",
+    "QX50",
+    "QX70",
+    "Q70",
+    "QX80",
+    "FX",
+    "G"
+  ],
+  "iveco": [
+    "Daily",
+    "Eurocargo",
+    "Stralis",
+    "S-Way",
+    "Trakker",
+    "X-Way"
+  ],
+  "dodge": [
+    "Challenger",
+    "Charger",
+    "Durango",
+    "Ram 1500",
+    "Ram 2500",
+    "Ram 3500",
+    "Journey",
+    "Grand Caravan",
+    "Viper",
+    "Nitro"
+  ],
+  "chevrolet": [
+    "Spark",
+    "Cruze",
+    "Malibu",
+    "Camaro",
+    "Corvette",
+    "Equinox",
+    "Traverse",
+    "Silverado",
+    "Tahoe",
+    "Suburban",
+    "Colorado",
+    "Trax",
+    "Blazer",
+    "Volt",
+    "Bolt"
+  ],
+  "chrysler": [
+    "300",
+    "Pacifica",
+    "Voyager",
+    "Sebring",
+    "PT Cruiser",
+    "Grand Voyager"
+  ],
+  "opel": [
+    "Corsa",
+    "Astra",
+    "Insignia",
+    "Mokka",
+    "Crossland",
+    "Grandland",
+    "Combo",
+    "Vivaro",
+    "Movano",
+    "Meriva",
+    "Antara",
+    "Agila",
+    "Adam",
+    "Karl",
+    "Cascada"
+  ],
+  "mg": [
+    "MG3",
+    "MG4",
+    "MG5",
+    "HS",
+    "ZS",
+    "ZS EV",
+    "MG4 EV",
+    "Marvel R",
+    "MG TF",
+    "MG ZT"
+  ],
+  "cupra": [
+    "Formentor",
+    "Leon",
+    "Ateca",
+    "Born",
+    "Tavascan"
+  ],
+  "genesis": [
+    "G70",
+    "G80",
+    "G90",
+    "GV60",
+    "GV70",
+    "GV80"
+  ],
+  "polestar": [
+    "Polestar 1",
+    "Polestar 2",
+    "Polestar 3",
+    "Polestar 4"
+  ],
+  "lotus": [
+    "Elise",
+    "Exige",
+    "Evora",
+    "Emira",
+    "Eletre"
+  ],
+  "aston-martin": [
+    "Vantage",
+    "DB11",
+    "DBS",
+    "DBX",
+    "Rapide"
+  ],
+  "mclaren": [
+    "540C",
+    "570S",
+    "720S",
+    "765LT",
+    "GT",
+    "Artura"
+  ],
+  "ferrari": [
+    "488",
+    "F8 Tributo",
+    "SF90",
+    "Roma",
+    "Portofino",
+    "812 Superfast",
+    "Purosangue"
+  ],
+  "lamborghini": [
+    "Huracan",
+    "Aventador",
+    "Urus"
+  ],
+  "rolls-royce": [
+    "Ghost",
+    "Wraith",
+    "Dawn",
+    "Phantom",
+    "Cullinan",
+    "Spectre"
+  ],
+  "bugatti": [
+    "Chiron",
+    "Veyron",
+    "Divo"
+  ],
+  "gmc": [
+    "Sierra",
+    "Canyon",
+    "Yukon",
+    "Terrain",
+    "Acadia"
+  ],
+  "cadillac": [
+    "CT4",
+    "CT5",
+    "CT6",
+    "XT4",
+    "XT5",
+    "XT6",
+    "Escalade",
+    "Lyriq"
+  ],
+  "buick": [
+    "Encore",
+    "Envision",
+    "Enclave",
+    "Regal"
+  ],
+  "lincoln": [
+    "Corsair",
+    "Nautilus",
+    "Aviator",
+    "Navigator"
+  ],
+  "ram": [
+    "1500",
+    "2500",
+    "3500",
+    "ProMaster"
+  ],
+  "hummer": [
+    "EV",
+    "H2",
+    "H3"
+  ],
+  "saab": [
+    "9-3",
+    "9-5"
+  ],
+  "lancia": [
+    "Ypsilon",
+    "Delta",
+    "Musa",
+    "Thema"
+  ],
+  "alpine": [
+    "A110"
+  ],
+  "greatwall": [
+    "Steed",
+    "Voleex C10"
+  ],
+  "proton": [
+    "Persona",
+    "Saga",
+    "Exora",
+    "Preve"
+  ],
+  "perodua": [
+    "Myvi",
+    "Axia",
+    "Bezza",
+    "Aruz"
+  ]
+},
 
   /**
    * MANUFACTURER ENGINES DATABASE
    * Generic engines available per manufacturer
    */
-  MANUFACTURER_ENGINES: {
-    'audi': ['1.6 TDI - 90hp', '1.6 TDI - 95hp', '1.6 TDI - 105hp', '1.6 TDI - 116hp', '2.0 TDI - 136hp', '2.0 TDI - 140hp', '2.0 TDI - 143hp', '2.0 TDI - 150hp', '2.0 TDI - 170hp', '2.0 TDI - 190hp', '2.0 TDI - 200hp', '2.0 TDI - 204hp', '3.0 TDI - 204hp', '3.0 TDI - 218hp', '3.0 TDI - 231hp', '3.0 TDI - 272hp', '1.0 TFSI - 82hp', '1.0 TFSI - 95hp', '1.0 TFSI - 110hp', '1.0 TFSI - 115hp', '1.0 TFSI - 116hp', '1.2 TFSI - 86hp', '1.4 TFSI - 122hp', '1.4 TFSI - 125hp', '1.4 TFSI - 140hp', '1.4 TFSI - 150hp', '1.5 TFSI - 150hp', '1.8 T - 150hp', '1.8 T - 163hp', '1.8 T - 180hp', '1.8 TFSI - 160hp', '1.8 TFSI - 170hp', '1.8 TFSI - 180hp', '1.8 TFSI - 192hp', '2.0 TFSI - 190hp', '2.0 TFSI - 200hp', '2.0 TFSI - 245hp', '2.0 TFSI - 300hp', '2.5 TFSI - 400hp', '3.0 TFSI - 340hp', '3.0 V6 - 220hp'],
-    'volkswagen': ['1.6 TDI - 105hp', '1.6 TDI - 116hp', '2.0 TDI - 136hp', '2.0 TDI - 140hp', '2.0 TDI - 150hp', '2.0 TDI - 184hp', '2.0 TDI - 190hp', '3.0 TDI - 204hp', '3.0 TDI - 286hp', '1.0 TSI - 95hp', '1.0 TSI - 115hp', '1.4 TSI - 125hp', '1.4 TSI - 150hp', '1.5 TSI - 130hp', '1.5 TSI - 150hp', '1.8 T - 150hp', '1.8 T - 180hp', '1.8 TSI - 160hp', '1.8 TSI - 180hp', '2.0 TSI - 190hp', '2.0 TSI - 245hp', '2.0 TSI - 300hp'],
-    'seat': ['1.6 TDI - 105hp', '1.6 TDI - 116hp', '2.0 TDI - 143hp', '2.0 TDI - 150hp', '2.0 TDI - 184hp', '1.0 TSI - 95hp', '1.0 TSI - 115hp', '1.4 TSI - 125hp', '1.4 TSI - 150hp', '1.5 TSI - 130hp', '1.5 TSI - 150hp', '1.8 T - 150hp', '1.8 T - 180hp', '1.8 TSI - 160hp', '1.8 TSI - 180hp', '2.0 TSI - 190hp', '2.0 TSI - 245hp', '2.0 TSI - 300hp'],
-    'skoda': ['1.6 TDI - 105hp', '1.6 TDI - 116hp', '2.0 TDI - 143hp', '2.0 TDI - 150hp', '2.0 TDI - 200hp', '1.0 TSI - 95hp', '1.0 TSI - 110hp', '1.4 TSI - 125hp', '1.4 TSI - 150hp', '1.5 TSI - 150hp', '1.8 T - 150hp', '1.8 T - 180hp', '1.8 TSI - 160hp', '1.8 TSI - 180hp', '2.0 TSI - 190hp', '2.0 TSI - 245hp'],
-    'fiat': ['1.3 MultiJet - 75hp', '1.3 MultiJet - 95hp', '1.6 MultiJet - 105hp', '1.6 MultiJet - 120hp', '2.0 MultiJet - 140hp', '2.0 MultiJet - 170hp', '0.9 TwinAir - 85hp', '1.0 FireFly - 70hp', '1.0 FireFly - 100hp', '1.4 MultiAir - 95hp', '1.4 MultiAir - 120hp', '1.4 T-Jet - 120hp', '1.4 T-Jet - 150hp', '1.6 MultiJet II - 120hp', '2.0 MultiJet II - 170hp'],
-    'alfa-romeo': ['1.3 JTDm - 95hp', '1.6 JTDm - 105hp', '1.6 JTDm - 120hp', '2.0 JTDm - 136hp', '2.0 JTDm - 150hp', '2.0 JTDm - 180hp', '2.2 JTD - 136hp', '2.2 JTD - 150hp', '2.2 JTD - 180hp', '1.4 TB MultiAir - 120hp', '1.4 TB MultiAir - 140hp', '1.4 TB MultiAir - 170hp', '1.8 TBi - 200hp', '2.0 TB - 200hp', '2.0 TB - 280hp', '2.9 V6 Bi-Turbo - 510hp'],
-    'bmw': ['1.6d - 116hp', '2.0d - 150hp', '2.0d - 163hp', '2.0d - 190hp', '2.0d - 204hp', '3.0d - 218hp', '3.0d - 249hp', '3.0d - 265hp', '3.0d - 286hp', '1.5i - 136hp', '2.0i - 184hp', '2.0i - 252hp', '3.0i - 258hp', '3.0i - 340hp', '3.0i - 374hp', '4.4 V8 - 530hp'],
-    'mercedes': ['1.5 CDI - 116hp', '1.6 CDI - 136hp', '2.0 CDI - 136hp', '2.0 CDI - 163hp', '2.0 CDI - 190hp', '2.1 CDI - 136hp', '2.1 CDI - 170hp', '2.2 CDI - 170hp', '3.0 CDI - 204hp', '3.0 CDI - 231hp', '3.0 CDI - 258hp', '1.3 - 136hp', '1.5 - 156hp', '1.6 - 122hp', '2.0 - 184hp', '2.0 - 211hp', '2.0 - 258hp', '3.0 V6 - 367hp'],
-    'ford': ['1.5 TDCi - 95hp', '1.5 TDCi - 120hp', '1.6 TDCi - 95hp', '1.6 TDCi - 115hp', '2.0 TDCi - 150hp', '2.0 TDCi - 170hp', '2.0 TDCi - 185hp', '2.0 Bi-Turbo - 213hp', '1.0 EcoBoost - 100hp', '1.0 EcoBoost - 125hp', '1.0 EcoBoost - 140hp', '1.5 EcoBoost - 150hp', '1.5 EcoBoost - 182hp', '2.0 EcoBoost - 245hp', '2.3 EcoBoost - 280hp', '2.7 EcoBoost V6 - 325hp'],
-    'vauxhall': ['1.5 Turbo D - 102hp', '1.5 Turbo D - 120hp', '1.6 CDTI - 110hp', '1.6 CDTI - 136hp', '2.0 CDTI - 170hp', '1.0 Turbo - 105hp', '1.2 Turbo - 110hp', '1.2 Turbo - 130hp', '1.4 Turbo - 125hp', '1.4 Turbo - 145hp', '1.6 Turbo - 200hp', '2.0 Turbo - 230hp'],
-    'land-rover': ['2.0 D - 163hp', '2.0 D - 180hp', '2.0 D - 204hp', '2.0 D - 240hp', '3.0 D - 249hp', '3.0 D - 300hp', '2.0 P - 200hp', '2.0 P - 249hp', '2.0 P - 300hp', '3.0 P - 360hp', '3.0 P - 400hp', '5.0 V8 - 525hp'],
-    'peugeot': ['1.5 BlueHDi - 100hp', '1.5 BlueHDi - 130hp', '1.6 BlueHDi - 100hp', '1.6 BlueHDi - 120hp', '2.0 BlueHDi - 150hp', '2.0 BlueHDi - 180hp', '1.2 PureTech - 100hp', '1.2 PureTech - 110hp', '1.2 PureTech - 130hp', '1.6 PureTech - 165hp', '1.6 PureTech - 180hp'],
-    'renault': ['1.5 dCi - 75hp', '1.5 dCi - 85hp', '1.5 dCi - 90hp', '1.5 dCi - 95hp', '1.5 dCi - 110hp', '1.5 Blue dCi - 115hp', '1.6 dCi - 130hp', '1.7 Blue dCi - 150hp', '2.0 dCi - 150hp', '2.0 dCi - 160hp', '0.9 TCe - 90hp', '1.0 SCe - 65hp', '1.0 SCe - 75hp', '1.0 TCe - 90hp', '1.0 TCe - 100hp', '1.2 TCe - 115hp', '1.2 TCe - 120hp', '1.3 TCe - 130hp', '1.3 TCe - 140hp', '1.3 TCe - 155hp', '1.3 TCe - 160hp', '1.6 TCe - 165hp', '1.6 TCe - 190hp', '1.8 TCe - 280hp'],
-    'citroen': ['1.5 BlueHDi - 100hp', '1.5 BlueHDi - 130hp', '1.6 BlueHDi - 100hp', '1.6 BlueHDi - 120hp', '2.0 BlueHDi - 150hp', '2.0 BlueHDi - 180hp', '1.2 PureTech - 82hp', '1.2 PureTech - 110hp', '1.2 PureTech - 130hp', '1.6 PureTech - 165hp'],
-    'nissan': ['1.5 dCi - 90hp', '1.5 dCi - 110hp', '1.6 dCi - 130hp', '2.0 dCi - 150hp', '2.0 dCi - 177hp', '0.9 IG-T - 90hp', '1.0 DIG-T - 100hp', '1.2 DIG-T - 115hp', '1.3 DIG-T - 140hp', '1.3 DIG-T - 160hp', '1.6 DIG-T - 163hp', '2.0 - 144hp'],
-    'toyota': ['1.4 D-4D - 90hp', '1.6 D-4D - 112hp', '2.0 D-4D - 116hp', '2.0 D-4D - 143hp', '2.2 D-4D - 150hp', '2.2 D-4D - 177hp', '1.0 VVT-i - 72hp', '1.2 Turbo - 116hp', '1.5 VVT-i - 111hp', '1.8 VVT-i - 140hp', '2.0 VVT-i - 152hp', '2.5 Hybrid - 184hp', '3.5 V6 - 299hp'],
-    'honda': ['1.6 i-DTEC - 120hp', '2.2 i-DTEC - 150hp', '2.2 i-DTEC - 160hp', '1.0 VTEC Turbo - 129hp', '1.5 VTEC Turbo - 182hp', '1.5 i-VTEC - 130hp', '1.8 i-VTEC - 142hp', '2.0 i-VTEC - 158hp', '2.0 VTEC Turbo - 320hp'],
-    'mazda': ['1.5 SKYACTIV-D - 105hp', '1.8 SKYACTIV-D - 116hp', '2.2 SKYACTIV-D - 150hp', '2.2 SKYACTIV-D - 184hp', '1.5 SKYACTIV-G - 90hp', '1.5 SKYACTIV-G - 120hp', '2.0 SKYACTIV-G - 122hp', '2.0 SKYACTIV-G - 165hp', '2.5 SKYACTIV-G - 194hp'],
-    'hyundai': ['1.5 CRDi - 110hp', '1.6 CRDi - 115hp', '1.6 CRDi - 136hp', '2.0 CRDi - 185hp', '1.0 T-GDi - 100hp', '1.0 T-GDi - 120hp', '1.4 T-GDi - 140hp', '1.6 T-GDi - 177hp', '1.6 T-GDi - 204hp', '2.0 T-GDi - 245hp'],
-    'kia': ['1.5 CRDi - 110hp', '1.6 CRDi - 115hp', '1.6 CRDi - 136hp', '2.0 CRDi - 185hp', '1.0 T-GDi - 100hp', '1.0 T-GDi - 120hp', '1.4 T-GDi - 140hp', '1.6 T-GDi - 177hp', '1.6 T-GDi - 204hp', '2.0 T-GDi - 245hp'],
-    'porsche': ['3.0 Diesel - 245hp', '3.0 Diesel - 262hp', '4.0 Diesel - 421hp', '2.0 - 300hp', '2.5 - 365hp', '3.0 - 340hp', '3.0 - 385hp', '3.0 - 450hp', '4.0 - 500hp', '4.0 - 550hp'],
-    'jaguar': ['2.0 D - 163hp', '2.0 D - 180hp', '2.0 D - 204hp', '3.0 D - 300hp', '2.0 P - 200hp', '2.0 P - 250hp', '2.0 P - 300hp', '3.0 P - 340hp', '3.0 P - 380hp', '5.0 V8 - 575hp'],
-    'volvo': ['2.0 D3 - 150hp', '2.0 D4 - 190hp', '2.0 D5 - 235hp', '2.0 T4 - 190hp', '2.0 T5 - 250hp', '2.0 T6 - 310hp', '2.0 T8 Hybrid - 390hp']
-  },
+    MANUFACTURER_ENGINES: {
+  "audi": [
+    "1.6 TDI - 90hp",
+    "1.6 TDI - 95hp",
+    "1.6 TDI - 105hp",
+    "1.6 TDI - 116hp",
+    "2.0 TDI - 136hp",
+    "2.0 TDI - 140hp",
+    "2.0 TDI - 143hp",
+    "2.0 TDI - 150hp",
+    "2.0 TDI - 170hp",
+    "2.0 TDI - 190hp",
+    "2.0 TDI - 200hp",
+    "2.0 TDI - 204hp",
+    "3.0 TDI - 204hp",
+    "3.0 TDI - 218hp",
+    "3.0 TDI - 231hp",
+    "3.0 TDI - 272hp",
+    "1.0 TFSI - 82hp",
+    "1.0 TFSI - 95hp",
+    "1.0 TFSI - 110hp",
+    "1.0 TFSI - 115hp",
+    "1.0 TFSI - 116hp",
+    "1.2 TFSI - 86hp",
+    "1.4 TFSI - 122hp",
+    "1.4 TFSI - 125hp",
+    "1.4 TFSI - 140hp",
+    "1.4 TFSI - 150hp",
+    "1.5 TFSI - 150hp",
+    "1.8 T - 150hp",
+    "1.8 T - 163hp",
+    "1.8 T - 180hp",
+    "1.8 TFSI - 160hp",
+    "1.8 TFSI - 170hp",
+    "1.8 TFSI - 180hp",
+    "1.8 TFSI - 192hp",
+    "2.0 TFSI - 190hp",
+    "2.0 TFSI - 200hp",
+    "2.0 TFSI - 245hp",
+    "2.0 TFSI - 300hp",
+    "2.5 TFSI - 400hp",
+    "3.0 TFSI - 340hp",
+    "3.0 V6 - 220hp"
+  ],
+  "volkswagen": [
+    "1.6 TDI - 105hp",
+    "1.6 TDI - 116hp",
+    "2.0 TDI - 136hp",
+    "2.0 TDI - 140hp",
+    "2.0 TDI - 150hp",
+    "2.0 TDI - 184hp",
+    "2.0 TDI - 190hp",
+    "3.0 TDI - 204hp",
+    "3.0 TDI - 286hp",
+    "1.0 TSI - 95hp",
+    "1.0 TSI - 115hp",
+    "1.4 TSI - 125hp",
+    "1.4 TSI - 150hp",
+    "1.5 TSI - 130hp",
+    "1.5 TSI - 150hp",
+    "1.8 T - 150hp",
+    "1.8 T - 180hp",
+    "1.8 TSI - 160hp",
+    "1.8 TSI - 180hp",
+    "2.0 TSI - 190hp",
+    "2.0 TSI - 245hp",
+    "2.0 TSI - 300hp"
+  ],
+  "seat": [
+    "1.6 TDI - 105hp",
+    "1.6 TDI - 116hp",
+    "2.0 TDI - 143hp",
+    "2.0 TDI - 150hp",
+    "2.0 TDI - 184hp",
+    "1.0 TSI - 95hp",
+    "1.0 TSI - 115hp",
+    "1.4 TSI - 125hp",
+    "1.4 TSI - 150hp",
+    "1.5 TSI - 130hp",
+    "1.5 TSI - 150hp",
+    "1.8 T - 150hp",
+    "1.8 T - 180hp",
+    "1.8 TSI - 160hp",
+    "1.8 TSI - 180hp",
+    "2.0 TSI - 190hp",
+    "2.0 TSI - 245hp",
+    "2.0 TSI - 300hp"
+  ],
+  "skoda": [
+    "1.6 TDI - 105hp",
+    "1.6 TDI - 116hp",
+    "2.0 TDI - 143hp",
+    "2.0 TDI - 150hp",
+    "2.0 TDI - 200hp",
+    "1.0 TSI - 95hp",
+    "1.0 TSI - 110hp",
+    "1.4 TSI - 125hp",
+    "1.4 TSI - 150hp",
+    "1.5 TSI - 150hp",
+    "1.8 T - 150hp",
+    "1.8 T - 180hp",
+    "1.8 TSI - 160hp",
+    "1.8 TSI - 180hp",
+    "2.0 TSI - 190hp",
+    "2.0 TSI - 245hp"
+  ],
+  "fiat": [
+    "1.3 MultiJet - 75hp",
+    "1.3 MultiJet - 95hp",
+    "1.6 MultiJet - 105hp",
+    "1.6 MultiJet - 120hp",
+    "2.0 MultiJet - 140hp",
+    "2.0 MultiJet - 170hp",
+    "0.9 TwinAir - 85hp",
+    "1.0 FireFly - 70hp",
+    "1.0 FireFly - 100hp",
+    "1.4 MultiAir - 95hp",
+    "1.4 MultiAir - 120hp",
+    "1.4 T-Jet - 120hp",
+    "1.4 T-Jet - 150hp",
+    "1.6 MultiJet II - 120hp",
+    "2.0 MultiJet II - 170hp"
+  ],
+  "alfa-romeo": [
+    "1.3 JTDm - 95hp",
+    "1.6 JTDm - 105hp",
+    "1.6 JTDm - 120hp",
+    "2.0 JTDm - 136hp",
+    "2.0 JTDm - 150hp",
+    "2.0 JTDm - 180hp",
+    "2.2 JTD - 136hp",
+    "2.2 JTD - 150hp",
+    "2.2 JTD - 180hp",
+    "1.4 TB MultiAir - 120hp",
+    "1.4 TB MultiAir - 140hp",
+    "1.4 TB MultiAir - 170hp",
+    "1.8 TBi - 200hp",
+    "2.0 TB - 200hp",
+    "2.0 TB - 280hp",
+    "2.9 V6 Bi-Turbo - 510hp"
+  ],
+  "bmw": [
+    "1.6d - 116hp",
+    "2.0d - 150hp",
+    "2.0d - 163hp",
+    "2.0d - 190hp",
+    "2.0d - 204hp",
+    "3.0d - 218hp",
+    "3.0d - 249hp",
+    "3.0d - 265hp",
+    "3.0d - 286hp",
+    "1.5i - 136hp",
+    "2.0i - 184hp",
+    "2.0i - 252hp",
+    "3.0i - 258hp",
+    "3.0i - 340hp",
+    "3.0i - 374hp",
+    "4.4 V8 - 530hp"
+  ],
+  "mercedes": [
+    "1.5 CDI - 116hp",
+    "1.6 CDI - 136hp",
+    "2.0 CDI - 136hp",
+    "2.0 CDI - 163hp",
+    "2.0 CDI - 190hp",
+    "2.1 CDI - 136hp",
+    "2.1 CDI - 170hp",
+    "2.2 CDI - 170hp",
+    "3.0 CDI - 204hp",
+    "3.0 CDI - 231hp",
+    "3.0 CDI - 258hp",
+    "1.3 - 136hp",
+    "1.5 - 156hp",
+    "1.6 - 122hp",
+    "2.0 - 184hp",
+    "2.0 - 211hp",
+    "2.0 - 258hp",
+    "3.0 V6 - 367hp"
+  ],
+  "ford": [
+    "1.5 TDCi - 95hp",
+    "1.5 TDCi - 120hp",
+    "1.6 TDCi - 95hp",
+    "1.6 TDCi - 115hp",
+    "2.0 TDCi - 150hp",
+    "2.0 TDCi - 170hp",
+    "2.0 TDCi - 185hp",
+    "2.0 Bi-Turbo - 213hp",
+    "1.0 EcoBoost - 100hp",
+    "1.0 EcoBoost - 125hp",
+    "1.0 EcoBoost - 140hp",
+    "1.5 EcoBoost - 150hp",
+    "1.5 EcoBoost - 182hp",
+    "2.0 EcoBoost - 245hp",
+    "2.3 EcoBoost - 280hp",
+    "2.7 EcoBoost V6 - 325hp"
+  ],
+  "vauxhall": [
+    "1.5 Turbo D - 102hp",
+    "1.5 Turbo D - 120hp",
+    "1.6 CDTI - 110hp",
+    "1.6 CDTI - 136hp",
+    "2.0 CDTI - 170hp",
+    "1.0 Turbo - 105hp",
+    "1.2 Turbo - 110hp",
+    "1.2 Turbo - 130hp",
+    "1.4 Turbo - 125hp",
+    "1.4 Turbo - 145hp",
+    "1.6 Turbo - 200hp",
+    "2.0 Turbo - 230hp"
+  ],
+  "land-rover": [
+    "2.0 D - 163hp",
+    "2.0 D - 180hp",
+    "2.0 D - 204hp",
+    "2.0 D - 240hp",
+    "3.0 D - 249hp",
+    "3.0 D - 300hp",
+    "2.0 P - 200hp",
+    "2.0 P - 249hp",
+    "2.0 P - 300hp",
+    "3.0 P - 360hp",
+    "3.0 P - 400hp",
+    "5.0 V8 - 525hp"
+  ],
+  "peugeot": [
+    "1.5 BlueHDi - 100hp",
+    "1.5 BlueHDi - 130hp",
+    "1.6 BlueHDi - 100hp",
+    "1.6 BlueHDi - 120hp",
+    "2.0 BlueHDi - 150hp",
+    "2.0 BlueHDi - 180hp",
+    "1.2 PureTech - 100hp",
+    "1.2 PureTech - 110hp",
+    "1.2 PureTech - 130hp",
+    "1.6 PureTech - 165hp",
+    "1.6 PureTech - 180hp"
+  ],
+  "renault": [
+    "1.5 dCi - 75hp",
+    "1.5 dCi - 85hp",
+    "1.5 dCi - 90hp",
+    "1.5 dCi - 95hp",
+    "1.5 dCi - 110hp",
+    "1.5 Blue dCi - 115hp",
+    "1.6 dCi - 130hp",
+    "1.7 Blue dCi - 150hp",
+    "2.0 dCi - 150hp",
+    "2.0 dCi - 160hp",
+    "0.9 TCe - 90hp",
+    "1.0 SCe - 65hp",
+    "1.0 SCe - 75hp",
+    "1.0 TCe - 90hp",
+    "1.0 TCe - 100hp",
+    "1.2 - 58hp",
+    "1.2 - 75hp",
+    "1.2 TCe - 115hp",
+    "1.2 TCe - 120hp",
+    "1.3 TCe - 130hp",
+    "1.3 TCe - 140hp",
+    "1.3 TCe - 155hp",
+    "1.3 TCe - 160hp",
+    "1.6 TCe - 165hp",
+    "1.6 TCe - 190hp",
+    "1.8 TCe - 280hp"
+  ],
+  "citroen": [
+    "1.5 BlueHDi - 100hp",
+    "1.5 BlueHDi - 130hp",
+    "1.6 BlueHDi - 100hp",
+    "1.6 BlueHDi - 120hp",
+    "2.0 BlueHDi - 150hp",
+    "2.0 BlueHDi - 180hp",
+    "1.2 PureTech - 82hp",
+    "1.2 PureTech - 110hp",
+    "1.2 PureTech - 130hp",
+    "1.6 PureTech - 165hp"
+  ],
+  "nissan": [
+    "1.5 dCi - 90hp",
+    "1.5 dCi - 110hp",
+    "1.6 dCi - 130hp",
+    "2.0 dCi - 150hp",
+    "2.0 dCi - 177hp",
+    "0.9 IG-T - 90hp",
+    "1.0 DIG-T - 100hp",
+    "1.2 DIG-T - 115hp",
+    "1.3 DIG-T - 140hp",
+    "1.3 DIG-T - 160hp",
+    "1.6 DIG-T - 163hp",
+    "2.0 - 144hp"
+  ],
+  "toyota": [
+    "1.4 D-4D - 90hp",
+    "1.6 D-4D - 112hp",
+    "2.0 D-4D - 116hp",
+    "2.0 D-4D - 143hp",
+    "2.2 D-4D - 150hp",
+    "2.2 D-4D - 177hp",
+    "1.0 VVT-i - 72hp",
+    "1.2 Turbo - 116hp",
+    "1.5 VVT-i - 111hp",
+    "1.8 VVT-i - 140hp",
+    "2.0 VVT-i - 152hp",
+    "2.5 Hybrid - 184hp",
+    "3.5 V6 - 299hp"
+  ],
+  "honda": [
+    "1.6 i-DTEC - 120hp",
+    "2.2 i-DTEC - 150hp",
+    "2.2 i-DTEC - 160hp",
+    "1.0 VTEC Turbo - 129hp",
+    "1.5 VTEC Turbo - 182hp",
+    "1.5 i-VTEC - 130hp",
+    "1.8 i-VTEC - 142hp",
+    "2.0 i-VTEC - 158hp",
+    "2.0 VTEC Turbo - 320hp"
+  ],
+  "mazda": [
+    "1.5 SKYACTIV-D - 105hp",
+    "1.8 SKYACTIV-D - 116hp",
+    "2.2 SKYACTIV-D - 150hp",
+    "2.2 SKYACTIV-D - 184hp",
+    "1.5 SKYACTIV-G - 90hp",
+    "1.5 SKYACTIV-G - 120hp",
+    "2.0 SKYACTIV-G - 122hp",
+    "2.0 SKYACTIV-G - 165hp",
+    "2.5 SKYACTIV-G - 194hp"
+  ],
+  "hyundai": [
+    "1.5 CRDi - 110hp",
+    "1.6 CRDi - 115hp",
+    "1.6 CRDi - 136hp",
+    "2.0 CRDi - 185hp",
+    "1.0 T-GDi - 100hp",
+    "1.0 T-GDi - 120hp",
+    "1.4 T-GDi - 140hp",
+    "1.6 T-GDi - 177hp",
+    "1.6 T-GDi - 204hp",
+    "2.0 T-GDi - 245hp"
+  ],
+  "kia": [
+    "1.5 CRDi - 110hp",
+    "1.6 CRDi - 115hp",
+    "1.6 CRDi - 136hp",
+    "2.0 CRDi - 185hp",
+    "1.0 T-GDi - 100hp",
+    "1.0 T-GDi - 120hp",
+    "1.4 T-GDi - 140hp",
+    "1.6 T-GDi - 177hp",
+    "1.6 T-GDi - 204hp",
+    "2.0 T-GDi - 245hp"
+  ],
+  "porsche": [
+    "3.0 Diesel - 245hp",
+    "3.0 Diesel - 262hp",
+    "4.0 Diesel - 421hp",
+    "2.0 - 300hp",
+    "2.5 - 365hp",
+    "3.0 - 340hp",
+    "3.0 - 385hp",
+    "3.0 - 450hp",
+    "4.0 - 500hp",
+    "4.0 - 550hp"
+  ],
+  "jaguar": [
+    "2.0 D - 163hp",
+    "2.0 D - 180hp",
+    "2.0 D - 204hp",
+    "3.0 D - 300hp",
+    "2.0 P - 200hp",
+    "2.0 P - 250hp",
+    "2.0 P - 300hp",
+    "3.0 P - 340hp",
+    "3.0 P - 380hp",
+    "5.0 V8 - 575hp"
+  ],
+  "volvo": [
+    "2.0 D3 - 150hp",
+    "2.0 D4 - 190hp",
+    "2.0 D5 - 235hp",
+    "2.0 T4 - 190hp",
+    "2.0 T5 - 250hp",
+    "2.0 T6 - 310hp",
+    "2.0 T8 Hybrid - 390hp"
+  ]
+},
 
   /**
    * GENERIC ENGINES FALLBACK
    * Used when manufacturer-specific engines not available
    */
-  GENERIC_ENGINES: [
-    '1.0 - 70hp', '1.2 - 80hp', '1.4 - 90hp', '1.5 - 100hp', 
-    '1.6 - 110hp', '1.8 - 140hp', '2.0 - 150hp', '2.0 - 180hp', 
-    '2.2 - 150hp', '2.5 - 200hp', '3.0 - 250hp'
-  ],
+    GENERIC_ENGINES: [
+  "1.0 - 70hp",
+  "1.2 - 80hp",
+  "1.4 - 90hp",
+  "1.5 - 100hp",
+  "1.6 - 110hp",
+  "1.8 - 140hp",
+  "2.0 - 150hp",
+  "2.0 - 180hp",
+  "2.2 - 150hp",
+  "2.5 - 200hp",
+  "3.0 - 250hp"
+],
 
   /**
    * YEAR-SPECIFIC ENGINE DATABASE
    * Most detailed data - specific engines per model and year range
    */
-  VEHICLE_ENGINE_DATABASE: {
-    'audi': {
-      'a1': {
-        '2010-2014': ['1.2 TFSI - 86hp', '1.4 TFSI - 122hp', '1.4 TFSI - 185hp', '1.6 TDI - 90hp', '1.6 TDI - 105hp', '2.0 TDI - 143hp'],
-        '2015-2018': ['1.0 TFSI - 82hp', '1.0 TFSI - 95hp', '1.4 TFSI - 125hp', '1.4 TFSI - 150hp', '1.6 TDI - 90hp', '1.6 TDI - 116hp'],
-        '2019-2024': ['1.0 TFSI - 95hp', '1.0 TFSI - 110hp', '1.5 TFSI - 150hp', '1.6 TDI - 95hp', '1.6 TDI - 116hp']
-      },
-      'a3': {
-        '2003-2005': ['1.6 - 102hp', '2.0 FSI - 150hp', '3.2 V6 - 250hp', '1.9 TDI - 105hp', '2.0 TDI - 140hp'],
-        '2006-2008': ['1.6 - 102hp', '2.0 FSI - 150hp', '2.0 TFSI - 200hp', '1.9 TDI - 105hp', '2.0 TDI - 140hp', '2.0 TDI - 170hp'],
-        '2009-2012': ['1.2 TFSI - 105hp', '1.4 TFSI - 125hp', '1.8 TFSI - 160hp', '2.0 TFSI - 200hp', '1.6 TDI - 105hp', '2.0 TDI - 140hp', '2.0 TDI - 170hp'],
-        '2013-2016': ['1.0 TFSI - 115hp', '1.4 TFSI - 125hp', '1.4 TFSI - 150hp', '1.8 TFSI - 180hp', '2.0 TFSI - 190hp', '1.6 TDI - 110hp', '2.0 TDI - 150hp', '2.0 TDI - 184hp'],
-        '2017-2020': ['1.0 TFSI - 116hp', '1.5 TFSI - 150hp', '2.0 TFSI - 190hp', '2.0 TFSI - 310hp', '1.6 TDI - 116hp', '2.0 TDI - 150hp', '2.0 TDI - 184hp'],
-        '2021-2024': ['1.5 TFSI - 150hp', '2.0 TFSI - 190hp', '2.0 TFSI - 310hp', '2.0 TDI - 150hp', '2.0 TDI - 200hp']
-      },
-      'a4': {
-        '1995-2000': ['1.6 - 100hp', '1.8 - 125hp', '1.8 T - 150hp', '1.8 T - 180hp', '2.4 V6 - 165hp', '1.9 TDI - 90hp', '1.9 TDI - 110hp', '2.5 TDI - 150hp'],
-        '2001-2004': ['1.8 T - 163hp', '2.0 - 130hp', '3.0 V6 - 220hp', '1.9 TDI - 130hp', '2.5 TDI - 155hp'],
-        '2005-2008': ['1.8 T - 163hp', '2.0 - 130hp', '3.0 V6 - 220hp', '1.9 TDI - 116hp', '2.0 TDI - 140hp', '2.7 TDI - 180hp', '3.0 TDI - 204hp'],
-        '2009-2012': ['1.8 TFSI - 120hp', '1.8 TFSI - 160hp', '2.0 TFSI - 180hp', '2.0 TFSI - 211hp', '2.0 TDI - 143hp', '2.0 TDI - 170hp', '3.0 TDI - 240hp'],
-        '2013-2016': ['1.8 TFSI - 170hp', '2.0 TFSI - 225hp', '2.0 TFSI - 252hp', '2.0 TDI - 150hp', '2.0 TDI - 190hp', '3.0 TDI - 218hp', '3.0 TDI - 272hp'],
-        '2017-2019': ['1.4 TFSI - 150hp', '2.0 TFSI - 190hp', '2.0 TFSI - 252hp', '2.0 TDI - 150hp', '2.0 TDI - 190hp', '3.0 TDI - 218hp', '3.0 TDI - 286hp'],
-        '2020-2024': ['2.0 TFSI - 204hp', '2.0 TFSI - 265hp', '2.0 TDI - 163hp', '2.0 TDI - 204hp', '3.0 TDI - 231hp']
-      },
-      'a5': {
-        '2007-2011': ['1.8 TFSI - 170hp', '2.0 TFSI - 180hp', '2.0 TFSI - 211hp', '3.0 TFSI - 272hp', '2.0 TDI - 143hp', '2.0 TDI - 170hp', '2.7 TDI - 190hp', '3.0 TDI - 240hp'],
-        '2012-2016': ['1.8 TFSI - 170hp', '2.0 TFSI - 225hp', '3.0 TFSI - 272hp', '2.0 TDI - 150hp', '2.0 TDI - 190hp', '3.0 TDI - 218hp', '3.0 TDI - 245hp'],
-        '2017-2024': ['2.0 TFSI - 190hp', '2.0 TFSI - 252hp', '3.0 TFSI - 354hp', '2.0 TDI - 150hp', '2.0 TDI - 190hp', '3.0 TDI - 286hp']
-      },
-      'a6': {
-        '2005-2010': ['2.0 TFSI - 170hp', '2.8 FSI - 220hp', '3.0 TFSI - 290hp', '4.2 V8 - 350hp', '2.0 TDI - 140hp', '2.0 TDI - 170hp', '2.7 TDI - 180hp', '3.0 TDI - 225hp', '3.0 TDI - 240hp'],
-        '2011-2014': ['2.0 TFSI - 180hp', '2.0 TFSI - 211hp', '2.8 FSI - 220hp', '3.0 TFSI - 300hp', '2.0 TDI - 177hp', '3.0 TDI - 204hp', '3.0 TDI - 245hp', '3.0 TDI - 313hp'],
-        '2015-2018': ['1.8 TFSI - 190hp', '2.0 TFSI - 252hp', '3.0 TFSI - 333hp', '2.0 TDI - 150hp', '2.0 TDI - 190hp', '3.0 TDI - 218hp', '3.0 TDI - 272hp', '3.0 TDI - 320hp'],
-        '2019-2024': ['2.0 TFSI - 204hp', '3.0 TFSI - 340hp', '2.0 TDI - 163hp', '2.0 TDI - 204hp', '3.0 TDI - 231hp', '3.0 TDI - 286hp']
-      },
-      'q2': {
-        '2016-2024': ['1.0 TFSI - 116hp', '1.4 TFSI - 150hp', '2.0 TFSI - 190hp', '1.6 TDI - 116hp', '2.0 TDI - 150hp']
-      },
-      'q3': {
-        '2011-2014': ['1.4 TFSI - 150hp', '2.0 TFSI - 170hp', '2.0 TFSI - 211hp', '2.0 TDI - 140hp', '2.0 TDI - 177hp'],
-        '2015-2018': ['1.4 TFSI - 125hp', '1.4 TFSI - 150hp', '2.0 TFSI - 180hp', '2.0 TFSI - 230hp', '1.6 TDI - 116hp', '2.0 TDI - 150hp', '2.0 TDI - 184hp'],
-        '2019-2024': ['1.5 TFSI - 150hp', '2.0 TFSI - 190hp', '2.0 TFSI - 230hp', '2.0 TDI - 150hp', '2.0 TDI - 200hp']
-      },
-      'q5': {
-        '2009-2012': ['2.0 TFSI - 211hp', '3.0 TFSI - 272hp', '2.0 TDI - 143hp', '2.0 TDI - 170hp', '3.0 TDI - 240hp'],
-        '2013-2016': ['2.0 TFSI - 220hp', '2.0 TFSI - 230hp', '2.0 TDI - 150hp', '2.0 TDI - 190hp', '3.0 TDI - 258hp'],
-        '2017-2024': ['2.0 TFSI - 252hp', '3.0 TFSI - 354hp', '2.0 TDI - 190hp', '3.0 TDI - 286hp']
-      },
-      'q7': {
-        '2006-2009': ['3.0 TFSI - 272hp', '3.6 FSI - 280hp', '4.2 FSI - 350hp', '3.0 TDI - 233hp', '4.2 TDI - 326hp', '6.0 TDI - 500hp'],
-        '2010-2015': ['3.0 TFSI - 272hp', '3.0 TFSI - 333hp', '3.0 TDI - 204hp', '3.0 TDI - 245hp', '4.2 TDI - 340hp'],
-        '2016-2019': ['2.0 TFSI - 252hp', '3.0 TFSI - 333hp', '3.0 TDI - 218hp', '3.0 TDI - 272hp'],
-        '2020-2024': ['3.0 TFSI - 340hp', '3.0 TDI - 231hp', '3.0 TDI - 286hp', '4.0 TDI - 435hp']
-      },
-      'q8': {
-        '2019-2024': ['3.0 TFSI - 340hp', '4.0 TFSI SQ8 - 507hp', '3.0 TDI - 231hp', '3.0 TDI - 286hp', '4.0 TDI - 435hp']
-      },
-      'tt': {
-        '1999-2005': ['1.8 T - 180hp', '1.8 T - 225hp', '3.2 V6 - 250hp'],
-        '2006-2014': ['1.8 TFSI - 160hp', '2.0 TFSI - 200hp', '2.0 TFSI - 211hp', '3.2 V6 - 250hp', '2.0 TDI - 170hp'],
-        '2015-2024': ['2.0 TFSI - 230hp', '2.0 TFSI - 306hp', '2.5 TFSI - 400hp']
-      }
+    VEHICLE_ENGINE_DATABASE: {
+  "audi": {
+    "a3": {
+      "2003-2005": [
+        "1.6 - 102hp",
+        "2.0 FSI - 150hp",
+        "3.2 V6 - 250hp",
+        "1.9 TDI - 105hp",
+        "2.0 TDI - 140hp"
+      ],
+      "2006-2008": [
+        "1.6 - 102hp",
+        "2.0 FSI - 150hp",
+        "2.0 TFSI - 200hp",
+        "1.9 TDI - 105hp",
+        "2.0 TDI - 140hp",
+        "2.0 TDI - 170hp"
+      ],
+      "2009-2012": [
+        "1.2 TFSI - 105hp",
+        "1.4 TFSI - 125hp",
+        "1.8 TFSI - 160hp",
+        "2.0 TFSI - 200hp",
+        "1.6 TDI - 105hp",
+        "2.0 TDI - 140hp",
+        "2.0 TDI - 170hp"
+      ],
+      "2013-2016": [
+        "1.0 TFSI - 115hp",
+        "1.4 TFSI - 125hp",
+        "1.4 TFSI - 150hp",
+        "1.8 TFSI - 180hp",
+        "2.0 TFSI - 190hp",
+        "1.6 TDI - 110hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 184hp"
+      ],
+      "2017-2020": [
+        "1.0 TFSI - 116hp",
+        "1.5 TFSI - 150hp",
+        "2.0 TFSI - 190hp",
+        "2.0 TFSI - 310hp",
+        "1.6 TDI - 116hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 184hp"
+      ],
+      "2021-2024": [
+        "1.5 TFSI - 150hp",
+        "2.0 TFSI - 190hp",
+        "2.0 TFSI - 310hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 200hp"
+      ]
     },
-    'volkswagen': {
-      'polo': {
-        '2002-2009': ['1.2 - 55hp', '1.2 - 64hp', '1.4 - 75hp', '1.6 - 105hp', '1.4 TDI - 70hp', '1.4 TDI - 80hp', '1.9 TDI - 100hp', '1.9 TDI - 130hp'],
-        '2010-2017': ['1.0 - 60hp', '1.0 - 75hp', '1.2 - 60hp', '1.2 - 70hp', '1.2 TSI - 90hp', '1.2 TSI - 110hp', '1.4 TSI GTI - 180hp', '1.2 TDI - 75hp', '1.6 TDI - 90hp', '1.6 TDI - 105hp'],
-        '2018-2024': ['1.0 - 65hp', '1.0 - 80hp', '1.0 TSI - 95hp', '1.0 TSI - 110hp', '1.5 TSI - 150hp', '2.0 TSI GTI - 207hp', '1.6 TDI - 80hp', '1.6 TDI - 95hp']
-      },
-      'golf': {
-        '1998-2003': ['1.4 - 75hp', '1.6 - 100hp', '1.6 - 105hp', '1.8 - 125hp', '1.8 T GTI - 150hp', '1.8 T GTI - 180hp', '2.0 - 115hp', '2.3 V5 - 150hp', '2.8 VR6 - 204hp', '3.2 R32 - 241hp', '1.9 SDI - 68hp', '1.9 TDI - 90hp', '1.9 TDI - 110hp', '1.9 TDI - 115hp', '1.9 TDI - 130hp', '1.9 TDI - 150hp'],
-        '2004-2008': ['1.4 - 75hp', '1.4 - 80hp', '1.6 - 102hp', '1.6 FSI - 115hp', '2.0 FSI - 150hp', '2.0 GTI - 200hp', '3.2 R32 - 250hp', '1.9 TDI - 90hp', '1.9 TDI - 105hp', '2.0 TDI - 140hp', '2.0 GTD - 170hp'],
-        '2009-2012': ['1.2 TSI - 85hp', '1.2 TSI - 105hp', '1.4 - 80hp', '1.4 TSI - 122hp', '1.4 TSI - 160hp', '1.6 - 102hp', '2.0 TSI GTI - 210hp', '2.5 R - 270hp', '1.6 TDI - 90hp', '1.6 TDI - 105hp', '2.0 TDI - 110hp', '2.0 TDI - 140hp', '2.0 GTD - 170hp'],
-        '2013-2016': ['1.0 TSI - 85hp', '1.2 TSI - 85hp', '1.2 TSI - 105hp', '1.2 TSI - 110hp', '1.4 TSI - 125hp', '1.4 TSI - 140hp', '1.4 TSI - 150hp', '1.6 - 110hp', '2.0 TSI GTI - 220hp', '2.0 TSI GTI Performance - 230hp', '2.0 TSI R - 300hp', '1.6 TDI - 90hp', '1.6 TDI - 105hp', '1.6 TDI - 110hp', '2.0 TDI - 110hp', '2.0 TDI - 150hp', '2.0 GTD - 184hp'],
-        '2017-2020': ['1.0 TSI - 85hp', '1.0 TSI - 90hp', '1.0 TSI - 110hp', '1.0 TSI - 115hp', '1.4 TSI - 125hp', '1.5 TSI - 130hp', '1.5 TSI - 150hp', '1.6 - 110hp', '2.0 TSI GTI - 230hp', '2.0 TSI GTI Performance - 245hp', '2.0 TSI R - 310hp', '1.6 TDI - 115hp', '2.0 TDI - 115hp', '2.0 TDI - 150hp', '2.0 GTD - 200hp'],
-        '2021-2024': ['1.0 eTSI - 110hp', '1.5 eTSI - 130hp', '1.5 eTSI - 150hp', '2.0 TSI GTI - 245hp', '2.0 TSI R - 320hp', '2.0 TDI - 115hp', '2.0 TDI - 150hp', '2.0 GTD - 200hp']
-      },
-      'jetta': {
-        '2006-2010': ['1.4 TSI - 122hp', '1.6 - 102hp', '2.0 FSI - 150hp', '2.0 TSI - 200hp', '1.9 TDI - 105hp', '2.0 TDI - 140hp', '2.0 TDI - 170hp'],
-        '2011-2018': ['1.2 TSI - 105hp', '1.4 TSI - 122hp', '1.4 TSI - 150hp', '1.6 - 110hp', '1.8 TSI - 170hp', '2.0 TSI - 200hp', '1.6 TDI - 105hp', '2.0 TDI - 140hp', '2.0 TDI - 150hp'],
-        '2019-2024': ['1.0 TSI - 110hp', '1.4 TSI - 150hp', '1.5 TSI - 150hp', '2.0 TSI GLI - 228hp', '1.6 TDI - 115hp', '2.0 TDI - 150hp']
-      },
-      'passat': {
-        '1997-2005': ['1.6 - 102hp', '1.8 - 125hp', '1.8 T - 150hp', '1.8 T - 170hp', '2.0 - 115hp', '2.3 V5 - 150hp', '2.8 V6 - 193hp', '4.0 W8 - 275hp', '1.9 TDI - 90hp', '1.9 TDI - 101hp', '1.9 TDI - 110hp', '1.9 TDI - 130hp', '2.0 TDI - 136hp', '2.5 TDI - 150hp', '2.5 TDI V6 - 163hp'],
-        '2005-2010': ['1.4 TSI - 122hp', '1.6 - 102hp', '1.8 TSI - 160hp', '2.0 FSI - 150hp', '2.0 TSI - 200hp', '3.2 V6 - 250hp', '3.6 V6 - 300hp', '1.6 TDI - 105hp', '1.9 TDI - 105hp', '2.0 TDI - 110hp', '2.0 TDI - 140hp', '2.0 TDI - 170hp'],
-        '2011-2014': ['1.4 TSI - 122hp', '1.8 TSI - 152hp', '1.8 TSI - 160hp', '2.0 TSI - 210hp', '3.6 V6 - 300hp', '1.6 TDI - 105hp', '2.0 TDI - 140hp', '2.0 TDI - 170hp', '2.0 TDI - 177hp'],
-        '2015-2019': ['1.4 TSI - 125hp', '1.8 TSI - 180hp', '2.0 TSI - 220hp', '2.0 TSI - 280hp', '1.6 TDI - 120hp', '2.0 TDI - 150hp', '2.0 TDI - 190hp', '2.0 TDI BiTurbo - 240hp'],
-        '2020-2024': ['1.5 TSI - 150hp', '2.0 TSI - 190hp', '2.0 TDI - 122hp', '2.0 TDI - 150hp', '2.0 TDI - 200hp']
-      },
-      'tiguan': {
-        '2008-2011': ['1.4 TSI - 150hp', '2.0 TSI - 170hp', '2.0 TSI - 200hp', '2.0 TDI - 140hp', '2.0 TDI - 170hp'],
-        '2012-2016': ['1.4 TSI - 122hp', '1.4 TSI - 125hp', '1.4 TSI - 150hp', '2.0 TSI - 180hp', '2.0 TSI - 220hp', '2.0 TDI - 110hp', '2.0 TDI - 140hp', '2.0 TDI - 150hp', '2.0 TDI - 177hp', '2.0 TDI - 184hp'],
-        '2017-2020': ['1.4 TSI - 125hp', '1.4 TSI - 150hp', '1.5 TSI - 150hp', '2.0 TSI - 180hp', '2.0 TSI - 220hp', '2.0 TDI - 115hp', '2.0 TDI - 150hp', '2.0 TDI - 190hp', '2.0 TDI BiTurbo - 240hp'],
-        '2021-2024': ['1.5 TSI - 130hp', '1.5 TSI - 150hp', '2.0 TSI - 190hp', '2.0 TSI - 245hp', '2.0 TDI - 122hp', '2.0 TDI - 150hp', '2.0 TDI - 200hp']
-      },
-      't-roc': {
-        '2018-2024': ['1.0 TSI - 110hp', '1.0 TSI - 115hp', '1.5 TSI - 150hp', '2.0 TSI - 190hp', '1.6 TDI - 115hp', '2.0 TDI - 150hp']
-      },
-      't-cross': {
-        '2019-2024': ['1.0 TSI - 95hp', '1.0 TSI - 110hp', '1.5 TSI - 150hp']
-      },
-      'touareg': {
-        '2003-2010': ['3.2 V6 - 241hp', '3.6 V6 - 280hp', '4.2 V8 - 310hp', '6.0 W12 - 450hp', '2.5 TDI - 174hp', '3.0 TDI - 225hp', '5.0 V10 TDI - 313hp'],
-        '2011-2018': ['3.0 TFSI - 333hp', '4.2 V8 TDI - 340hp', '3.0 TDI - 204hp', '3.0 TDI - 245hp', '4.2 TDI - 340hp'],
-        '2019-2024': ['3.0 TFSI - 340hp', '4.0 TFSI - 462hp', '3.0 TDI - 231hp', '3.0 TDI - 286hp', '4.0 TDI - 421hp']
-      },
-      'caddy': {
-        '2004-2010': ['1.4 - 75hp', '1.6 - 102hp', '2.0 - 115hp', '1.9 TDI - 75hp', '1.9 TDI - 105hp', '2.0 TDI - 140hp'],
-        '2011-2015': ['1.2 TSI - 85hp', '1.6 - 102hp', '1.6 TDI - 75hp', '1.6 TDI - 102hp', '2.0 TDI - 110hp', '2.0 TDI - 140hp'],
-        '2016-2020': ['1.0 TSI - 102hp', '1.4 TSI - 125hp', '1.6 TDI - 75hp', '1.6 TDI - 102hp', '2.0 TDI - 122hp', '2.0 TDI - 150hp'],
-        '2021-2024': ['1.5 TSI - 114hp', '2.0 TDI - 75hp', '2.0 TDI - 102hp', '2.0 TDI - 122hp']
-      },
-      'transporter': {
-        '2004-2009': ['1.9 TDI - 84hp', '1.9 TDI - 102hp', '2.0 - 115hp', '2.5 TDI - 130hp', '2.5 TDI - 174hp'],
-        '2010-2015': ['2.0 - 115hp', '2.0 TSI - 204hp', '2.0 TDI - 84hp', '2.0 TDI - 102hp', '2.0 TDI - 114hp', '2.0 TDI - 140hp', '2.0 TDI - 180hp'],
-        '2016-2019': ['2.0 TSI - 150hp', '2.0 TSI - 204hp', '2.0 TDI - 84hp', '2.0 TDI - 102hp', '2.0 TDI - 150hp', '2.0 TDI - 204hp'],
-        '2020-2024': ['2.0 TSI - 204hp', '2.0 TDI - 90hp', '2.0 TDI - 110hp', '2.0 TDI - 150hp', '2.0 TDI - 199hp']
-      }
+    "a4": {
+      "1995-2000": [
+        "1.6 - 100hp",
+        "1.8 - 125hp",
+        "1.8 T - 150hp",
+        "1.8 T - 180hp",
+        "2.4 V6 - 165hp",
+        "2.6 V6 - 150hp",
+        "2.8 V6 - 193hp",
+        "1.9 TDI - 75hp",
+        "1.9 TDI - 90hp",
+        "1.9 TDI - 110hp",
+        "1.9 TDI - 116hp",
+        "2.5 TDI - 150hp"
+      ],
+      "2001-2004": [
+        "1.8 T - 163hp",
+        "2.0 - 130hp",
+        "3.0 V6 - 220hp",
+        "1.9 TDI - 130hp",
+        "2.5 TDI - 155hp"
+      ],
+      "2005-2008": [
+        "1.8 T - 163hp",
+        "2.0 - 130hp",
+        "3.0 V6 - 220hp",
+        "1.9 TDI - 116hp",
+        "2.0 TDI - 140hp",
+        "2.7 TDI - 180hp",
+        "3.0 TDI - 204hp"
+      ],
+      "2009-2012": [
+        "1.8 TFSI - 120hp",
+        "1.8 TFSI - 160hp",
+        "2.0 TFSI - 180hp",
+        "2.0 TFSI - 211hp",
+        "3.2 FSI - 265hp",
+        "2.0 TDI - 143hp",
+        "2.0 TDI - 170hp",
+        "2.7 TDI - 190hp",
+        "3.0 TDI - 240hp"
+      ],
+      "2013-2016": [
+        "1.8 TFSI - 170hp",
+        "2.0 TFSI - 225hp",
+        "2.0 TFSI - 252hp",
+        "3.0 TFSI - 272hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 190hp",
+        "3.0 TDI - 218hp",
+        "3.0 TDI - 272hp"
+      ],
+      "2017-2019": [
+        "1.4 TFSI - 150hp",
+        "2.0 TFSI - 190hp",
+        "2.0 TFSI - 252hp",
+        "3.0 TFSI - 354hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 190hp",
+        "3.0 TDI - 218hp",
+        "3.0 TDI - 286hp"
+      ],
+      "2020-2024": [
+        "2.0 TFSI - 204hp",
+        "2.0 TFSI - 265hp",
+        "3.0 TFSI - 340hp",
+        "2.0 TDI - 163hp",
+        "2.0 TDI - 204hp",
+        "3.0 TDI - 231hp"
+      ]
     },
-    'bmw': {
-      '1-series': {
-        '2004-2007': ['1.6 116i - 115hp', '2.0 118i - 129hp', '2.0 120i - 150hp', '3.0 130i - 265hp', '2.0 118d - 122hp', '2.0 120d - 163hp'],
-        '2008-2011': ['2.0 116i - 122hp', '2.0 118i - 143hp', '2.0 120i - 170hp', '3.0 130i - 265hp', '2.0 116d - 115hp', '2.0 118d - 143hp', '2.0 120d - 177hp'],
-        '2012-2019': ['1.5 116i - 136hp', '2.0 118i - 136hp', '2.0 120i - 184hp', '3.0 M140i - 340hp', '1.5 116d - 116hp', '2.0 118d - 150hp', '2.0 120d - 190hp'],
-        '2020-2024': ['1.5 118i - 140hp', '2.0 120i - 178hp', '2.0 M135i - 306hp', '2.0 118d - 150hp', '2.0 120d - 190hp']
-      },
-      '2-series': {
-        '2014-2021': ['1.5 218i - 136hp', '2.0 220i - 192hp', '3.0 M240i - 340hp', '1.5 216d - 116hp', '2.0 218d - 150hp', '2.0 220d - 190hp'],
-        '2022-2024': ['2.0 220i - 184hp', '3.0 M240i - 374hp', '2.0 220d - 190hp']
-      },
-      '3-series': {
-        '1999-2005': ['1.8 316i - 105hp', '1.9 318i - 118hp', '2.0 320i - 150hp', '2.2 320i - 170hp', '2.5 323i - 170hp', '2.5 325i - 192hp', '2.8 328i - 193hp', '3.0 330i - 231hp', '2.0 318d - 116hp', '2.0 320d - 136hp', '2.0 320d - 150hp', '3.0 330d - 184hp', '3.0 330d - 204hp'],
-        '2006-2011': ['2.0 316i - 122hp', '2.0 318i - 129hp', '2.0 318i - 143hp', '2.0 320i - 150hp', '2.0 320i - 170hp', '2.5 325i - 218hp', '3.0 330i - 258hp', '3.0 330i - 272hp', '2.0 318d - 122hp', '2.0 318d - 143hp', '2.0 320d - 163hp', '2.0 320d - 177hp', '2.0 320d - 184hp', '3.0 325d - 197hp', '3.0 330d - 231hp', '3.0 330d - 245hp'],
-        '2012-2018': ['1.6 316i - 136hp', '2.0 318i - 136hp', '2.0 320i - 184hp', '2.0 328i - 245hp', '3.0 335i - 306hp', '2.0 316d - 116hp', '2.0 318d - 143hp', '2.0 318d - 150hp', '2.0 320d - 163hp', '2.0 320d - 184hp', '2.0 320d - 190hp', '3.0 325d - 218hp', '3.0 330d - 258hp', '3.0 335d - 313hp'],
-        '2019-2024': ['2.0 318i - 156hp', '2.0 320i - 184hp', '2.0 330i - 258hp', '3.0 M340i - 374hp', '2.0 318d - 150hp', '2.0 320d - 190hp', '3.0 330d - 286hp', '3.0 M340d - 340hp']
-      },
-      '4-series': {
-        '2014-2020': ['2.0 418i - 136hp', '2.0 420i - 184hp', '2.0 428i - 245hp', '3.0 435i - 306hp', '2.0 418d - 150hp', '2.0 420d - 190hp', '3.0 430d - 258hp', '3.0 435d - 313hp'],
-        '2021-2024': ['2.0 420i - 184hp', '2.0 430i - 258hp', '3.0 M440i - 374hp', '2.0 420d - 190hp', '3.0 430d - 286hp']
-      },
-      '5-series': {
-        '1997-2003': ['2.0 520i - 150hp', '2.2 520i - 170hp', '2.5 523i - 170hp', '2.5 525i - 192hp', '2.8 528i - 193hp', '3.0 530i - 231hp', '4.4 540i - 286hp', '2.5 525d - 163hp', '3.0 530d - 184hp', '3.0 530d - 193hp'],
-        '2004-2010': ['2.0 520i - 170hp', '2.5 523i - 190hp', '3.0 525i - 218hp', '3.0 530i - 258hp', '3.0 530i - 272hp', '4.8 550i - 367hp', '2.0 520d - 163hp', '2.0 520d - 177hp', '3.0 525d - 197hp', '3.0 530d - 218hp', '3.0 530d - 235hp', '3.0 535d - 286hp'],
-        '2011-2016': ['2.0 520i - 184hp', '2.0 528i - 245hp', '3.0 530i - 258hp', '3.0 535i - 306hp', '4.4 550i - 449hp', '2.0 518d - 150hp', '2.0 520d - 184hp', '2.0 520d - 190hp', '3.0 525d - 218hp', '3.0 530d - 258hp', '3.0 535d - 313hp'],
-        '2017-2023': ['2.0 520i - 184hp', '2.0 530i - 252hp', '3.0 540i - 340hp', '4.4 M550i - 530hp', '2.0 520d - 190hp', '3.0 530d - 265hp', '3.0 540d - 320hp', '3.0 M550d - 400hp'],
-        '2024': ['2.0 520i - 184hp', '2.0 530i - 252hp', '3.0 540i - 340hp', '2.0 520d - 190hp', '3.0 530d - 286hp']
-      },
-      '7-series': {
-        '2002-2008': ['3.0 730i - 231hp', '3.6 735i - 272hp', '4.4 745i - 333hp', '6.0 760i - 445hp', '3.0 730d - 218hp', '3.0 730d - 231hp', '4.0 740d - 258hp'],
-        '2009-2015': ['3.0 730i - 258hp', '3.0 740i - 326hp', '4.4 750i - 407hp', '6.0 760i - 544hp', '3.0 730d - 245hp', '3.0 740d - 306hp', '3.0 750d - 381hp'],
-        '2016-2022': ['2.0 730i - 258hp', '3.0 740i - 326hp', '4.4 750i - 450hp', '6.6 M760i - 585hp', '3.0 730d - 265hp', '3.0 740d - 320hp', '3.0 750d - 400hp'],
-        '2023-2024': ['3.0 740i - 380hp', '4.4 760i - 544hp', '3.0 740d - 300hp']
-      },
-      'x1': {
-        '2009-2015': ['2.0 18i - 150hp', '2.0 20i - 184hp', '3.0 28i - 245hp', '2.0 18d - 143hp', '2.0 20d - 177hp', '2.0 20d - 184hp', '2.0 23d - 204hp'],
-        '2016-2022': ['1.5 18i - 140hp', '2.0 20i - 192hp', '2.0 25i - 231hp', '1.5 18d - 150hp', '2.0 20d - 190hp', '2.0 25d - 231hp'],
-        '2023-2024': ['1.5 18i - 136hp', '2.0 20i - 204hp', '2.0 18d - 150hp', '2.0 20d - 163hp']
-      },
-      'x3': {
-        '2004-2010': ['2.0 xDrive20i - 150hp', '2.5 xDrive25i - 218hp', '3.0 xDrive30i - 258hp', '3.0 xDrive30i - 272hp', '2.0 xDrive18d - 143hp', '2.0 xDrive20d - 177hp', '3.0 xDrive30d - 218hp', '3.0 xDrive30d - 235hp'],
-        '2011-2017': ['2.0 xDrive20i - 184hp', '2.0 xDrive28i - 245hp', '3.0 xDrive35i - 306hp', '2.0 xDrive18d - 143hp', '2.0 xDrive18d - 150hp', '2.0 xDrive20d - 184hp', '2.0 xDrive20d - 190hp', '3.0 xDrive30d - 258hp', '3.0 xDrive35d - 313hp'],
-        '2018-2024': ['2.0 xDrive20i - 184hp', '2.0 xDrive30i - 252hp', '3.0 M40i - 360hp', '2.0 xDrive18d - 150hp', '2.0 xDrive20d - 190hp', '3.0 xDrive30d - 286hp', '3.0 M40d - 340hp']
-      },
-      'x5': {
-        '2000-2006': ['3.0 3.0i - 231hp', '4.4 4.4i - 286hp', '4.6 4.6is - 347hp', '4.8 4.8is - 360hp', '3.0 3.0d - 184hp', '3.0 3.0d - 218hp'],
-        '2007-2013': ['3.0 xDrive30i - 272hp', '4.8 xDrive48i - 355hp', '3.0 xDrive30d - 235hp', '3.0 xDrive30d - 245hp', '3.0 xDrive35d - 286hp'],
-        '2014-2018': ['2.0 xDrive25d - 218hp', '3.0 xDrive30d - 258hp', '3.0 xDrive40d - 313hp', '3.0 M50d - 381hp', '2.0 xDrive35i - 306hp', '3.0 xDrive40e - 313hp', '4.4 xDrive50i - 450hp'],
-        '2019-2024': ['3.0 xDrive40i - 340hp', '4.4 xDrive50i - 530hp', '3.0 xDrive30d - 265hp', '3.0 xDrive30d - 286hp', '3.0 xDrive40d - 340hp', '3.0 M50d - 400hp']
-      }
+    "a6": {
+      "1997-2004": [
+        "1.8 - 125hp",
+        "1.8 T - 150hp",
+        "1.8 T - 180hp",
+        "2.0 - 130hp",
+        "2.4 - 165hp",
+        "2.4 - 170hp",
+        "2.7 T - 230hp",
+        "2.7 T - 250hp",
+        "2.8 - 193hp",
+        "3.0 - 220hp",
+        "4.2 V8 - 300hp",
+        "1.9 TDI - 110hp",
+        "1.9 TDI - 115hp",
+        "1.9 TDI - 130hp",
+        "2.5 TDI - 150hp",
+        "2.5 TDI - 155hp",
+        "2.5 TDI - 180hp"
+      ],
+      "2004-2008": [
+        "2.0 TFSI - 170hp",
+        "2.4 - 177hp",
+        "3.0 - 218hp",
+        "3.0 TFSI - 290hp",
+        "3.2 FSI - 255hp",
+        "4.2 FSI - 335hp",
+        "5.2 FSI V10 - 435hp",
+        "2.0 TDI - 140hp",
+        "2.0 TDI - 170hp",
+        "2.7 TDI - 180hp",
+        "3.0 TDI - 211hp",
+        "3.0 TDI - 225hp",
+        "3.0 TDI - 233hp"
+      ],
+      "2009-2011": [
+        "1.8 TFSI - 170hp",
+        "2.0 TFSI - 180hp",
+        "2.8 FSI - 220hp",
+        "3.0 TFSI - 300hp",
+        "4.2 FSI - 350hp",
+        "2.0 TDI - 136hp",
+        "2.0 TDI - 170hp",
+        "2.7 TDI - 190hp",
+        "3.0 TDI - 240hp",
+        "3.0 TDI - 245hp"
+      ],
+      "2012-2014": [
+        "1.8 TFSI - 190hp",
+        "2.0 TFSI - 180hp",
+        "2.0 TFSI - 211hp",
+        "2.0 TFSI - 252hp",
+        "3.0 TFSI - 310hp",
+        "4.0 TFSI - 420hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 177hp",
+        "2.0 TDI - 190hp",
+        "3.0 TDI - 204hp",
+        "3.0 TDI - 245hp",
+        "3.0 TDI - 313hp"
+      ],
+      "2015-2018": [
+        "1.8 TFSI - 190hp",
+        "2.0 TFSI - 252hp",
+        "3.0 TFSI - 333hp",
+        "4.0 TFSI - 450hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 190hp",
+        "3.0 TDI - 218hp",
+        "3.0 TDI - 272hp",
+        "3.0 TDI - 320hp"
+      ],
+      "2019-2024": [
+        "2.0 TFSI - 204hp",
+        "2.0 TFSI - 245hp",
+        "3.0 TFSI - 340hp",
+        "4.0 TFSI - 460hp",
+        "2.0 TDI - 163hp",
+        "2.0 TDI - 204hp",
+        "3.0 TDI - 231hp",
+        "3.0 TDI - 286hp"
+      ]
     },
-    'ford': {
-      'fiesta': {
-        '2002-2008': ['1.25 - 75hp', '1.3 - 60hp', '1.3 - 70hp', '1.4 - 80hp', '1.6 - 100hp', '2.0 ST - 150hp', '1.4 TDCi - 68hp', '1.6 TDCi - 90hp', '1.6 TDCi - 110hp'],
-        '2009-2012': ['1.25 - 60hp', '1.25 - 82hp', '1.4 - 96hp', '1.6 - 120hp', '1.6 ST - 120hp', '1.6 ST - 182hp', '1.4 TDCi - 68hp', '1.4 TDCi - 70hp', '1.6 TDCi - 75hp', '1.6 TDCi - 90hp', '1.6 TDCi - 95hp'],
-        '2013-2017': ['1.0 EcoBoost - 100hp', '1.0 EcoBoost - 125hp', '1.0 EcoBoost - 140hp', '1.25 - 60hp', '1.25 - 82hp', '1.6 ST - 182hp', '1.5 TDCi - 75hp', '1.5 TDCi - 95hp', '1.6 TDCi - 95hp'],
-        '2018-2023': ['1.0 EcoBoost - 85hp', '1.0 EcoBoost - 100hp', '1.0 EcoBoost - 125hp', '1.0 EcoBoost - 140hp', '1.5 EcoBoost ST - 200hp', '1.5 TDCi - 85hp', '1.5 TDCi - 120hp']
-      },
-      'focus': {
-        '1999-2004': ['1.4 - 75hp', '1.6 - 100hp', '1.8 - 115hp', '2.0 - 130hp', '1.8 TDCi - 100hp', '1.8 TDCi - 115hp'],
-        '2005-2010': ['1.4 - 80hp', '1.6 - 100hp', '1.8 - 125hp', '2.0 - 145hp', '2.5 ST - 225hp', '1.6 TDCi - 90hp', '1.6 TDCi - 109hp', '1.8 TDCi - 115hp', '2.0 TDCi - 136hp'],
-        '2011-2014': ['1.0 EcoBoost - 100hp', '1.0 EcoBoost - 125hp', '1.6 - 85hp', '1.6 - 105hp', '1.6 - 125hp', '2.0 - 150hp', '2.0 ST - 250hp', '1.6 TDCi - 95hp', '1.6 TDCi - 105hp', '1.6 TDCi - 115hp', '2.0 TDCi - 140hp', '2.0 TDCi - 163hp'],
-        '2015-2018': ['1.0 EcoBoost - 100hp', '1.0 EcoBoost - 125hp', '1.5 EcoBoost - 150hp', '1.5 EcoBoost - 182hp', '2.0 - 150hp', '2.3 EcoBoost RS - 350hp', '1.5 TDCi - 95hp', '1.5 TDCi - 105hp', '1.5 TDCi - 120hp', '1.6 TDCi - 115hp', '2.0 TDCi - 150hp', '2.0 TDCi - 185hp'],
-        '2019-2024': ['1.0 EcoBoost - 85hp', '1.0 EcoBoost - 100hp', '1.0 EcoBoost - 125hp', '1.5 EcoBoost - 150hp', '1.5 EcoBoost - 182hp', '2.3 EcoBoost ST - 280hp', '1.5 EcoBlue - 95hp', '1.5 EcoBlue - 120hp', '2.0 EcoBlue - 150hp', '2.0 EcoBlue ST - 190hp']
-      },
-      'mondeo': {
-        '2001-2007': ['1.8 - 125hp', '2.0 - 145hp', '2.5 V6 - 170hp', '3.0 V6 ST220 - 226hp', '2.0 TDCi - 115hp', '2.0 TDCi - 130hp', '2.2 TDCi - 155hp'],
-        '2008-2014': ['1.6 - 110hp', '1.6 - 125hp', '1.6 EcoBoost - 160hp', '2.0 - 145hp', '2.0 EcoBoost - 203hp', '2.5 - 220hp', '1.6 TDCi - 115hp', '2.0 TDCi - 115hp', '2.0 TDCi - 140hp', '2.0 TDCi - 163hp', '2.2 TDCi - 175hp', '2.2 TDCi - 200hp'],
-        '2015-2022': ['1.0 EcoBoost - 125hp', '1.5 EcoBoost - 160hp', '1.5 EcoBoost - 165hp', '2.0 EcoBoost - 240hp', '1.5 TDCi - 120hp', '2.0 TDCi - 150hp', '2.0 TDCi - 180hp', '2.0 TDCi - 190hp']
-      },
-      'kuga': {
-        '2008-2012': ['1.6 EcoBoost - 150hp', '2.0 - 145hp', '2.5 - 200hp', '2.0 TDCi - 136hp', '2.0 TDCi - 140hp', '2.0 TDCi - 163hp'],
-        '2013-2019': ['1.5 EcoBoost - 120hp', '1.5 EcoBoost - 150hp', '1.5 EcoBoost - 182hp', '2.0 EcoBoost - 240hp', '1.5 TDCi - 88hp', '1.5 TDCi - 95hp', '1.5 TDCi - 120hp', '2.0 TDCi - 120hp', '2.0 TDCi - 150hp', '2.0 TDCi - 163hp', '2.0 TDCi - 180hp'],
-        '2020-2024': ['1.5 EcoBoost - 120hp', '1.5 EcoBoost - 150hp', '2.0 EcoBoost - 190hp', '2.5 PHEV - 225hp', '1.5 EcoBlue - 120hp', '2.0 EcoBlue - 120hp', '2.0 EcoBlue - 150hp', '2.0 EcoBlue - 190hp']
-      },
-      'mustang': {
-        '2015-2017': ['2.3 EcoBoost - 317hp', '5.0 GT V8 - 421hp'],
-        '2018-2023': ['2.3 EcoBoost - 290hp', '5.0 GT V8 - 450hp', '5.2 Shelby GT500 - 760hp'],
-        '2024': ['2.3 EcoBoost - 315hp', '5.0 GT V8 - 486hp']
-      },
-      'ranger': {
-        '2007-2011': ['2.5 TDCi - 143hp', '3.0 TDCi - 156hp'],
-        '2012-2015': ['2.2 TDCi - 125hp', '2.2 TDCi - 150hp', '3.2 TDCi - 200hp'],
-        '2016-2022': ['2.0 EcoBlue - 130hp', '2.0 EcoBlue - 170hp', '2.0 EcoBlue - 213hp', '3.2 TDCi - 200hp'],
-        '2023-2024': ['2.0 EcoBlue - 170hp', '3.0 EcoBoost V6 - 288hp']
-      },
-      'transit-custom': {
-        '2013-2018': ['2.2 TDCi - 100hp', '2.2 TDCi - 125hp', '2.2 TDCi - 155hp'],
-        '2019-2024': ['2.0 EcoBlue - 105hp', '2.0 EcoBlue - 130hp', '2.0 EcoBlue - 170hp', '2.0 EcoBlue - 185hp']
-      },
-      'transit': {
-        '2006-2013': ['2.2 TDCi - 110hp', '2.2 TDCi - 125hp', '2.2 TDCi - 140hp', '2.4 TDCi - 115hp', '2.4 TDCi - 140hp', '3.2 TDCi - 200hp'],
-        '2014-2019': ['2.0 EcoBlue - 105hp', '2.0 EcoBlue - 130hp', '2.0 EcoBlue - 170hp', '2.2 TDCi - 125hp', '2.2 TDCi - 155hp'],
-        '2020-2024': ['2.0 EcoBlue - 105hp', '2.0 EcoBlue - 130hp', '2.0 EcoBlue - 170hp', '2.0 EcoBlue - 185hp']
-      },
-      'puma': {
-        '2020-2024': ['1.0 EcoBoost - 125hp', '1.0 EcoBoost - 155hp', '1.5 EcoBoost ST - 200hp']
-      }
+    "q3": {
+      "2012-2014": [
+        "1.4 TFSI - 150hp",
+        "2.0 TFSI - 170hp",
+        "2.0 TFSI - 211hp",
+        "2.0 TDI - 140hp",
+        "2.0 TDI - 177hp"
+      ],
+      "2015-2018": [
+        "1.4 TFSI - 150hp",
+        "2.0 TFSI - 180hp",
+        "2.0 TFSI - 220hp",
+        "2.5 TFSI RS - 340hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 184hp"
+      ],
+      "2019-2024": [
+        "1.5 TFSI - 150hp",
+        "2.0 TFSI - 190hp",
+        "2.5 TFSI RS - 400hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 190hp"
+      ]
     },
-    'mercedes': {
-      'a-class': {
-        '2013-2018': ['1.6 A180 - 122hp', '2.0 A200 - 156hp', '2.0 A250 - 211hp', '2.0 A45 AMG - 360hp', '1.5 A180d - 109hp', '2.1 A200d - 136hp', '2.1 A220d - 177hp'],
-        '2019-2024': ['1.3 A180 - 136hp', '2.0 A200 - 163hp', '2.0 A250 - 224hp', '2.0 A35 AMG - 306hp', '2.0 A45 AMG - 421hp', '1.5 A180d - 116hp', '2.0 A200d - 150hp', '2.0 A220d - 190hp']
-      },
-      'c-class': {
-        '2008-2014': ['1.8 C180 - 156hp', '1.8 C200 - 184hp', '3.5 C350 - 306hp', '6.2 C63 AMG - 457hp', '2.1 C200 CDI - 136hp', '2.1 C220 CDI - 170hp', '3.0 C320 CDI - 231hp'],
-        '2015-2021': ['1.6 C160 - 129hp', '2.0 C200 - 184hp', '2.0 C300 - 245hp', '4.0 C63 AMG - 476hp', '1.6 C200d - 136hp', '2.1 C220d - 170hp', '2.1 C300d - 204hp'],
-        '2022-2024': ['1.5 C180 - 170hp', '2.0 C200 - 204hp', '2.0 C300 - 258hp', '2.0 C200d - 163hp', '2.0 C220d - 200hp', '3.0 C300d - 265hp']
-      },
-      'glc': {
-        '2016-2019': ['2.0 GLC200 - 184hp', '2.0 GLC250 - 211hp', '2.0 GLC300 - 245hp', '3.0 GLC43 AMG - 367hp', '2.1 GLC220d - 170hp', '2.1 GLC250d - 204hp', '3.0 GLC350d - 258hp'],
-        '2020-2024': ['2.0 GLC200 - 197hp', '2.0 GLC300 - 258hp', '3.0 GLC43 AMG - 390hp', '4.0 GLC63 AMG - 476hp', '2.0 GLC200d - 163hp', '2.0 GLC220d - 194hp', '2.0 GLC300d - 245hp']
-      }
+    "q5": {
+      "2009-2012": [
+        "2.0 TFSI - 211hp",
+        "3.0 TFSI - 272hp",
+        "3.2 FSI - 270hp",
+        "2.0 TDI - 143hp",
+        "2.0 TDI - 170hp",
+        "3.0 TDI - 240hp"
+      ],
+      "2013-2016": [
+        "2.0 TFSI - 220hp",
+        "2.0 TFSI - 230hp",
+        "3.0 TFSI - 272hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 190hp",
+        "3.0 TDI - 258hp"
+      ],
+      "2017-2024": [
+        "2.0 TFSI - 252hp",
+        "3.0 TFSI - 354hp",
+        "2.0 TDI - 190hp",
+        "3.0 TDI - 286hp"
+      ]
+    },
+    "q7": {
+      "2006-2015": [
+        "3.0 TFSI - 272hp",
+        "3.6 FSI - 280hp",
+        "4.2 FSI - 350hp",
+        "3.0 TDI - 240hp",
+        "4.2 TDI - 326hp"
+      ],
+      "2016-2019": [
+        "2.0 TFSI - 252hp",
+        "3.0 TFSI - 333hp",
+        "3.0 TDI - 218hp",
+        "3.0 TDI - 272hp"
+      ],
+      "2020-2024": [
+        "2.0 TFSI - 265hp",
+        "3.0 TFSI - 340hp",
+        "3.0 TDI - 231hp",
+        "3.0 TDI - 286hp"
+      ]
+    },
+    "a1": {
+      "2010-2014": [
+        "1.2 TFSI - 86hp",
+        "1.4 TFSI - 122hp",
+        "1.4 TFSI - 125hp",
+        "1.4 TFSI - 140hp",
+        "1.6 TDI - 90hp",
+        "1.6 TDI - 105hp",
+        "2.0 TDI - 143hp"
+      ],
+      "2015-2018": [
+        "1.0 TFSI - 82hp",
+        "1.0 TFSI - 95hp",
+        "1.4 TFSI - 125hp",
+        "1.4 TFSI - 150hp",
+        "1.8 TFSI - 192hp",
+        "1.6 TDI - 90hp",
+        "1.6 TDI - 116hp",
+        "2.0 TDI - 143hp"
+      ],
+      "2019-2024": [
+        "1.0 TFSI - 95hp",
+        "1.0 TFSI - 110hp",
+        "1.0 TFSI - 116hp",
+        "1.5 TFSI - 150hp",
+        "2.0 TFSI - 200hp",
+        "1.6 TDI - 95hp",
+        "1.6 TDI - 116hp"
+      ]
+    },
+    "a5": {
+      "2007-2016": [
+        "1.8 TFSI - 170hp",
+        "2.0 TFSI - 211hp",
+        "3.0 TFSI - 272hp",
+        "3.2 FSI - 265hp",
+        "2.0 TDI - 143hp",
+        "2.0 TDI - 177hp",
+        "2.7 TDI - 190hp",
+        "3.0 TDI - 240hp"
+      ],
+      "2017-2024": [
+        "2.0 TFSI - 190hp",
+        "2.0 TFSI - 252hp",
+        "3.0 TFSI - 354hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 190hp",
+        "3.0 TDI - 286hp"
+      ]
+    },
+    "a7": {
+      "2011-2017": [
+        "2.0 TFSI - 252hp",
+        "3.0 TFSI - 300hp",
+        "3.0 TDI - 204hp",
+        "3.0 TDI - 272hp"
+      ],
+      "2018-2024": [
+        "2.0 TFSI - 245hp",
+        "3.0 TFSI - 340hp",
+        "2.0 TDI - 204hp",
+        "3.0 TDI - 286hp"
+      ]
+    },
+    "a8": {
+      "2003-2009": [
+        "3.0 - 220hp",
+        "3.2 FSI - 260hp",
+        "4.2 FSI - 350hp",
+        "3.0 TDI - 233hp",
+        "4.0 TDI - 275hp"
+      ],
+      "2010-2017": [
+        "2.0 TFSI - 245hp",
+        "3.0 TFSI - 310hp",
+        "4.0 TFSI - 435hp",
+        "3.0 TDI - 250hp",
+        "4.2 TDI - 385hp"
+      ],
+      "2018-2024": [
+        "3.0 TFSI - 340hp",
+        "4.0 TFSI - 460hp",
+        "3.0 TDI - 286hp"
+      ]
+    },
+    "q2": {
+      "2017-2024": [
+        "1.0 TFSI - 116hp",
+        "1.5 TFSI - 150hp",
+        "2.0 TFSI - 190hp",
+        "1.6 TDI - 116hp",
+        "2.0 TDI - 150hp"
+      ]
+    },
+    "q8": {
+      "2019-2024": [
+        "3.0 TFSI - 340hp",
+        "4.0 TFSI - 507hp",
+        "3.0 TDI - 231hp",
+        "3.0 TDI - 286hp"
+      ]
+    },
+    "q4-e-tron": {
+      "2021-2024": [
+        "Electric 35 - 170hp",
+        "Electric 40 - 204hp",
+        "Electric 45 - 299hp",
+        "Electric 50 - 299hp"
+      ]
+    },
+    "rs3": {
+      "2011-2016": [
+        "2.5 TFSI - 340hp",
+        "2.5 TFSI - 367hp"
+      ],
+      "2017-2024": [
+        "2.5 TFSI - 400hp"
+      ]
+    },
+    "rs4": {
+      "2000-2008": [
+        "4.2 V8 - 420hp"
+      ],
+      "2012-2016": [
+        "4.2 FSI - 450hp"
+      ],
+      "2018-2024": [
+        "2.9 TFSI - 450hp"
+      ]
+    },
+    "rs5": {
+      "2010-2016": [
+        "4.2 FSI - 450hp"
+      ],
+      "2017-2024": [
+        "2.9 TFSI - 450hp"
+      ]
+    },
+    "rs6": {
+      "2003-2010": [
+        "5.0 V10 - 580hp"
+      ],
+      "2013-2018": [
+        "4.0 TFSI - 560hp"
+      ],
+      "2020-2024": [
+        "4.0 TFSI - 600hp"
+      ]
+    },
+    "rs7": {
+      "2014-2018": [
+        "4.0 TFSI - 560hp"
+      ],
+      "2020-2024": [
+        "4.0 TFSI - 600hp"
+      ]
+    },
+    "rsq8": {
+      "2020-2024": [
+        "4.0 TFSI - 600hp"
+      ]
+    },
+    "e-tron": {
+      "2021-2024": [
+        "Electric 35 - 170hp",
+        "Electric 40 - 204hp",
+        "Electric 45 - 299hp",
+        "Electric 50 - 299hp"
+      ]
     }
   },
+  "volkswagen": {
+    "polo": {
+      "2002-2009": [
+        "1.2 - 55hp",
+        "1.2 - 64hp",
+        "1.4 - 75hp",
+        "1.6 - 105hp",
+        "1.4 TDI - 70hp",
+        "1.4 TDI - 80hp",
+        "1.9 TDI - 100hp"
+      ],
+      "2010-2017": [
+        "1.0 - 60hp",
+        "1.0 - 75hp",
+        "1.2 TSI - 90hp",
+        "1.2 TSI - 110hp",
+        "1.4 TSI GTI - 180hp",
+        "1.2 TDI - 75hp",
+        "1.6 TDI - 90hp",
+        "1.6 TDI - 105hp"
+      ],
+      "2018-2024": [
+        "1.0 TSI - 80hp",
+        "1.0 TSI - 95hp",
+        "1.0 TSI - 110hp",
+        "2.0 TSI GTI - 207hp",
+        "1.6 TDI - 80hp",
+        "1.6 TDI - 95hp"
+      ]
+    },
+    "golf": {
+      "1992-1997": [
+        "1.4 - 60hp",
+        "1.6 - 75hp",
+        "1.8 - 75hp",
+        "1.8 - 90hp",
+        "2.0 - 115hp",
+        "2.0 GTI - 150hp",
+        "2.8 VR6 - 174hp",
+        "1.9 D - 64hp",
+        "1.9 TDI - 90hp",
+        "1.9 TDI - 110hp"
+      ],
+      "1998-2003": [
+        "1.4 - 75hp",
+        "1.6 - 100hp",
+        "1.8 - 125hp",
+        "2.0 - 115hp",
+        "1.8T GTI - 180hp",
+        "2.3 V5 - 150hp",
+        "2.8 VR6 - 204hp",
+        "3.2 R32 - 241hp",
+        "1.9 SDI - 68hp",
+        "1.9 TDI - 90hp",
+        "1.9 TDI - 110hp",
+        "1.9 TDI - 130hp",
+        "1.9 TDI - 150hp"
+      ],
+      "2004-2008": [
+        "1.4 - 75hp",
+        "1.6 - 102hp",
+        "2.0 FSI - 150hp",
+        "2.0 GTI - 200hp",
+        "1.9 TDI - 90hp",
+        "1.9 TDI - 105hp",
+        "2.0 TDI - 140hp",
+        "2.0 GTD - 170hp"
+      ],
+      "2009-2012": [
+        "1.2 TSI - 85hp",
+        "1.2 TSI - 105hp",
+        "1.4 TSI - 122hp",
+        "1.4 TSI - 160hp",
+        "2.0 TSI GTI - 210hp",
+        "1.6 TDI - 90hp",
+        "1.6 TDI - 105hp",
+        "2.0 TDI - 110hp",
+        "2.0 TDI - 140hp",
+        "2.0 GTD - 170hp"
+      ],
+      "2013-2016": [
+        "1.0 TSI - 85hp",
+        "1.2 TSI - 105hp",
+        "1.4 TSI - 125hp",
+        "1.4 TSI - 150hp",
+        "2.0 TSI GTI - 220hp",
+        "2.0 TSI R - 300hp",
+        "1.6 TDI - 90hp",
+        "1.6 TDI - 110hp",
+        "2.0 TDI - 150hp",
+        "2.0 GTD - 184hp"
+      ],
+      "2017-2020": [
+        "1.0 TSI - 90hp",
+        "1.0 TSI - 115hp",
+        "1.5 TSI - 130hp",
+        "1.5 TSI - 150hp",
+        "2.0 TSI GTI - 245hp",
+        "2.0 TSI R - 310hp",
+        "1.6 TDI - 115hp",
+        "2.0 TDI - 150hp",
+        "2.0 GTD - 200hp"
+      ],
+      "2021-2024": [
+        "1.0 eTSI - 110hp",
+        "1.5 eTSI - 130hp",
+        "1.5 eTSI - 150hp",
+        "2.0 TSI GTI - 245hp",
+        "2.0 TSI R - 320hp",
+        "2.0 TDI - 150hp",
+        "2.0 GTD - 200hp"
+      ]
+    },
+    "jetta": {
+      "2006-2010": [
+        "1.4 TSI - 122hp",
+        "1.6 - 102hp",
+        "2.0 - 115hp",
+        "2.0 FSI - 150hp",
+        "1.9 TDI - 105hp",
+        "2.0 TDI - 140hp",
+        "2.0 TDI - 170hp"
+      ],
+      "2011-2018": [
+        "1.2 TSI - 105hp",
+        "1.4 TSI - 122hp",
+        "1.4 TSI - 150hp",
+        "1.8 TSI - 180hp",
+        "2.0 TSI - 211hp",
+        "1.6 TDI - 105hp",
+        "2.0 TDI - 110hp",
+        "2.0 TDI - 150hp"
+      ],
+      "2019-2024": [
+        "1.4 TSI - 150hp",
+        "1.5 TSI - 150hp",
+        "2.0 TSI - 190hp",
+        "1.6 TDI - 115hp",
+        "2.0 TDI - 150hp"
+      ]
+    },
+    "passat": {
+      "2005-2010": [
+        "1.6 - 102hp",
+        "1.8 TSI - 160hp",
+        "2.0 FSI - 150hp",
+        "3.2 V6 - 250hp",
+        "1.9 TDI - 105hp",
+        "2.0 TDI - 140hp",
+        "2.0 TDI - 170hp"
+      ],
+      "2011-2014": [
+        "1.4 TSI - 122hp",
+        "1.8 TSI - 160hp",
+        "2.0 TSI - 210hp",
+        "3.6 V6 - 300hp",
+        "1.6 TDI - 105hp",
+        "2.0 TDI - 140hp",
+        "2.0 TDI - 170hp",
+        "2.0 TDI - 177hp"
+      ],
+      "2015-2019": [
+        "1.4 TSI - 125hp",
+        "1.8 TSI - 180hp",
+        "2.0 TSI - 220hp",
+        "1.6 TDI - 120hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 190hp",
+        "2.0 TDI BiTurbo - 240hp"
+      ],
+      "2020-2024": [
+        "1.5 TSI - 150hp",
+        "2.0 TSI - 190hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 200hp"
+      ]
+    },
+    "arteon": {
+      "2017-2020": [
+        "1.5 TSI - 150hp",
+        "2.0 TSI - 190hp",
+        "2.0 TSI - 280hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 190hp",
+        "2.0 TDI - 240hp"
+      ],
+      "2021-2024": [
+        "1.5 TSI - 150hp",
+        "2.0 TSI - 190hp",
+        "2.0 TSI R - 320hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 200hp"
+      ]
+    },
+    "t-cross": {
+      "2019-2024": [
+        "1.0 TSI - 95hp",
+        "1.0 TSI - 115hp",
+        "1.5 TSI - 150hp"
+      ]
+    },
+    "t-roc": {
+      "2018-2024": [
+        "1.0 TSI - 110hp",
+        "1.5 TSI - 150hp",
+        "2.0 TSI - 190hp",
+        "2.0 TSI R - 300hp",
+        "1.6 TDI - 115hp",
+        "2.0 TDI - 150hp"
+      ]
+    },
+    "tiguan": {
+      "2008-2011": [
+        "1.4 TSI - 150hp",
+        "2.0 TSI - 170hp",
+        "2.0 TSI - 200hp",
+        "2.0 TDI - 140hp",
+        "2.0 TDI - 170hp"
+      ],
+      "2012-2016": [
+        "1.4 TSI - 125hp",
+        "1.4 TSI - 150hp",
+        "2.0 TSI - 180hp",
+        "2.0 TSI - 220hp",
+        "2.0 TDI - 110hp",
+        "2.0 TDI - 140hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 184hp"
+      ],
+      "2017-2020": [
+        "1.5 TSI - 150hp",
+        "2.0 TSI - 180hp",
+        "2.0 TSI - 220hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 190hp",
+        "2.0 TDI BiTurbo - 240hp"
+      ],
+      "2021-2024": [
+        "1.5 TSI - 150hp",
+        "2.0 TSI - 190hp",
+        "2.0 TSI - 245hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 200hp"
+      ]
+    },
+    "touareg": {
+      "2003-2010": [
+        "3.2 V6 - 220hp",
+        "3.6 FSI - 280hp",
+        "4.2 V8 - 310hp",
+        "2.5 TDI - 174hp",
+        "3.0 TDI - 225hp",
+        "5.0 V10 TDI - 313hp"
+      ],
+      "2011-2018": [
+        "3.0 TSI - 333hp",
+        "4.2 FSI - 360hp",
+        "3.0 TDI - 204hp",
+        "3.0 TDI - 245hp",
+        "4.0 TDI - 340hp"
+      ],
+      "2019-2024": [
+        "3.0 TSI - 340hp",
+        "4.0 TSI - 462hp",
+        "3.0 TDI - 231hp",
+        "3.0 TDI - 286hp"
+      ]
+    },
+    "caddy": {
+      "2004-2010": [
+        "1.4 - 75hp",
+        "1.6 - 102hp",
+        "2.0 - 115hp",
+        "1.9 TDI - 75hp",
+        "1.9 TDI - 105hp",
+        "2.0 TDI - 110hp",
+        "2.0 TDI - 140hp"
+      ],
+      "2011-2020": [
+        "1.2 TSI - 84hp",
+        "1.2 TSI - 105hp",
+        "1.4 TSI - 125hp",
+        "1.6 TDI - 75hp",
+        "1.6 TDI - 102hp",
+        "2.0 TDI - 110hp",
+        "2.0 TDI - 140hp",
+        "2.0 TDI - 150hp"
+      ],
+      "2021-2024": [
+        "1.0 TSI - 114hp",
+        "1.5 TSI - 114hp",
+        "2.0 TDI - 75hp",
+        "2.0 TDI - 122hp"
+      ]
+    },
+    "transporter": {
+      "2004-2009": [
+        "1.9 TDI - 84hp",
+        "1.9 TDI - 105hp",
+        "2.5 TDI - 130hp",
+        "2.5 TDI - 174hp"
+      ],
+      "2010-2015": [
+        "2.0 TDI - 84hp",
+        "2.0 TDI - 102hp",
+        "2.0 TDI - 114hp",
+        "2.0 TDI - 140hp",
+        "2.0 TDI - 180hp"
+      ],
+      "2016-2019": [
+        "2.0 TDI - 84hp",
+        "2.0 TDI - 102hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 204hp"
+      ],
+      "2020-2024": [
+        "2.0 TDI - 90hp",
+        "2.0 TDI - 110hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 199hp"
+      ]
+    },
+    "crafter": {
+      "2007-2016": [
+        "2.0 TDI - 109hp",
+        "2.0 TDI - 136hp",
+        "2.5 TDI - 163hp",
+        "2.5 TDI - 109hp"
+      ],
+      "2017-2024": [
+        "2.0 TDI - 102hp",
+        "2.0 TDI - 140hp",
+        "2.0 TDI - 177hp"
+      ]
+    },
+    "id.3": {
+      "2020-2024": [
+        "Electric - 145hp",
+        "Electric - 204hp"
+      ]
+    },
+    "id.4": {
+      "2021-2024": [
+        "Electric - 174hp",
+        "Electric - 204hp",
+        "Electric - 299hp"
+      ]
+    },
+    "id.5": {
+      "2022-2024": [
+        "Electric - 174hp",
+        "Electric - 204hp",
+        "Electric - 299hp"
+      ]
+    },
+    "id.buzz": {
+      "2023-2024": [
+        "Electric - 204hp",
+        "Electric - 286hp"
+      ]
+    },
+    "golf-gti": {
+      "1992-1997": [
+        "2.0 - 150hp"
+      ],
+      "1998-2003": [
+        "1.8T - 180hp"
+      ],
+      "2004-2008": [
+        "2.0 TFSI - 200hp"
+      ],
+      "2009-2012": [
+        "2.0 TSI - 210hp"
+      ],
+      "2013-2016": [
+        "2.0 TSI - 220hp"
+      ],
+      "2017-2020": [
+        "2.0 TSI - 245hp"
+      ],
+      "2021-2024": [
+        "2.0 TSI - 245hp"
+      ]
+    },
+    "golf-r": {
+      "2010-2013": [
+        "2.0 TSI - 270hp"
+      ],
+      "2014-2016": [
+        "2.0 TSI - 300hp"
+      ],
+      "2017-2020": [
+        "2.0 TSI - 310hp"
+      ],
+      "2021-2024": [
+        "2.0 TSI - 320hp"
+      ]
+    },
+    "scirocco": {
+      "2009-2017": [
+        "1.4 TSI - 122hp",
+        "1.4 TSI - 160hp",
+        "2.0 TSI - 180hp",
+        "2.0 TSI - 210hp",
+        "2.0 TSI R - 280hp",
+        "2.0 TDI - 140hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 184hp"
+      ]
+    },
+    "edge": {
+      "2016-2024": [
+        "2.0 EcoBlue - 150hp",
+        "2.0 EcoBlue - 190hp",
+        "2.0 EcoBlue - 238hp",
+        "2.0 EcoBoost - 245hp",
+        "2.7 EcoBoost - 335hp"
+      ]
+    },
+    "explorer": {
+      "2011-2019": [
+        "2.0 EcoBoost - 240hp",
+        "2.3 EcoBoost - 280hp",
+        "3.5 V6 - 290hp",
+        "3.5 EcoBoost - 365hp"
+      ],
+      "2020-2024": [
+        "2.3 EcoBoost - 300hp",
+        "3.0 EcoBoost - 457hp",
+        "3.3 Hybrid - 318hp"
+      ]
+    },
+    "transit": {
+      "2006-2013": [
+        "2.2 TDCi - 85hp",
+        "2.2 TDCi - 110hp",
+        "2.2 TDCi - 125hp",
+        "2.2 TDCi - 155hp",
+        "2.4 TDCi - 140hp"
+      ],
+      "2014-2019": [
+        "2.0 EcoBlue - 105hp",
+        "2.0 EcoBlue - 130hp",
+        "2.0 EcoBlue - 170hp",
+        "2.2 TDCi - 125hp",
+        "2.2 TDCi - 155hp"
+      ],
+      "2020-2024": [
+        "2.0 EcoBlue - 105hp",
+        "2.0 EcoBlue - 130hp",
+        "2.0 EcoBlue - 170hp",
+        "2.0 EcoBlue - 185hp"
+      ]
+    },
+    "transit-custom": {
+      "2013-2024": [
+        "2.0 EcoBlue - 105hp",
+        "2.0 EcoBlue - 130hp",
+        "2.0 EcoBlue - 170hp",
+        "2.0 EcoBlue - 185hp"
+      ]
+    },
+    "ranger": {
+      "2012-2018": [
+        "2.2 TDCi - 125hp",
+        "2.2 TDCi - 150hp",
+        "3.2 TDCi - 200hp"
+      ],
+      "2019-2024": [
+        "2.0 EcoBlue - 130hp",
+        "2.0 EcoBlue - 170hp",
+        "2.0 Bi-Turbo - 213hp",
+        "3.0 V6 - 250hp"
+      ]
+    },
+    "f-150": {
+      "2011-2024": [
+        "2.7 EcoBoost V6 - 325hp",
+        "3.5 EcoBoost V6 - 400hp",
+        "5.0 V8 - 400hp"
+      ]
+    },
+    "s-max": {
+      "2006-2014": [
+        "1.6 EcoBoost - 160hp",
+        "2.0 EcoBoost - 203hp",
+        "2.0 TDCi - 140hp",
+        "2.0 TDCi - 163hp",
+        "2.2 TDCi - 200hp"
+      ],
+      "2015-2023": [
+        "1.5 EcoBoost - 160hp",
+        "2.0 EcoBoost - 240hp",
+        "2.0 TDCi - 150hp",
+        "2.0 TDCi - 180hp",
+        "2.0 TDCi - 210hp"
+      ]
+    },
+    "galaxy": {
+      "2006-2014": [
+        "1.6 EcoBoost - 160hp",
+        "2.0 EcoBoost - 203hp",
+        "2.0 TDCi - 140hp",
+        "2.0 TDCi - 163hp",
+        "2.2 TDCi - 200hp"
+      ],
+      "2015-2023": [
+        "1.5 EcoBoost - 160hp",
+        "2.0 EcoBoost - 240hp",
+        "2.0 TDCi - 150hp",
+        "2.0 TDCi - 180hp",
+        "2.0 TDCi - 210hp"
+      ]
+    },
+    "tourneo": {
+      "2014-2024": [
+        "2.0 EcoBlue - 105hp",
+        "2.0 EcoBlue - 130hp",
+        "2.0 EcoBlue - 170hp",
+        "2.0 EcoBlue - 185hp"
+      ]
+    },
+    "fiesta-st": {
+      "2013-2017": [
+        "1.6 EcoBoost - 182hp"
+      ],
+      "2018-2023": [
+        "1.5 EcoBoost - 200hp"
+      ]
+    },
+    "focus-st": {
+      "2005-2010": [
+        "2.5 - 225hp"
+      ],
+      "2012-2014": [
+        "2.0 EcoBoost - 250hp"
+      ],
+      "2015-2018": [
+        "2.3 EcoBoost - 280hp"
+      ],
+      "2019-2024": [
+        "2.3 EcoBoost - 280hp"
+      ]
+    },
+    "focus-rs": {
+      "2009-2011": [
+        "2.5 - 305hp"
+      ],
+      "2016-2018": [
+        "2.3 EcoBoost - 350hp"
+      ]
+    },
+    "mustang-mach-e": {
+      "2021-2024": [
+        "Electric RWD - 269hp",
+        "Electric AWD - 351hp",
+        "Electric GT - 487hp"
+      ]
+    },
+    "bronco": {
+      "2021-2024": [
+        "2.3 EcoBoost - 300hp",
+        "2.7 EcoBoost - 330hp"
+      ]
+    }
+  },
+  "bmw": {
+    "3-series": {
+      "1990-1998": [
+        "1.6 316i - 102hp",
+        "1.8 318i - 113hp",
+        "1.8 318is - 140hp",
+        "1.9 319i - 140hp",
+        "2.0 320i - 150hp",
+        "2.5 323i - 170hp",
+        "2.5 325i - 192hp",
+        "2.8 328i - 193hp",
+        "3.0 M3 - 286hp",
+        "3.2 M3 - 321hp",
+        "1.7 318tds - 90hp",
+        "2.5 325td - 115hp",
+        "2.5 325tds - 143hp"
+      ],
+      "1999-2005": [
+        "1.8 316i - 105hp",
+        "1.9 318i - 118hp",
+        "2.0 320i - 150hp",
+        "2.2 320i - 170hp",
+        "2.5 323i - 170hp",
+        "2.5 325i - 192hp",
+        "2.8 328i - 193hp",
+        "3.0 330i - 231hp",
+        "3.2 M3 - 343hp",
+        "2.0 318d - 116hp",
+        "2.0 320d - 136hp",
+        "2.0 320d - 150hp",
+        "3.0 330d - 204hp"
+      ],
+      "2005-2008": [
+        "2.0 316i - 122hp",
+        "2.0 318i - 129hp",
+        "2.0 320i - 150hp",
+        "2.5 325i - 218hp",
+        "3.0 330i - 258hp",
+        "2.0 318d - 122hp",
+        "2.0 320d - 163hp",
+        "2.0 320d - 177hp",
+        "3.0 330d - 231hp"
+      ],
+      "2009-2011": [
+        "2.0 316i - 122hp",
+        "2.0 320i - 170hp",
+        "3.0 325i - 218hp",
+        "3.0 330i - 272hp",
+        "3.0 335i - 306hp",
+        "2.0 316d - 116hp",
+        "2.0 318d - 143hp",
+        "2.0 320d - 184hp",
+        "3.0 325d - 197hp",
+        "3.0 330d - 245hp"
+      ],
+      "2012-2015": [
+        "1.6 316i - 136hp",
+        "2.0 320i - 184hp",
+        "2.0 328i - 245hp",
+        "3.0 335i - 306hp",
+        "1.6 316d - 116hp",
+        "2.0 318d - 143hp",
+        "2.0 320d - 184hp",
+        "3.0 325d - 218hp",
+        "3.0 330d - 258hp"
+      ],
+      "2016-2018": [
+        "1.5 318i - 136hp",
+        "2.0 320i - 184hp",
+        "2.0 330i - 252hp",
+        "3.0 340i - 326hp",
+        "1.5 316d - 116hp",
+        "2.0 318d - 150hp",
+        "2.0 320d - 190hp",
+        "3.0 330d - 265hp"
+      ],
+      "2019-2024": [
+        "2.0 320i - 184hp",
+        "2.0 330i - 258hp",
+        "3.0 M340i - 374hp",
+        "2.0 318d - 150hp",
+        "2.0 320d - 190hp",
+        "3.0 330d - 286hp"
+      ]
+    },
+    "5-series": {
+      "2005-2010": [
+        "2.0 520i - 170hp",
+        "2.5 523i - 190hp",
+        "3.0 525i - 218hp",
+        "3.0 530i - 272hp",
+        "4.8 550i - 367hp",
+        "2.0 520d - 177hp",
+        "3.0 525d - 197hp",
+        "3.0 530d - 235hp",
+        "3.0 535d - 286hp"
+      ],
+      "2011-2013": [
+        "2.0 520i - 184hp",
+        "3.0 528i - 245hp",
+        "3.0 535i - 306hp",
+        "4.4 550i - 449hp",
+        "2.0 518d - 143hp",
+        "2.0 520d - 184hp",
+        "3.0 525d - 218hp",
+        "3.0 530d - 258hp",
+        "3.0 535d - 313hp"
+      ],
+      "2014-2016": [
+        "2.0 520i - 184hp",
+        "2.0 528i - 245hp",
+        "3.0 535i - 306hp",
+        "4.4 550i - 449hp",
+        "2.0 518d - 150hp",
+        "2.0 520d - 190hp",
+        "3.0 525d - 218hp",
+        "3.0 530d - 258hp",
+        "3.0 535d - 313hp"
+      ],
+      "2017-2020": [
+        "2.0 520i - 184hp",
+        "2.0 530i - 252hp",
+        "3.0 540i - 340hp",
+        "4.4 M550i - 530hp",
+        "2.0 518d - 150hp",
+        "2.0 520d - 190hp",
+        "3.0 530d - 265hp",
+        "3.0 540d - 320hp"
+      ],
+      "2021-2024": [
+        "2.0 520i - 184hp",
+        "2.0 530i - 252hp",
+        "3.0 540i - 340hp",
+        "4.4 M550i - 530hp",
+        "2.0 520d - 190hp",
+        "3.0 530d - 286hp",
+        "3.0 540d - 340hp"
+      ]
+    },
+    "1-series": {
+      "2005-2011": [
+        "1.6 116i - 122hp",
+        "2.0 118i - 143hp",
+        "2.0 120i - 170hp",
+        "3.0 130i - 265hp",
+        "2.0 118d - 143hp",
+        "2.0 120d - 177hp",
+        "2.0 123d - 204hp"
+      ],
+      "2012-2015": [
+        "1.6 116i - 136hp",
+        "1.6 118i - 170hp",
+        "2.0 120i - 184hp",
+        "3.0 M135i - 320hp",
+        "1.6 116d - 116hp",
+        "2.0 118d - 143hp",
+        "2.0 120d - 184hp",
+        "2.0 125d - 218hp"
+      ],
+      "2016-2019": [
+        "1.5 118i - 136hp",
+        "2.0 120i - 184hp",
+        "2.0 M140i - 340hp",
+        "1.5 116d - 116hp",
+        "2.0 118d - 150hp",
+        "2.0 120d - 190hp"
+      ],
+      "2020-2024": [
+        "1.5 118i - 140hp",
+        "2.0 120i - 178hp",
+        "2.0 M135i - 306hp",
+        "2.0 118d - 150hp",
+        "2.0 120d - 190hp"
+      ]
+    },
+    "x1": {
+      "2010-2015": [
+        "2.0 sDrive18i - 150hp",
+        "2.0 xDrive20i - 184hp",
+        "3.0 xDrive28i - 245hp",
+        "2.0 sDrive18d - 143hp",
+        "2.0 xDrive18d - 143hp",
+        "2.0 xDrive20d - 184hp",
+        "2.0 xDrive25d - 218hp"
+      ],
+      "2016-2022": [
+        "1.5 sDrive18i - 140hp",
+        "2.0 sDrive20i - 192hp",
+        "2.0 xDrive25i - 231hp",
+        "2.0 sDrive18d - 150hp",
+        "2.0 xDrive20d - 190hp",
+        "2.0 xDrive25d - 231hp"
+      ],
+      "2023-2024": [
+        "1.5 sDrive18i - 136hp",
+        "2.0 xDrive23i - 204hp",
+        "2.0 sDrive18d - 150hp",
+        "2.0 xDrive20d - 163hp",
+        "2.0 xDrive23d - 211hp"
+      ]
+    },
+    "x3": {
+      "2005-2010": [
+        "2.0 xDrive20i - 150hp",
+        "2.5 xDrive25i - 218hp",
+        "3.0 xDrive30i - 272hp",
+        "2.0 xDrive18d - 143hp",
+        "2.0 xDrive20d - 177hp",
+        "3.0 xDrive30d - 235hp"
+      ],
+      "2011-2017": [
+        "2.0 xDrive20i - 184hp",
+        "2.0 xDrive28i - 245hp",
+        "3.0 xDrive35i - 306hp",
+        "2.0 xDrive18d - 143hp",
+        "2.0 xDrive20d - 184hp",
+        "3.0 xDrive30d - 258hp",
+        "3.0 xDrive35d - 313hp"
+      ],
+      "2018-2024": [
+        "2.0 xDrive20i - 184hp",
+        "2.0 xDrive30i - 252hp",
+        "3.0 M40i - 360hp",
+        "2.0 xDrive18d - 150hp",
+        "2.0 xDrive20d - 190hp",
+        "3.0 xDrive30d - 286hp",
+        "3.0 M40d - 340hp"
+      ]
+    },
+    "x5": {
+      "2000-2006": [
+        "3.0 xDrive30i - 231hp",
+        "4.4 xDrive44i - 320hp",
+        "4.8 xDrive48i - 360hp",
+        "3.0 xDrive30d - 218hp",
+        "3.0 xDrive35d - 272hp"
+      ],
+      "2007-2013": [
+        "3.0 xDrive30i - 272hp",
+        "3.0 xDrive35i - 306hp",
+        "4.8 xDrive50i - 407hp",
+        "3.0 xDrive30d - 235hp",
+        "3.0 xDrive35d - 286hp",
+        "3.0 M50d - 381hp"
+      ],
+      "2014-2018": [
+        "2.0 xDrive25d - 231hp",
+        "3.0 xDrive30d - 258hp",
+        "3.0 xDrive35i - 306hp",
+        "3.0 xDrive40d - 313hp",
+        "4.4 xDrive50i - 450hp",
+        "3.0 M50d - 381hp"
+      ],
+      "2019-2024": [
+        "2.0 xDrive30i - 265hp",
+        "3.0 xDrive40i - 340hp",
+        "4.4 xDrive50i - 530hp",
+        "3.0 xDrive30d - 265hp",
+        "3.0 xDrive40d - 340hp",
+        "3.0 M50d - 400hp"
+      ]
+    },
+    "2-series": {
+      "2014-2021": [
+        "1.5 216i - 109hp",
+        "2.0 218i - 136hp",
+        "2.0 220i - 192hp",
+        "3.0 M240i - 340hp",
+        "1.5 216d - 116hp",
+        "2.0 218d - 150hp",
+        "2.0 220d - 190hp"
+      ],
+      "2022-2024": [
+        "2.0 220i - 170hp",
+        "3.0 M240i - 374hp",
+        "2.0 218d - 150hp",
+        "2.0 220d - 190hp"
+      ]
+    },
+    "4-series": {
+      "2014-2020": [
+        "2.0 420i - 184hp",
+        "2.0 428i - 245hp",
+        "3.0 435i - 306hp",
+        "3.0 M4 - 431hp",
+        "2.0 418d - 150hp",
+        "2.0 420d - 190hp",
+        "3.0 430d - 258hp"
+      ],
+      "2021-2024": [
+        "2.0 420i - 184hp",
+        "3.0 M440i - 374hp",
+        "3.0 M4 - 510hp",
+        "2.0 420d - 190hp",
+        "3.0 430d - 286hp"
+      ]
+    },
+    "x2": {
+      "2018-2024": [
+        "1.5 sDrive18i - 140hp",
+        "2.0 sDrive20i - 192hp",
+        "2.0 M35i - 306hp",
+        "1.5 sDrive18d - 150hp",
+        "2.0 xDrive20d - 190hp"
+      ]
+    },
+    "x4": {
+      "2014-2018": [
+        "2.0 xDrive20i - 184hp",
+        "2.0 xDrive28i - 245hp",
+        "3.0 xDrive35i - 306hp",
+        "3.0 M40i - 360hp",
+        "2.0 xDrive20d - 190hp",
+        "3.0 xDrive30d - 258hp",
+        "3.0 xDrive35d - 313hp"
+      ],
+      "2019-2024": [
+        "2.0 xDrive20i - 184hp",
+        "2.0 xDrive30i - 252hp",
+        "3.0 M40i - 387hp",
+        "3.0 M Competition - 510hp",
+        "2.0 xDrive20d - 190hp",
+        "3.0 xDrive30d - 286hp"
+      ]
+    },
+    "x6": {
+      "2008-2014": [
+        "3.0 xDrive30i - 272hp",
+        "3.0 xDrive35i - 306hp",
+        "4.4 xDrive50i - 407hp",
+        "3.0 xDrive30d - 235hp",
+        "3.0 xDrive35d - 286hp",
+        "3.0 M50d - 381hp"
+      ],
+      "2015-2019": [
+        "2.0 xDrive28i - 245hp",
+        "3.0 xDrive35i - 306hp",
+        "4.4 xDrive50i - 450hp",
+        "3.0 xDrive30d - 258hp",
+        "3.0 xDrive40d - 313hp",
+        "3.0 M50d - 381hp"
+      ],
+      "2020-2024": [
+        "3.0 xDrive40i - 340hp",
+        "4.4 xDrive50i - 530hp",
+        "3.0 xDrive30d - 265hp",
+        "3.0 xDrive40d - 340hp",
+        "3.0 M50d - 400hp"
+      ]
+    },
+    "x7": {
+      "2019-2024": [
+        "3.0 xDrive30d - 265hp",
+        "3.0 xDrive40i - 340hp",
+        "4.4 xDrive50i - 530hp",
+        "3.0 M50d - 400hp",
+        "4.4 M60i - 530hp"
+      ]
+    },
+    "6-series": {
+      "2011-2018": [
+        "3.0 640i - 320hp",
+        "4.4 650i - 450hp",
+        "3.0 640d - 313hp"
+      ]
+    },
+    "7-series": {
+      "2009-2015": [
+        "3.0 730i - 258hp",
+        "3.0 740i - 326hp",
+        "4.4 750i - 449hp",
+        "6.0 760i - 544hp",
+        "3.0 730d - 258hp",
+        "3.0 740d - 313hp"
+      ],
+      "2016-2022": [
+        "2.0 730i - 265hp",
+        "3.0 740i - 340hp",
+        "4.4 750i - 530hp",
+        "6.6 M760i - 610hp",
+        "3.0 730d - 265hp",
+        "3.0 740d - 320hp"
+      ],
+      "2023-2024": [
+        "3.0 740i - 380hp",
+        "4.4 760i - 544hp",
+        "3.0 740d - 300hp"
+      ]
+    },
+    "8-series": {
+      "2019-2024": [
+        "3.0 840i - 340hp",
+        "4.4 850i - 530hp",
+        "4.4 M8 - 625hp",
+        "3.0 840d - 340hp"
+      ]
+    },
+    "i3": {
+      "2013-2022": [
+        "Electric - 170hp",
+        "Electric - 184hp"
+      ]
+    },
+    "i4": {
+      "2022-2024": [
+        "Electric eDrive40 - 340hp",
+        "Electric M50 - 544hp"
+      ]
+    },
+    "i8": {
+      "2014-2020": [
+        "1.5 Hybrid - 374hp"
+      ]
+    },
+    "ix": {
+      "2022-2024": [
+        "Electric xDrive40 - 326hp",
+        "Electric xDrive50 - 523hp",
+        "Electric M60 - 619hp"
+      ]
+    },
+    "z4": {
+      "2009-2016": [
+        "2.0 sDrive20i - 184hp",
+        "2.5 sDrive23i - 204hp",
+        "3.0 sDrive30i - 258hp",
+        "3.0 sDrive35i - 306hp"
+      ],
+      "2019-2024": [
+        "2.0 sDrive20i - 197hp",
+        "2.0 sDrive30i - 258hp",
+        "3.0 M40i - 340hp"
+      ]
+    },
+    "m2": {
+      "2016-2020": [
+        "3.0 - 370hp",
+        "3.0 Competition - 410hp"
+      ],
+      "2023-2024": [
+        "3.0 - 460hp",
+        "3.0 Competition - 485hp"
+      ]
+    },
+    "m3": {
+      "2001-2006": [
+        "3.2 - 343hp"
+      ],
+      "2008-2013": [
+        "4.0 V8 - 420hp"
+      ],
+      "2014-2018": [
+        "3.0 - 431hp",
+        "3.0 Competition - 450hp"
+      ],
+      "2021-2024": [
+        "3.0 - 480hp",
+        "3.0 Competition - 510hp"
+      ]
+    },
+    "m4": {
+      "2014-2020": [
+        "3.0 - 431hp",
+        "3.0 Competition - 450hp"
+      ],
+      "2021-2024": [
+        "3.0 - 480hp",
+        "3.0 Competition - 510hp"
+      ]
+    },
+    "m5": {
+      "2000-2003": [
+        "5.0 V8 - 400hp"
+      ],
+      "2005-2010": [
+        "5.0 V10 - 507hp"
+      ],
+      "2012-2017": [
+        "4.4 V8 - 560hp",
+        "4.4 Competition - 600hp"
+      ],
+      "2018-2024": [
+        "4.4 V8 - 625hp",
+        "4.4 Competition - 635hp"
+      ]
+    },
+    "m8": {
+      "2020-2024": [
+        "4.4 V8 - 625hp",
+        "4.4 Competition - 635hp"
+      ]
+    },
+    "x3-m": {
+      "2020-2024": [
+        "3.0 - 480hp",
+        "3.0 Competition - 510hp"
+      ]
+    },
+    "x4-m": {
+      "2020-2024": [
+        "3.0 - 480hp",
+        "3.0 Competition - 510hp"
+      ]
+    },
+    "x5-m": {
+      "2010-2013": [
+        "4.4 V8 - 555hp"
+      ],
+      "2015-2019": [
+        "4.4 V8 - 575hp"
+      ],
+      "2020-2024": [
+        "4.4 V8 - 625hp",
+        "4.4 Competition - 635hp"
+      ]
+    },
+    "x6-m": {
+      "2010-2014": [
+        "4.4 V8 - 555hp"
+      ],
+      "2015-2019": [
+        "4.4 V8 - 575hp"
+      ],
+      "2020-2024": [
+        "4.4 V8 - 625hp",
+        "4.4 Competition - 635hp"
+      ]
+    }
+  },
+  "fiat": {
+    "500": {
+      "2008-2012": [
+        "0.9 TwinAir - 65hp",
+        "0.9 TwinAir - 85hp",
+        "1.2 - 69hp",
+        "1.4 - 100hp",
+        "1.3 MultiJet - 75hp",
+        "1.3 MultiJet - 95hp"
+      ],
+      "2013-2015": [
+        "0.9 TwinAir - 65hp",
+        "0.9 TwinAir - 85hp",
+        "1.2 - 69hp",
+        "1.4 - 100hp",
+        "1.3 MultiJet - 95hp"
+      ],
+      "2016-2020": [
+        "0.9 TwinAir - 65hp",
+        "0.9 TwinAir - 85hp",
+        "1.0 Hybrid - 70hp",
+        "1.2 - 69hp",
+        "1.3 MultiJet - 95hp"
+      ],
+      "2021-2024": [
+        "1.0 Hybrid - 70hp",
+        "1.0 Hybrid - 70hp (electric)"
+      ]
+    },
+    "500x": {
+      "2015-2018": [
+        "1.4 T-Jet - 120hp",
+        "1.4 T-Jet - 140hp",
+        "1.4 MultiAir - 140hp",
+        "1.6 MultiJet - 120hp",
+        "2.0 MultiJet - 140hp"
+      ],
+      "2019-2024": [
+        "1.0 FireFly - 120hp",
+        "1.3 FireFly - 150hp",
+        "1.3 MultiJet - 95hp",
+        "1.6 MultiJet - 120hp",
+        "2.0 MultiJet - 130hp"
+      ]
+    },
+    "tipo": {
+      "2016-2020": [
+        "1.4 - 95hp",
+        "1.4 T-Jet - 120hp",
+        "1.6 - 110hp",
+        "1.3 MultiJet - 95hp",
+        "1.6 MultiJet - 120hp"
+      ],
+      "2021-2024": [
+        "1.0 FireFly - 100hp",
+        "1.5 Hybrid - 130hp",
+        "1.6 MultiJet - 130hp"
+      ]
+    },
+    "panda": {
+      "2003-2011": [
+        "1.1 - 54hp",
+        "1.2 - 60hp",
+        "1.4 - 100hp",
+        "1.3 MultiJet - 70hp",
+        "1.3 MultiJet - 75hp"
+      ],
+      "2012-2024": [
+        "0.9 TwinAir - 65hp",
+        "0.9 TwinAir - 85hp",
+        "1.2 - 69hp",
+        "1.3 MultiJet - 75hp",
+        "1.3 MultiJet - 95hp"
+      ]
+    },
+    "500l": {
+      "2013-2022": [
+        "0.9 TwinAir - 105hp",
+        "1.4 - 95hp",
+        "1.4 T-Jet - 120hp",
+        "1.6 MultiJet - 105hp",
+        "1.6 MultiJet - 120hp"
+      ]
+    },
+    "ducato": {
+      "2006-2024": [
+        "2.0 MultiJet - 115hp",
+        "2.3 MultiJet - 120hp",
+        "2.3 MultiJet - 130hp",
+        "2.3 MultiJet - 140hp",
+        "2.3 MultiJet - 150hp",
+        "2.3 MultiJet - 180hp"
+      ]
+    },
+    "doblo": {
+      "2010-2022": [
+        "1.4 - 95hp",
+        "1.6 MultiJet - 90hp",
+        "1.6 MultiJet - 105hp",
+        "1.6 MultiJet - 120hp",
+        "2.0 MultiJet - 135hp"
+      ]
+    },
+    "punto": {
+      "1999-2010": [
+        "1.2 - 60hp",
+        "1.2 - 65hp",
+        "1.4 - 77hp",
+        "1.4 - 95hp",
+        "1.3 MultiJet - 70hp",
+        "1.3 MultiJet - 75hp",
+        "1.9 MultiJet - 100hp"
+      ],
+      "2012-2018": [
+        "0.9 TwinAir - 85hp",
+        "1.2 - 69hp",
+        "1.4 - 77hp",
+        "1.3 MultiJet - 85hp",
+        "1.3 MultiJet - 95hp"
+      ]
+    },
+    "bravo": {
+      "2007-2014": [
+        "1.4 - 90hp",
+        "1.4 T-Jet - 120hp",
+        "1.4 T-Jet - 150hp",
+        "1.6 MultiJet - 105hp",
+        "1.6 MultiJet - 120hp",
+        "1.9 MultiJet - 120hp",
+        "1.9 MultiJet - 150hp",
+        "2.0 MultiJet - 165hp"
+      ]
+    },
+    "qubo": {
+      "2008-2021": [
+        "1.3 MultiJet - 75hp",
+        "1.3 MultiJet - 80hp",
+        "1.4 - 73hp",
+        "1.4 - 77hp"
+      ]
+    },
+    "fiorino": {
+      "2008-2024": [
+        "1.3 MultiJet - 75hp",
+        "1.3 MultiJet - 80hp",
+        "1.3 MultiJet - 95hp",
+        "1.4 - 73hp"
+      ]
+    },
+    "talento": {
+      "2016-2024": [
+        "1.6 MultiJet - 95hp",
+        "1.6 MultiJet - 120hp",
+        "1.6 MultiJet - 145hp"
+      ]
+    },
+    "600e": {
+      "2024": [
+        "Electric - 156hp"
+      ]
+    },
+    "500e": {
+      "2008-2012": [
+        "0.9 TwinAir - 65hp",
+        "0.9 TwinAir - 85hp",
+        "1.2 - 69hp",
+        "1.4 - 100hp",
+        "1.3 MultiJet - 75hp",
+        "1.3 MultiJet - 95hp"
+      ],
+      "2013-2015": [
+        "0.9 TwinAir - 65hp",
+        "0.9 TwinAir - 85hp",
+        "1.2 - 69hp",
+        "1.4 - 100hp",
+        "1.3 MultiJet - 95hp"
+      ],
+      "2016-2020": [
+        "0.9 TwinAir - 65hp",
+        "0.9 TwinAir - 85hp",
+        "1.0 Hybrid - 70hp",
+        "1.2 - 69hp",
+        "1.3 MultiJet - 95hp"
+      ],
+      "2021-2024": [
+        "1.0 Hybrid - 70hp",
+        "1.0 Hybrid - 70hp (electric)"
+      ]
+    }
+  },
+  "mercedes": {
+    "a-class": {
+      "2005-2012": [
+        "1.5 A150 - 95hp",
+        "1.7 A160 - 95hp",
+        "2.0 A170 - 116hp",
+        "2.0 A200 - 136hp",
+        "1.5 A150 CDI - 95hp",
+        "1.8 A180 CDI - 109hp",
+        "2.0 A200 CDI - 140hp"
+      ],
+      "2013-2018": [
+        "1.5 A160 - 102hp",
+        "1.6 A180 - 122hp",
+        "2.0 A200 - 156hp",
+        "2.0 A250 - 211hp",
+        "2.0 A45 AMG - 360hp",
+        "1.5 A160d - 90hp",
+        "1.5 A180d - 109hp",
+        "2.1 A200d - 136hp",
+        "2.1 A220d - 177hp"
+      ],
+      "2019-2024": [
+        "1.3 A180 - 136hp",
+        "2.0 A200 - 163hp",
+        "2.0 A250 - 224hp",
+        "2.0 A35 AMG - 306hp",
+        "2.0 A45 AMG - 421hp",
+        "1.5 A180d - 116hp",
+        "2.0 A200d - 150hp",
+        "2.0 A220d - 190hp"
+      ]
+    },
+    "c-class": {
+      "1993-2000": [
+        "1.8 C180 - 122hp",
+        "2.0 C200 - 136hp",
+        "2.2 C220 - 150hp",
+        "2.3 C230 - 150hp",
+        "2.8 C280 - 193hp",
+        "3.6 C36 AMG - 280hp",
+        "2.0 C200 D - 75hp",
+        "2.2 C220 CDI - 95hp",
+        "2.5 C250 D - 113hp",
+        "2.5 C250 TD - 150hp"
+      ],
+      "2001-2007": [
+        "1.8 C180 - 129hp",
+        "2.0 C200 - 163hp",
+        "2.6 C240 - 170hp",
+        "3.2 C320 - 218hp",
+        "5.4 C55 AMG - 367hp",
+        "2.1 C200 CDI - 116hp",
+        "2.1 C220 CDI - 143hp",
+        "2.7 C270 CDI - 170hp",
+        "3.2 C320 CDI - 204hp"
+      ],
+      "2005-2007": [
+        "1.8 C180 - 143hp",
+        "2.5 C230 - 204hp",
+        "3.0 C280 - 231hp",
+        "3.5 C350 - 272hp",
+        "2.1 C200 CDI - 122hp",
+        "2.1 C220 CDI - 150hp",
+        "3.0 C320 CDI - 224hp"
+      ],
+      "2008-2014": [
+        "1.8 C180 - 156hp",
+        "1.8 C200 - 184hp",
+        "3.0 C300 - 231hp",
+        "3.5 C350 - 306hp",
+        "6.2 C63 AMG - 457hp",
+        "2.1 C200 CDI - 136hp",
+        "2.1 C220 CDI - 170hp",
+        "3.0 C320 CDI - 231hp"
+      ],
+      "2015-2021": [
+        "1.6 C160 - 129hp",
+        "2.0 C200 - 184hp",
+        "2.0 C250 - 211hp",
+        "3.0 C400 - 333hp",
+        "4.0 C63 AMG - 476hp",
+        "1.6 C200d - 136hp",
+        "2.1 C220d - 170hp",
+        "2.1 C250d - 204hp",
+        "3.0 C350d - 258hp"
+      ],
+      "2022-2024": [
+        "1.5 C180 - 170hp",
+        "2.0 C200 - 204hp",
+        "2.0 C300 - 258hp",
+        "4.0 C63 AMG - 510hp",
+        "2.0 C200d - 163hp",
+        "2.0 C220d - 200hp",
+        "3.0 C300d - 265hp"
+      ]
+    },
+    "e-class": {
+      "2024": [
+        "2.0 E200 - 204hp",
+        "2.0 E300 - 258hp",
+        "3.0 E450 - 381hp",
+        "2.0 E200d - 163hp",
+        "2.0 E220d - 197hp",
+        "3.0 E300d - 265hp"
+      ],
+      "1995-2002": [
+        "2.0 E200 - 136hp",
+        "2.3 E230 - 150hp",
+        "2.4 E240 - 170hp",
+        "2.8 E280 - 193hp",
+        "3.2 E320 - 224hp",
+        "4.3 E430 - 279hp",
+        "5.5 E55 AMG - 354hp",
+        "2.0 E200 D - 102hp",
+        "2.5 E250 D - 113hp",
+        "2.9 E290 TD - 129hp",
+        "3.0 E300 TD - 177hp"
+      ],
+      "2003-2009": [
+        "1.8 E200 - 163hp",
+        "2.5 E230 - 204hp",
+        "3.0 E280 - 231hp",
+        "3.5 E350 - 272hp",
+        "2.1 E200 CDI - 136hp",
+        "2.1 E220 CDI - 170hp",
+        "3.0 E320 CDI - 224hp"
+      ],
+      "2010-2016": [
+        "1.8 E200 - 184hp",
+        "2.0 E250 - 211hp",
+        "3.0 E300 - 231hp",
+        "3.5 E350 - 306hp",
+        "5.5 E63 AMG - 557hp",
+        "2.1 E200 CDI - 136hp",
+        "2.1 E220 CDI - 170hp",
+        "3.0 E350 CDI - 265hp"
+      ],
+      "2017-2023": [
+        "2.0 E200 - 184hp",
+        "2.0 E250 - 211hp",
+        "2.0 E300 - 245hp",
+        "3.0 E400 - 333hp",
+        "4.0 E63 AMG - 612hp",
+        "2.0 E200d - 150hp",
+        "2.0 E220d - 194hp",
+        "3.0 E350d - 286hp"
+      ]
+    },
+    "gla": {
+      "2014-2019": [
+        "1.6 GLA180 - 122hp",
+        "2.0 GLA200 - 156hp",
+        "2.0 GLA250 - 211hp",
+        "2.0 GLA45 AMG - 360hp",
+        "1.5 GLA180d - 109hp",
+        "2.1 GLA200d - 136hp",
+        "2.1 GLA220d - 177hp"
+      ],
+      "2020-2024": [
+        "1.3 GLA180 - 136hp",
+        "2.0 GLA200 - 163hp",
+        "2.0 GLA250 - 224hp",
+        "2.0 GLA35 AMG - 306hp",
+        "2.0 GLA45 AMG - 421hp",
+        "2.0 GLA200d - 150hp",
+        "2.0 GLA220d - 190hp"
+      ]
+    },
+    "glc": {
+      "2016-2019": [
+        "2.0 GLC200 - 184hp",
+        "2.0 GLC250 - 211hp",
+        "2.0 GLC300 - 245hp",
+        "3.0 GLC43 AMG - 367hp",
+        "2.1 GLC220d - 170hp",
+        "2.1 GLC250d - 204hp",
+        "3.0 GLC350d - 258hp"
+      ],
+      "2020-2024": [
+        "2.0 GLC200 - 197hp",
+        "2.0 GLC300 - 258hp",
+        "3.0 GLC43 AMG - 390hp",
+        "4.0 GLC63 AMG - 476hp",
+        "2.0 GLC200d - 163hp",
+        "2.0 GLC220d - 194hp",
+        "2.0 GLC300d - 245hp"
+      ]
+    },
+    "gle": {
+      "2012-2015": [
+        "3.0 GLE350 - 306hp",
+        "3.5 GLE400 - 333hp",
+        "4.7 GLE450 - 435hp",
+        "2.1 GLE250d - 204hp",
+        "3.0 GLE350d - 258hp"
+      ],
+      "2016-2019": [
+        "2.0 GLE300 - 245hp",
+        "3.0 GLE400 - 333hp",
+        "3.0 GLE43 AMG - 390hp",
+        "2.1 GLE250d - 204hp",
+        "3.0 GLE350d - 258hp",
+        "3.0 GLE400d - 340hp"
+      ],
+      "2020-2024": [
+        "2.0 GLE300 - 258hp",
+        "3.0 GLE450 - 367hp",
+        "3.0 GLE53 AMG - 435hp",
+        "4.0 GLE63 AMG - 612hp",
+        "2.0 GLE300d - 245hp",
+        "3.0 GLE350d - 286hp",
+        "3.0 GLE400d - 330hp"
+      ]
+    },
+    "b-class": {
+      "2005-2011": [
+        "1.5 B150 - 95hp",
+        "1.7 B170 - 116hp",
+        "2.0 B200 - 136hp",
+        "2.0 B200 Turbo - 193hp",
+        "1.5 B150 CDI - 95hp",
+        "1.8 B180 CDI - 109hp",
+        "2.0 B200 CDI - 140hp"
+      ],
+      "2012-2018": [
+        "1.6 B180 - 122hp",
+        "2.0 B200 - 156hp",
+        "2.0 B250 - 211hp",
+        "1.5 B160 CDI - 90hp",
+        "1.8 B180 CDI - 109hp",
+        "2.1 B200 CDI - 136hp",
+        "2.1 B220 CDI - 177hp"
+      ],
+      "2019-2024": [
+        "1.3 B180 - 136hp",
+        "2.0 B200 - 163hp",
+        "2.0 B250 - 224hp",
+        "1.5 B180d - 116hp",
+        "2.0 B200d - 150hp",
+        "2.0 B220d - 190hp"
+      ]
+    },
+    "s-class": {
+      "2006-2013": [
+        "3.0 S300 - 231hp",
+        "3.5 S350 - 272hp",
+        "4.7 S450 - 340hp",
+        "5.5 S500 - 388hp",
+        "6.0 S600 - 517hp",
+        "3.0 S320 CDI - 235hp",
+        "3.0 S350 CDI - 258hp"
+      ],
+      "2014-2020": [
+        "3.0 S400 - 333hp",
+        "4.7 S500 - 455hp",
+        "6.0 S600 - 530hp",
+        "3.0 S350d - 286hp",
+        "3.0 S400d - 340hp"
+      ],
+      "2021-2024": [
+        "3.0 S450 - 367hp",
+        "4.0 S500 - 435hp",
+        "4.0 S580 - 503hp",
+        "3.0 S350d - 286hp",
+        "3.0 S400d - 330hp"
+      ]
+    },
+    "cla": {
+      "2013-2019": [
+        "1.6 CLA180 - 122hp",
+        "2.0 CLA200 - 156hp",
+        "2.0 CLA250 - 211hp",
+        "2.0 CLA45 AMG - 381hp",
+        "1.5 CLA180d - 109hp",
+        "2.1 CLA200d - 136hp",
+        "2.1 CLA220d - 177hp"
+      ],
+      "2020-2024": [
+        "1.3 CLA180 - 136hp",
+        "2.0 CLA200 - 163hp",
+        "2.0 CLA250 - 224hp",
+        "2.0 CLA35 AMG - 306hp",
+        "2.0 CLA45 AMG - 421hp",
+        "1.5 CLA180d - 116hp",
+        "2.0 CLA200d - 150hp",
+        "2.0 CLA220d - 190hp"
+      ]
+    },
+    "cls": {
+      "2004-2010": [
+        "3.0 CLS350 - 272hp",
+        "5.0 CLS500 - 388hp",
+        "5.5 CLS55 AMG - 476hp",
+        "6.3 CLS63 AMG - 514hp",
+        "3.0 CLS320 CDI - 224hp"
+      ],
+      "2011-2018": [
+        "3.0 CLS350 - 306hp",
+        "4.7 CLS500 - 408hp",
+        "5.5 CLS63 AMG - 557hp",
+        "2.1 CLS250 CDI - 204hp",
+        "3.0 CLS350 CDI - 265hp"
+      ],
+      "2019-2024": [
+        "3.0 CLS450 - 367hp",
+        "3.0 CLS53 AMG - 435hp",
+        "2.0 CLS300d - 245hp",
+        "3.0 CLS350d - 286hp",
+        "3.0 CLS400d - 340hp"
+      ]
+    },
+    "glb": {
+      "2020-2024": [
+        "1.3 GLB200 - 163hp",
+        "2.0 GLB250 - 224hp",
+        "2.0 GLB35 AMG - 306hp",
+        "2.0 GLB200d - 150hp",
+        "2.0 GLB220d - 190hp"
+      ]
+    },
+    "gls": {
+      "2016-2019": [
+        "3.0 GLS350d - 258hp",
+        "3.0 GLS400 - 333hp",
+        "4.7 GLS500 - 455hp",
+        "5.5 GLS63 AMG - 585hp"
+      ],
+      "2020-2024": [
+        "3.0 GLS450 - 367hp",
+        "4.0 GLS580 - 489hp",
+        "4.0 GLS63 AMG - 612hp",
+        "3.0 GLS350d - 286hp",
+        "3.0 GLS400d - 330hp"
+      ]
+    },
+    "g-class": {
+      "2000-2018": [
+        "3.0 G350 - 211hp",
+        "5.0 G500 - 388hp",
+        "5.5 G55 AMG - 507hp",
+        "6.3 G63 AMG - 544hp",
+        "3.0 G350d - 245hp"
+      ],
+      "2019-2024": [
+        "3.0 G350 - 286hp",
+        "4.0 G500 - 422hp",
+        "4.0 G63 AMG - 585hp",
+        "3.0 G350d - 286hp",
+        "2.9 G400d - 330hp"
+      ]
+    },
+    "sl": {
+      "2001-2011": [
+        "3.7 SL350 - 245hp",
+        "5.0 SL500 - 388hp",
+        "5.5 SL55 AMG - 517hp",
+        "6.0 SL600 - 517hp",
+        "6.3 SL63 AMG - 525hp",
+        "6.5 SL65 AMG - 612hp"
+      ],
+      "2012-2020": [
+        "3.0 SL350 - 306hp",
+        "3.5 SL400 - 333hp",
+        "4.7 SL500 - 435hp",
+        "5.5 SL63 AMG - 585hp",
+        "6.0 SL65 AMG - 630hp"
+      ]
+    },
+    "slc": {
+      "2016-2020": [
+        "1.6 SLC180 - 156hp",
+        "2.0 SLC200 - 184hp",
+        "2.0 SLC300 - 245hp",
+        "3.0 SLC43 AMG - 367hp"
+      ]
+    },
+    "amg-gt": {
+      "2015-2024": [
+        "4.0 AMG GT - 476hp",
+        "4.0 AMG GT S - 522hp",
+        "4.0 AMG GT C - 557hp",
+        "4.0 AMG GT R - 585hp"
+      ]
+    },
+    "eqc": {
+      "2019-2024": [
+        "Electric EQC400 - 408hp"
+      ]
+    },
+    "eqa": {
+      "2021-2024": [
+        "Electric EQA250 - 190hp",
+        "Electric EQA350 - 292hp"
+      ]
+    },
+    "eqb": {
+      "2022-2024": [
+        "Electric EQB250 - 190hp",
+        "Electric EQB350 - 292hp"
+      ]
+    },
+    "eqs": {
+      "2022-2024": [
+        "Electric 450+ - 333hp",
+        "Electric 500 - 449hp",
+        "Electric AMG 53 - 658hp"
+      ]
+    },
+    "eqe": {
+      "2022-2024": [
+        "Electric 300 - 245hp",
+        "Electric 350+ - 292hp",
+        "Electric AMG 43 - 476hp",
+        "Electric AMG 53 - 687hp"
+      ]
+    },
+    "v-class": {
+      "2015-2024": [
+        "2.0 V200d - 136hp",
+        "2.0 V220d - 163hp",
+        "2.0 V250d - 190hp",
+        "2.0 V300d - 239hp"
+      ]
+    },
+    "vito": {
+      "2015-2024": [
+        "1.6 109 CDI - 88hp",
+        "1.6 111 CDI - 114hp",
+        "2.0 114 CDI - 136hp",
+        "2.0 116 CDI - 163hp",
+        "2.0 119 CDI - 190hp"
+      ]
+    },
+    "sprinter": {
+      "2019-2024": [
+        "2.0 314 CDI - 143hp",
+        "2.0 316 CDI - 163hp",
+        "2.0 319 CDI - 190hp",
+        "2.0 324 CDI - 245hp"
+      ]
+    },
+    "a35-amg": {
+      "2019-2024": [
+        "2.0 - 306hp"
+      ]
+    },
+    "a45-amg": {
+      "2014-2019": [
+        "2.0 - 381hp"
+      ],
+      "2020-2024": [
+        "2.0 - 421hp"
+      ]
+    },
+    "c43-amg": {
+      "2016-2024": [
+        "3.0 V6 - 390hp"
+      ]
+    },
+    "c63-amg": {
+      "2008-2014": [
+        "6.2 V8 - 457hp"
+      ],
+      "2015-2024": [
+        "4.0 V8 - 476hp",
+        "4.0 V8 S - 510hp"
+      ]
+    },
+    "e43-amg": {
+      "2017-2024": [
+        "3.0 V6 - 401hp"
+      ]
+    },
+    "e63-amg": {
+      "2010-2016": [
+        "5.5 V8 - 557hp"
+      ],
+      "2017-2024": [
+        "4.0 V8 - 612hp"
+      ]
+    },
+    "glc43-amg": {
+      "2017-2024": [
+        "3.0 V6 - 390hp"
+      ]
+    },
+    "glc63-amg": {
+      "2018-2024": [
+        "4.0 V8 - 476hp",
+        "4.0 V8 S - 510hp"
+      ]
+    },
+    "gle43-amg": {
+      "2017-2024": [
+        "3.0 V6 - 390hp"
+      ]
+    },
+    "gle63-amg": {
+      "2016-2019": [
+        "5.5 V8 - 557hp"
+      ],
+      "2020-2024": [
+        "4.0 V8 - 612hp"
+      ]
+    }
+  },
+  "vauxhall": {
+    "corsa": {
+      "2006-2010": [
+        "1.0 - 60hp",
+        "1.2 - 80hp",
+        "1.4 - 90hp",
+        "1.6 Turbo - 192hp",
+        "1.3 CDTi - 75hp",
+        "1.3 CDTi - 90hp",
+        "1.7 CDTi - 125hp"
+      ],
+      "2011-2014": [
+        "1.0 - 65hp",
+        "1.2 - 85hp",
+        "1.4 - 100hp",
+        "1.4 Turbo - 120hp",
+        "1.6 Turbo VXR - 192hp",
+        "1.3 CDTi - 75hp",
+        "1.3 CDTi - 95hp"
+      ],
+      "2015-2019": [
+        "1.0 - 90hp",
+        "1.2 - 70hp",
+        "1.4 - 90hp",
+        "1.4 Turbo - 100hp",
+        "1.6 Turbo VXR - 202hp",
+        "1.3 CDTi - 75hp",
+        "1.3 CDTi - 95hp"
+      ],
+      "2020-2024": [
+        "1.2 - 75hp",
+        "1.2 Turbo - 100hp",
+        "1.2 Turbo - 130hp",
+        "1.5 Turbo D - 100hp",
+        "1.5 Turbo D - 130hp"
+      ]
+    },
+    "astra": {
+      "2004-2009": [
+        "1.4 - 90hp",
+        "1.6 - 105hp",
+        "1.8 - 140hp",
+        "2.0 Turbo - 200hp",
+        "1.3 CDTi - 90hp",
+        "1.7 CDTi - 110hp",
+        "1.9 CDTi - 120hp",
+        "1.9 CDTi - 150hp"
+      ],
+      "2010-2015": [
+        "1.4 - 100hp",
+        "1.4 Turbo - 120hp",
+        "1.4 Turbo - 140hp",
+        "1.6 - 115hp",
+        "1.6 Turbo - 180hp",
+        "2.0 Turbo VXR - 280hp",
+        "1.3 CDTi - 95hp",
+        "1.7 CDTi - 110hp",
+        "1.7 CDTi - 130hp",
+        "2.0 CDTi - 165hp"
+      ],
+      "2016-2021": [
+        "1.0 Turbo - 105hp",
+        "1.4 Turbo - 125hp",
+        "1.4 Turbo - 145hp",
+        "1.6 Turbo - 200hp",
+        "1.5 Turbo D - 105hp",
+        "1.5 Turbo D - 122hp",
+        "1.6 Turbo D - 136hp",
+        "2.0 Turbo D - 170hp"
+      ],
+      "2022-2024": [
+        "1.2 Turbo - 110hp",
+        "1.2 Turbo - 130hp",
+        "1.5 Turbo D - 130hp"
+      ]
+    },
+    "insignia": {
+      "2009-2013": [
+        "1.6 - 115hp",
+        "1.8 - 140hp",
+        "2.0 Turbo - 220hp",
+        "2.8 V6 Turbo - 260hp",
+        "2.0 CDTi - 130hp",
+        "2.0 CDTi - 160hp",
+        "2.0 CDTi - 190hp"
+      ],
+      "2014-2017": [
+        "1.4 Turbo - 140hp",
+        "1.6 Turbo - 170hp",
+        "2.0 Turbo - 250hp",
+        "2.8 V6 Turbo VXR - 325hp",
+        "1.6 CDTi - 110hp",
+        "1.6 CDTi - 136hp",
+        "2.0 CDTi - 140hp",
+        "2.0 CDTi - 170hp"
+      ],
+      "2018-2024": [
+        "1.5 Turbo - 140hp",
+        "1.5 Turbo - 165hp",
+        "2.0 Turbo - 230hp",
+        "1.5 Turbo D - 122hp",
+        "2.0 Turbo D - 170hp"
+      ]
+    },
+    "mokka": {
+      "2013-2019": [
+        "1.4 - 140hp",
+        "1.4 Turbo - 140hp",
+        "1.6 - 115hp",
+        "1.7 CDTi - 130hp"
+      ],
+      "2020-2024": [
+        "1.2 Turbo - 100hp",
+        "1.2 Turbo - 130hp",
+        "1.5 Turbo D - 110hp"
+      ]
+    },
+    "crossland": {
+      "2017-2024": [
+        "1.2 - 83hp",
+        "1.2 Turbo - 110hp",
+        "1.2 Turbo - 130hp",
+        "1.5 Turbo D - 102hp",
+        "1.5 Turbo D - 120hp"
+      ]
+    },
+    "grandland": {
+      "2018-2024": [
+        "1.2 Turbo - 130hp",
+        "1.6 Turbo - 180hp",
+        "1.6 PHEV - 300hp",
+        "1.5 Turbo D - 130hp",
+        "2.0 Turbo D - 177hp"
+      ]
+    },
+    "combo": {
+      "2012-2018": [
+        "1.4 - 95hp",
+        "1.6 CDTi - 90hp",
+        "1.6 CDTi - 105hp"
+      ],
+      "2019-2024": [
+        "1.2 Turbo - 110hp",
+        "1.5 Turbo D - 100hp",
+        "1.5 Turbo D - 130hp"
+      ]
+    },
+    "vivaro": {
+      "2014-2019": [
+        "1.6 CDTi - 90hp",
+        "1.6 CDTi - 120hp",
+        "1.6 CDTi - 145hp"
+      ],
+      "2020-2024": [
+        "1.5 Turbo D - 100hp",
+        "1.5 Turbo D - 120hp",
+        "2.0 Turbo D - 120hp",
+        "2.0 Turbo D - 150hp",
+        "2.0 Turbo D - 180hp"
+      ]
+    },
+    "movano": {
+      "2010-2021": [
+        "2.3 CDTi - 100hp",
+        "2.3 CDTi - 125hp",
+        "2.3 CDTi - 145hp",
+        "2.3 CDTi - 165hp"
+      ]
+    },
+    "corsa-e": {
+      "2020-2024": [
+        "Electric - 136hp"
+      ]
+    },
+    "mokka-e": {
+      "2021-2024": [
+        "Electric - 136hp"
+      ]
+    },
+    "zafira": {
+      "2005-2014": [
+        "1.6 - 115hp",
+        "1.8 - 140hp",
+        "2.2 - 150hp",
+        "1.7 CDTi - 110hp",
+        "1.9 CDTi - 120hp",
+        "1.9 CDTi - 150hp",
+        "2.0 CDTi - 165hp"
+      ],
+      "2015-2019": [
+        "1.4 Turbo - 120hp",
+        "1.4 Turbo - 140hp",
+        "1.6 - 115hp",
+        "1.6 CDTi - 120hp",
+        "2.0 CDTi - 170hp"
+      ]
+    },
+    "ampera": {
+      "2012-2015": [
+        "1.4 Electric Range Extender - 150hp"
+      ]
+    },
+    "corsa-vxr": {
+      "2007-2014": [
+        "1.6 Turbo - 192hp"
+      ],
+      "2015-2019": [
+        "1.6 Turbo - 202hp"
+      ]
+    },
+    "astra-vxr": {
+      "2005-2010": [
+        "2.0 Turbo - 240hp"
+      ],
+      "2011-2015": [
+        "2.0 Turbo - 280hp"
+      ]
+    }
+  },
+  "nissan": {
+    "micra": {
+      "2003-2010": [
+        "1.0 - 65hp",
+        "1.2 - 80hp",
+        "1.4 - 88hp",
+        "1.6 - 110hp",
+        "1.5 dCi - 65hp",
+        "1.5 dCi - 82hp"
+      ],
+      "2011-2016": [
+        "1.2 - 80hp",
+        "1.2 DIG-S - 98hp",
+        "1.5 dCi - 90hp"
+      ],
+      "2017-2024": [
+        "0.9 IG-T - 90hp",
+        "1.0 IG-T - 100hp",
+        "1.5 dCi - 90hp"
+      ]
+    },
+    "note": {
+      "2006-2012": [
+        "1.4 - 88hp",
+        "1.6 - 110hp",
+        "1.5 dCi - 68hp",
+        "1.5 dCi - 86hp",
+        "1.5 dCi - 90hp"
+      ],
+      "2013-2020": [
+        "1.2 - 80hp",
+        "1.2 DIG-S - 98hp",
+        "1.5 dCi - 90hp"
+      ],
+      "2021-2024": [
+        "1.0 IG-T - 100hp",
+        "1.3 DIG-T - 140hp"
+      ]
+    },
+    "pulsar": {
+      "2014-2018": [
+        "1.2 DIG-T - 115hp",
+        "1.6 DIG-T - 190hp",
+        "1.5 dCi - 110hp"
+      ]
+    },
+    "juke": {
+      "2010-2014": [
+        "1.2 DIG-T - 115hp",
+        "1.6 - 94hp",
+        "1.6 - 117hp",
+        "1.6 Turbo - 190hp",
+        "1.5 dCi - 110hp"
+      ],
+      "2015-2019": [
+        "1.2 DIG-T - 115hp",
+        "1.6 - 112hp",
+        "1.6 DIG-T - 163hp",
+        "1.6 Nismo - 218hp",
+        "1.5 dCi - 110hp"
+      ],
+      "2020-2024": [
+        "1.0 DIG-T - 114hp",
+        "1.3 DIG-T - 140hp"
+      ]
+    },
+    "qashqai": {
+      "2007-2013": [
+        "1.6 - 114hp",
+        "2.0 - 141hp",
+        "1.5 dCi - 106hp",
+        "1.5 dCi - 110hp",
+        "1.6 dCi - 130hp",
+        "2.0 dCi - 150hp"
+      ],
+      "2014-2020": [
+        "1.2 DIG-T - 115hp",
+        "1.6 DIG-T - 163hp",
+        "1.5 dCi - 110hp",
+        "1.6 dCi - 130hp",
+        "1.7 dCi - 150hp"
+      ],
+      "2021-2024": [
+        "1.3 DIG-T - 140hp",
+        "1.3 DIG-T - 158hp",
+        "1.5 e-Power - 158hp"
+      ]
+    },
+    "x-trail": {
+      "2007-2013": [
+        "2.0 - 141hp",
+        "2.5 - 169hp",
+        "1.6 dCi - 130hp",
+        "2.0 dCi - 150hp",
+        "2.0 dCi - 173hp"
+      ],
+      "2014-2021": [
+        "1.6 DIG-T - 163hp",
+        "1.7 dCi - 150hp",
+        "2.0 dCi - 177hp"
+      ],
+      "2022-2024": [
+        "1.5 e-Power - 204hp"
+      ]
+    },
+    "leaf": {
+      "2011-2017": [
+        "Electric - 109hp"
+      ],
+      "2018-2022": [
+        "Electric - 150hp",
+        "Electric - 217hp"
+      ],
+      "2023-2024": [
+        "Electric - 150hp"
+      ]
+    },
+    "gt-r": {
+      "2009-2016": [
+        "3.8 V6 Twin Turbo - 550hp"
+      ],
+      "2017-2024": [
+        "3.8 V6 Twin Turbo - 570hp"
+      ]
+    },
+    "navara": {
+      "2005-2015": [
+        "2.5 dCi - 144hp",
+        "2.5 dCi - 174hp",
+        "2.5 dCi - 190hp",
+        "3.0 dCi - 231hp"
+      ],
+      "2016-2024": [
+        "2.3 dCi - 160hp",
+        "2.3 dCi - 190hp"
+      ]
+    },
+    "nv200": {
+      "2010-2024": [
+        "1.5 dCi - 90hp",
+        "1.5 dCi - 110hp",
+        "1.6 - 109hp"
+      ]
+    },
+    "nv300": {
+      "2016-2024": [
+        "1.6 dCi - 95hp",
+        "1.6 dCi - 120hp",
+        "1.6 dCi - 145hp"
+      ]
+    },
+    "nv400": {
+      "2011-2024": [
+        "2.3 dCi - 110hp",
+        "2.3 dCi - 125hp",
+        "2.3 dCi - 145hp",
+        "2.3 dCi - 165hp"
+      ]
+    },
+    "ariya": {
+      "2022-2024": [
+        "Electric 63kWh - 218hp",
+        "Electric 87kWh - 242hp",
+        "Electric 87kWh e-4ORCE - 306hp"
+      ]
+    },
+    "370z": {
+      "2009-2020": [
+        "3.7 V6 - 328hp",
+        "3.7 V6 Nismo - 350hp"
+      ]
+    },
+    "350z": {
+      "2003-2009": [
+        "3.5 V6 - 280hp",
+        "3.5 V6 - 300hp",
+        "3.5 V6 - 313hp"
+      ]
+    },
+    "patrol": {
+      "1998-2010": [
+        "2.8 TD - 129hp",
+        "3.0 TD - 158hp",
+        "4.8 - 248hp"
+      ],
+      "2011-2024": [
+        "5.6 V8 - 400hp"
+      ]
+    },
+    "pathfinder": {
+      "2005-2014": [
+        "2.5 dCi - 174hp",
+        "2.5 dCi - 190hp",
+        "3.0 dCi - 231hp",
+        "4.0 V6 - 269hp"
+      ],
+      "2015-2024": [
+        "2.3 dCi - 190hp",
+        "2.5 - 184hp",
+        "3.5 V6 - 284hp"
+      ]
+    },
+    "primastar": {
+      "2002-2014": [
+        "1.9 dCi - 82hp",
+        "1.9 dCi - 100hp",
+        "2.0 dCi - 114hp",
+        "2.0 dCi - 150hp"
+      ],
+      "2015-2024": [
+        "1.6 dCi - 120hp",
+        "1.6 dCi - 145hp",
+        "2.0 dCi - 150hp"
+      ]
+    },
+    "interstar": {
+      "2004-2024": [
+        "2.5 dCi - 115hp",
+        "2.5 dCi - 145hp",
+        "2.3 dCi - 110hp",
+        "2.3 dCi - 150hp",
+        "2.3 dCi - 170hp"
+      ]
+    },
+    "pixo": {
+      "2009-2013": [
+        "1.0 - 68hp"
+      ]
+    }
+  },
+  "peugeot": {
+    "108": {
+      "2014-2021": [
+        "1.0 - 68hp",
+        "1.2 - 82hp"
+      ]
+    },
+    "208": {
+      "2012-2019": [
+        "1.0 - 68hp",
+        "1.2 - 82hp",
+        "1.2 PureTech - 110hp",
+        "1.6 THP - 165hp",
+        "1.6 GTi - 208hp",
+        "1.4 HDi - 68hp",
+        "1.6 BlueHDi - 75hp",
+        "1.6 BlueHDi - 100hp",
+        "1.6 BlueHDi - 120hp"
+      ],
+      "2020-2024": [
+        "1.2 PureTech - 75hp",
+        "1.2 PureTech - 100hp",
+        "1.2 PureTech - 130hp",
+        "1.5 BlueHDi - 100hp",
+        "1.5 BlueHDi - 130hp"
+      ]
+    },
+    "307": {
+      "2001-2008": [
+        "1.4 - 90hp",
+        "1.6 - 110hp",
+        "2.0 - 140hp",
+        "1.6 HDi - 90hp",
+        "1.6 HDi - 110hp",
+        "2.0 HDi - 90hp",
+        "2.0 HDi - 110hp",
+        "2.0 HDi - 136hp"
+      ]
+    },
+    "308": {
+      "2007-2013": [
+        "1.4 - 95hp",
+        "1.6 - 120hp",
+        "1.6 THP - 140hp",
+        "1.6 THP - 156hp",
+        "1.6 THP - 200hp",
+        "1.6 HDi - 90hp",
+        "1.6 HDi - 110hp",
+        "2.0 HDi - 136hp",
+        "2.0 HDi - 163hp"
+      ],
+      "2014-2021": [
+        "1.2 PureTech - 110hp",
+        "1.2 PureTech - 130hp",
+        "1.6 THP - 125hp",
+        "1.6 THP - 165hp",
+        "1.6 THP - 270hp",
+        "1.5 BlueHDi - 100hp",
+        "1.5 BlueHDi - 130hp",
+        "1.6 BlueHDi - 120hp",
+        "2.0 BlueHDi - 150hp",
+        "2.0 BlueHDi - 180hp"
+      ],
+      "2022-2024": [
+        "1.2 PureTech - 110hp",
+        "1.2 PureTech - 130hp",
+        "1.6 PureTech - 180hp",
+        "1.5 BlueHDi - 130hp"
+      ]
+    },
+    "407": {
+      "2004-2011": [
+        "1.8 - 125hp",
+        "2.0 - 140hp",
+        "2.2 - 158hp",
+        "3.0 V6 - 211hp",
+        "1.6 HDi - 110hp",
+        "2.0 HDi - 136hp",
+        "2.0 HDi - 163hp",
+        "2.7 HDi - 204hp"
+      ]
+    },
+    "508": {
+      "2011-2018": [
+        "1.6 THP - 156hp",
+        "1.6 THP - 165hp",
+        "2.0 - 140hp",
+        "2.0 THP - 204hp",
+        "1.6 HDi - 115hp",
+        "1.6 HDi - 120hp",
+        "2.0 HDi - 140hp",
+        "2.0 HDi - 163hp",
+        "2.0 HDi - 180hp"
+      ],
+      "2019-2024": [
+        "1.5 BlueHDi - 130hp",
+        "1.6 PureTech - 180hp",
+        "1.6 PureTech - 225hp",
+        "2.0 BlueHDi - 163hp",
+        "2.0 BlueHDi - 180hp"
+      ]
+    },
+    "2008": {
+      "2013-2019": [
+        "1.2 - 82hp",
+        "1.2 PureTech - 110hp",
+        "1.6 THP - 165hp",
+        "1.4 HDi - 68hp",
+        "1.6 HDi - 92hp",
+        "1.6 BlueHDi - 100hp",
+        "1.6 BlueHDi - 120hp"
+      ],
+      "2020-2024": [
+        "1.2 PureTech - 100hp",
+        "1.2 PureTech - 130hp",
+        "1.5 BlueHDi - 110hp",
+        "1.5 BlueHDi - 130hp"
+      ]
+    },
+    "3008": {
+      "2009-2016": [
+        "1.6 - 120hp",
+        "1.6 THP - 156hp",
+        "1.6 THP - 165hp",
+        "1.6 HDi - 112hp",
+        "1.6 HDi - 115hp",
+        "2.0 HDi - 136hp",
+        "2.0 HDi - 150hp",
+        "2.0 HDi - 163hp"
+      ],
+      "2017-2024": [
+        "1.2 PureTech - 130hp",
+        "1.6 PureTech - 180hp",
+        "1.6 PureTech - 300hp",
+        "1.5 BlueHDi - 130hp",
+        "2.0 BlueHDi - 163hp",
+        "2.0 BlueHDi - 180hp"
+      ]
+    },
+    "4007": {
+      "2007-2012": [
+        "2.2 HDi - 156hp",
+        "2.4 - 170hp"
+      ]
+    },
+    "5008": {
+      "2009-2016": [
+        "1.6 THP - 156hp",
+        "1.6 THP - 165hp",
+        "1.6 HDi - 112hp",
+        "1.6 HDi - 115hp",
+        "2.0 HDi - 150hp",
+        "2.0 HDi - 163hp"
+      ],
+      "2017-2024": [
+        "1.2 PureTech - 130hp",
+        "1.6 PureTech - 180hp",
+        "1.5 BlueHDi - 130hp",
+        "2.0 BlueHDi - 163hp",
+        "2.0 BlueHDi - 180hp"
+      ]
+    },
+    "rifter": {
+      "2018-2024": [
+        "1.2 PureTech - 110hp",
+        "1.5 BlueHDi - 100hp",
+        "1.5 BlueHDi - 130hp"
+      ]
+    },
+    "partner": {
+      "2008-2018": [
+        "1.6 - 98hp",
+        "1.6 VTi - 120hp",
+        "1.6 HDi - 75hp",
+        "1.6 HDi - 90hp",
+        "1.6 HDi - 115hp"
+      ],
+      "2019-2024": [
+        "1.2 PureTech - 110hp",
+        "1.5 BlueHDi - 100hp",
+        "1.5 BlueHDi - 130hp"
+      ]
+    },
+    "boxer": {
+      "2006-2014": [
+        "2.2 HDi - 100hp",
+        "2.2 HDi - 110hp",
+        "2.2 HDi - 120hp",
+        "2.2 HDi - 130hp",
+        "3.0 HDi - 156hp",
+        "3.0 HDi - 180hp"
+      ],
+      "2015-2024": [
+        "2.0 BlueHDi - 130hp",
+        "2.0 BlueHDi - 140hp",
+        "2.0 BlueHDi - 165hp",
+        "2.2 BlueHDi - 140hp",
+        "2.2 BlueHDi - 165hp"
+      ]
+    },
+    "e-208": {
+      "2020-2024": [
+        "Electric - 136hp",
+        "Electric - 156hp"
+      ]
+    },
+    "e-2008": {
+      "2020-2024": [
+        "Electric - 136hp",
+        "Electric - 156hp"
+      ]
+    },
+    "expert": {
+      "2007-2016": [
+        "2.0 HDi - 120hp",
+        "2.0 HDi - 136hp",
+        "2.0 HDi - 163hp"
+      ],
+      "2017-2024": [
+        "1.5 BlueHDi - 100hp",
+        "1.5 BlueHDi - 120hp",
+        "2.0 BlueHDi - 120hp",
+        "2.0 BlueHDi - 150hp",
+        "2.0 BlueHDi - 180hp"
+      ]
+    },
+    "208-gti": {
+      "2013-2019": [
+        "1.6 THP - 208hp"
+      ]
+    },
+    "308-gti": {
+      "2015-2021": [
+        "1.6 THP - 270hp"
+      ]
+    },
+    "rcz": {
+      "2010-2015": [
+        "1.6 THP - 156hp",
+        "1.6 THP - 200hp",
+        "1.6 THP - 270hp",
+        "2.0 HDi - 163hp"
+      ]
+    }
+  },
+  "renault": {
+    "clio": {
+      "2005-2012": [
+        "1.2 - 75hp",
+        "1.4 - 98hp",
+        "1.6 - 110hp",
+        "2.0 RS - 197hp",
+        "1.5 dCi - 65hp",
+        "1.5 dCi - 85hp",
+        "1.5 dCi - 106hp"
+      ],
+      "2013-2019": [
+        "0.9 TCe - 90hp",
+        "1.2 - 75hp",
+        "1.2 TCe - 120hp",
+        "1.6 RS - 200hp",
+        "1.5 dCi - 75hp",
+        "1.5 dCi - 90hp",
+        "1.5 dCi - 110hp"
+      ],
+      "2020-2024": [
+        "1.0 TCe - 90hp",
+        "1.0 TCe - 100hp",
+        "1.3 TCe - 130hp",
+        "1.3 TCe - 140hp",
+        "1.5 Blue dCi - 85hp",
+        "1.5 Blue dCi - 115hp"
+      ]
+    },
+    "megane": {
+      "2003-2008": [
+        "1.4 - 98hp",
+        "1.6 - 113hp",
+        "2.0 - 136hp",
+        "2.0 RS - 225hp",
+        "1.5 dCi - 82hp",
+        "1.5 dCi - 105hp",
+        "1.9 dCi - 120hp"
+      ],
+      "2009-2015": [
+        "1.4 TCe - 130hp",
+        "1.6 - 110hp",
+        "2.0 - 140hp",
+        "2.0 TCe - 180hp",
+        "2.0 RS - 265hp",
+        "1.5 dCi - 90hp",
+        "1.5 dCi - 110hp",
+        "1.9 dCi - 130hp"
+      ],
+      "2016-2022": [
+        "1.2 TCe - 115hp",
+        "1.2 TCe - 130hp",
+        "1.6 TCe - 165hp",
+        "1.8 TCe - 280hp",
+        "1.5 dCi - 90hp",
+        "1.5 dCi - 110hp",
+        "1.6 dCi - 130hp",
+        "1.7 Blue dCi - 150hp"
+      ],
+      "2023-2024": [
+        "1.2 TCe - 130hp",
+        "1.6 E-Tech - 200hp"
+      ]
+    },
+    "captur": {
+      "2013-2019": [
+        "0.9 TCe - 90hp",
+        "1.2 TCe - 120hp",
+        "1.5 dCi - 90hp",
+        "1.5 dCi - 110hp"
+      ],
+      "2020-2024": [
+        "1.0 TCe - 100hp",
+        "1.3 TCe - 130hp",
+        "1.3 TCe - 155hp",
+        "1.5 Blue dCi - 95hp",
+        "1.5 Blue dCi - 115hp",
+        "1.6 E-Tech - 145hp"
+      ]
+    },
+    "kadjar": {
+      "2016-2022": [
+        "1.2 TCe - 130hp",
+        "1.3 TCe - 140hp",
+        "1.3 TCe - 160hp",
+        "1.5 dCi - 110hp",
+        "1.6 dCi - 130hp",
+        "1.7 Blue dCi - 150hp",
+        "2.0 Blue dCi - 190hp"
+      ]
+    },
+    "koleos": {
+      "2008-2015": [
+        "2.0 - 140hp",
+        "2.5 - 171hp",
+        "2.0 dCi - 150hp",
+        "2.0 dCi - 173hp"
+      ],
+      "2017-2024": [
+        "1.7 Blue dCi - 150hp",
+        "1.7 Blue dCi - 190hp",
+        "2.0 Blue dCi - 190hp"
+      ]
+    },
+    "scenic": {
+      "2003-2009": [
+        "1.4 - 98hp",
+        "1.6 - 113hp",
+        "2.0 - 135hp",
+        "1.5 dCi - 105hp",
+        "1.9 dCi - 120hp",
+        "1.9 dCi - 130hp"
+      ],
+      "2009-2016": [
+        "1.4 TCe - 130hp",
+        "1.6 - 110hp",
+        "2.0 - 140hp",
+        "1.5 dCi - 95hp",
+        "1.5 dCi - 110hp",
+        "1.6 dCi - 130hp",
+        "1.9 dCi - 130hp"
+      ],
+      "2016-2023": [
+        "1.2 TCe - 115hp",
+        "1.2 TCe - 130hp",
+        "1.3 TCe - 140hp",
+        "1.5 dCi - 95hp",
+        "1.5 dCi - 110hp",
+        "1.6 dCi - 130hp",
+        "1.7 Blue dCi - 150hp"
+      ]
+    },
+    "trafic": {
+      "2001-2014": [
+        "1.9 dCi - 100hp",
+        "2.0 dCi - 90hp",
+        "2.0 dCi - 115hp",
+        "2.5 dCi - 145hp"
+      ],
+      "2014-2024": [
+        "1.6 dCi - 95hp",
+        "1.6 dCi - 120hp",
+        "1.6 dCi - 145hp",
+        "2.0 dCi - 120hp",
+        "2.0 dCi - 145hp",
+        "2.0 dCi - 170hp"
+      ]
+    },
+    "master": {
+      "2010-2024": [
+        "2.3 dCi - 100hp",
+        "2.3 dCi - 125hp",
+        "2.3 dCi - 135hp",
+        "2.3 dCi - 145hp",
+        "2.3 dCi - 165hp"
+      ]
+    },
+    "zoe": {
+      "2013-2019": [
+        "Electric R90 - 88hp"
+      ],
+      "2020-2024": [
+        "Electric R110 - 108hp",
+        "Electric R135 - 135hp"
+      ]
+    },
+    "arkana": {
+      "2021-2024": [
+        "1.3 TCe - 140hp",
+        "1.3 TCe - 160hp",
+        "1.6 E-Tech - 145hp"
+      ]
+    },
+    "kangoo": {
+      "2008-2021": [
+        "1.2 TCe - 115hp",
+        "1.5 dCi - 75hp",
+        "1.5 dCi - 90hp",
+        "1.5 dCi - 110hp"
+      ],
+      "2021-2024": [
+        "1.3 TCe - 130hp",
+        "1.5 Blue dCi - 95hp",
+        "1.5 Blue dCi - 115hp"
+      ]
+    },
+    "twingo": {
+      "2007-2014": [
+        "1.2 - 58hp",
+        "1.2 - 75hp",
+        "1.5 dCi - 65hp",
+        "1.5 dCi - 75hp"
+      ],
+      "2014-2024": [
+        "0.9 TCe - 90hp",
+        "1.0 SCe - 65hp",
+        "1.0 SCe - 75hp"
+      ]
+    },
+    "espace": {
+      "2003-2014": [
+        "2.0 - 170hp",
+        "2.0 Turbo - 170hp",
+        "3.5 V6 - 245hp",
+        "1.9 dCi - 120hp",
+        "2.0 dCi - 150hp",
+        "2.0 dCi - 175hp"
+      ],
+      "2015-2024": [
+        "1.6 TCe - 200hp",
+        "1.8 TCe - 225hp",
+        "1.6 dCi - 130hp",
+        "1.6 dCi - 160hp",
+        "2.0 Blue dCi - 200hp"
+      ]
+    },
+    "laguna": {
+      "2007-2015": [
+        "2.0 - 140hp",
+        "2.0 Turbo - 205hp",
+        "3.5 V6 - 240hp",
+        "1.5 dCi - 110hp",
+        "2.0 dCi - 150hp",
+        "2.0 dCi - 175hp"
+      ]
+    },
+    "fluence": {
+      "2010-2016": [
+        "1.6 - 110hp",
+        "2.0 - 140hp",
+        "1.5 dCi - 90hp",
+        "1.5 dCi - 110hp"
+      ]
+    },
+    "wind": {
+      "2010-2013": [
+        "1.2 TCe - 100hp",
+        "1.6 - 133hp"
+      ]
+    },
+    "twizy": {
+      "2012-2024": [
+        "Electric - 17hp"
+      ]
+    },
+    "clio-rs": {
+      "2013-2022": [
+        "1.6 Turbo - 200hp",
+        "1.6 Turbo - 220hp"
+      ]
+    },
+    "megane-rs": {
+      "2010-2017": [
+        "2.0 Turbo - 250hp",
+        "2.0 Turbo - 265hp",
+        "2.0 Turbo - 275hp"
+      ],
+      "2018-2024": [
+        "1.8 TCe - 280hp",
+        "1.8 TCe - 300hp"
+      ]
+    }
+  },
+  "seat": {
+    "ibiza": {
+      "2008-2012": [
+        "1.2 - 60hp",
+        "1.2 - 70hp",
+        "1.4 - 85hp",
+        "1.6 - 105hp",
+        "1.4 TSI - 150hp",
+        "1.9 TDI - 105hp",
+        "2.0 TDI - 143hp"
+      ],
+      "2013-2017": [
+        "1.0 - 75hp",
+        "1.2 TSI - 90hp",
+        "1.2 TSI - 110hp",
+        "1.4 TSI - 140hp",
+        "1.4 TDI - 80hp",
+        "1.4 TDI - 105hp",
+        "1.6 TDI - 90hp",
+        "1.6 TDI - 105hp"
+      ],
+      "2018-2024": [
+        "1.0 TSI - 95hp",
+        "1.0 TSI - 110hp",
+        "1.5 TSI - 150hp",
+        "1.6 TDI - 80hp",
+        "1.6 TDI - 95hp"
+      ]
+    },
+    "leon": {
+      "2005-2012": [
+        "1.4 - 86hp",
+        "1.6 - 102hp",
+        "1.8 TSI - 160hp",
+        "2.0 TSI - 200hp",
+        "2.0 Cupra - 240hp",
+        "1.9 TDI - 105hp",
+        "2.0 TDI - 140hp",
+        "2.0 TDI - 170hp"
+      ],
+      "2013-2020": [
+        "1.0 TSI - 115hp",
+        "1.2 TSI - 110hp",
+        "1.4 TSI - 125hp",
+        "1.8 TSI - 180hp",
+        "2.0 TSI - 190hp",
+        "2.0 Cupra - 300hp",
+        "1.6 TDI - 90hp",
+        "1.6 TDI - 110hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 184hp"
+      ],
+      "2021-2024": [
+        "1.0 eTSI - 110hp",
+        "1.5 eTSI - 130hp",
+        "1.5 eTSI - 150hp",
+        "2.0 TSI - 190hp",
+        "2.0 Cupra - 300hp",
+        "2.0 TDI - 150hp"
+      ]
+    },
+    "ateca": {
+      "2017-2024": [
+        "1.0 TSI - 115hp",
+        "1.5 TSI - 150hp",
+        "2.0 TSI - 190hp",
+        "2.0 Cupra - 300hp",
+        "1.6 TDI - 115hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 190hp"
+      ]
+    },
+    "arona": {
+      "2018-2024": [
+        "1.0 TSI - 95hp",
+        "1.0 TSI - 110hp",
+        "1.5 TSI - 150hp",
+        "1.6 TDI - 95hp",
+        "1.6 TDI - 115hp"
+      ]
+    },
+    "tarraco": {
+      "2019-2024": [
+        "1.5 TSI - 150hp",
+        "2.0 TSI - 190hp",
+        "2.0 TSI - 245hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 200hp"
+      ]
+    },
+    "alhambra": {
+      "2010-2020": [
+        "1.4 TSI - 150hp",
+        "2.0 TSI - 200hp",
+        "2.0 TSI - 220hp",
+        "2.0 TDI - 115hp",
+        "2.0 TDI - 140hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 184hp"
+      ]
+    },
+    "mii": {
+      "2012-2021": [
+        "1.0 - 60hp",
+        "1.0 - 75hp"
+      ]
+    },
+    "toledo": {
+      "2013-2019": [
+        "1.2 TSI - 90hp",
+        "1.2 TSI - 110hp",
+        "1.4 TSI - 125hp",
+        "1.6 TDI - 90hp",
+        "1.6 TDI - 105hp",
+        "1.6 TDI - 110hp"
+      ]
+    },
+    "leon-cupra": {
+      "2014-2020": [
+        "2.0 TSI - 280hp",
+        "2.0 TSI - 290hp",
+        "2.0 TSI - 300hp"
+      ]
+    },
+    "ibiza-cupra": {
+      "2012-2015": [
+        "1.4 TSI - 180hp"
+      ]
+    },
+    "exeo": {
+      "2009-2013": [
+        "1.6 - 102hp",
+        "1.8 TSI - 160hp",
+        "2.0 TSI - 200hp",
+        "1.9 TDI - 120hp",
+        "2.0 TDI - 143hp",
+        "2.0 TDI - 170hp"
+      ]
+    }
+  },
+  "skoda": {
+    "fabia": {
+      "2007-2014": [
+        "1.2 - 60hp",
+        "1.2 - 70hp",
+        "1.4 - 86hp",
+        "1.6 - 105hp",
+        "1.2 TSI - 105hp",
+        "1.4 TSI - 180hp",
+        "1.2 TDI - 75hp",
+        "1.4 TDI - 80hp",
+        "1.6 TDI - 90hp",
+        "1.6 TDI - 105hp"
+      ],
+      "2015-2021": [
+        "1.0 - 60hp",
+        "1.0 - 75hp",
+        "1.2 TSI - 90hp",
+        "1.2 TSI - 110hp",
+        "1.4 TDI - 90hp",
+        "1.4 TDI - 105hp"
+      ],
+      "2022-2024": [
+        "1.0 TSI - 95hp",
+        "1.0 TSI - 110hp",
+        "1.5 TSI - 150hp"
+      ]
+    },
+    "octavia": {
+      "2004-2013": [
+        "1.4 - 80hp",
+        "1.6 - 102hp",
+        "1.8 TSI - 160hp",
+        "2.0 TSI - 200hp",
+        "2.0 RS - 200hp",
+        "1.9 TDI - 105hp",
+        "2.0 TDI - 140hp",
+        "2.0 TDI - 170hp"
+      ],
+      "2014-2019": [
+        "1.0 TSI - 115hp",
+        "1.2 TSI - 110hp",
+        "1.4 TSI - 125hp",
+        "1.4 TSI - 150hp",
+        "1.8 TSI - 180hp",
+        "2.0 TSI - 220hp",
+        "2.0 RS - 245hp",
+        "1.6 TDI - 90hp",
+        "1.6 TDI - 110hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 184hp"
+      ],
+      "2020-2024": [
+        "1.0 TSI - 110hp",
+        "1.5 TSI - 150hp",
+        "2.0 TSI - 190hp",
+        "2.0 RS - 245hp",
+        "2.0 TDI - 115hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 200hp"
+      ]
+    },
+    "kodiaq": {
+      "2017-2024": [
+        "1.5 TSI - 150hp",
+        "2.0 TSI - 190hp",
+        "2.0 TSI - 245hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 200hp"
+      ]
+    },
+    "superb": {
+      "2008-2015": [
+        "1.4 TSI - 125hp",
+        "1.8 TSI - 160hp",
+        "2.0 TSI - 200hp",
+        "3.6 V6 - 260hp",
+        "1.6 TDI - 105hp",
+        "2.0 TDI - 140hp",
+        "2.0 TDI - 170hp"
+      ],
+      "2015-2024": [
+        "1.4 TSI - 150hp",
+        "1.5 TSI - 150hp",
+        "2.0 TSI - 190hp",
+        "2.0 TSI - 280hp",
+        "1.6 TDI - 120hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 190hp"
+      ]
+    },
+    "scala": {
+      "2019-2024": [
+        "1.0 TSI - 95hp",
+        "1.0 TSI - 110hp",
+        "1.5 TSI - 150hp",
+        "1.6 TDI - 115hp"
+      ]
+    },
+    "kamiq": {
+      "2020-2024": [
+        "1.0 TSI - 95hp",
+        "1.0 TSI - 110hp",
+        "1.5 TSI - 150hp"
+      ]
+    },
+    "karoq": {
+      "2018-2024": [
+        "1.0 TSI - 115hp",
+        "1.5 TSI - 150hp",
+        "2.0 TSI - 190hp",
+        "1.6 TDI - 115hp",
+        "2.0 TDI - 150hp"
+      ]
+    },
+    "enyaq": {
+      "2021-2024": [
+        "Electric 60 - 179hp",
+        "Electric 80 - 204hp",
+        "Electric 80x - 265hp",
+        "Electric RS - 299hp"
+      ]
+    },
+    "enyaq-iv": {
+      "2021-2024": [
+        "Electric 60 - 179hp",
+        "Electric 80 - 204hp",
+        "Electric 80x - 265hp",
+        "Electric vRS - 299hp"
+      ]
+    },
+    "citigo": {
+      "2012-2019": [
+        "1.0 - 60hp",
+        "1.0 - 75hp"
+      ]
+    },
+    "rapid": {
+      "2013-2019": [
+        "1.0 TSI - 95hp",
+        "1.0 TSI - 110hp",
+        "1.2 TSI - 110hp",
+        "1.4 TSI - 125hp",
+        "1.6 TDI - 90hp",
+        "1.6 TDI - 105hp",
+        "1.6 TDI - 116hp"
+      ]
+    },
+    "yeti": {
+      "2009-2017": [
+        "1.2 TSI - 105hp",
+        "1.4 TSI - 125hp",
+        "1.8 TSI - 160hp",
+        "2.0 TSI - 180hp",
+        "1.6 TDI - 105hp",
+        "2.0 TDI - 110hp",
+        "2.0 TDI - 140hp",
+        "2.0 TDI - 170hp"
+      ]
+    },
+    "roomster": {
+      "2006-2015": [
+        "1.2 - 64hp",
+        "1.4 - 86hp",
+        "1.6 - 105hp",
+        "1.2 TDI - 75hp",
+        "1.4 TDI - 80hp",
+        "1.9 TDI - 105hp"
+      ]
+    },
+    "octavia-vrs": {
+      "2001-2005": [
+        "1.8 T - 180hp"
+      ],
+      "2006-2013": [
+        "2.0 TSI - 200hp",
+        "2.0 TDI - 170hp"
+      ],
+      "2013-2020": [
+        "2.0 TSI - 220hp",
+        "2.0 TDI - 184hp"
+      ],
+      "2021-2024": [
+        "2.0 TSI - 245hp",
+        "2.0 TDI - 200hp"
+      ]
+    },
+    "superb-scout": {
+      "2020-2024": [
+        "2.0 TSI - 190hp",
+        "2.0 TDI - 200hp"
+      ]
+    }
+  },
+  "toyota": {
+    "aygo": {
+      "2005-2013": [
+        "1.0 VVT-i - 68hp",
+        "1.4 D-4D - 54hp"
+      ],
+      "2014-2021": [
+        "1.0 VVT-i - 69hp",
+        "1.0 VVT-i - 72hp"
+      ]
+    },
+    "yaris": {
+      "1999-2005": [
+        "1.0 VVT-i - 68hp",
+        "1.3 VVT-i - 87hp",
+        "1.5 TS - 106hp",
+        "1.4 D-4D - 75hp"
+      ],
+      "2006-2011": [
+        "1.0 VVT-i - 69hp",
+        "1.3 VVT-i - 87hp",
+        "1.5 VVT-i - 106hp",
+        "1.4 D-4D - 90hp"
+      ],
+      "2012-2019": [
+        "1.0 VVT-i - 69hp",
+        "1.33 VVT-i - 99hp",
+        "1.5 VVT-i - 111hp",
+        "1.4 D-4D - 90hp"
+      ],
+      "2020-2024": [
+        "1.0 VVT-i - 72hp",
+        "1.5 VVT-i Hybrid - 116hp"
+      ]
+    },
+    "corolla": {
+      "1997-2001": [
+        "1.4 VVT-i - 97hp",
+        "1.6 VVT-i - 110hp",
+        "1.8 VVT-i - 125hp",
+        "2.0 D-4D - 90hp"
+      ],
+      "2002-2006": [
+        "1.4 VVT-i - 97hp",
+        "1.6 VVT-i - 110hp",
+        "1.8 VVT-i - 125hp",
+        "2.0 D-4D - 90hp",
+        "2.0 D-4D - 116hp"
+      ],
+      "2007-2013": [
+        "1.4 VVT-i - 97hp",
+        "1.6 VVT-i - 132hp",
+        "1.8 VVT-i - 147hp",
+        "2.0 D-4D - 126hp",
+        "2.2 D-4D - 177hp"
+      ],
+      "2014-2018": [
+        "1.33 VVT-i - 99hp",
+        "1.6 VVT-i - 132hp",
+        "1.8 VVT-i Hybrid - 136hp",
+        "1.4 D-4D - 90hp"
+      ],
+      "2019-2024": [
+        "1.2 Turbo - 116hp",
+        "1.8 VVT-i Hybrid - 122hp",
+        "2.0 VVT-i Hybrid - 184hp"
+      ]
+    },
+    "prius": {
+      "1997-2003": [
+        "1.5 VVT-i Hybrid - 114hp"
+      ],
+      "2004-2009": [
+        "1.5 VVT-i Hybrid - 77hp"
+      ],
+      "2010-2015": [
+        "1.8 VVT-i Hybrid - 136hp"
+      ],
+      "2016-2024": [
+        "1.8 VVT-i Hybrid - 122hp"
+      ]
+    },
+    "camry": {
+      "1997-2001": [
+        "2.0 VVT-i - 128hp",
+        "2.2 VVT-i - 136hp",
+        "3.0 V6 - 188hp"
+      ],
+      "2002-2006": [
+        "2.0 VVT-i - 147hp",
+        "2.4 VVT-i - 152hp",
+        "3.0 V6 - 188hp",
+        "2.0 D-4D - 116hp"
+      ],
+      "2007-2011": [
+        "2.0 VVT-i - 147hp",
+        "2.4 VVT-i - 167hp",
+        "3.5 V6 - 277hp",
+        "2.2 D-4D - 177hp"
+      ],
+      "2012-2017": [
+        "2.0 VVT-i - 152hp",
+        "2.5 VVT-i - 181hp",
+        "3.5 V6 - 277hp"
+      ],
+      "2018-2024": [
+        "2.5 VVT-i - 181hp",
+        "2.5 VVT-i Hybrid - 218hp",
+        "3.5 V6 - 301hp"
+      ]
+    },
+    "c-hr": {
+      "2017-2019": [
+        "1.2 Turbo - 116hp",
+        "1.8 VVT-i Hybrid - 122hp"
+      ],
+      "2020-2024": [
+        "1.2 Turbo - 116hp",
+        "1.8 VVT-i Hybrid - 122hp",
+        "2.0 VVT-i Hybrid - 184hp"
+      ]
+    },
+    "rav4": {
+      "1994-2000": [
+        "2.0 VVT-i - 129hp",
+        "2.0 D-4D - 116hp"
+      ],
+      "2001-2005": [
+        "1.8 VVT-i - 125hp",
+        "2.0 VVT-i - 152hp",
+        "2.0 D-4D - 116hp"
+      ],
+      "2006-2012": [
+        "2.0 VVT-i - 152hp",
+        "2.4 VVT-i - 170hp",
+        "3.5 V6 - 277hp",
+        "2.2 D-4D - 136hp",
+        "2.2 D-4D - 177hp"
+      ],
+      "2013-2018": [
+        "2.0 VVT-i - 152hp",
+        "2.5 VVT-i Hybrid - 197hp",
+        "2.0 D-4D - 124hp",
+        "2.2 D-4D - 150hp"
+      ],
+      "2019-2024": [
+        "2.0 VVT-i - 173hp",
+        "2.5 VVT-i Hybrid - 218hp",
+        "2.5 PHEV - 306hp"
+      ]
+    },
+    "highlander": {
+      "2001-2007": [
+        "2.4 VVT-i - 160hp",
+        "3.0 V6 - 220hp",
+        "3.3 V6 - 230hp"
+      ],
+      "2008-2013": [
+        "2.7 VVT-i - 188hp",
+        "3.5 V6 - 273hp"
+      ],
+      "2014-2019": [
+        "2.7 VVT-i - 188hp",
+        "3.5 V6 - 295hp"
+      ],
+      "2020-2024": [
+        "2.5 Hybrid - 243hp",
+        "3.5 V6 - 295hp"
+      ]
+    },
+    "land-cruiser": {
+      "1998-2007": [
+        "4.0 V6 - 245hp",
+        "4.2 TD - 204hp",
+        "4.5 V8 - 268hp"
+      ],
+      "2008-2015": [
+        "4.0 V6 - 282hp",
+        "4.5 V8 D-4D - 286hp"
+      ],
+      "2016-2021": [
+        "2.8 D-4D - 177hp",
+        "4.0 V6 - 282hp",
+        "4.5 V8 D-4D - 272hp"
+      ],
+      "2022-2024": [
+        "3.3 Turbo D - 309hp",
+        "3.5 V6 - 415hp"
+      ]
+    },
+    "hilux": {
+      "1998-2004": [
+        "2.4 D - 79hp",
+        "2.5 D-4D - 102hp",
+        "2.7 VVT-i - 150hp",
+        "3.0 D-4D - 163hp"
+      ],
+      "2005-2015": [
+        "2.5 D-4D - 102hp",
+        "2.5 D-4D - 144hp",
+        "3.0 D-4D - 171hp",
+        "4.0 V6 - 236hp"
+      ],
+      "2016-2024": [
+        "2.4 D-4D - 150hp",
+        "2.8 D-4D - 177hp",
+        "2.8 D-4D - 204hp"
+      ]
+    },
+    "proace": {
+      "2013-2016": [
+        "1.6 D-4D - 90hp",
+        "1.6 D-4D - 115hp",
+        "2.0 D-4D - 128hp"
+      ],
+      "2017-2024": [
+        "1.6 D-4D - 95hp",
+        "1.6 D-4D - 115hp",
+        "2.0 D-4D - 120hp",
+        "2.0 D-4D - 150hp",
+        "2.0 D-4D - 180hp"
+      ]
+    },
+    "avensis": {
+      "2003-2008": [
+        "1.6 - 110hp",
+        "1.8 - 129hp",
+        "2.0 - 147hp",
+        "2.4 - 163hp",
+        "2.0 D-4D - 116hp",
+        "2.2 D-4D - 150hp",
+        "2.2 D-4D - 177hp"
+      ],
+      "2009-2018": [
+        "1.6 - 132hp",
+        "1.8 - 147hp",
+        "2.0 - 152hp",
+        "2.0 D-4D - 124hp",
+        "2.0 D-4D - 143hp",
+        "2.2 D-4D - 150hp"
+      ]
+    },
+    "auris": {
+      "2007-2012": [
+        "1.4 - 97hp",
+        "1.6 - 124hp",
+        "1.8 - 147hp",
+        "1.4 D-4D - 90hp",
+        "2.0 D-4D - 124hp",
+        "2.2 D-4D - 177hp"
+      ],
+      "2013-2018": [
+        "1.33 - 99hp",
+        "1.6 - 132hp",
+        "1.8 Hybrid - 136hp",
+        "1.4 D-4D - 90hp",
+        "1.6 D-4D - 112hp"
+      ]
+    },
+    "verso": {
+      "2009-2018": [
+        "1.6 - 132hp",
+        "1.8 - 147hp",
+        "2.0 D-4D - 124hp",
+        "2.0 D-4D - 126hp",
+        "2.2 D-4D - 150hp"
+      ]
+    },
+    "supra": {
+      "2019-2024": [
+        "2.0 - 258hp",
+        "3.0 - 340hp",
+        "3.0 - 387hp"
+      ]
+    },
+    "gt86": {
+      "2012-2021": [
+        "2.0 - 200hp"
+      ]
+    },
+    "bz4x": {
+      "2023-2024": [
+        "Electric FWD - 204hp",
+        "Electric AWD - 218hp"
+      ]
+    },
+    "mirai": {
+      "2015-2024": [
+        "Hydrogen Fuel Cell - 154hp",
+        "Hydrogen Fuel Cell - 182hp"
+      ]
+    },
+    "yaris-gr": {
+      "2020-2024": [
+        "1.6 Turbo - 261hp",
+        "1.6 Turbo - 280hp"
+      ]
+    }
+  },
+  "honda": {
+    "jazz": {
+      "2001-2007": [
+        "1.2 i-DSI - 78hp",
+        "1.4 i-DSI - 83hp"
+      ],
+      "2008-2014": [
+        "1.2 i-VTEC - 90hp",
+        "1.4 i-VTEC - 100hp"
+      ],
+      "2015-2019": [
+        "1.3 i-VTEC - 102hp"
+      ],
+      "2020-2024": [
+        "1.0 i-VTEC - 109hp",
+        "1.5 i-MMD Hybrid - 109hp"
+      ]
+    },
+    "civic": {
+      "1996-2000": [
+        "1.4 i - 90hp",
+        "1.5 i - 114hp",
+        "1.6 i VTEC - 125hp"
+      ],
+      "2001-2005": [
+        "1.4 i - 90hp",
+        "1.6 i - 110hp",
+        "1.7 i-VTEC - 115hp",
+        "2.0 i-VTEC Type R - 200hp",
+        "1.7 CTDi - 100hp"
+      ],
+      "2006-2011": [
+        "1.4 i-VTEC - 100hp",
+        "1.8 i-VTEC - 140hp",
+        "2.0 i-VTEC - 201hp",
+        "2.2 i-CTDi - 140hp"
+      ],
+      "2012-2016": [
+        "1.4 i-VTEC - 100hp",
+        "1.8 i-VTEC - 142hp",
+        "2.2 i-DTEc - 150hp"
+      ],
+      "2017-2021": [
+        "1.0 VTEC Turbo - 129hp",
+        "1.5 VTEC Turbo - 182hp",
+        "2.0 VTEC Turbo - 320hp",
+        "1.6 i-DTEC - 120hp"
+      ],
+      "2022-2024": [
+        "1.5 VTEC Turbo - 182hp",
+        "2.0 VTEC Turbo - 330hp",
+        "1.5 Hybrid - 184hp"
+      ]
+    },
+    "accord": {
+      "1998-2002": [
+        "1.8 i - 136hp",
+        "2.0 i - 147hp",
+        "2.3 i - 150hp",
+        "3.0 V6 - 200hp"
+      ],
+      "2003-2007": [
+        "2.0 i-VTEC - 155hp",
+        "2.4 i-VTEC - 190hp",
+        "3.0 i-VTEC - 241hp",
+        "2.2 i-CTDi - 140hp"
+      ],
+      "2008-2015": [
+        "2.0 i-VTEC - 156hp",
+        "2.4 i-VTEC - 201hp",
+        "3.5 i-VTEC - 280hp",
+        "2.2 i-DTEC - 150hp",
+        "2.2 i-DTEC - 180hp"
+      ],
+      "2016-2024": [
+        "1.5 VTEC Turbo - 192hp",
+        "2.0 VTEC Turbo - 252hp",
+        "2.0 Hybrid - 215hp"
+      ]
+    },
+    "cr-v": {
+      "1997-2001": [
+        "2.0 i - 147hp"
+      ],
+      "2002-2006": [
+        "2.0 i-VTEC - 150hp",
+        "2.4 i-VTEC - 162hp"
+      ],
+      "2007-2012": [
+        "2.0 i-VTEC - 150hp",
+        "2.4 i-VTEC - 190hp",
+        "2.2 i-CTDi - 140hp",
+        "2.2 i-DTEc - 150hp"
+      ],
+      "2013-2017": [
+        "2.0 i-VTEC - 155hp",
+        "2.4 i-VTEC - 190hp",
+        "1.6 i-DTEC - 120hp",
+        "1.6 i-DTEC - 160hp"
+      ],
+      "2018-2024": [
+        "1.5 VTEC Turbo - 173hp",
+        "2.0 VTEC Turbo - 193hp",
+        "2.0 Hybrid - 184hp"
+      ]
+    },
+    "hr-v": {
+      "1999-2005": [
+        "1.6 i - 105hp"
+      ],
+      "2015-2021": [
+        "1.5 i-VTEC - 130hp",
+        "1.6 i-DTEC - 120hp"
+      ],
+      "2022-2024": [
+        "1.5 i-VTEC - 131hp",
+        "1.5 Hybrid - 131hp"
+      ]
+    },
+    "e": {
+      "2020-2024": [
+        "Electric - 154hp"
+      ]
+    },
+    "civic-type-r": {
+      "2001-2005": [
+        "2.0 VTEC - 200hp"
+      ],
+      "2007-2011": [
+        "2.0 VTEC - 201hp"
+      ],
+      "2015-2021": [
+        "2.0 VTEC Turbo - 310hp",
+        "2.0 VTEC Turbo - 320hp"
+      ],
+      "2023-2024": [
+        "2.0 VTEC Turbo - 330hp"
+      ]
+    },
+    "nsx": {
+      "1990-2005": [
+        "3.0 V6 - 270hp",
+        "3.2 V6 - 280hp"
+      ],
+      "2016-2022": [
+        "3.5 V6 Hybrid - 581hp"
+      ]
+    },
+    "insight": {
+      "2009-2014": [
+        "1.3 Hybrid - 98hp"
+      ],
+      "2019-2022": [
+        "1.5 Hybrid - 152hp"
+      ]
+    },
+    "legend": {
+      "2006-2012": [
+        "3.5 V6 - 295hp"
+      ],
+      "2015-2021": [
+        "3.5 V6 Hybrid - 377hp"
+      ]
+    },
+    "fr-v": {
+      "2005-2009": [
+        "1.7 - 125hp",
+        "1.8 - 140hp",
+        "2.0 - 155hp",
+        "2.2 i-CTDi - 140hp"
+      ]
+    },
+    "stream": {
+      "2001-2006": [
+        "1.7 - 125hp",
+        "2.0 - 156hp"
+      ],
+      "2007-2014": [
+        "1.8 - 140hp",
+        "2.0 - 156hp"
+      ]
+    },
+    "cr-z": {
+      "2010-2016": [
+        "1.5 Hybrid - 114hp",
+        "1.5 Hybrid - 135hp"
+      ]
+    },
+    "s2000": {
+      "1999-2009": [
+        "2.0 VTEC - 240hp",
+        "2.2 VTEC - 237hp"
+      ]
+    },
+    "zr-v": {
+      "2023-2024": [
+        "1.5 Turbo - 180hp",
+        "2.0 Hybrid - 184hp"
+      ]
+    }
+  },
+  "mazda": {
+    "mazda2": {
+      "2003-2007": [
+        "1.25 - 75hp",
+        "1.4 - 80hp",
+        "1.6 - 100hp",
+        "1.4 MZ-CD - 68hp"
+      ],
+      "2008-2014": [
+        "1.3 - 75hp",
+        "1.3 - 84hp",
+        "1.5 - 103hp",
+        "1.6 MZ-CD - 90hp"
+      ],
+      "2015-2024": [
+        "1.5 Skyactiv-G - 75hp",
+        "1.5 Skyactiv-G - 90hp",
+        "1.5 Skyactiv-G - 115hp"
+      ]
+    },
+    "mazda3": {
+      "2004-2008": [
+        "1.4 - 84hp",
+        "1.6 - 105hp",
+        "2.0 - 150hp",
+        "2.3 MPS - 260hp",
+        "1.6 MZ-CD - 109hp",
+        "2.0 MZ-CD - 143hp"
+      ],
+      "2009-2013": [
+        "1.6 - 105hp",
+        "2.0 - 150hp",
+        "2.3 - 260hp",
+        "1.6 MZR-CD - 109hp",
+        "2.0 MZR-CD - 143hp"
+      ],
+      "2014-2018": [
+        "1.5 Skyactiv-G - 100hp",
+        "2.0 Skyactiv-G - 120hp",
+        "2.0 Skyactiv-G - 165hp",
+        "1.5 Skyactiv-D - 105hp",
+        "2.2 Skyactiv-D - 150hp"
+      ],
+      "2019-2024": [
+        "2.0 Skyactiv-G - 122hp",
+        "2.0 Skyactiv-G - 180hp",
+        "2.5 Skyactiv-G - 186hp",
+        "1.8 Skyactiv-D - 116hp"
+      ]
+    },
+    "mazda6": {
+      "2002-2007": [
+        "1.8 - 120hp",
+        "2.0 - 141hp",
+        "2.3 - 166hp",
+        "2.0 MZ-CD - 121hp",
+        "2.0 MZ-CD - 143hp"
+      ],
+      "2008-2012": [
+        "1.8 - 120hp",
+        "2.0 - 147hp",
+        "2.5 - 170hp",
+        "2.0 MZR-CD - 140hp",
+        "2.2 MZR-CD - 185hp"
+      ],
+      "2013-2018": [
+        "2.0 Skyactiv-G - 145hp",
+        "2.5 Skyactiv-G - 192hp",
+        "2.2 Skyactiv-D - 150hp",
+        "2.2 Skyactiv-D - 175hp"
+      ],
+      "2019-2024": [
+        "2.0 Skyactiv-G - 165hp",
+        "2.5 Skyactiv-G - 194hp",
+        "2.5 Turbo - 231hp",
+        "2.2 Skyactiv-D - 184hp"
+      ]
+    },
+    "cx-3": {
+      "2015-2021": [
+        "1.5 Skyactiv-G - 120hp",
+        "2.0 Skyactiv-G - 121hp",
+        "2.0 Skyactiv-G - 150hp",
+        "1.5 Skyactiv-D - 105hp",
+        "1.8 Skyactiv-D - 115hp"
+      ]
+    },
+    "cx-30": {
+      "2019-2024": [
+        "2.0 Skyactiv-G - 122hp",
+        "2.0 Skyactiv-G - 150hp",
+        "2.0 Skyactiv-X - 186hp",
+        "1.8 Skyactiv-D - 116hp"
+      ]
+    },
+    "cx-5": {
+      "2012-2016": [
+        "2.0 Skyactiv-G - 165hp",
+        "2.5 Skyactiv-G - 192hp",
+        "2.2 Skyactiv-D - 150hp",
+        "2.2 Skyactiv-D - 175hp"
+      ],
+      "2017-2024": [
+        "2.0 Skyactiv-G - 165hp",
+        "2.5 Skyactiv-G - 194hp",
+        "2.5 Turbo - 231hp",
+        "2.2 Skyactiv-D - 184hp"
+      ]
+    },
+    "cx-60": {
+      "2022-2024": [
+        "2.5 PHEV - 327hp",
+        "3.3 Skyactiv-D - 254hp"
+      ]
+    },
+    "mx-5": {
+      "1998-2005": [
+        "1.6 - 110hp",
+        "1.8 - 146hp"
+      ],
+      "2006-2015": [
+        "1.8 - 126hp",
+        "2.0 - 160hp"
+      ],
+      "2016-2024": [
+        "1.5 Skyactiv-G - 132hp",
+        "2.0 Skyactiv-G - 184hp"
+      ]
+    },
+    "cx-7": {
+      "2007-2012": [
+        "2.3 Turbo - 260hp",
+        "2.2 Skyactiv-D - 173hp"
+      ]
+    },
+    "cx-9": {
+      "2007-2015": [
+        "3.7 V6 - 277hp"
+      ],
+      "2016-2024": [
+        "2.5 Turbo - 231hp"
+      ]
+    },
+    "rx-8": {
+      "2003-2012": [
+        "1.3 Rotary - 192hp",
+        "1.3 Rotary - 231hp"
+      ]
+    },
+    "mx-30": {
+      "2020-2024": [
+        "Electric - 145hp",
+        "1.8 Rotary PHEV - 170hp"
+      ]
+    },
+    "bongo": {
+      "2004-2024": [
+        "2.5 TD - 95hp",
+        "2.5 TD - 115hp"
+      ]
+    }
+  },
+  "hyundai": {
+    "i20": {
+      "2009-2014": [
+        "1.2 - 78hp",
+        "1.4 - 100hp",
+        "1.4 CRDi - 90hp"
+      ],
+      "2015-2020": [
+        "1.0 T-GDi - 100hp",
+        "1.2 - 84hp",
+        "1.4 - 100hp",
+        "1.4 CRDi - 90hp"
+      ],
+      "2021-2024": [
+        "1.0 T-GDi - 100hp",
+        "1.0 T-GDi - 120hp"
+      ]
+    },
+    "i30": {
+      "2007-2012": [
+        "1.4 - 109hp",
+        "1.6 - 126hp",
+        "2.0 - 143hp",
+        "1.6 CRDi - 115hp",
+        "1.6 CRDi - 128hp",
+        "2.0 CRDi - 140hp"
+      ],
+      "2013-2016": [
+        "1.4 - 100hp",
+        "1.6 - 135hp",
+        "1.6 T-GDi - 186hp",
+        "1.4 CRDi - 90hp",
+        "1.6 CRDi - 110hp",
+        "1.6 CRDi - 128hp"
+      ],
+      "2017-2024": [
+        "1.0 T-GDi - 120hp",
+        "1.4 T-GDi - 140hp",
+        "1.6 T-GDi - 204hp",
+        "2.0 T-GDi N - 280hp",
+        "1.6 CRDi - 110hp",
+        "1.6 CRDi - 136hp"
+      ]
+    },
+    "tucson": {
+      "2010-2015": [
+        "1.6 GDi - 135hp",
+        "2.0 - 166hp",
+        "1.7 CRDi - 115hp",
+        "2.0 CRDi - 136hp",
+        "2.0 CRDi - 184hp"
+      ],
+      "2016-2020": [
+        "1.6 T-GDi - 177hp",
+        "2.0 CRDi - 136hp",
+        "2.0 CRDi - 185hp"
+      ],
+      "2021-2024": [
+        "1.6 T-GDi - 150hp",
+        "1.6 T-GDi - 180hp",
+        "2.0 T-GDi - 230hp",
+        "1.6 CRDi - 136hp",
+        "2.0 CRDi - 185hp"
+      ]
+    },
+    "i10": {
+      "2008-2013": [
+        "1.1 - 69hp",
+        "1.2 - 78hp",
+        "1.0 CRDi - 75hp"
+      ],
+      "2014-2019": [
+        "1.0 - 66hp",
+        "1.2 - 87hp"
+      ],
+      "2020-2024": [
+        "1.0 - 67hp",
+        "1.2 - 84hp"
+      ]
+    },
+    "i40": {
+      "2012-2019": [
+        "1.6 GDi - 135hp",
+        "2.0 GDi - 177hp",
+        "1.7 CRDi - 115hp",
+        "1.7 CRDi - 136hp",
+        "2.0 CRDi - 136hp"
+      ]
+    },
+    "kona": {
+      "2018-2024": [
+        "1.0 T-GDi - 120hp",
+        "1.6 T-GDi - 177hp",
+        "1.6 T-GDi - 198hp",
+        "1.6 CRDi - 115hp",
+        "1.6 CRDi - 136hp",
+        "Electric - 136hp",
+        "Electric - 204hp"
+      ]
+    },
+    "santa-fe": {
+      "2006-2012": [
+        "2.2 - 150hp",
+        "2.7 V6 - 189hp",
+        "2.0 CRDi - 150hp",
+        "2.2 CRDi - 197hp"
+      ],
+      "2013-2018": [
+        "2.0 T-GDi - 245hp",
+        "2.2 CRDi - 197hp",
+        "2.2 CRDi - 200hp"
+      ],
+      "2019-2024": [
+        "2.0 T-GDi - 235hp",
+        "1.6 T-GDi PHEV - 265hp",
+        "2.2 CRDi - 200hp"
+      ]
+    },
+    "ioniq": {
+      "2017-2022": [
+        "1.6 GDi Hybrid - 141hp",
+        "Electric - 136hp",
+        "1.6 GDi PHEV - 141hp"
+      ]
+    },
+    "ioniq-5": {
+      "2021-2024": [
+        "Electric RWD - 170hp",
+        "Electric RWD - 229hp",
+        "Electric AWD - 306hp"
+      ]
+    },
+    "ioniq-6": {
+      "2023-2024": [
+        "Electric RWD - 153hp",
+        "Electric RWD - 229hp",
+        "Electric AWD - 325hp"
+      ]
+    },
+    "ix35": {
+      "2010-2015": [
+        "1.6 GDi - 135hp",
+        "2.0 - 166hp",
+        "1.7 CRDi - 115hp",
+        "2.0 CRDi - 136hp",
+        "2.0 CRDi - 184hp"
+      ]
+    },
+    "ix20": {
+      "2010-2019": [
+        "1.4 - 90hp",
+        "1.6 - 125hp",
+        "1.4 CRDi - 90hp",
+        "1.6 CRDi - 128hp"
+      ]
+    },
+    "veloster": {
+      "2011-2018": [
+        "1.6 GDi - 140hp",
+        "1.6 T-GDi - 186hp",
+        "1.6 T-GDi N - 275hp"
+      ],
+      "2019-2022": [
+        "2.0 - 147hp",
+        "1.6 T-GDi - 204hp",
+        "2.0 T-GDi N - 275hp"
+      ]
+    },
+    "i30-n": {
+      "2018-2024": [
+        "2.0 T-GDi - 250hp",
+        "2.0 T-GDi - 280hp"
+      ]
+    },
+    "kona-n": {
+      "2021-2024": [
+        "2.0 T-GDi - 280hp"
+      ]
+    },
+    "bayon": {
+      "2021-2024": [
+        "1.0 T-GDi - 100hp",
+        "1.0 T-GDi - 120hp"
+      ]
+    },
+    "palisade": {
+      "2019-2024": [
+        "3.8 V6 - 295hp",
+        "2.2 CRDi - 200hp"
+      ]
+    },
+    "nexo": {
+      "2019-2024": [
+        "Hydrogen Fuel Cell - 163hp"
+      ]
+    }
+  },
+  "kia": {
+    "ceed": {
+      "2007-2012": [
+        "1.4 - 90hp",
+        "1.6 - 126hp",
+        "2.0 - 143hp",
+        "1.6 CRDi - 115hp",
+        "1.6 CRDi - 128hp",
+        "2.0 CRDi - 140hp"
+      ],
+      "2013-2018": [
+        "1.4 - 100hp",
+        "1.6 - 135hp",
+        "1.6 T-GDi - 204hp",
+        "1.4 CRDi - 90hp",
+        "1.6 CRDi - 110hp",
+        "1.6 CRDi - 128hp"
+      ],
+      "2019-2024": [
+        "1.0 T-GDi - 120hp",
+        "1.4 T-GDi - 140hp",
+        "1.6 T-GDi - 204hp",
+        "1.6 CRDi - 115hp",
+        "1.6 CRDi - 136hp"
+      ]
+    },
+    "sportage": {
+      "2010-2015": [
+        "1.6 GDi - 135hp",
+        "2.0 - 163hp",
+        "1.7 CRDi - 115hp",
+        "2.0 CRDi - 136hp",
+        "2.0 CRDi - 184hp"
+      ],
+      "2016-2021": [
+        "1.6 T-GDi - 177hp",
+        "2.0 CRDi - 136hp",
+        "2.0 CRDi - 185hp"
+      ],
+      "2022-2024": [
+        "1.6 T-GDi - 150hp",
+        "1.6 T-GDi - 180hp",
+        "2.0 T-GDi - 265hp",
+        "1.6 CRDi - 136hp",
+        "2.0 CRDi - 186hp"
+      ]
+    },
+    "niro": {
+      "2017-2021": [
+        "1.6 GDi Hybrid - 141hp",
+        "1.6 GDi PHEV - 141hp"
+      ],
+      "2022-2024": [
+        "1.6 GDi Hybrid - 141hp",
+        "1.6 T-GDi Hybrid - 183hp"
+      ]
+    },
+    "picanto": {
+      "2004-2011": [
+        "1.0 - 61hp",
+        "1.1 - 65hp",
+        "1.1 CRDi - 75hp"
+      ],
+      "2011-2017": [
+        "1.0 - 69hp",
+        "1.2 - 85hp"
+      ],
+      "2017-2024": [
+        "1.0 - 67hp",
+        "1.2 - 84hp"
+      ]
+    },
+    "rio": {
+      "2005-2011": [
+        "1.2 - 75hp",
+        "1.4 - 97hp",
+        "1.6 - 112hp",
+        "1.5 CRDi - 110hp"
+      ],
+      "2012-2017": [
+        "1.1 CRDi - 75hp",
+        "1.2 - 85hp",
+        "1.4 - 100hp",
+        "1.4 CRDi - 90hp"
+      ],
+      "2017-2024": [
+        "1.0 T-GDi - 100hp",
+        "1.0 T-GDi - 120hp",
+        "1.2 - 84hp",
+        "1.4 - 100hp",
+        "1.4 CRDi - 90hp"
+      ]
+    },
+    "xceed": {
+      "2020-2024": [
+        "1.0 T-GDi - 120hp",
+        "1.4 T-GDi - 140hp",
+        "1.6 T-GDi - 204hp",
+        "1.6 CRDi - 115hp",
+        "1.6 CRDi - 136hp"
+      ]
+    },
+    "stonic": {
+      "2018-2024": [
+        "1.0 T-GDi - 100hp",
+        "1.0 T-GDi - 120hp",
+        "1.2 - 84hp",
+        "1.4 - 100hp",
+        "1.6 CRDi - 115hp"
+      ]
+    },
+    "sorento": {
+      "2006-2009": [
+        "2.4 - 175hp",
+        "3.3 V6 - 242hp",
+        "3.8 V6 - 262hp",
+        "2.5 CRDi - 170hp"
+      ],
+      "2010-2014": [
+        "2.0 T-GDi - 245hp",
+        "2.4 - 178hp",
+        "2.0 CRDi - 197hp",
+        "2.2 CRDi - 197hp"
+      ],
+      "2015-2020": [
+        "2.0 T-GDi - 245hp",
+        "2.2 CRDi - 200hp"
+      ],
+      "2021-2024": [
+        "1.6 T-GDi Hybrid - 230hp",
+        "2.2 CRDi - 202hp"
+      ]
+    },
+    "ev6": {
+      "2022-2024": [
+        "Electric RWD - 229hp",
+        "Electric AWD - 325hp",
+        "Electric GT - 585hp"
+      ]
+    },
+    "proceed": {
+      "2008-2012": [
+        "1.4 - 90hp",
+        "1.6 - 126hp",
+        "2.0 - 143hp",
+        "1.6 CRDi - 115hp",
+        "1.6 CRDi - 128hp"
+      ],
+      "2019-2024": [
+        "1.0 T-GDi - 120hp",
+        "1.4 T-GDi - 140hp",
+        "1.6 T-GDi - 204hp",
+        "1.6 CRDi - 115hp",
+        "1.6 CRDi - 136hp"
+      ]
+    },
+    "venga": {
+      "2010-2019": [
+        "1.4 - 90hp",
+        "1.6 - 125hp",
+        "1.4 CRDi - 90hp",
+        "1.6 CRDi - 128hp"
+      ]
+    },
+    "soul": {
+      "2009-2013": [
+        "1.6 - 126hp",
+        "2.0 - 142hp",
+        "1.6 CRDi - 128hp"
+      ],
+      "2014-2019": [
+        "1.6 GDi - 130hp",
+        "2.0 - 163hp",
+        "1.6 CRDi - 128hp"
+      ],
+      "2020-2024": [
+        "1.6 T-GDi - 177hp",
+        "Electric - 204hp"
+      ]
+    },
+    "optima": {
+      "2012-2015": [
+        "1.6 GDi - 135hp",
+        "2.0 GDi - 163hp",
+        "1.7 CRDi - 141hp"
+      ],
+      "2016-2020": [
+        "1.6 T-GDi - 180hp",
+        "2.0 GDi - 163hp",
+        "2.0 T-GDi - 245hp",
+        "1.7 CRDi - 141hp",
+        "2.0 CRDi - 185hp"
+      ]
+    },
+    "stinger": {
+      "2018-2024": [
+        "2.0 T-GDi - 255hp",
+        "2.2 CRDi - 200hp",
+        "3.3 V6 - 370hp"
+      ]
+    },
+    "ev9": {
+      "2023-2024": [
+        "Electric RWD - 204hp",
+        "Electric AWD - 385hp"
+      ]
+    },
+    "carnival": {
+      "2006-2014": [
+        "2.7 V6 - 189hp",
+        "2.9 CRDi - 185hp"
+      ],
+      "2015-2024": [
+        "2.2 CRDi - 200hp",
+        "3.5 V6 - 294hp"
+      ]
+    },
+    "ceed-gt": {
+      "2019-2024": [
+        "1.6 T-GDi - 204hp"
+      ]
+    }
+  },
+  "mg": {
+    "mg3": {
+      "2013-2024": [
+        "1.5 VTi-TECH - 106hp"
+      ]
+    },
+    "mg4": {
+      "2023-2024": [
+        "Electric 51kWh - 170hp",
+        "Electric 64kWh - 204hp"
+      ]
+    },
+    "mg5": {
+      "2021-2024": [
+        "Electric - 156hp",
+        "Electric - 177hp"
+      ]
+    },
+    "hs": {
+      "2019-2024": [
+        "1.5 Turbo - 162hp",
+        "PHEV - 258hp"
+      ]
+    },
+    "zs": {
+      "2017-2024": [
+        "1.0 Turbo - 111hp",
+        "1.5 VTi-TECH - 106hp",
+        "Electric - 143hp"
+      ]
+    },
+    "mg6": {
+      "2018-2024": [
+        "1.5 Turbo - 162hp"
+      ]
+    },
+    "tf": {
+      "2002-2011": [
+        "1.6 - 115hp",
+        "1.8 - 135hp",
+        "1.8 - 160hp"
+      ]
+    },
+    "gs": {
+      "2013-2018": [
+        "1.5 Turbo - 166hp"
+      ]
+    },
+    "marvel-r": {
+      "2021-2024": [
+        "Electric - 288hp"
+      ]
+    },
+    "cyberster": {
+      "2024-2024": [
+        "Electric - 536hp"
+      ]
+    },
+    "zs-ev": {
+      "2019-2024": [
+        "Electric - 143hp",
+        "Electric - 156hp"
+      ]
+    },
+    "mg4-ev": {
+      "2023-2024": [
+        "Electric 51kWh - 170hp",
+        "Electric 64kWh - 204hp"
+      ]
+    },
+    "mg-tf": {
+      "2002-2011": [
+        "1.6 - 115hp",
+        "1.8 - 135hp",
+        "1.8 - 160hp"
+      ]
+    },
+    "mg-zt": {
+      "2001-2005": [
+        "1.8 - 120hp",
+        "2.0 - 131hp",
+        "2.5 V6 - 177hp",
+        "4.6 V8 - 260hp",
+        "2.0 CDTi - 116hp"
+      ]
+    }
+  },
+  "cupra": {
+    "formentor": {
+      "2021-2024": [
+        "1.4 e-Hybrid - 245hp",
+        "1.5 TSI - 150hp",
+        "2.0 TSI - 190hp",
+        "2.0 TSI - 310hp"
+      ]
+    },
+    "leon": {
+      "2021-2024": [
+        "1.4 e-Hybrid - 245hp",
+        "1.5 TSI - 150hp",
+        "2.0 TSI - 245hp",
+        "2.0 TSI - 300hp"
+      ]
+    },
+    "ateca": {
+      "2018-2024": [
+        "2.0 TSI - 300hp"
+      ]
+    },
+    "born": {
+      "2022-2024": [
+        "Electric 45kWh - 150hp",
+        "Electric 58kWh - 204hp",
+        "Electric 77kWh - 231hp"
+      ]
+    },
+    "tavascan": {
+      "2024-2024": [
+        "Electric - 286hp"
+      ]
+    }
+  },
+  "genesis": {
+    "g70": {
+      "2018-2024": [
+        "2.0 Turbo - 252hp",
+        "3.3 V6 Turbo - 370hp"
+      ]
+    },
+    "g80": {
+      "2021-2024": [
+        "2.5 Turbo - 304hp",
+        "3.5 V6 Turbo - 380hp",
+        "Electric - 370hp"
+      ]
+    },
+    "g90": {
+      "2017-2024": [
+        "3.3 V6 Turbo - 370hp",
+        "5.0 V8 - 425hp"
+      ]
+    },
+    "gv60": {
+      "2023-2024": [
+        "Electric RWD - 229hp",
+        "Electric AWD - 314hp",
+        "Electric Sport - 430hp"
+      ]
+    },
+    "gv70": {
+      "2022-2024": [
+        "2.5 Turbo - 304hp",
+        "3.5 V6 Turbo - 380hp",
+        "Electric - 490hp"
+      ]
+    },
+    "gv80": {
+      "2021-2024": [
+        "2.5 Turbo - 304hp",
+        "3.5 V6 Turbo - 380hp"
+      ]
+    }
+  },
+  "polestar": {
+    "polestar-2": {
+      "2020-2024": [
+        "Electric Single Motor - 231hp",
+        "Electric Dual Motor - 408hp",
+        "Electric Dual Motor Long Range - 476hp"
+      ]
+    },
+    "polestar-3": {
+      "2024": [
+        "Electric Dual Motor - 489hp",
+        "Electric Dual Motor Long Range - 517hp"
+      ]
+    },
+    "polestar-4": {
+      "2024-2024": [
+        "Electric Dual Motor - 544hp"
+      ]
+    },
+    "polestar-1": {
+      "2019-2021": [
+        "2.0 Hybrid - 619hp"
+      ]
+    }
+  },
+  "lotus": {
+    "elise": {
+      "1996-2021": [
+        "1.6 - 134hp",
+        "1.8 - 190hp"
+      ]
+    },
+    "exige": {
+      "2000-2021": [
+        "1.8 Supercharged - 240hp",
+        "3.5 V6 Supercharged - 350hp",
+        "3.5 V6 Supercharged - 430hp"
+      ]
+    },
+    "evora": {
+      "2009-2021": [
+        "3.5 V6 Supercharged - 400hp",
+        "3.5 V6 Supercharged GT - 416hp"
+      ]
+    },
+    "emira": {
+      "2022-2024": [
+        "2.0 Turbo - 360hp",
+        "3.5 V6 Supercharged - 400hp"
+      ]
+    },
+    "eletre": {
+      "2023-2024": [
+        "Electric Dual Motor - 603hp",
+        "Electric R - 905hp"
+      ]
+    }
+  },
+  "aston-martin": {
+    "vantage": {
+      "2005-2024": [
+        "4.0 V8 - 510hp",
+        "4.0 V8 - 535hp",
+        "5.9 V12 - 573hp"
+      ]
+    },
+    "db11": {
+      "2016-2024": [
+        "4.0 V8 - 528hp",
+        "5.2 V12 - 639hp"
+      ]
+    },
+    "dbs": {
+      "2019-2024": [
+        "5.2 V12 - 725hp"
+      ]
+    },
+    "dbx": {
+      "2020-2024": [
+        "4.0 V8 - 550hp",
+        "4.0 V8 707 - 707hp"
+      ]
+    },
+    "rapide": {
+      "2010-2020": [
+        "5.9 V12 - 477hp",
+        "6.0 V12 - 558hp"
+      ]
+    }
+  },
+  "mclaren": {
+    "540c": {
+      "2015-2019": [
+        "3.8 V8 Twin-Turbo - 540hp"
+      ]
+    },
+    "570s": {
+      "2015-2021": [
+        "3.8 V8 Twin-Turbo - 570hp"
+      ]
+    },
+    "720s": {
+      "2017-2024": [
+        "4.0 V8 Twin-Turbo - 720hp"
+      ]
+    },
+    "765lt": {
+      "2020-2024": [
+        "4.0 V8 Twin-Turbo - 765hp"
+      ]
+    },
+    "gt": {
+      "2019-2024": [
+        "4.0 V8 Twin-Turbo - 620hp"
+      ]
+    },
+    "artura": {
+      "2022-2024": [
+        "3.0 V6 Hybrid - 680hp"
+      ]
+    }
+  },
+  "ferrari": {
+    "488": {
+      "2015-2019": [
+        "3.9 V8 Twin-Turbo - 670hp",
+        "3.9 V8 Twin-Turbo Pista - 720hp"
+      ]
+    },
+    "f8-tributo": {
+      "2019-2024": [
+        "3.9 V8 Twin-Turbo - 720hp"
+      ]
+    },
+    "sf90": {
+      "2020-2024": [
+        "4.0 V8 PHEV - 1000hp"
+      ]
+    },
+    "roma": {
+      "2020-2024": [
+        "3.9 V8 Twin-Turbo - 620hp"
+      ]
+    },
+    "812-superfast": {
+      "2017-2024": [
+        "6.5 V12 - 800hp"
+      ]
+    },
+    "purosangue": {
+      "2023-2024": [
+        "6.5 V12 - 725hp"
+      ]
+    },
+    "portofino": {
+      "2018-2024": [
+        "3.9 V8 Twin-Turbo - 600hp",
+        "3.9 V8 Twin-Turbo M - 620hp"
+      ]
+    }
+  },
+  "lamborghini": {
+    "huracan": {
+      "2014-2024": [
+        "5.2 V10 - 610hp",
+        "5.2 V10 Performante - 640hp",
+        "5.2 V10 STO - 640hp"
+      ]
+    },
+    "aventador": {
+      "2011-2022": [
+        "6.5 V12 - 740hp",
+        "6.5 V12 SVJ - 770hp"
+      ]
+    },
+    "urus": {
+      "2018-2024": [
+        "4.0 V8 Twin-Turbo - 650hp"
+      ]
+    }
+  },
+  "rolls-royce": {
+    "ghost": {
+      "2010-2024": [
+        "6.6 V12 Twin-Turbo - 571hp",
+        "6.75 V12 Twin-Turbo - 571hp"
+      ]
+    },
+    "wraith": {
+      "2014-2024": [
+        "6.6 V12 Twin-Turbo - 632hp"
+      ]
+    },
+    "phantom": {
+      "2003-2024": [
+        "6.75 V12 - 460hp",
+        "6.75 V12 Twin-Turbo - 571hp"
+      ]
+    },
+    "cullinan": {
+      "2018-2024": [
+        "6.75 V12 Twin-Turbo - 571hp"
+      ]
+    },
+    "spectre": {
+      "2024": [
+        "Electric - 585hp"
+      ]
+    },
+    "dawn": {
+      "2016-2024": [
+        "6.6 V12 Twin-Turbo - 571hp",
+        "6.6 V12 Twin-Turbo Black Badge - 632hp"
+      ]
+    }
+  },
+  "bugatti": {
+    "veyron": {
+      "2005-2015": [
+        "8.0 W16 Quad-Turbo - 1001hp",
+        "8.0 W16 Super Sport - 1200hp"
+      ]
+    },
+    "chiron": {
+      "2016-2024": [
+        "8.0 W16 Quad-Turbo - 1500hp",
+        "8.0 W16 Super Sport - 1600hp"
+      ]
+    },
+    "divo": {
+      "2018-2020": [
+        "8.0 W16 Quad-Turbo - 1500hp"
+      ]
+    }
+  },
+  "gmc": {
+    "sierra": {
+      "2014-2024": [
+        "4.3 V6 - 285hp",
+        "5.3 V8 - 355hp",
+        "6.2 V8 - 420hp",
+        "3.0 Duramax Diesel - 277hp"
+      ]
+    },
+    "canyon": {
+      "2015-2024": [
+        "2.5 I4 - 200hp",
+        "3.6 V6 - 308hp",
+        "2.8 Duramax Diesel - 181hp"
+      ]
+    },
+    "yukon": {
+      "2015-2024": [
+        "5.3 V8 - 355hp",
+        "6.2 V8 - 420hp",
+        "3.0 Duramax Diesel - 277hp"
+      ]
+    },
+    "terrain": {
+      "2018-2024": [
+        "1.5 Turbo - 170hp",
+        "2.0 Turbo - 252hp"
+      ]
+    },
+    "acadia": {
+      "2017-2024": [
+        "2.5 I4 - 193hp",
+        "3.6 V6 - 310hp"
+      ]
+    }
+  },
+  "cadillac": {
+    "ct4": {
+      "2020-2024": [
+        "2.0 Turbo - 237hp",
+        "2.7 Turbo - 310hp",
+        "3.6 V6 Twin-Turbo V - 472hp"
+      ]
+    },
+    "ct5": {
+      "2020-2024": [
+        "2.0 Turbo - 237hp",
+        "3.0 Twin-Turbo - 360hp",
+        "6.2 V8 Supercharged V - 668hp"
+      ]
+    },
+    "xt4": {
+      "2019-2024": [
+        "2.0 Turbo - 237hp"
+      ]
+    },
+    "xt5": {
+      "2017-2024": [
+        "2.0 Turbo - 237hp",
+        "3.6 V6 - 310hp"
+      ]
+    },
+    "xt6": {
+      "2020-2024": [
+        "3.6 V6 - 310hp"
+      ]
+    },
+    "escalade": {
+      "2015-2024": [
+        "6.2 V8 - 420hp",
+        "3.0 Duramax Diesel - 277hp"
+      ]
+    },
+    "lyriq": {
+      "2023-2024": [
+        "Electric RWD - 340hp",
+        "Electric AWD - 500hp"
+      ]
+    },
+    "ct6": {
+      "2016-2020": [
+        "2.0 Turbo - 265hp",
+        "3.0 Twin-Turbo - 404hp",
+        "3.6 V6 - 335hp",
+        "4.2 Twin-Turbo V8 - 500hp"
+      ]
+    }
+  },
+  "alpine": {
+    "a110": {
+      "2017-2024": [
+        "1.8 Turbo - 252hp",
+        "1.8 Turbo S - 292hp"
+      ]
+    }
+  },
+  "volvo": {
+    "s60": {
+      "2010-2018": [
+        "1.6 T3 - 150hp",
+        "1.6 T4 - 180hp",
+        "2.0 T5 - 245hp",
+        "2.0 D3 - 136hp",
+        "2.0 D4 - 190hp"
+      ],
+      "2019-2024": [
+        "2.0 T4 - 190hp",
+        "2.0 T5 - 250hp",
+        "2.0 T8 PHEV - 390hp",
+        "2.0 D3 - 150hp",
+        "2.0 D4 - 190hp"
+      ]
+    },
+    "xc60": {
+      "2009-2017": [
+        "2.0 T5 - 245hp",
+        "3.0 T6 - 304hp",
+        "2.0 D3 - 163hp",
+        "2.0 D4 - 190hp",
+        "2.4 D5 - 220hp"
+      ],
+      "2018-2024": [
+        "2.0 T4 - 190hp",
+        "2.0 T5 - 250hp",
+        "2.0 T6 - 310hp",
+        "2.0 T8 PHEV - 390hp",
+        "2.0 D4 - 190hp",
+        "2.0 D5 - 235hp"
+      ]
+    },
+    "xc90": {
+      "2015-2024": [
+        "2.0 T5 - 250hp",
+        "2.0 T6 - 310hp",
+        "2.0 T8 PHEV - 390hp",
+        "2.0 D4 - 190hp",
+        "2.0 D5 - 235hp"
+      ]
+    },
+    "v40": {
+      "2013-2019": [
+        "1.5 T2 - 122hp",
+        "1.6 T3 - 150hp",
+        "2.0 T4 - 190hp",
+        "2.0 T5 - 245hp",
+        "1.6 D2 - 115hp",
+        "2.0 D3 - 150hp",
+        "2.0 D4 - 190hp"
+      ]
+    },
+    "v60": {
+      "2011-2018": [
+        "1.6 T3 - 150hp",
+        "1.6 T4 - 180hp",
+        "2.0 T5 - 245hp",
+        "2.0 D3 - 163hp",
+        "2.0 D4 - 190hp",
+        "2.4 D5 - 215hp"
+      ],
+      "2019-2024": [
+        "2.0 T4 - 190hp",
+        "2.0 T5 - 250hp",
+        "2.0 T6 - 310hp",
+        "2.0 T8 PHEV - 390hp",
+        "2.0 D3 - 150hp",
+        "2.0 D4 - 190hp"
+      ]
+    },
+    "v90": {
+      "2017-2024": [
+        "2.0 T4 - 190hp",
+        "2.0 T5 - 250hp",
+        "2.0 T6 - 310hp",
+        "2.0 T8 PHEV - 390hp",
+        "2.0 D3 - 150hp",
+        "2.0 D4 - 190hp",
+        "2.0 D5 - 235hp"
+      ]
+    },
+    "xc40": {
+      "2018-2024": [
+        "1.5 T2 - 129hp",
+        "1.5 T3 - 163hp",
+        "2.0 T4 - 190hp",
+        "2.0 T5 - 247hp",
+        "2.0 D3 - 150hp",
+        "2.0 D4 - 190hp",
+        "Electric Recharge P8 - 408hp"
+      ]
+    },
+    "s90": {
+      "2017-2024": [
+        "2.0 T4 - 190hp",
+        "2.0 T5 - 250hp",
+        "2.0 T6 - 310hp",
+        "2.0 T8 PHEV - 390hp",
+        "2.0 D4 - 190hp",
+        "2.0 D5 - 235hp"
+      ]
+    },
+    "c30": {
+      "2007-2013": [
+        "1.6 - 100hp",
+        "1.6 - 115hp",
+        "1.8 - 125hp",
+        "2.0 - 145hp",
+        "2.4 - 170hp",
+        "2.5 T5 - 230hp",
+        "1.6 D - 109hp",
+        "2.0 D - 136hp"
+      ]
+    },
+    "c40": {
+      "2022-2024": [
+        "Electric Twin - 408hp"
+      ]
+    },
+    "c70": {
+      "2006-2013": [
+        "2.0 - 145hp",
+        "2.4 - 170hp",
+        "2.5 T5 - 230hp",
+        "2.0 D - 136hp"
+      ]
+    },
+    "v50": {
+      "2004-2012": [
+        "1.6 - 100hp",
+        "1.8 - 125hp",
+        "2.0 - 145hp",
+        "2.4 - 170hp",
+        "2.5 T5 - 230hp",
+        "1.6 D - 109hp",
+        "2.0 D - 136hp"
+      ]
+    },
+    "v70": {
+      "1997-2007": [
+        "2.0 - 140hp",
+        "2.3 T5 - 250hp",
+        "2.4 - 140hp",
+        "2.4 - 170hp",
+        "2.4 D5 - 163hp"
+      ],
+      "2008-2016": [
+        "1.6 - 110hp",
+        "2.0 - 145hp",
+        "2.5 T5 - 231hp",
+        "3.0 T6 - 304hp",
+        "2.0 D3 - 136hp",
+        "2.4 D5 - 205hp"
+      ]
+    },
+    "s40": {
+      "2004-2012": [
+        "1.6 - 100hp",
+        "1.8 - 125hp",
+        "2.0 - 145hp",
+        "2.4 - 170hp",
+        "2.5 T5 - 230hp",
+        "1.6 D - 109hp",
+        "2.0 D - 136hp"
+      ]
+    },
+    "s80": {
+      "1998-2006": [
+        "2.0 T - 180hp",
+        "2.4 - 140hp",
+        "2.5 T - 210hp",
+        "2.8 T6 - 272hp",
+        "2.4 D - 130hp",
+        "2.4 D5 - 163hp"
+      ],
+      "2007-2016": [
+        "2.0 T - 203hp",
+        "2.5 T - 231hp",
+        "3.0 T6 - 304hp",
+        "4.4 V8 - 315hp",
+        "2.0 D - 136hp",
+        "2.4 D5 - 205hp"
+      ]
+    },
+    "xc70": {
+      "2000-2007": [
+        "2.4 - 170hp",
+        "2.4 T - 200hp",
+        "2.5 T - 210hp",
+        "2.4 D5 - 163hp",
+        "2.4 D5 - 185hp"
+      ],
+      "2008-2016": [
+        "2.0 T - 203hp",
+        "2.5 T - 231hp",
+        "3.0 T6 - 304hp",
+        "2.0 D3 - 163hp",
+        "2.4 D5 - 215hp"
+      ]
+    },
+    "xc40-recharge": {
+      "2021-2024": [
+        "Electric Twin - 408hp"
+      ]
+    },
+    "c40-recharge": {
+      "2022-2024": [
+        "Electric Twin - 408hp"
+      ]
+    }
+  },
+  "alfa-romeo": {
+    "147": {
+      "2001-2010": [
+        "1.6 TS - 105hp",
+        "2.0 TS - 150hp",
+        "3.2 V6 GTA - 250hp",
+        "1.9 JTD - 115hp",
+        "1.9 JTD - 140hp"
+      ]
+    },
+    "156": {
+      "1997-2005": [
+        "1.6 TS - 120hp",
+        "1.8 TS - 144hp",
+        "2.0 TS - 155hp",
+        "2.5 V6 - 190hp",
+        "3.2 V6 GTA - 250hp",
+        "1.9 JTD - 105hp",
+        "1.9 JTD - 115hp",
+        "2.4 JTD - 140hp"
+      ]
+    },
+    "159": {
+      "2005-2011": [
+        "1.8 TBi - 140hp",
+        "1.9 JTS - 160hp",
+        "2.2 JTS - 185hp",
+        "3.2 V6 - 260hp",
+        "1.9 JTDm - 120hp",
+        "1.9 JTDm - 150hp",
+        "2.0 JTDm - 136hp",
+        "2.0 JTDm - 170hp",
+        "2.4 JTDm - 200hp"
+      ]
+    },
+    "giulietta": {
+      "2010-2013": [
+        "1.4 TB - 120hp",
+        "1.4 TB MultiAir - 170hp",
+        "1.8 TBi - 235hp",
+        "1.6 JTDm - 105hp",
+        "2.0 JTDm - 140hp",
+        "2.0 JTDm - 170hp"
+      ],
+      "2014-2020": [
+        "1.4 TB MultiAir - 120hp",
+        "1.4 TB MultiAir - 170hp",
+        "1.8 TBi QV - 240hp",
+        "1.6 JTDm-2 - 120hp",
+        "2.0 JTDm-2 - 150hp",
+        "2.0 JTDm-2 - 175hp"
+      ]
+    },
+    "giulia": {
+      "2016-2024": [
+        "2.0 Turbo - 200hp",
+        "2.0 Turbo - 280hp",
+        "2.9 V6 QV - 510hp",
+        "2.2 JTDm - 136hp",
+        "2.2 JTDm - 160hp",
+        "2.2 JTDm - 190hp",
+        "2.2 JTDm - 210hp"
+      ]
+    },
+    "stelvio": {
+      "2017-2024": [
+        "2.0 Turbo - 200hp",
+        "2.0 Turbo - 280hp",
+        "2.9 V6 QV - 510hp",
+        "2.2 JTDm - 160hp",
+        "2.2 JTDm - 190hp",
+        "2.2 JTDm - 210hp"
+      ]
+    },
+    "mito": {
+      "2008-2018": [
+        "0.9 TwinAir - 85hp",
+        "1.4 - 78hp",
+        "1.4 TB - 120hp",
+        "1.4 TB MultiAir - 135hp",
+        "1.4 TB MultiAir - 170hp",
+        "1.3 JTDm - 85hp",
+        "1.3 JTDm - 90hp",
+        "1.6 JTDm - 120hp"
+      ]
+    },
+    "tonale": {
+      "2022-2024": [
+        "1.5 Hybrid - 130hp",
+        "1.5 Hybrid - 160hp",
+        "1.5 PHEV - 280hp",
+        "1.6 Diesel - 130hp"
+      ]
+    },
+    "brera": {
+      "2006-2010": [
+        "2.2 JTS - 185hp",
+        "3.2 V6 - 260hp",
+        "2.4 JTDm - 200hp"
+      ]
+    },
+    "spider": {
+      "2006-2010": [
+        "2.2 JTS - 185hp",
+        "3.2 V6 - 260hp",
+        "2.4 JTDm - 200hp"
+      ]
+    },
+    "gt": {
+      "2004-2010": [
+        "1.8 TS - 140hp",
+        "2.0 JTS - 165hp",
+        "3.2 V6 - 240hp",
+        "1.9 JTD - 150hp"
+      ]
+    },
+    "giulia-quadrifoglio": {
+      "2016-2024": [
+        "2.9 V6 - 510hp"
+      ]
+    },
+    "stelvio-quadrifoglio": {
+      "2018-2024": [
+        "2.9 V6 - 510hp"
+      ]
+    }
+  },
+  "citroen": {
+    "c1": {
+      "2005-2014": [
+        "1.0 - 68hp",
+        "1.4 HDi - 54hp"
+      ],
+      "2015-2021": [
+        "1.0 VTi - 68hp",
+        "1.2 PureTech - 82hp"
+      ]
+    },
+    "c3": {
+      "2010-2016": [
+        "1.0 - 68hp",
+        "1.2 PureTech - 82hp",
+        "1.4 VTi - 95hp",
+        "1.6 VTi - 120hp",
+        "1.4 HDi - 70hp",
+        "1.6 HDi - 92hp"
+      ],
+      "2017-2024": [
+        "1.0 PureTech - 68hp",
+        "1.2 PureTech - 83hp",
+        "1.2 PureTech - 110hp",
+        "1.5 BlueHDi - 100hp"
+      ]
+    },
+    "c4": {
+      "2010-2017": [
+        "1.4 VTi - 95hp",
+        "1.6 VTi - 120hp",
+        "1.6 THP - 156hp",
+        "1.6 HDi - 92hp",
+        "1.6 HDi - 115hp",
+        "2.0 HDi - 150hp"
+      ],
+      "2018-2024": [
+        "1.2 PureTech - 100hp",
+        "1.2 PureTech - 130hp",
+        "1.6 PureTech - 180hp",
+        "1.5 BlueHDi - 110hp",
+        "1.5 BlueHDi - 130hp"
+      ]
+    },
+    "c5": {
+      "2008-2017": [
+        "1.6 THP - 156hp",
+        "1.6 THP - 165hp",
+        "2.0 - 140hp",
+        "1.6 HDi - 112hp",
+        "1.6 HDi - 115hp",
+        "2.0 HDi - 140hp",
+        "2.0 HDi - 163hp",
+        "2.2 HDi - 204hp"
+      ]
+    },
+    "c3-aircross": {
+      "2017-2024": [
+        "1.2 PureTech - 110hp",
+        "1.2 PureTech - 130hp",
+        "1.5 BlueHDi - 100hp",
+        "1.5 BlueHDi - 120hp"
+      ]
+    },
+    "c3-picasso": {
+      "2009-2017": [
+        "1.4 VTi - 95hp",
+        "1.6 VTi - 120hp",
+        "1.6 HDi - 92hp",
+        "1.6 HDi - 110hp"
+      ]
+    },
+    "c4-cactus": {
+      "2014-2017": [
+        "1.2 PureTech - 82hp",
+        "1.2 PureTech - 110hp",
+        "1.6 BlueHDi - 100hp"
+      ],
+      "2018-2024": [
+        "1.2 PureTech - 110hp",
+        "1.2 PureTech - 130hp",
+        "1.5 BlueHDi - 100hp",
+        "1.5 BlueHDi - 120hp"
+      ]
+    },
+    "c4-picasso": {
+      "2007-2013": [
+        "1.6 THP - 156hp",
+        "2.0 HDi - 136hp",
+        "2.0 HDi - 150hp"
+      ],
+      "2014-2018": [
+        "1.2 PureTech - 130hp",
+        "1.6 THP - 165hp",
+        "1.6 BlueHDi - 120hp",
+        "2.0 BlueHDi - 150hp"
+      ]
+    },
+    "c4-grand-picasso": {
+      "2007-2013": [
+        "1.6 THP - 156hp",
+        "2.0 HDi - 136hp",
+        "2.0 HDi - 150hp"
+      ],
+      "2014-2018": [
+        "1.2 PureTech - 130hp",
+        "1.6 THP - 165hp",
+        "1.6 BlueHDi - 120hp",
+        "2.0 BlueHDi - 150hp"
+      ]
+    },
+    "c5-x": {
+      "2022-2024": [
+        "1.6 PureTech PHEV - 225hp"
+      ]
+    },
+    "c5-aircross": {
+      "2019-2024": [
+        "1.2 PureTech - 130hp",
+        "1.6 PureTech - 180hp",
+        "1.6 PHEV - 225hp",
+        "1.5 BlueHDi - 130hp",
+        "2.0 BlueHDi - 180hp"
+      ]
+    },
+    "nemo": {
+      "2008-2021": [
+        "1.3 HDi - 75hp",
+        "1.4 - 73hp"
+      ]
+    },
+    "jumpy": {
+      "2007-2016": [
+        "2.0 HDi - 120hp",
+        "2.0 HDi - 136hp",
+        "2.0 HDi - 163hp"
+      ],
+      "2017-2024": [
+        "1.5 BlueHDi - 100hp",
+        "1.5 BlueHDi - 120hp",
+        "2.0 BlueHDi - 120hp",
+        "2.0 BlueHDi - 150hp",
+        "2.0 BlueHDi - 180hp"
+      ]
+    },
+    "e-berlingo": {
+      "2021-2024": [
+        "Electric - 136hp"
+      ]
+    },
+    "e-c4": {
+      "2021-2024": [
+        "Electric - 136hp"
+      ]
+    },
+    "berlingo": {
+      "2008-2018": [
+        "1.6 VTi - 98hp",
+        "1.6 VTi - 120hp",
+        "1.6 HDi - 75hp",
+        "1.6 HDi - 90hp",
+        "1.6 HDi - 115hp"
+      ],
+      "2019-2024": [
+        "1.2 PureTech - 110hp",
+        "1.2 PureTech - 130hp",
+        "1.5 BlueHDi - 100hp",
+        "1.5 BlueHDi - 130hp"
+      ]
+    },
+    "dispatch": {
+      "2007-2016": [
+        "2.0 HDi - 120hp",
+        "2.0 HDi - 136hp",
+        "2.0 HDi - 163hp"
+      ],
+      "2017-2024": [
+        "1.5 BlueHDi - 100hp",
+        "1.5 BlueHDi - 120hp",
+        "2.0 BlueHDi - 120hp",
+        "2.0 BlueHDi - 150hp",
+        "2.0 BlueHDi - 180hp"
+      ]
+    },
+    "relay": {
+      "2006-2014": [
+        "2.2 HDi - 100hp",
+        "2.2 HDi - 110hp",
+        "2.2 HDi - 120hp",
+        "2.2 HDi - 130hp",
+        "3.0 HDi - 156hp",
+        "3.0 HDi - 180hp"
+      ],
+      "2015-2024": [
+        "2.0 BlueHDi - 130hp",
+        "2.0 BlueHDi - 140hp",
+        "2.0 BlueHDi - 165hp",
+        "2.2 BlueHDi - 140hp",
+        "2.2 BlueHDi - 165hp"
+      ]
+    }
+  },
+  "land-rover": {
+    "discovery-sport": {
+      "2015-2019": [
+        "2.0 Si4 - 240hp",
+        "2.0 TD4 - 150hp",
+        "2.0 TD4 - 180hp"
+      ],
+      "2020-2024": [
+        "2.0 P200 - 200hp",
+        "2.0 P250 - 249hp",
+        "2.0 P300 - 300hp",
+        "2.0 D150 - 150hp",
+        "2.0 D180 - 180hp",
+        "2.0 D200 - 204hp"
+      ]
+    },
+    "range-rover-evoque": {
+      "2011-2018": [
+        "2.0 Si4 - 240hp",
+        "2.0 TD4 - 150hp",
+        "2.0 SD4 - 190hp"
+      ],
+      "2019-2024": [
+        "2.0 P200 - 200hp",
+        "2.0 P250 - 249hp",
+        "2.0 P300 - 300hp",
+        "2.0 D150 - 150hp",
+        "2.0 D180 - 180hp",
+        "2.0 D200 - 204hp"
+      ]
+    },
+    "defender": {
+      "2020-2024": [
+        "2.0 P300 - 300hp",
+        "3.0 P400 - 400hp",
+        "5.0 V8 - 525hp",
+        "2.0 D200 - 200hp",
+        "2.0 D240 - 240hp",
+        "3.0 D300 - 300hp"
+      ]
+    },
+    "discovery": {
+      "2004-2009": [
+        "2.7 TD V6 - 190hp",
+        "4.0 V6 - 215hp",
+        "4.4 V8 - 299hp"
+      ],
+      "2010-2016": [
+        "3.0 SDV6 - 256hp",
+        "3.0 Si6 - 340hp",
+        "5.0 V8 - 375hp"
+      ],
+      "2017-2024": [
+        "2.0 SD4 - 240hp",
+        "3.0 SDV6 - 306hp",
+        "3.0 Si6 - 340hp"
+      ]
+    },
+    "range-rover": {
+      "2002-2012": [
+        "3.0 TD6 - 177hp",
+        "3.6 TDV8 - 272hp",
+        "4.2 V8 - 396hp",
+        "4.4 V8 - 299hp",
+        "5.0 V8 - 510hp"
+      ],
+      "2013-2021": [
+        "3.0 SDV6 - 292hp",
+        "4.4 SDV8 - 340hp",
+        "3.0 SC V6 - 340hp",
+        "5.0 V8 SC - 510hp",
+        "5.0 V8 SC - 575hp"
+      ],
+      "2022-2024": [
+        "3.0 D300 - 300hp",
+        "3.0 D350 - 350hp",
+        "3.0 P400 - 400hp",
+        "4.4 V8 - 530hp"
+      ]
+    },
+    "range-rover-sport": {
+      "2005-2013": [
+        "2.7 TDV6 - 190hp",
+        "3.0 TDV6 - 245hp",
+        "3.6 TDV8 - 272hp",
+        "4.2 V8 SC - 390hp",
+        "5.0 V8 SC - 510hp"
+      ],
+      "2014-2024": [
+        "3.0 SDV6 - 306hp",
+        "4.4 SDV8 - 340hp",
+        "3.0 SC V6 - 340hp",
+        "5.0 V8 SC - 575hp"
+      ]
+    },
+    "range-rover-velar": {
+      "2017-2024": [
+        "2.0 D180 - 180hp",
+        "2.0 D240 - 240hp",
+        "3.0 D300 - 300hp",
+        "2.0 P250 - 250hp",
+        "2.0 P300 - 300hp",
+        "3.0 P380 - 380hp",
+        "5.0 V8 - 550hp"
+      ]
+    },
+    "freelander": {
+      "1998-2006": [
+        "1.8 - 120hp",
+        "2.0 TD4 - 112hp",
+        "2.5 V6 - 177hp"
+      ],
+      "2007-2015": [
+        "2.2 TD4 - 150hp",
+        "2.2 TD4 - 160hp",
+        "3.2 - 233hp"
+      ]
+    },
+    "range-rover-autobiography": {
+      "2010-2024": [
+        "3.0 TDV6 - 258hp",
+        "4.4 SDV8 - 339hp",
+        "5.0 V8 - 525hp",
+        "5.0 Supercharged - 565hp"
+      ]
+    },
+    "range-rover-svr": {
+      "2015-2024": [
+        "5.0 Supercharged V8 - 575hp"
+      ]
+    }
+  },
+  "jeep": {
+    "renegade": {
+      "2015-2018": [
+        "1.4 MultiAir - 140hp",
+        "1.4 MultiAir - 170hp",
+        "1.6 MultiJet - 120hp",
+        "2.0 MultiJet - 140hp"
+      ],
+      "2019-2024": [
+        "1.0 T3 - 120hp",
+        "1.3 T4 - 150hp",
+        "1.3 T4 - 180hp",
+        "1.6 MultiJet - 130hp",
+        "2.0 MultiJet - 170hp"
+      ]
+    },
+    "compass": {
+      "2007-2016": [
+        "2.0 - 156hp",
+        "2.4 - 170hp",
+        "2.0 CRD - 140hp"
+      ],
+      "2017-2024": [
+        "1.4 MultiAir - 140hp",
+        "1.4 MultiAir - 170hp",
+        "2.0 MultiAir - 270hp",
+        "1.6 MultiJet - 120hp",
+        "2.0 MultiJet - 170hp"
+      ]
+    },
+    "cherokee": {
+      "2002-2007": [
+        "2.4 - 147hp",
+        "2.5 CRD - 143hp",
+        "2.8 CRD - 163hp",
+        "3.7 V6 - 210hp"
+      ],
+      "2008-2013": [
+        "2.8 CRD - 177hp",
+        "3.7 V6 - 204hp"
+      ],
+      "2014-2024": [
+        "2.0 MultiAir - 272hp",
+        "3.2 V6 - 272hp",
+        "2.0 MultiJet - 140hp",
+        "2.0 MultiJet - 170hp",
+        "2.2 MultiJet - 195hp"
+      ]
+    },
+    "grand-cherokee": {
+      "1999-2004": [
+        "2.7 CRD - 163hp",
+        "4.0 - 190hp",
+        "4.7 V8 - 235hp"
+      ],
+      "2005-2010": [
+        "3.0 CRD - 218hp",
+        "3.7 V6 - 210hp",
+        "4.7 V8 - 231hp",
+        "5.7 V8 - 326hp",
+        "6.1 V8 SRT - 426hp"
+      ],
+      "2011-2021": [
+        "3.0 CRD - 241hp",
+        "3.6 V6 - 286hp",
+        "5.7 V8 - 352hp",
+        "6.4 V8 SRT - 468hp"
+      ],
+      "2022-2024": [
+        "2.0 Turbo - 272hp",
+        "3.6 V6 - 293hp",
+        "5.7 V8 - 357hp",
+        "6.4 V8 - 475hp"
+      ]
+    },
+    "wrangler": {
+      "2007-2017": [
+        "2.8 CRD - 177hp",
+        "2.8 CRD - 200hp",
+        "3.6 V6 - 284hp",
+        "3.8 V6 - 199hp"
+      ],
+      "2018-2024": [
+        "2.0 Turbo - 272hp",
+        "2.2 MultiJet - 200hp",
+        "3.0 EcoDiesel - 264hp",
+        "3.6 V6 - 285hp"
+      ]
+    },
+    "gladiator": {
+      "2020-2024": [
+        "3.0 EcoDiesel - 264hp",
+        "3.6 V6 - 285hp"
+      ]
+    },
+    "avenger": {
+      "2023-2024": [
+        "1.2 Turbo - 100hp",
+        "Electric - 156hp"
+      ]
+    },
+    "commander": {
+      "2006-2010": [
+        "3.7 V6 - 210hp",
+        "4.7 V8 - 231hp",
+        "5.7 V8 - 326hp",
+        "2.8 CRD - 177hp"
+      ]
+    },
+    "liberty": {
+      "2002-2007": [
+        "2.4 - 147hp",
+        "3.7 V6 - 210hp",
+        "2.5 CRD - 143hp",
+        "2.8 CRD - 163hp"
+      ],
+      "2008-2012": [
+        "3.7 V6 - 204hp",
+        "2.8 CRD - 177hp"
+      ]
+    },
+    "patriot": {
+      "2007-2017": [
+        "2.0 - 158hp",
+        "2.4 - 172hp",
+        "2.0 CRD - 140hp",
+        "2.2 CRD - 163hp"
+      ]
+    }
+  },
+  "mini": {
+    "hatch": {
+      "2006-2013": [
+        "1.4 One - 95hp",
+        "1.6 Cooper - 120hp",
+        "1.6 Cooper S - 175hp",
+        "1.6 JCW - 211hp",
+        "1.6 D - 110hp"
+      ],
+      "2014-2024": [
+        "1.2 One - 102hp",
+        "1.5 Cooper - 136hp",
+        "2.0 Cooper S - 192hp",
+        "2.0 JCW - 231hp",
+        "1.5 D - 116hp",
+        "2.0 D - 150hp"
+      ]
+    },
+    "clubman": {
+      "2007-2014": [
+        "1.6 Cooper - 122hp",
+        "1.6 Cooper S - 175hp",
+        "1.6 JCW - 211hp",
+        "1.6 D - 112hp",
+        "2.0 D - 143hp"
+      ],
+      "2015-2024": [
+        "1.5 Cooper - 136hp",
+        "2.0 Cooper S - 192hp",
+        "2.0 JCW - 306hp",
+        "1.5 D - 116hp",
+        "2.0 D - 190hp"
+      ]
+    },
+    "countryman": {
+      "2010-2016": [
+        "1.6 Cooper - 122hp",
+        "1.6 Cooper S - 184hp",
+        "1.6 JCW - 218hp",
+        "1.6 D - 112hp",
+        "2.0 D - 143hp"
+      ],
+      "2017-2024": [
+        "1.5 Cooper - 136hp",
+        "2.0 Cooper S - 192hp",
+        "2.0 JCW - 306hp",
+        "1.5 D - 116hp",
+        "2.0 D - 190hp"
+      ]
+    },
+    "convertible": {
+      "2009-2015": [
+        "1.6 Cooper - 122hp",
+        "1.6 Cooper S - 184hp",
+        "1.6 JCW - 211hp"
+      ],
+      "2016-2024": [
+        "1.5 Cooper - 136hp",
+        "2.0 Cooper S - 192hp",
+        "2.0 JCW - 231hp"
+      ]
+    },
+    "paceman": {
+      "2013-2016": [
+        "1.6 Cooper - 122hp",
+        "1.6 Cooper S - 184hp",
+        "1.6 JCW - 218hp",
+        "1.6 D - 112hp",
+        "2.0 D - 143hp"
+      ]
+    },
+    "coupe": {
+      "2011-2015": [
+        "1.6 Cooper - 122hp",
+        "1.6 Cooper S - 184hp",
+        "1.6 JCW - 211hp",
+        "2.0 D - 143hp"
+      ]
+    },
+    "roadster": {
+      "2012-2015": [
+        "1.6 Cooper - 122hp",
+        "1.6 Cooper S - 184hp",
+        "1.6 JCW - 211hp"
+      ]
+    },
+    "john-cooper-works-gp": {
+      "2006-2008": [
+        "1.6 Supercharged - 218hp"
+      ],
+      "2013-2013": [
+        "1.6 Turbo - 218hp"
+      ],
+      "2020-2021": [
+        "2.0 Turbo - 306hp"
+      ]
+    },
+    "cooper-s-works": {
+      "2001-2006": [
+        "1.6 Supercharged - 200hp",
+        "1.6 Supercharged - 210hp"
+      ]
+    },
+    "electric": {
+      "2020-2024": [
+        "Electric - 184hp"
+      ]
+    },
+    "jcw": {
+      "2008-2024": [
+        "1.6 Turbo - 211hp",
+        "2.0 Turbo - 231hp",
+        "2.0 Turbo - 306hp"
+      ]
+    },
+    "cooper-s": {
+      "2006-2024": [
+        "1.6 Turbo - 175hp",
+        "1.6 Turbo - 184hp",
+        "2.0 Turbo - 192hp"
+      ]
+    }
+  },
+  "porsche": {
+    "911": {
+      "2005-2011": [
+        "3.6 Carrera - 325hp",
+        "3.8 Carrera S - 385hp",
+        "3.6 Turbo - 480hp",
+        "3.8 GT3 - 435hp"
+      ],
+      "2012-2018": [
+        "3.4 Carrera - 350hp",
+        "3.8 Carrera S - 400hp",
+        "3.8 Turbo - 540hp",
+        "4.0 GT3 - 500hp"
+      ],
+      "2019-2024": [
+        "3.0 Carrera - 385hp",
+        "3.0 Carrera S - 450hp",
+        "3.8 Turbo S - 650hp",
+        "4.0 GT3 - 510hp"
+      ]
+    },
+    "718-cayman": {
+      "2016-2024": [
+        "2.0 - 300hp",
+        "2.5 - 365hp",
+        "4.0 GTS - 400hp"
+      ]
+    },
+    "718-boxster": {
+      "2016-2024": [
+        "2.0 - 300hp",
+        "2.5 - 365hp",
+        "4.0 GTS - 400hp"
+      ]
+    },
+    "panamera": {
+      "2010-2016": [
+        "3.0 Diesel - 250hp",
+        "3.6 V6 - 310hp",
+        "4.8 V8 - 400hp",
+        "4.8 Turbo - 500hp"
+      ],
+      "2017-2024": [
+        "3.0 V6 - 330hp",
+        "2.9 V6 - 440hp",
+        "4.0 V8 - 550hp",
+        "4.0 Turbo S - 630hp"
+      ]
+    },
+    "macan": {
+      "2014-2018": [
+        "2.0 - 252hp",
+        "3.0 S - 340hp",
+        "3.6 Turbo - 400hp",
+        "3.0 Diesel - 258hp"
+      ],
+      "2019-2024": [
+        "2.0 - 265hp",
+        "2.9 S - 380hp",
+        "2.9 GTS - 440hp",
+        "3.0 Diesel - 262hp"
+      ]
+    },
+    "cayenne": {
+      "2003-2010": [
+        "3.2 V6 - 250hp",
+        "3.6 V6 - 290hp",
+        "4.5 V8 - 340hp",
+        "4.8 Turbo - 500hp",
+        "3.0 Diesel - 240hp"
+      ],
+      "2011-2017": [
+        "3.0 Diesel - 245hp",
+        "3.0 S Hybrid - 416hp",
+        "3.6 V6 - 420hp",
+        "4.8 Turbo - 520hp"
+      ],
+      "2018-2024": [
+        "3.0 V6 - 340hp",
+        "2.9 S - 440hp",
+        "4.0 Turbo - 550hp",
+        "3.0 Diesel - 340hp"
+      ]
+    },
+    "taycan": {
+      "2020-2024": [
+        "4S - 530hp",
+        "Turbo - 680hp",
+        "Turbo S - 761hp"
+      ]
+    },
+    "911-turbo": {
+      "2005-2011": [
+        "3.6 Turbo - 480hp",
+        "3.8 GT2 - 530hp",
+        "3.6 Turbo S - 530hp"
+      ],
+      "2012-2018": [
+        "3.8 Turbo - 520hp",
+        "3.8 Turbo S - 580hp"
+      ],
+      "2019-2024": [
+        "3.8 Turbo - 580hp",
+        "3.8 Turbo S - 650hp"
+      ]
+    },
+    "911-gt3": {
+      "2005-2011": [
+        "3.6 - 415hp",
+        "3.8 - 435hp"
+      ],
+      "2012-2018": [
+        "3.8 - 475hp",
+        "4.0 - 500hp"
+      ],
+      "2019-2024": [
+        "4.0 - 510hp",
+        "4.0 GT3 RS - 525hp"
+      ]
+    },
+    "carrera-gt": {
+      "2004-2007": [
+        "5.7 V10 - 612hp"
+      ]
+    },
+    "cayman-gt4": {
+      "2015-2019": [
+        "3.8 - 385hp"
+      ],
+      "2020-2024": [
+        "4.0 - 420hp"
+      ]
+    },
+    "boxster-spyder": {
+      "2010-2011": [
+        "3.4 - 320hp"
+      ],
+      "2015-2019": [
+        "3.8 - 375hp"
+      ],
+      "2020-2024": [
+        "4.0 - 420hp"
+      ]
+    },
+    "carrera": {
+      "2005-2011": [
+        "3.6 - 325hp",
+        "3.8 S - 355hp"
+      ],
+      "2012-2018": [
+        "3.4 - 350hp",
+        "3.8 S - 400hp"
+      ],
+      "2019-2024": [
+        "3.0 - 385hp",
+        "3.0 S - 450hp"
+      ]
+    }
+  },
+  "lexus": {
+    "ct": {
+      "2011-2024": [
+        "1.8 Hybrid - 136hp"
+      ]
+    },
+    "is": {
+      "2005-2013": [
+        "2.2 D - 177hp",
+        "2.5 V6 - 208hp",
+        "3.5 V8 - 306hp"
+      ],
+      "2014-2024": [
+        "2.0 Turbo - 245hp",
+        "2.5 Hybrid - 223hp",
+        "3.5 V6 - 318hp"
+      ]
+    },
+    "es": {
+      "2012-2018": [
+        "2.5 V6 - 208hp",
+        "3.5 V6 - 277hp"
+      ],
+      "2019-2024": [
+        "2.5 Hybrid - 218hp"
+      ]
+    },
+    "gs": {
+      "2005-2011": [
+        "3.0 V6 - 249hp",
+        "3.5 V6 - 303hp",
+        "4.3 V8 - 283hp",
+        "5.0 V8 - 417hp"
+      ],
+      "2012-2020": [
+        "2.5 Hybrid - 223hp",
+        "3.5 V6 - 318hp",
+        "5.0 V8 - 477hp"
+      ]
+    },
+    "ls": {
+      "2006-2017": [
+        "4.6 V8 - 385hp",
+        "5.0 V8 - 389hp"
+      ],
+      "2018-2024": [
+        "3.5 V6 Hybrid - 359hp"
+      ]
+    },
+    "ux": {
+      "2019-2024": [
+        "2.0 - 169hp",
+        "2.0 Hybrid - 184hp"
+      ]
+    },
+    "nx": {
+      "2015-2021": [
+        "2.0 Turbo - 238hp",
+        "2.5 Hybrid - 197hp"
+      ],
+      "2022-2024": [
+        "2.4 Turbo - 279hp",
+        "2.5 Hybrid - 244hp",
+        "2.5 PHEV - 309hp"
+      ]
+    },
+    "rx": {
+      "2003-2008": [
+        "3.3 V6 - 230hp",
+        "3.5 V6 Hybrid - 272hp"
+      ],
+      "2009-2015": [
+        "3.5 V6 - 277hp",
+        "3.5 V6 Hybrid - 299hp"
+      ],
+      "2016-2024": [
+        "2.0 Turbo - 238hp",
+        "3.5 V6 - 300hp",
+        "3.5 V6 Hybrid - 313hp"
+      ]
+    },
+    "lc": {
+      "2017-2024": [
+        "3.5 V6 Hybrid - 359hp",
+        "5.0 V8 - 477hp"
+      ]
+    },
+    "lx": {
+      "2008-2015": [
+        "5.7 V8 - 383hp"
+      ],
+      "2016-2024": [
+        "3.5 V6 - 409hp",
+        "3.5 V6 Hybrid - 415hp"
+      ]
+    },
+    "rc": {
+      "2015-2024": [
+        "2.0 Turbo - 245hp",
+        "3.5 V6 - 318hp"
+      ]
+    },
+    "rc-f": {
+      "2015-2024": [
+        "5.0 V8 - 477hp"
+      ]
+    },
+    "gs-f": {
+      "2016-2020": [
+        "5.0 V8 - 477hp"
+      ]
+    },
+    "is-f": {
+      "2008-2014": [
+        "5.0 V8 - 423hp"
+      ]
+    },
+    "lfa": {
+      "2010-2012": [
+        "4.8 V10 - 560hp"
+      ]
+    }
+  },
+  "jaguar": {
+    "xe": {
+      "2015-2024": [
+        "2.0 i4 - 200hp",
+        "2.0 i4 - 250hp",
+        "3.0 V6 S - 380hp",
+        "2.0 D - 163hp",
+        "2.0 D - 180hp",
+        "2.0 D - 240hp"
+      ]
+    },
+    "xf": {
+      "2008-2015": [
+        "2.2 D - 190hp",
+        "3.0 D - 275hp",
+        "3.0 V6 - 240hp",
+        "5.0 V8 - 385hp"
+      ],
+      "2016-2024": [
+        "2.0 i4 - 250hp",
+        "3.0 V6 S - 380hp",
+        "5.0 V8 - 550hp",
+        "2.0 D - 163hp",
+        "2.0 D - 240hp",
+        "3.0 D - 300hp"
+      ]
+    },
+    "xj": {
+      "2003-2009": [
+        "2.7 D V6 - 207hp",
+        "3.0 V6 - 240hp",
+        "4.2 V8 - 298hp"
+      ],
+      "2010-2019": [
+        "3.0 D V6 - 275hp",
+        "3.0 V6 SC - 340hp",
+        "5.0 V8 SC - 510hp"
+      ]
+    },
+    "f-type": {
+      "2013-2024": [
+        "2.0 i4 - 300hp",
+        "3.0 V6 S - 380hp",
+        "5.0 V8 R - 575hp"
+      ]
+    },
+    "e-pace": {
+      "2018-2024": [
+        "1.5 i3 - 160hp",
+        "2.0 i4 - 200hp",
+        "2.0 i4 - 249hp",
+        "2.0 i4 - 300hp",
+        "2.0 D - 150hp",
+        "2.0 D - 180hp",
+        "2.0 D - 204hp"
+      ]
+    },
+    "f-pace": {
+      "2016-2024": [
+        "2.0 i4 - 250hp",
+        "2.0 i4 - 300hp",
+        "3.0 V6 S - 380hp",
+        "5.0 V8 SVR - 550hp",
+        "2.0 D - 163hp",
+        "2.0 D - 240hp",
+        "3.0 D - 300hp"
+      ]
+    },
+    "i-pace": {
+      "2018-2024": [
+        "Electric - 400hp"
+      ]
+    },
+    "x-type": {
+      "2001-2009": [
+        "2.0 V6 - 130hp",
+        "2.5 V6 - 194hp",
+        "3.0 V6 - 231hp",
+        "2.0 D - 130hp",
+        "2.2 D - 155hp"
+      ]
+    },
+    "s-type": {
+      "1999-2007": [
+        "2.5 V6 - 201hp",
+        "3.0 V6 - 240hp",
+        "4.2 V8 - 300hp",
+        "2.7 D V6 - 207hp"
+      ]
+    },
+    "xk": {
+      "2006-2014": [
+        "4.2 V8 - 300hp",
+        "5.0 V8 - 385hp",
+        "5.0 V8 R - 510hp"
+      ]
+    },
+    "xfr": {
+      "2009-2015": [
+        "5.0 V8 SC - 510hp"
+      ],
+      "2016-2021": [
+        "5.0 V8 SC - 550hp"
+      ]
+    },
+    "xkr": {
+      "2007-2014": [
+        "5.0 V8 SC - 510hp"
+      ]
+    },
+    "f-type-r": {
+      "2013-2024": [
+        "5.0 V8 SC - 550hp",
+        "5.0 V8 SC - 575hp"
+      ]
+    },
+    "f-pace-svr": {
+      "2018-2024": [
+        "5.0 V8 SC - 550hp"
+      ]
+    }
+  },
+  "dacia": {
+    "sandero": {
+      "2008-2012": [
+        "1.2 - 75hp",
+        "1.4 - 75hp",
+        "1.6 - 90hp",
+        "1.5 dCi - 68hp",
+        "1.5 dCi - 85hp"
+      ],
+      "2013-2020": [
+        "0.9 TCe - 90hp",
+        "1.2 - 75hp",
+        "1.5 dCi - 75hp",
+        "1.5 dCi - 90hp"
+      ],
+      "2021-2024": [
+        "1.0 TCe - 90hp",
+        "1.0 TCe - 100hp"
+      ]
+    },
+    "logan": {
+      "2004-2012": [
+        "1.4 - 75hp",
+        "1.6 - 87hp",
+        "1.6 - 105hp",
+        "1.5 dCi - 68hp",
+        "1.5 dCi - 85hp"
+      ],
+      "2013-2020": [
+        "0.9 TCe - 90hp",
+        "1.2 - 75hp",
+        "1.0 TCe - 100hp",
+        "1.5 dCi - 75hp",
+        "1.5 dCi - 90hp"
+      ]
+    },
+    "duster": {
+      "2010-2017": [
+        "1.6 - 105hp",
+        "1.6 - 114hp",
+        "1.5 dCi - 90hp",
+        "1.5 dCi - 110hp"
+      ],
+      "2018-2024": [
+        "1.0 TCe - 100hp",
+        "1.3 TCe - 130hp",
+        "1.3 TCe - 150hp",
+        "1.5 dCi - 95hp",
+        "1.5 Blue dCi - 115hp"
+      ]
+    },
+    "jogger": {
+      "2022-2024": [
+        "1.0 TCe - 110hp",
+        "1.0 TCe Hybrid - 140hp"
+      ]
+    },
+    "spring": {
+      "2021-2024": [
+        "Electric - 44hp",
+        "Electric - 65hp"
+      ]
+    },
+    "dokker": {
+      "2012-2021": [
+        "1.2 TCe - 115hp",
+        "1.5 dCi - 75hp",
+        "1.5 dCi - 90hp"
+      ]
+    },
+    "lodgy": {
+      "2012-2021": [
+        "1.2 TCe - 115hp",
+        "1.5 dCi - 90hp",
+        "1.5 dCi - 110hp"
+      ]
+    }
+  },
+  "suzuki": {
+    "ignis": {
+      "2017-2024": [
+        "1.2 Dualjet - 90hp",
+        "1.2 Dualjet Hybrid - 83hp"
+      ]
+    },
+    "swift": {
+      "2005-2010": [
+        "1.3 - 92hp",
+        "1.5 - 102hp",
+        "1.6 Sport - 125hp",
+        "1.3 DDiS - 75hp"
+      ],
+      "2011-2017": [
+        "1.2 - 94hp",
+        "1.6 Sport - 136hp",
+        "1.3 DDiS - 75hp"
+      ],
+      "2018-2024": [
+        "1.0 Boosterjet - 111hp",
+        "1.2 Dualjet - 90hp",
+        "1.4 Boosterjet Sport - 140hp"
+      ]
+    },
+    "baleno": {
+      "2016-2022": [
+        "1.0 Boosterjet - 111hp",
+        "1.2 Dualjet - 90hp"
+      ]
+    },
+    "vitara": {
+      "2015-2024": [
+        "1.0 Boosterjet - 111hp",
+        "1.4 Boosterjet - 140hp",
+        "1.6 - 120hp",
+        "1.6 DDiS - 120hp"
+      ]
+    },
+    "s-cross": {
+      "2014-2024": [
+        "1.0 Boosterjet - 111hp",
+        "1.4 Boosterjet - 140hp",
+        "1.6 DDiS - 120hp"
+      ]
+    },
+    "jimny": {
+      "1998-2018": [
+        "1.3 - 85hp"
+      ],
+      "2019-2024": [
+        "1.5 - 102hp"
+      ]
+    },
+    "celerio": {
+      "2015-2024": [
+        "1.0 - 68hp"
+      ]
+    },
+    "sx4": {
+      "2006-2014": [
+        "1.5 - 99hp",
+        "1.6 - 107hp",
+        "2.0 - 145hp",
+        "1.6 DDiS - 90hp",
+        "1.9 DDiS - 120hp"
+      ]
+    },
+    "grand-vitara": {
+      "2005-2015": [
+        "1.6 - 106hp",
+        "2.0 - 140hp",
+        "2.4 - 166hp",
+        "3.2 V6 - 233hp",
+        "1.9 DDiS - 129hp"
+      ]
+    },
+    "splash": {
+      "2008-2015": [
+        "1.0 - 68hp",
+        "1.2 - 86hp",
+        "1.3 DDiS - 75hp"
+      ]
+    },
+    "alto": {
+      "2009-2014": [
+        "1.0 - 68hp"
+      ]
+    },
+    "swift-sport": {
+      "2006-2011": [
+        "1.6 - 125hp"
+      ],
+      "2012-2017": [
+        "1.6 - 136hp"
+      ],
+      "2018-2024": [
+        "1.4 Boosterjet - 140hp"
+      ]
+    }
+  },
+  "subaru": {
+    "impreza": {
+      "2000-2007": [
+        "1.5 - 90hp",
+        "1.6 - 105hp",
+        "2.0 - 125hp",
+        "2.0 Turbo WRX - 218hp",
+        "2.5 Turbo STI - 280hp"
+      ],
+      "2008-2016": [
+        "1.5 - 107hp",
+        "1.6 - 114hp",
+        "2.0 - 150hp",
+        "2.5 Turbo WRX - 265hp",
+        "2.5 Turbo STI - 300hp"
+      ],
+      "2017-2024": [
+        "1.6 - 114hp",
+        "2.0 - 156hp",
+        "2.0 Turbo WRX - 268hp"
+      ]
+    },
+    "legacy": {
+      "2004-2009": [
+        "2.0 - 165hp",
+        "2.5 - 167hp",
+        "3.0 H6 - 245hp",
+        "2.0 D - 150hp"
+      ],
+      "2010-2024": [
+        "2.5 - 175hp",
+        "3.6 H6 - 256hp"
+      ]
+    },
+    "outback": {
+      "2004-2009": [
+        "2.5 - 173hp",
+        "3.0 H6 - 245hp",
+        "2.0 D - 150hp"
+      ],
+      "2010-2014": [
+        "2.0 D - 150hp",
+        "2.5 - 173hp",
+        "3.6 H6 - 256hp"
+      ],
+      "2015-2024": [
+        "2.5 - 175hp",
+        "2.4 Turbo - 260hp"
+      ]
+    },
+    "forester": {
+      "2002-2007": [
+        "2.0 - 125hp",
+        "2.5 - 165hp",
+        "2.5 Turbo - 230hp"
+      ],
+      "2008-2012": [
+        "2.0 - 150hp",
+        "2.5 - 171hp",
+        "2.5 Turbo - 241hp",
+        "2.0 D - 147hp"
+      ],
+      "2013-2018": [
+        "2.0 - 150hp",
+        "2.0 Turbo - 241hp",
+        "2.0 D - 147hp"
+      ],
+      "2019-2024": [
+        "2.0 - 154hp",
+        "1.8 Turbo - 177hp"
+      ]
+    },
+    "xv": {
+      "2012-2017": [
+        "1.6 - 114hp",
+        "2.0 - 150hp",
+        "2.0 D - 147hp"
+      ],
+      "2018-2024": [
+        "1.6 - 114hp",
+        "2.0 - 156hp"
+      ]
+    },
+    "brz": {
+      "2013-2024": [
+        "2.0 - 200hp",
+        "2.4 - 228hp"
+      ]
+    },
+    "levorg": {
+      "2015-2024": [
+        "1.6 Turbo - 170hp",
+        "2.0 Turbo - 300hp"
+      ]
+    },
+    "wrx": {
+      "2001-2007": [
+        "2.0 Turbo - 218hp",
+        "2.5 Turbo - 265hp"
+      ],
+      "2008-2014": [
+        "2.5 Turbo - 265hp",
+        "2.5 Turbo - 305hp"
+      ],
+      "2015-2024": [
+        "2.0 Turbo - 268hp",
+        "2.4 Turbo - 271hp"
+      ]
+    },
+    "wrx-sti": {
+      "2001-2007": [
+        "2.0 Turbo - 280hp"
+      ],
+      "2008-2014": [
+        "2.5 Turbo - 300hp"
+      ],
+      "2015-2021": [
+        "2.5 Turbo - 300hp"
+      ]
+    },
+    "tribeca": {
+      "2006-2014": [
+        "3.0 H6 - 245hp",
+        "3.6 H6 - 256hp"
+      ]
+    },
+    "solterra": {
+      "2023-2024": [
+        "Electric - 215hp"
+      ]
+    }
+  },
+  "mitsubishi": {
+    "mirage": {
+      "2013-2024": [
+        "1.0 - 71hp",
+        "1.2 - 80hp"
+      ]
+    },
+    "eclipse-cross": {
+      "2018-2024": [
+        "1.5 Turbo - 163hp",
+        "2.2 Di-D - 150hp"
+      ]
+    },
+    "outlander": {
+      "2007-2012": [
+        "2.0 - 147hp",
+        "2.4 - 170hp",
+        "3.0 V6 - 230hp",
+        "2.2 Di-D - 156hp"
+      ],
+      "2013-2021": [
+        "2.0 - 150hp",
+        "2.2 Di-D - 150hp",
+        "2.4 PHEV - 224hp"
+      ],
+      "2022-2024": [
+        "2.5 PHEV - 252hp"
+      ]
+    },
+    "asx": {
+      "2010-2024": [
+        "1.6 - 117hp",
+        "2.0 - 150hp",
+        "1.6 Di-D - 114hp",
+        "1.8 Di-D - 150hp"
+      ]
+    },
+    "l200": {
+      "2006-2015": [
+        "2.5 Di-D - 136hp",
+        "2.5 Di-D - 178hp"
+      ],
+      "2016-2024": [
+        "2.2 Di-D - 150hp",
+        "2.3 Di-D - 181hp"
+      ]
+    },
+    "colt": {
+      "2004-2013": [
+        "1.1 - 75hp",
+        "1.3 - 95hp",
+        "1.5 - 109hp",
+        "1.5 Turbo - 150hp",
+        "1.5 DI-D - 95hp"
+      ]
+    },
+    "lancer": {
+      "2008-2017": [
+        "1.5 - 109hp",
+        "1.8 - 143hp",
+        "2.0 - 150hp",
+        "2.0 Turbo Evo X - 295hp",
+        "1.8 Di-D - 150hp"
+      ]
+    },
+    "shogun": {
+      "2007-2021": [
+        "3.2 Di-D - 200hp",
+        "3.8 V6 - 250hp"
+      ]
+    },
+    "pajero": {
+      "2007-2021": [
+        "3.0 V6 - 178hp",
+        "3.2 Di-D - 200hp",
+        "3.8 V6 - 250hp"
+      ]
+    },
+    "space-star": {
+      "2013-2024": [
+        "1.0 - 71hp",
+        "1.2 - 80hp"
+      ]
+    },
+    "outlander-phev": {
+      "2014-2020": [
+        "2.0 PHEV - 203hp",
+        "2.4 PHEV - 224hp"
+      ],
+      "2021-2024": [
+        "2.4 PHEV - 252hp"
+      ]
+    }
+  },
+  "tesla": {
+    "model-3": {
+      "2018-2024": [
+        "RWD - 325hp",
+        "Long Range AWD - 462hp",
+        "Performance - 513hp"
+      ]
+    },
+    "model-s": {
+      "2012-2015": [
+        "60 - 380hp",
+        "85 - 422hp",
+        "P85 - 421hp"
+      ],
+      "2016-2020": [
+        "75D - 525hp",
+        "100D - 588hp",
+        "P100D - 762hp"
+      ],
+      "2021-2024": [
+        "Long Range - 670hp",
+        "Plaid - 1020hp"
+      ]
+    },
+    "model-x": {
+      "2016-2020": [
+        "75D - 525hp",
+        "100D - 588hp",
+        "P100D - 762hp"
+      ],
+      "2021-2024": [
+        "Long Range - 670hp",
+        "Plaid - 1020hp"
+      ]
+    },
+    "model-y": {
+      "2020-2024": [
+        "RWD - 299hp",
+        "Long Range AWD - 462hp",
+        "Performance - 513hp"
+      ]
+    },
+    "roadster": {
+      "2008-2012": [
+        "Electric - 288hp"
+      ],
+      "2023-2024": [
+        "Electric - 1000hp"
+      ]
+    },
+    "cybertruck": {
+      "2024-2024": [
+        "Single Motor - 340hp",
+        "Dual Motor - 600hp",
+        "Tri Motor - 845hp"
+      ]
+    }
+  },
+  "bentley": {
+    "continental-gt": {
+      "2003-2010": [
+        "6.0 W12 - 552hp",
+        "6.0 W12 - 612hp"
+      ],
+      "2011-2024": [
+        "4.0 V8 - 507hp",
+        "6.0 W12 - 635hp"
+      ]
+    },
+    "flying-spur": {
+      "2006-2013": [
+        "6.0 W12 - 552hp",
+        "6.0 W12 - 616hp"
+      ],
+      "2014-2024": [
+        "4.0 V8 - 507hp",
+        "6.0 W12 - 635hp"
+      ]
+    },
+    "bentayga": {
+      "2016-2024": [
+        "3.0 Hybrid - 462hp",
+        "4.0 V8 - 550hp",
+        "6.0 W12 - 635hp"
+      ]
+    },
+    "mulsanne": {
+      "2010-2020": [
+        "6.75 V8 - 505hp",
+        "6.75 V8 - 530hp"
+      ]
+    },
+    "continental-gtc": {
+      "2006-2011": [
+        "6.0 W12 - 560hp",
+        "6.0 W12 - 610hp"
+      ],
+      "2012-2024": [
+        "4.0 V8 - 507hp",
+        "6.0 W12 - 635hp"
+      ]
+    }
+  },
+  "maserati": {
+    "ghibli": {
+      "2014-2024": [
+        "2.0 Turbo - 330hp",
+        "3.0 V6 - 350hp",
+        "3.0 V6 S - 430hp",
+        "3.0 V6 D - 275hp"
+      ]
+    },
+    "quattroporte": {
+      "2004-2012": [
+        "4.2 V8 - 400hp",
+        "4.7 V8 S - 430hp"
+      ],
+      "2013-2024": [
+        "3.0 V6 - 330hp",
+        "3.0 V6 S - 430hp",
+        "3.8 V8 GTS - 530hp",
+        "3.0 V6 D - 275hp"
+      ]
+    },
+    "levante": {
+      "2016-2024": [
+        "3.0 V6 - 350hp",
+        "3.0 V6 S - 430hp",
+        "3.8 V8 Trofeo - 580hp",
+        "3.0 V6 D - 275hp"
+      ]
+    },
+    "mc20": {
+      "2021-2024": [
+        "3.0 V6 Nettuno - 630hp"
+      ]
+    },
+    "granturismo": {
+      "2008-2019": [
+        "4.2 V8 - 405hp",
+        "4.7 V8 S - 440hp"
+      ],
+      "2023-2024": [
+        "3.0 V6 - 490hp"
+      ]
+    },
+    "grancabrio": {
+      "2010-2019": [
+        "4.7 V8 - 440hp"
+      ]
+    },
+    "grecale": {
+      "2022-2024": [
+        "2.0 Turbo - 300hp",
+        "3.0 V6 - 330hp",
+        "3.0 V6 Trofeo - 530hp"
+      ]
+    }
+  },
+  "abarth": {
+    "595": {
+      "2008-2024": [
+        "1.4 T-Jet - 145hp",
+        "1.4 T-Jet - 165hp",
+        "1.4 T-Jet - 180hp"
+      ]
+    },
+    "695": {
+      "2008-2024": [
+        "1.4 T-Jet - 180hp",
+        "1.4 T-Jet Biposto - 190hp"
+      ]
+    },
+    "500e": {
+      "2024": [
+        "Electric - 155hp"
+      ]
+    },
+    "124-spider": {
+      "2016-2024": [
+        "1.4 Turbo - 170hp"
+      ]
+    },
+    "grande-punto": {
+      "2007-2010": [
+        "1.4 T-Jet - 155hp"
+      ]
+    },
+    "punto-evo": {
+      "2010-2012": [
+        "1.4 Turbo - 165hp"
+      ]
+    }
+  },
+  "ds": {
+    "ds-3": {
+      "2010-2019": [
+        "1.2 PureTech - 110hp",
+        "1.6 THP - 155hp",
+        "1.6 THP - 208hp",
+        "1.6 BlueHDi - 100hp",
+        "1.6 BlueHDi - 120hp"
+      ]
+    },
+    "ds-4": {
+      "2011-2018": [
+        "1.6 THP - 165hp",
+        "1.6 THP - 210hp",
+        "1.6 BlueHDi - 120hp",
+        "2.0 BlueHDi - 180hp"
+      ],
+      "2021-2024": [
+        "1.2 PureTech - 130hp",
+        "1.6 PureTech - 225hp",
+        "1.5 BlueHDi - 130hp"
+      ]
+    },
+    "ds-7": {
+      "2018-2024": [
+        "1.6 PureTech - 180hp",
+        "1.6 PureTech - 225hp",
+        "2.0 BlueHDi - 180hp"
+      ]
+    },
+    "ds-9": {
+      "2021-2024": [
+        "1.6 PureTech - 225hp",
+        "2.0 BlueHDi - 180hp"
+      ]
+    },
+    "ds-5": {
+      "2012-2018": [
+        "1.6 THP - 165hp",
+        "1.6 THP - 210hp",
+        "1.6 BlueHDi - 120hp",
+        "2.0 BlueHDi - 180hp"
+      ]
+    },
+    "ds3-crossback": {
+      "2019-2024": [
+        "1.2 PureTech - 100hp",
+        "1.2 PureTech - 130hp",
+        "1.5 BlueHDi - 110hp",
+        "Electric - 136hp"
+      ]
+    },
+    "ds-3-crossback": {
+      "2019-2024": [
+        "1.2 PureTech - 100hp",
+        "1.2 PureTech - 130hp",
+        "1.5 BlueHDi - 110hp",
+        "Electric - 136hp"
+      ]
+    }
+  },
+  "smart": {
+    "1": {
+      "2023-2024": [
+        "Electric - 272hp"
+      ]
+    },
+    "3": {
+      "2024-2024": [
+        "Electric - 272hp"
+      ]
+    },
+    "fortwo": {
+      "2007-2014": [
+        "1.0 - 61hp",
+        "1.0 - 84hp",
+        "0.8 CDI - 54hp"
+      ],
+      "2015-2024": [
+        "0.9 Turbo - 90hp",
+        "Electric - 82hp"
+      ]
+    },
+    "forfour": {
+      "2015-2024": [
+        "0.9 Turbo - 90hp",
+        "1.0 - 71hp"
+      ]
+    },
+    "eq": {
+      "2020-2024": [
+        "Electric - 82hp"
+      ]
+    },
+    "roadster": {
+      "2003-2007": [
+        "0.7 Turbo - 82hp",
+        "0.7 Turbo - 101hp"
+      ]
+    },
+    "crossblade": {
+      "2002-2003": [
+        "0.6 Turbo - 71hp"
+      ]
+    },
+    "forfour-brabus": {
+      "2016-2024": [
+        "0.9 Turbo - 109hp"
+      ]
+    },
+    "#1": {
+      "2023-2024": [
+        "Electric - 272hp"
+      ]
+    },
+    "#3": {
+      "2024-2024": [
+        "Electric - 272hp"
+      ]
+    }
+  },
+  "ssangyong": {
+    "tivoli": {
+      "2015-2024": [
+        "1.2 Turbo - 128hp",
+        "1.5 Turbo - 163hp",
+        "1.6 Diesel - 115hp",
+        "1.6 Diesel - 136hp"
+      ]
+    },
+    "korando": {
+      "2011-2024": [
+        "1.5 Turbo - 163hp",
+        "2.0 Diesel - 148hp",
+        "2.2 Diesel - 181hp"
+      ]
+    },
+    "rexton": {
+      "2017-2024": [
+        "2.2 Diesel - 181hp",
+        "2.2 Diesel - 202hp"
+      ]
+    },
+    "musso": {
+      "2018-2024": [
+        "2.2 Diesel - 181hp"
+      ]
+    },
+    "korando-sports": {
+      "2004-2012": [
+        "2.9 Diesel - 122hp"
+      ]
+    },
+    "actyon": {
+      "2006-2013": [
+        "2.0 - 141hp",
+        "2.3 - 150hp",
+        "2.0 Diesel - 141hp"
+      ]
+    },
+    "rodius": {
+      "2005-2013": [
+        "2.7 Diesel - 165hp",
+        "3.2 - 220hp"
+      ]
+    },
+    "kyron": {
+      "2005-2014": [
+        "2.0 Diesel - 141hp",
+        "2.3 - 150hp",
+        "2.7 Diesel - 165hp",
+        "3.2 - 220hp"
+      ]
+    }
+  },
+  "infiniti": {
+    "q30": {
+      "2016-2019": [
+        "1.5 dCi - 109hp",
+        "1.6 Turbo - 122hp",
+        "2.0 Turbo - 211hp",
+        "2.2 dCi - 170hp"
+      ]
+    },
+    "q50": {
+      "2014-2024": [
+        "2.0 Turbo - 211hp",
+        "3.0 Turbo - 300hp",
+        "3.5 Hybrid - 364hp",
+        "2.2 dCi - 170hp"
+      ]
+    },
+    "q60": {
+      "2016-2024": [
+        "2.0 Turbo - 211hp",
+        "3.0 Turbo - 400hp"
+      ]
+    },
+    "qx30": {
+      "2017-2019": [
+        "1.6 Turbo - 122hp",
+        "2.0 Turbo - 211hp",
+        "2.2 dCi - 170hp"
+      ]
+    },
+    "qx50": {
+      "2014-2024": [
+        "2.0 VC-Turbo - 272hp"
+      ]
+    },
+    "qx70": {
+      "2013-2017": [
+        "3.0 dCi - 238hp",
+        "3.7 V6 - 320hp",
+        "5.0 V8 - 390hp"
+      ]
+    },
+    "q70": {
+      "2014-2019": [
+        "2.0 Turbo - 211hp",
+        "3.5 V6 - 320hp",
+        "3.7 V6 - 320hp",
+        "5.6 V8 - 420hp",
+        "2.2 dCi - 170hp"
+      ]
+    },
+    "qx80": {
+      "2013-2024": [
+        "5.6 V8 - 400hp"
+      ]
+    },
+    "fx": {
+      "2003-2008": [
+        "3.5 V6 - 280hp",
+        "4.5 V8 - 320hp"
+      ],
+      "2009-2013": [
+        "3.7 V6 - 320hp",
+        "5.0 V8 - 390hp"
+      ]
+    },
+    "m": {
+      "2006-2010": [
+        "3.5 V6 - 280hp",
+        "4.5 V8 - 325hp",
+        "5.6 V8 - 420hp"
+      ]
+    },
+    "g": {
+      "2007-2015": [
+        "2.5 V6 - 222hp",
+        "3.5 V6 - 306hp",
+        "3.7 V6 - 328hp",
+        "5.0 V8 - 390hp"
+      ]
+    }
+  },
+  "dodge": {
+    "challenger": {
+      "2008-2024": [
+        "3.6 V6 - 305hp",
+        "5.7 V8 - 372hp",
+        "6.4 V8 - 485hp",
+        "6.2 V8 Hellcat - 717hp"
+      ]
+    },
+    "charger": {
+      "2006-2024": [
+        "3.6 V6 - 292hp",
+        "5.7 V8 - 370hp",
+        "6.4 V8 - 485hp",
+        "6.2 V8 Hellcat - 707hp"
+      ]
+    },
+    "durango": {
+      "2011-2024": [
+        "3.6 V6 - 295hp",
+        "5.7 V8 - 360hp",
+        "6.4 V8 - 475hp"
+      ]
+    },
+    "ram-1500": {
+      "2009-2024": [
+        "3.6 V6 - 305hp",
+        "5.7 V8 - 395hp",
+        "3.0 EcoDiesel - 260hp"
+      ]
+    },
+    "journey": {
+      "2008-2020": [
+        "2.4 - 173hp",
+        "3.6 V6 - 283hp"
+      ]
+    },
+    "nitro": {
+      "2007-2012": [
+        "3.7 V6 - 210hp",
+        "4.0 V6 - 260hp"
+      ]
+    },
+    "caliber": {
+      "2006-2012": [
+        "1.8 - 148hp",
+        "2.0 - 156hp",
+        "2.4 - 172hp",
+        "2.0 CRD - 140hp"
+      ]
+    },
+    "avenger": {
+      "2008-2014": [
+        "2.4 - 173hp",
+        "3.6 V6 - 283hp"
+      ]
+    },
+    "viper": {
+      "2003-2010": [
+        "8.3 V10 - 500hp"
+      ],
+      "2013-2017": [
+        "8.4 V10 - 645hp"
+      ]
+    },
+    "dakota": {
+      "2005-2011": [
+        "3.7 V6 - 210hp",
+        "4.7 V8 - 230hp"
+      ]
+    },
+    "ram-2500": {
+      "2010-2024": [
+        "5.7 V8 - 383hp",
+        "6.4 V8 - 410hp",
+        "6.7 Cummins Diesel - 370hp"
+      ]
+    },
+    "ram-3500": {
+      "2010-2024": [
+        "6.4 V8 - 410hp",
+        "6.7 Cummins Diesel - 385hp"
+      ]
+    },
+    "grand-caravan": {
+      "2008-2020": [
+        "3.3 V6 - 180hp",
+        "3.6 V6 - 283hp"
+      ]
+    }
+  },
+  "chevrolet": {
+    "spark": {
+      "2010-2022": [
+        "1.0 - 68hp",
+        "1.2 - 82hp"
+      ]
+    },
+    "cruze": {
+      "2009-2019": [
+        "1.4 Turbo - 140hp",
+        "1.6 - 124hp",
+        "1.8 - 141hp",
+        "2.0 Diesel - 163hp"
+      ]
+    },
+    "malibu": {
+      "2012-2024": [
+        "1.5 Turbo - 163hp",
+        "2.0 Turbo - 250hp"
+      ]
+    },
+    "camaro": {
+      "2010-2024": [
+        "2.0 Turbo - 275hp",
+        "3.6 V6 - 335hp",
+        "6.2 V8 - 455hp",
+        "6.2 V8 ZL1 - 650hp"
+      ]
+    },
+    "corvette": {
+      "2005-2013": [
+        "6.0 V8 - 400hp",
+        "6.2 V8 - 430hp",
+        "7.0 V8 Z06 - 505hp"
+      ],
+      "2014-2019": [
+        "6.2 V8 - 460hp",
+        "6.2 V8 Z06 - 659hp"
+      ],
+      "2020-2024": [
+        "6.2 V8 - 495hp",
+        "5.5 V8 Z06 - 670hp"
+      ]
+    },
+    "equinox": {
+      "2010-2024": [
+        "1.5 Turbo - 170hp",
+        "2.0 Turbo - 252hp",
+        "1.6 Diesel - 136hp"
+      ]
+    },
+    "traverse": {
+      "2009-2024": [
+        "2.0 Turbo - 255hp",
+        "3.6 V6 - 310hp"
+      ]
+    },
+    "silverado": {
+      "2007-2024": [
+        "4.3 V6 - 285hp",
+        "5.3 V8 - 355hp",
+        "6.2 V8 - 420hp",
+        "3.0 Diesel - 277hp"
+      ]
+    },
+    "tahoe": {
+      "2007-2024": [
+        "5.3 V8 - 355hp",
+        "6.2 V8 - 420hp"
+      ]
+    },
+    "suburban": {
+      "2007-2024": [
+        "5.3 V8 - 355hp",
+        "6.2 V8 - 420hp"
+      ]
+    },
+    "trax": {
+      "2013-2024": [
+        "1.4 Turbo - 140hp",
+        "1.7 CDTi - 130hp"
+      ]
+    },
+    "trailblazer": {
+      "2020-2024": [
+        "1.2 Turbo - 137hp",
+        "1.3 Turbo - 155hp"
+      ]
+    },
+    "colorado": {
+      "2012-2024": [
+        "2.5 - 200hp",
+        "3.6 V6 - 308hp",
+        "2.8 Diesel - 200hp"
+      ]
+    },
+    "blazer": {
+      "2019-2024": [
+        "2.0 Turbo - 228hp",
+        "2.5 - 193hp",
+        "3.6 V6 - 308hp"
+      ]
+    },
+    "volt": {
+      "2011-2019": [
+        "1.4 PHEV - 149hp",
+        "1.5 PHEV - 149hp"
+      ]
+    },
+    "bolt": {
+      "2017-2024": [
+        "Electric - 200hp"
+      ]
+    }
+  },
+  "chrysler": {
+    "300": {
+      "2005-2024": [
+        "3.6 V6 - 292hp",
+        "5.7 V8 - 363hp",
+        "6.4 V8 SRT - 470hp"
+      ]
+    },
+    "pacifica": {
+      "2017-2024": [
+        "3.6 V6 - 287hp",
+        "3.6 V6 Hybrid - 260hp"
+      ]
+    },
+    "voyager": {
+      "2020-2024": [
+        "3.6 V6 - 287hp"
+      ]
+    },
+    "pt-cruiser": {
+      "2000-2010": [
+        "2.0 - 141hp",
+        "2.4 - 143hp",
+        "2.4 Turbo GT - 230hp",
+        "2.2 CRD - 121hp"
+      ]
+    },
+    "sebring": {
+      "2007-2010": [
+        "2.4 - 173hp",
+        "2.7 V6 - 189hp",
+        "3.5 V6 - 235hp"
+      ]
+    },
+    "crossfire": {
+      "2003-2008": [
+        "3.2 V6 - 215hp",
+        "3.2 V6 SRT-6 - 330hp"
+      ]
+    },
+    "grand-voyager": {
+      "2001-2016": [
+        "2.4 - 143hp",
+        "2.8 CRD - 163hp",
+        "3.3 V6 - 174hp",
+        "3.6 V6 - 283hp",
+        "3.8 V6 - 197hp"
+      ]
+    }
+  },
+  "opel": {
+    "corsa": {
+      "2006-2014": [
+        "1.0 - 60hp",
+        "1.2 - 80hp",
+        "1.4 - 90hp",
+        "1.3 CDTi - 75hp",
+        "1.7 CDTi - 125hp"
+      ],
+      "2015-2019": [
+        "1.0 - 90hp",
+        "1.4 - 90hp",
+        "1.3 CDTi - 95hp"
+      ],
+      "2020-2024": [
+        "1.2 - 75hp",
+        "1.2 Turbo - 100hp",
+        "1.5 Diesel - 100hp"
+      ]
+    },
+    "astra": {
+      "2010-2015": [
+        "1.4 - 100hp",
+        "1.4 Turbo - 140hp",
+        "1.6 Turbo - 180hp",
+        "1.7 CDTi - 130hp",
+        "2.0 CDTi - 165hp"
+      ],
+      "2016-2021": [
+        "1.0 Turbo - 105hp",
+        "1.4 Turbo - 145hp",
+        "1.6 Turbo - 200hp",
+        "1.6 Diesel - 136hp",
+        "2.0 Diesel - 170hp"
+      ],
+      "2022-2024": [
+        "1.2 Turbo - 130hp",
+        "1.5 Diesel - 130hp"
+      ]
+    },
+    "insignia": {
+      "2009-2017": [
+        "1.6 Turbo - 170hp",
+        "2.0 Turbo - 250hp",
+        "2.0 CDTi - 170hp"
+      ],
+      "2018-2024": [
+        "1.5 Turbo - 165hp",
+        "2.0 Turbo - 230hp",
+        "2.0 Diesel - 170hp"
+      ]
+    },
+    "mokka": {
+      "2013-2020": [
+        "1.4 Turbo - 140hp",
+        "1.6 CDTi - 136hp"
+      ],
+      "2021-2024": [
+        "1.2 Turbo - 100hp",
+        "1.2 Turbo - 130hp",
+        "1.5 Diesel - 110hp"
+      ]
+    },
+    "crossland": {
+      "2017-2024": [
+        "1.2 - 83hp",
+        "1.2 Turbo - 110hp",
+        "1.5 Diesel - 110hp"
+      ]
+    },
+    "grandland": {
+      "2018-2024": [
+        "1.2 Turbo - 130hp",
+        "1.6 Turbo - 180hp",
+        "1.5 Diesel - 130hp",
+        "2.0 Diesel - 177hp"
+      ]
+    },
+    "combo": {
+      "2012-2024": [
+        "1.5 Diesel - 100hp",
+        "1.5 Diesel - 130hp"
+      ]
+    },
+    "vivaro": {
+      "2014-2024": [
+        "1.5 Diesel - 120hp",
+        "1.6 Diesel - 125hp",
+        "2.0 Diesel - 145hp"
+      ]
+    },
+    "movano": {
+      "2010-2024": [
+        "2.3 Diesel - 110hp",
+        "2.3 Diesel - 125hp",
+        "2.3 Diesel - 145hp"
+      ]
+    },
+    "meriva": {
+      "2010-2017": [
+        "1.4 - 100hp",
+        "1.4 Turbo - 120hp",
+        "1.6 CDTi - 95hp",
+        "1.7 CDTi - 130hp"
+      ]
+    },
+    "antara": {
+      "2007-2015": [
+        "2.4 - 140hp",
+        "3.2 V6 - 230hp",
+        "2.0 CDTi - 150hp",
+        "2.2 CDTi - 184hp"
+      ]
+    },
+    "agila": {
+      "2008-2014": [
+        "1.0 - 68hp",
+        "1.2 - 94hp",
+        "1.3 CDTi - 75hp"
+      ]
+    },
+    "adam": {
+      "2013-2019": [
+        "1.0 Turbo - 90hp",
+        "1.2 - 70hp",
+        "1.4 - 87hp",
+        "1.4 Turbo - 150hp"
+      ]
+    },
+    "karl": {
+      "2015-2019": [
+        "1.0 - 75hp"
+      ]
+    },
+    "cascada": {
+      "2013-2019": [
+        "1.4 Turbo - 140hp",
+        "1.6 Turbo - 170hp",
+        "2.0 CDTi - 165hp"
+      ]
+    }
+  },
+  "iveco": {
+    "daily": {
+      "2014-2024": [
+        "2.3 Diesel - 116hp",
+        "2.3 Diesel - 136hp",
+        "2.3 Diesel - 156hp",
+        "3.0 Diesel - 170hp",
+        "3.0 Diesel - 205hp"
+      ]
+    },
+    "s-way": {
+      "2019-2024": [
+        "9.0 Diesel - 420hp",
+        "12.9 Diesel - 510hp"
+      ]
+    },
+    "eurocargo": {
+      "2015-2024": [
+        "5.9 Diesel - 160hp",
+        "5.9 Diesel - 210hp",
+        "6.7 Diesel - 250hp"
+      ]
+    },
+    "stralis": {
+      "2012-2020": [
+        "10.3 Diesel - 460hp",
+        "12.9 Diesel - 560hp"
+      ]
+    },
+    "massif": {
+      "2008-2015": [
+        "3.0 Diesel - 176hp"
+      ]
+    },
+    "trakker": {
+      "2004-2024": [
+        "7.8 Diesel - 310hp",
+        "10.3 Diesel - 450hp",
+        "12.9 Diesel - 560hp"
+      ]
+    },
+    "x-way": {
+      "2019-2024": [
+        "9.0 Diesel - 420hp",
+        "12.9 Diesel - 510hp"
+      ]
+    }
+  },
+  "buick": {
+    "encore": {
+      "2013-2024": [
+        "1.4 Turbo - 138hp",
+        "1.4 Turbo - 153hp"
+      ]
+    },
+    "envision": {
+      "2016-2024": [
+        "2.0 Turbo - 252hp",
+        "2.5 - 197hp"
+      ]
+    },
+    "enclave": {
+      "2018-2024": [
+        "3.6 V6 - 310hp"
+      ]
+    },
+    "regal": {
+      "2018-2020": [
+        "2.0 Turbo - 250hp",
+        "3.6 V6 - 310hp"
+      ]
+    }
+  },
+  "lincoln": {
+    "corsair": {
+      "2020-2024": [
+        "2.0 Turbo - 250hp",
+        "2.3 Turbo - 295hp"
+      ]
+    },
+    "nautilus": {
+      "2019-2024": [
+        "2.0 Turbo - 250hp",
+        "2.7 V6 Turbo - 335hp"
+      ]
+    },
+    "aviator": {
+      "2020-2024": [
+        "3.0 V6 Twin-Turbo - 400hp",
+        "3.0 V6 PHEV - 494hp"
+      ]
+    },
+    "navigator": {
+      "2018-2024": [
+        "3.5 V6 Twin-Turbo - 450hp"
+      ]
+    }
+  },
+  "ram": {
+    "1500": {
+      "2019-2024": [
+        "3.6 V6 - 305hp",
+        "5.7 V8 - 395hp",
+        "3.0 EcoDiesel - 260hp"
+      ]
+    },
+    "2500": {
+      "2019-2024": [
+        "6.4 V8 - 410hp",
+        "6.7 Cummins Diesel - 370hp"
+      ]
+    },
+    "3500": {
+      "2019-2024": [
+        "6.4 V8 - 410hp",
+        "6.7 Cummins Diesel - 370hp"
+      ]
+    },
+    "promaster": {
+      "2014-2024": [
+        "3.6 V6 - 280hp",
+        "3.0 EcoDiesel - 174hp"
+      ]
+    }
+  },
+  "hummer": {
+    "ev": {
+      "2022-2024": [
+        "Electric - 830hp",
+        "Electric - 1000hp"
+      ]
+    },
+    "h2": {
+      "2003-2009": [
+        "6.0 V8 - 325hp",
+        "6.2 V8 - 393hp"
+      ]
+    },
+    "h3": {
+      "2006-2010": [
+        "3.5 I5 - 220hp",
+        "3.7 I5 - 242hp",
+        "5.3 V8 - 300hp"
+      ]
+    }
+  },
+  "saab": {
+    "9-3": {
+      "2003-2014": [
+        "1.8t - 150hp",
+        "2.0t - 175hp",
+        "2.0 Turbo - 210hp",
+        "2.8 V6 Turbo - 255hp",
+        "1.9 TiD - 150hp"
+      ]
+    },
+    "9-5": {
+      "2006-2012": [
+        "2.0t - 220hp",
+        "2.3 Turbo - 260hp",
+        "2.8 V6 Turbo - 280hp",
+        "1.9 TiD - 150hp",
+        "2.0 TiD - 180hp"
+      ]
+    }
+  },
+  "lancia": {
+    "ypsilon": {
+      "2011-2024": [
+        "0.9 TwinAir - 85hp",
+        "1.2 - 69hp",
+        "1.4 - 95hp",
+        "1.3 MultiJet - 95hp"
+      ]
+    },
+    "delta": {
+      "2008-2014": [
+        "1.4 Turbo - 140hp",
+        "1.4 Turbo - 150hp",
+        "1.6 MultiJet - 105hp",
+        "1.9 MultiJet - 190hp"
+      ]
+    },
+    "musa": {
+      "2004-2012": [
+        "1.4 - 95hp",
+        "1.3 MultiJet - 90hp",
+        "1.6 MultiJet - 105hp"
+      ]
+    },
+    "thema": {
+      "2011-2014": [
+        "3.0 V6 - 190hp",
+        "3.6 V6 - 286hp",
+        "3.0 MultiJet - 239hp"
+      ]
+    }
+  },
+  "greatwall": {
+    "steed": {
+      "2010-2020": [
+        "2.0 Diesel - 143hp",
+        "2.4 - 136hp"
+      ]
+    },
+    "voleex-c10": {
+      "2010-2014": [
+        "1.5 - 106hp"
+      ]
+    }
+  },
+  "proton": {
+    "persona": {
+      "2016-2024": [
+        "1.6 - 107hp"
+      ]
+    },
+    "saga": {
+      "2016-2024": [
+        "1.3 - 95hp"
+      ]
+    },
+    "exora": {
+      "2009-2019": [
+        "1.6 Turbo - 140hp"
+      ]
+    },
+    "preve": {
+      "2012-2018": [
+        "1.6 Turbo - 140hp"
+      ]
+    }
+  },
+  "perodua": {
+    "myvi": {
+      "2018-2024": [
+        "1.3 - 95hp",
+        "1.5 - 103hp"
+      ]
+    },
+    "axia": {
+      "2014-2024": [
+        "1.0 - 68hp"
+      ]
+    },
+    "bezza": {
+      "2016-2024": [
+        "1.0 - 68hp",
+        "1.3 - 95hp"
+      ]
+    },
+    "aruz": {
+      "2019-2024": [
+        "1.5 - 105hp"
+      ]
+    }
+  },
+  "ford": {}
+},
 
   /**
    * ECU DATABASE - Comprehensive ECU types by manufacturer
@@ -953,9 +9801,108 @@ const CarnageVehicleDB = {
     }
   },
 
+  // Strict verified-only mode: disable manufacturer/generic engine pools
+  MANUFACTURER_ENGINES: {},
+  GENERIC_ENGINES: [],
+
   /**
    * HELPER METHODS
    */
+
+  canonicalizeEngineName: function(name) {
+    if (!name) return '';
+    let out = String(name).trim();
+    out = out.replace(/\s*[-–—]\s*/g, ' - ');
+    out = out.replace(/\s+/g, ' ').trim();
+
+    const substitutions = [
+      [/\btdi\b/gi, 'TDI'],
+      [/\btsi\b/gi, 'TSI'],
+      [/\btfsi\b/gi, 'TFSI'],
+      [/\bcdi\b/gi, 'CDI'],
+      [/\bcdti\b/gi, 'CDTI'],
+      [/\bdci\b/gi, 'dCi'],
+      [/\bhdi\b/gi, 'HDi'],
+      [/\bbluehdi\b/gi, 'BlueHDi'],
+      [/\bcrdi\b/gi, 'CRDi'],
+      [/\bjtdm\b/gi, 'JTDm'],
+      [/\bd-4d\b/gi, 'D-4D'],
+      [/\becoboost\b/gi, 'EcoBoost'],
+      [/\becoblue\b/gi, 'EcoBlue'],
+      [/\bmultijet\b/gi, 'MultiJet'],
+      [/\bpuretech\b/gi, 'PureTech'],
+      [/\bskyactiv-d\b/gi, 'SKYACTIV-D'],
+      [/\bskyactiv-g\b/gi, 'SKYACTIV-G'],
+      [/\bhp\b/gi, 'hp']
+    ];
+
+    for (const [pattern, replacement] of substitutions) {
+      out = out.replace(pattern, replacement);
+    }
+
+    return out.replace(/\s+/g, ' ').trim();
+  },
+
+  dedupeAndNormalizeEngines: function(engineList) {
+    if (!Array.isArray(engineList)) return [];
+    const normalized = [];
+    const seen = new Set();
+
+    for (const engine of engineList) {
+      const canonical = this.canonicalizeEngineName(engine);
+      if (!canonical) continue;
+      const key = canonical.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      normalized.push(canonical);
+    }
+
+    return normalized;
+  },
+
+  buildSanitizedYearEngines: function() {
+    const source = this.VEHICLE_ENGINE_DATABASE || {};
+    const out = {};
+
+    for (const [make, modelMap] of Object.entries(source)) {
+      out[make] = {};
+      for (const [modelKey, yearMap] of Object.entries(modelMap || {})) {
+        out[make][modelKey] = {};
+        for (const [yearRange, engines] of Object.entries(yearMap || {})) {
+          out[make][modelKey][yearRange] = this.dedupeAndNormalizeEngines(engines);
+        }
+      }
+    }
+
+    return out;
+  },
+
+  buildSanitizedManufacturerEngines: function(yearEngines) {
+    const sourcePools = this.MANUFACTURER_ENGINES || {};
+    const sanitized = {};
+
+    for (const [make, pool] of Object.entries(sourcePools)) {
+      sanitized[make] = this.dedupeAndNormalizeEngines(pool);
+    }
+
+    for (const [make, modelMap] of Object.entries(yearEngines || {})) {
+      if (sanitized[make] && sanitized[make].length > 0) continue;
+
+      const aggregated = [];
+      for (const yearMap of Object.values(modelMap || {})) {
+        for (const engines of Object.values(yearMap || {})) {
+          aggregated.push(...engines);
+        }
+      }
+
+      const normalized = this.dedupeAndNormalizeEngines(aggregated);
+      if (normalized.length > 0) {
+        sanitized[make] = normalized;
+      }
+    }
+
+    return sanitized;
+  },
   
   // Get all manufacturers
   getManufacturers: function() {
@@ -970,47 +9917,46 @@ const CarnageVehicleDB = {
   // Get year ranges for a specific model
   getYearRanges: function(manufacturer, model) {
     const modelKey = model.toLowerCase().replace(/\s+/g, '-');
-    const mfrData = this.VEHICLE_ENGINE_DATABASE[manufacturer];
+    const mfrData = this.buildSanitizedYearEngines()[manufacturer];
     
     if (mfrData && mfrData[modelKey]) {
       return Object.keys(mfrData[modelKey]);
     }
     
     // Fallback year ranges
-    return ['2021-2024', '2017-2020', '2013-2016', '2009-2012', '2005-2008', '2000-2004'];
+    return ['2021-2026', '2017-2020', '2013-2016', '2009-2012', '2005-2008', '2000-2004'];
   },
 
   // Get engines for manufacturer, model, and year
   getEngines: function(manufacturer, model, yearRange) {
     const modelKey = model.toLowerCase().replace(/\s+/g, '-');
-    const mfrData = this.VEHICLE_ENGINE_DATABASE[manufacturer];
+    const sanitizedYearEngines = this.buildSanitizedYearEngines();
+    const mfrData = sanitizedYearEngines[manufacturer];
     
     // Try year-specific engines first
     if (mfrData && mfrData[modelKey] && mfrData[modelKey][yearRange]) {
       return mfrData[modelKey][yearRange];
     }
-    
-    // Fall back to manufacturer engines
-    if (this.MANUFACTURER_ENGINES[manufacturer]) {
-      return this.MANUFACTURER_ENGINES[manufacturer];
-    }
-    
-    // Last resort: generic engines
-    return this.GENERIC_ENGINES;
+
+    // Strict mode: no manufacturer/generic fallback engines
+    return [];
   },
 
   // Export for Node.js API
   getAPIData: function() {
+    const yearEngines = this.buildSanitizedYearEngines();
     return {
       models: this.VEHICLE_DATABASE,
-      engines: this.MANUFACTURER_ENGINES,
-      genericEngines: this.GENERIC_ENGINES,
-      yearEngines: this.VEHICLE_ENGINE_DATABASE
+      yearEngines: yearEngines
     };
   }
 };
 
 // Export for use in Node.js
+if (typeof window !== 'undefined') {
+  window.CarnageVehicleDB = CarnageVehicleDB;
+}
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = CarnageVehicleDB;
 }
