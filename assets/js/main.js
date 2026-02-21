@@ -45,6 +45,69 @@
   // Year-Model-Engine Database (central source)
   const VEHICLE_ENGINE_DATABASE = (window.CarnageVehicleDB && window.CarnageVehicleDB.VEHICLE_ENGINE_DATABASE) || {};
 
+  function replaceObjectContents(target, source) {
+    Object.keys(target || {}).forEach((key) => delete target[key]);
+    Object.assign(target, source || {});
+  }
+
+  function formatManufacturerLabel(key) {
+    const value = String(key || '');
+    return value
+      .split('-')
+      .map((part) => {
+        const p = part.toLowerCase();
+        if (p === 'vw') return 'VW';
+        if (p === 'bmw') return 'BMW';
+        if (p === 'mg') return 'MG';
+        if (p === 'ds') return 'DS';
+        return p.charAt(0).toUpperCase() + p.slice(1);
+      })
+      .join(' ');
+  }
+
+  function populateManufacturerSelect(selectEl) {
+    if (!selectEl) return;
+    const current = selectEl.value;
+    const manufacturers = Object.keys(VEHICLE_DATABASE).sort();
+    selectEl.innerHTML = '<option value="">Select Manufacturer</option>';
+    manufacturers.forEach((manufacturer) => {
+      const option = document.createElement('option');
+      option.value = manufacturer;
+      option.textContent = formatManufacturerLabel(manufacturer);
+      selectEl.appendChild(option);
+    });
+    if (current && manufacturers.includes(current)) {
+      selectEl.value = current;
+    }
+  }
+
+  let vehicleDataHydrationPromise = null;
+  function hydrateVehicleDataFromAPI() {
+    if (vehicleDataHydrationPromise) return vehicleDataHydrationPromise;
+
+    vehicleDataHydrationPromise = fetch(`${API_URL}/api/vehicles?v=${Date.now()}`, {
+      cache: 'no-store',
+      headers: { 'Cache-Control': 'no-cache' }
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error(`Vehicle API ${response.status}`);
+        return response.json();
+      })
+      .then((data) => {
+        replaceObjectContents(VEHICLE_DATABASE, data.models || {});
+        replaceObjectContents(VEHICLE_ENGINE_DATABASE, data.yearEngines || {});
+        return data;
+      })
+      .catch((error) => {
+        console.warn('Vehicle API hydrate failed, using local fallback database:', error);
+        return null;
+      });
+
+    return vehicleDataHydrationPromise;
+  }
+
+  hydrateVehicleDataFromAPI();
+
   const DYNAMIC_ENGINE_DATA = {};
 
   // Initialize IndexedDB
@@ -428,6 +491,11 @@
       model: !!modelSelect,
       year: !!yearSelect,
       engine: !!engineSelect
+    });
+
+    populateManufacturerSelect(manufacturerSelect);
+    hydrateVehicleDataFromAPI().then(() => {
+      populateManufacturerSelect(manufacturerSelect);
     });
     
     // Initialize vehicle details card as hidden
@@ -1989,6 +2057,11 @@
     const vrmStatusSearch = document.getElementById('search-vrm-status');
     
     if (!searchManufacturer || !searchModel || !searchYear || !searchEngine || !searchBtn) return;
+
+    populateManufacturerSelect(searchManufacturer);
+    hydrateVehicleDataFromAPI().then(() => {
+      populateManufacturerSelect(searchManufacturer);
+    });
     
     // Populate model dropdown when manufacturer changes
     searchManufacturer.addEventListener('change', (e) => {
@@ -6776,6 +6849,11 @@ I would like to request a quote for tuning this vehicle.`,
     const yearSelect = document.getElementById('public-year');
     const engineSelect = document.getElementById('public-engine');
     const searchBtn = document.getElementById('public-search-btn');
+
+    populateManufacturerSelect(manufacturerSelect);
+    hydrateVehicleDataFromAPI().then(() => {
+      populateManufacturerSelect(manufacturerSelect);
+    });
     
     // Vehicle data (comprehensive database - same as authenticated version)
     const vehicleData = {
