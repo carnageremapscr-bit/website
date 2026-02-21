@@ -540,6 +540,7 @@ const CarnageVehicleDB = {
     "Legacy",
     "Outback",
     "Forester",
+    "Crosstrek",
     "XV",
     "BRZ",
     "Levorg",
@@ -842,6 +843,14 @@ const CarnageVehicleDB = {
     "Axia",
     "Bezza",
     "Aruz"
+  ],
+  "daihatsu": [
+    "Cuore",
+    "Sirion",
+    "Charade",
+    "Terios",
+    "Copen",
+    "Materia"
   ]
 },
 
@@ -1234,6 +1243,11 @@ const CarnageVehicleDB = {
     "2.0 T5 - 250hp",
     "2.0 T6 - 310hp",
     "2.0 T8 Hybrid - 390hp"
+  ],
+  "daihatsu": [
+    "1.0 - 60hp",
+    "1.3 - 87hp",
+    "1.5 - 103hp"
   ]
 },
 
@@ -1737,6 +1751,10 @@ const CarnageVehicleDB = {
         "Electric 40 - 204hp",
         "Electric 45 - 299hp",
         "Electric 50 - 299hp"
+      ],
+      "2025-2026": [
+        "Electric 40 - 204hp",
+        "Electric 50 - 299hp"
       ]
     },
     "tt": {
@@ -2192,6 +2210,29 @@ const CarnageVehicleDB = {
         "2.0 TSI - 200hp",
         "2.0 TDI - 150hp",
         "2.0 TDI - 177hp"
+      ]
+    },
+    "touran": {
+      "2004-2010": [
+        "1.6 - 102hp",
+        "1.4 TSI - 140hp",
+        "1.9 TDI - 105hp",
+        "2.0 TDI - 140hp"
+      ],
+      "2011-2015": [
+        "1.2 TSI - 105hp",
+        "1.4 TSI - 140hp",
+        "1.6 TDI - 105hp",
+        "2.0 TDI - 140hp",
+        "2.0 TDI - 177hp"
+      ],
+      "2016-2026": [
+        "1.2 TSI - 110hp",
+        "1.4 TSI - 150hp",
+        "1.5 TSI - 150hp",
+        "1.6 TDI - 115hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 190hp"
       ]
     },
     "up": {
@@ -2873,6 +2914,10 @@ const CarnageVehicleDB = {
       "2022-2024": [
         "Electric eDrive40 - 340hp",
         "Electric M50 - 544hp"
+      ],
+      "2025-2026": [
+        "Electric eDrive40 - 340hp",
+        "Electric M50 - 544hp"
       ]
     },
     "i8": {
@@ -2882,6 +2927,11 @@ const CarnageVehicleDB = {
     },
     "ix": {
       "2022-2024": [
+        "Electric xDrive40 - 326hp",
+        "Electric xDrive50 - 523hp",
+        "Electric M60 - 619hp"
+      ],
+      "2025-2026": [
         "Electric xDrive40 - 326hp",
         "Electric xDrive50 - 523hp",
         "Electric M60 - 619hp"
@@ -3615,16 +3665,27 @@ const CarnageVehicleDB = {
     "eqc": {
       "2019-2024": [
         "Electric EQC400 - 408hp"
+      ],
+      "2025-2026": [
+        "Electric EQC400 - 408hp"
       ]
     },
     "eqa": {
       "2021-2024": [
         "Electric EQA250 - 190hp",
         "Electric EQA350 - 292hp"
+      ],
+      "2025-2026": [
+        "Electric EQA250 - 190hp",
+        "Electric EQA350 - 292hp"
       ]
     },
     "eqb": {
       "2022-2024": [
+        "Electric EQB250 - 190hp",
+        "Electric EQB350 - 292hp"
+      ],
+      "2025-2026": [
         "Electric EQB250 - 190hp",
         "Electric EQB350 - 292hp"
       ]
@@ -3634,10 +3695,21 @@ const CarnageVehicleDB = {
         "Electric 450+ - 333hp",
         "Electric 500 - 449hp",
         "Electric AMG 53 - 658hp"
+      ],
+      "2025-2026": [
+        "Electric 450+ - 333hp",
+        "Electric 500 - 449hp",
+        "Electric AMG 53 - 658hp"
       ]
     },
     "eqe": {
       "2022-2024": [
+        "Electric 300 - 245hp",
+        "Electric 350+ - 292hp",
+        "Electric AMG 43 - 476hp",
+        "Electric AMG 53 - 687hp"
+      ],
+      "2025-2026": [
         "Electric 300 - 245hp",
         "Electric 350+ - 292hp",
         "Electric AMG 43 - 476hp",
@@ -5963,6 +6035,12 @@ const CarnageVehicleDB = {
         "1.6 CRDi - 136hp",
         "Electric - 136hp",
         "Electric - 204hp"
+      ],
+      "2025-2026": [
+        "1.0 T-GDi - 120hp",
+        "1.6 T-GDi - 198hp",
+        "Electric - 136hp",
+        "Electric - 204hp"
       ]
     },
     "santa-fe": {
@@ -5984,10 +6062,15 @@ const CarnageVehicleDB = {
       ]
     },
     "ioniq": {
-      "2017-2022": [
-        "1.6 GDi Hybrid - 141hp",
-        "Electric - 136hp",
-        "1.6 GDi PHEV - 141hp"
+      "2021-2024": [
+        "Electric RWD - 170hp",
+        "Electric RWD - 229hp",
+        "Electric AWD - 306hp"
+      ],
+      "2025-2026": [
+        "Electric RWD - 170hp",
+        "Electric RWD - 229hp",
+        "Electric AWD - 306hp"
       ]
     },
     "ioniq-5": {
@@ -6488,16 +6571,28 @@ const CarnageVehicleDB = {
         "Electric Single Motor - 231hp",
         "Electric Dual Motor - 408hp",
         "Electric Dual Motor Long Range - 476hp"
+      ],
+      "2025-2026": [
+        "Electric Single Motor - 231hp",
+        "Electric Dual Motor - 408hp",
+        "Electric Dual Motor Long Range - 476hp"
       ]
     },
     "polestar-3": {
       "2024": [
         "Electric Dual Motor - 489hp",
         "Electric Dual Motor Long Range - 517hp"
+      ],
+      "2025-2026": [
+        "Electric Dual Motor - 489hp",
+        "Electric Dual Motor Long Range - 517hp"
       ]
     },
     "polestar-4": {
       "2024-2024": [
+        "Electric Dual Motor - 544hp"
+      ],
+      "2025-2026": [
         "Electric Dual Motor - 544hp"
       ]
     },
@@ -8484,6 +8579,11 @@ const CarnageVehicleDB = {
         "1.8 Turbo - 177hp"
       ]
     },
+    "crosstrek": {
+      "2024-2026": [
+        "2.0 e-Boxer - 136hp"
+      ]
+    },
     "xv": {
       "2012-2017": [
         "1.6 - 114hp",
@@ -8852,6 +8952,23 @@ const CarnageVehicleDB = {
       "2021-2024": [
         "1.2 PureTech - 130hp",
         "1.6 PureTech - 225hp",
+        "1.5 BlueHDi - 130hp"
+      ],
+      "2025-2026": [
+        "1.2 PureTech - 130hp",
+        "1.6 E-Tense Hybrid - 225hp",
+        "1.5 BlueHDi - 130hp"
+      ]
+    },
+    "ds4": {
+      "2021-2024": [
+        "1.2 PureTech - 130hp",
+        "1.6 PureTech - 225hp",
+        "1.5 BlueHDi - 130hp"
+      ],
+      "2025-2026": [
+        "1.2 PureTech - 130hp",
+        "1.6 E-Tense Hybrid - 225hp",
         "1.5 BlueHDi - 130hp"
       ]
     },
@@ -9741,6 +9858,49 @@ const CarnageVehicleDB = {
     "aruz": {
       "2019-2024": [
         "1.5 - 105hp"
+      ]
+    }
+  },
+  "daihatsu": {
+    "cuore": {
+      "2000-2007": [
+        "1.0 - 60hp"
+      ]
+    },
+    "sirion": {
+      "2000-2004": [
+        "1.0 - 65hp",
+        "1.3 - 87hp"
+      ],
+      "2005-2011": [
+        "1.0 - 69hp",
+        "1.3 - 87hp"
+      ]
+    },
+    "charade": {
+      "2003-2006": [
+        "1.0 - 58hp"
+      ]
+    },
+    "terios": {
+      "2000-2005": [
+        "1.3 - 86hp"
+      ],
+      "2006-2011": [
+        "1.5 - 105hp"
+      ]
+    },
+    "copen": {
+      "2003-2005": [
+        "0.7 Turbo - 68hp"
+      ],
+      "2006-2011": [
+        "1.3 - 87hp"
+      ]
+    },
+    "materia": {
+      "2007-2011": [
+        "1.5 - 103hp"
       ]
     }
   },
@@ -10647,8 +10807,237 @@ const CarnageVehicleDB = {
     }
   },
 
-  // Strict verified-only mode: disable manufacturer/generic engine pools
-  MANUFACTURER_ENGINES: {},
+  // Manufacturer engine pools (used as seed; sanitized later)
+  MANUFACTURER_ENGINES: {
+    "tesla": [
+      "Electric - 283hp",
+      "Electric - 325hp",
+      "Electric - 351hp",
+      "Electric - 462hp",
+      "Electric - 1020hp"
+    ],
+
+    "bentley": [
+      "4.0 V8 Twin Turbo - 550hp",
+      "6.0 W12 Twin Turbo - 635hp",
+      "3.0 V6 Hybrid - 449hp"
+    ],
+
+    "maserati": [
+      "2.0 Mild Hybrid - 330hp",
+      "3.0 V6 Twin Turbo - 430hp",
+      "3.8 V8 Twin Turbo - 580hp"
+    ],
+
+    "abarth": [
+      "1.4 T-Jet - 145hp",
+      "1.4 T-Jet - 165hp",
+      "1.4 T-Jet - 180hp",
+      "Electric - 155hp"
+    ],
+
+    "ds": [
+      "1.2 PureTech - 100hp",
+      "1.2 PureTech - 130hp",
+      "1.5 BlueHDi - 130hp",
+      "1.6 E-Tense PHEV - 225hp",
+      "Electric - 156hp"
+    ],
+
+    "smart": [
+      "1.0 - 71hp",
+      "0.9 Turbo - 90hp",
+      "Electric - 82hp",
+      "Electric - 272hp"
+    ],
+
+    "ssangyong": [
+      "1.5 Turbo - 163hp",
+      "2.2 Diesel - 181hp"
+    ],
+
+    "infiniti": [
+      "1.6 Turbo - 156hp",
+      "2.0 Turbo - 211hp",
+      "2.2 Diesel - 170hp",
+      "3.0 V6 Twin Turbo - 405hp"
+    ],
+
+    "iveco": [
+      "2.3 Diesel - 136hp",
+      "3.0 Diesel - 180hp",
+      "3.0 Diesel - 210hp"
+    ],
+
+    "dodge": [
+      "3.6 V6 - 305hp",
+      "5.7 V8 HEMI - 375hp",
+      "6.2 Supercharged V8 - 717hp"
+    ],
+
+    "chevrolet": [
+      "1.4 Turbo - 140hp",
+      "2.0 Diesel - 163hp",
+      "6.2 V8 - 455hp"
+    ],
+
+    "chrysler": [
+      "2.0 Diesel - 140hp",
+      "3.6 V6 - 287hp"
+    ],
+
+    "opel": [
+      "1.5 Turbo D - 102hp",
+      "1.5 Turbo D - 120hp",
+      "1.6 CDTI - 110hp",
+      "1.6 CDTI - 136hp",
+      "2.0 CDTI - 170hp",
+      "1.0 Turbo - 105hp",
+      "1.2 Turbo - 110hp",
+      "1.2 Turbo - 130hp",
+      "1.4 Turbo - 125hp",
+      "1.4 Turbo - 145hp",
+      "1.6 Turbo - 200hp",
+      "2.0 Turbo - 230hp"
+    ],
+
+    "mg": [
+      "1.0 Turbo - 111hp",
+      "1.5 Turbo - 162hp",
+      "1.5 Hybrid - 195hp",
+      "Electric - 156hp",
+      "Electric - 204hp"
+    ],
+
+    "cupra": [
+      "1.5 TSI - 150hp",
+      "2.0 TSI - 245hp",
+      "2.0 TSI - 300hp",
+      "1.4 eHybrid - 245hp",
+      "Electric - 231hp"
+    ],
+
+    "genesis": [
+      "2.2 Diesel - 210hp",
+      "2.5 Turbo - 304hp",
+      "3.5 V6 Twin Turbo - 380hp",
+      "Electric - 490hp"
+    ],
+
+    "polestar": [
+      "Electric - 231hp",
+      "Electric - 408hp",
+      "Electric - 517hp"
+    ],
+
+    "lotus": [
+      "3.5 V6 Supercharged - 350hp",
+      "2.0 Turbo - 360hp",
+      "Electric - 905hp"
+    ],
+
+    "aston-martin": [
+      "4.0 V8 Twin Turbo - 510hp",
+      "5.2 V12 Twin Turbo - 630hp",
+      "4.0 V8 - 707hp"
+    ],
+
+    "mclaren": [
+      "3.8 V8 Twin Turbo - 570hp",
+      "4.0 V8 Twin Turbo - 720hp",
+      "3.0 V6 Hybrid - 680hp"
+    ],
+
+    "ferrari": [
+      "3.9 V8 Twin Turbo - 720hp",
+      "4.0 V8 Twin Turbo - 800hp",
+      "6.5 V12 - 800hp",
+      "4.0 V8 Hybrid - 986hp"
+    ],
+
+    "lamborghini": [
+      "5.2 V10 - 610hp",
+      "6.5 V12 - 770hp",
+      "4.0 V8 Twin Turbo - 650hp"
+    ],
+
+    "rolls-royce": [
+      "6.6 V12 Twin Turbo - 563hp",
+      "6.75 V12 Twin Turbo - 571hp",
+      "Electric - 585hp"
+    ],
+
+    "bugatti": [
+      "8.0 W16 Quad Turbo - 1500hp",
+      "8.0 W16 Quad Turbo - 1600hp"
+    ],
+
+    "gmc": [
+      "2.8 Diesel - 181hp",
+      "5.3 V8 - 355hp",
+      "6.2 V8 - 420hp"
+    ],
+
+    "cadillac": [
+      "2.0 Turbo - 237hp",
+      "3.0 Twin Turbo - 360hp",
+      "6.2 Supercharged V8 - 668hp",
+      "Electric - 500hp"
+    ],
+
+    "buick": [
+      "1.4 Turbo - 155hp",
+      "2.0 Turbo - 250hp"
+    ],
+
+    "lincoln": [
+      "2.0 Turbo - 250hp",
+      "3.0 V6 Twin Turbo - 400hp"
+    ],
+
+    "ram": [
+      "3.0 EcoDiesel - 260hp",
+      "5.7 V8 HEMI - 395hp",
+      "6.2 Supercharged V8 - 702hp"
+    ],
+
+    "hummer": [
+      "6.0 V8 - 325hp",
+      "Electric - 1000hp"
+    ],
+
+    "saab": [
+      "1.9 TiD - 150hp",
+      "2.0 Turbo - 210hp",
+      "2.8 V6 Turbo - 280hp"
+    ],
+
+    "lancia": [
+      "1.2 - 69hp",
+      "1.3 Diesel - 95hp",
+      "1.4 Turbo - 120hp"
+    ],
+
+    "alpine": [
+      "1.8 Turbo - 252hp",
+      "1.8 Turbo - 300hp"
+    ],
+
+    "greatwall": [
+      "2.0 Diesel - 143hp"
+    ],
+
+    "proton": [
+      "1.3 - 95hp",
+      "1.5 - 110hp"
+    ],
+
+    "perodua": [
+      "1.0 - 67hp",
+      "1.3 - 95hp"
+    ]
+  },
+
   GENERIC_ENGINES: [],
 
   /**
