@@ -59,7 +59,6 @@ const CarnageVehicleDB = {
     "i3",
     "i4",
     "i8",
-    "iX",
     "M2",
     "M3",
     "M4",
@@ -461,8 +460,10 @@ const CarnageVehicleDB = {
     "Coupe",
     "Roadster",
     "JCW",
+    "John Cooper Works GP",
     "Cooper S",
-    "Electric"
+    "Electric",
+    "Aceman"
   ],
   "porsche": [
     "718 Cayman",
@@ -1310,6 +1311,13 @@ const CarnageVehicleDB = {
         "2.0 TFSI - 310hp",
         "2.0 TDI - 150hp",
         "2.0 TDI - 200hp"
+      ],
+      "2025-2026": [
+        "1.5 TFSI Mild Hybrid - 150hp",
+        "2.0 TFSI Mild Hybrid - 204hp",
+        "2.0 TFSI - 333hp",
+        "2.0 TDI Mild Hybrid - 150hp",
+        "2.0 TFSI e PHEV - 272hp"
       ]
     },
     "a4": {
@@ -1381,6 +1389,13 @@ const CarnageVehicleDB = {
         "2.0 TDI - 163hp",
         "2.0 TDI - 204hp",
         "3.0 TDI - 231hp"
+      ],
+      "2025-2026": [
+        "2.0 TFSI Mild Hybrid - 204hp",
+        "2.0 TFSI Mild Hybrid - 272hp",
+        "3.0 TFSI Mild Hybrid - 367hp",
+        "2.0 TDI Mild Hybrid - 204hp",
+        "2.0 TFSI e PHEV - 299hp"
       ]
     },
     "a6": {
@@ -1488,6 +1503,13 @@ const CarnageVehicleDB = {
         "2.5 TFSI RS - 400hp",
         "2.0 TDI - 150hp",
         "2.0 TDI - 190hp"
+      ],
+      "2025-2026": [
+        "1.5 TFSI Mild Hybrid - 150hp",
+        "2.0 TFSI Mild Hybrid - 204hp",
+        "2.5 TFSI RS - 400hp",
+        "2.0 TDI Mild Hybrid - 150hp",
+        "2.0 TFSI e PHEV - 272hp"
       ]
     },
     "q5": {
@@ -1512,6 +1534,13 @@ const CarnageVehicleDB = {
         "3.0 TFSI - 354hp",
         "2.0 TDI - 190hp",
         "3.0 TDI - 286hp"
+      ],
+      "2025-2026": [
+        "2.0 TFSI Mild Hybrid - 204hp",
+        "3.0 TFSI Mild Hybrid - 367hp",
+        "2.0 TDI Mild Hybrid - 204hp",
+        "3.0 TDI Mild Hybrid - 286hp",
+        "2.0 TFSI e PHEV - 367hp"
       ]
     },
     "q7": {
@@ -1533,6 +1562,11 @@ const CarnageVehicleDB = {
         "3.0 TFSI - 340hp",
         "3.0 TDI - 231hp",
         "3.0 TDI - 286hp"
+      ],
+      "2025-2026": [
+        "3.0 TFSI Mild Hybrid - 367hp",
+        "3.0 TDI Mild Hybrid - 286hp",
+        "3.0 TFSI e PHEV - 462hp"
       ]
     },
     "a1": {
@@ -1704,6 +1738,29 @@ const CarnageVehicleDB = {
         "Electric 45 - 299hp",
         "Electric 50 - 299hp"
       ]
+    },
+    "tt": {
+      "2007-2014": [
+        "1.8 TFSI - 160hp",
+        "2.0 TFSI - 200hp",
+        "2.0 TDI - 170hp"
+      ],
+      "2015-2023": [
+        "2.0 TFSI - 230hp",
+        "2.0 TFSI - 310hp",
+        "2.5 TFSI - 400hp"
+      ]
+    },
+    "r8": {
+      "2007-2014": [
+        "4.2 FSI V8 - 420hp",
+        "5.2 FSI V10 - 525hp"
+      ],
+      "2015-2024": [
+        "5.2 FSI V10 - 540hp",
+        "5.2 FSI V10 Plus - 610hp",
+        "5.2 FSI V10 Performance - 620hp"
+      ]
     }
   },
   "volkswagen": {
@@ -1714,7 +1771,6 @@ const CarnageVehicleDB = {
         "1.4 - 75hp",
         "1.6 - 105hp",
         "1.4 TDI - 70hp",
-        "1.4 TDI - 80hp",
         "1.9 TDI - 100hp"
       ],
       "2010-2017": [
@@ -2067,6 +2123,104 @@ const CarnageVehicleDB = {
         "Electric - 286hp"
       ]
     },
+    "id-3": {
+      "2020-2024": [
+        "Electric - 145hp",
+        "Electric - 204hp"
+      ],
+      "2025-2026": [
+        "Electric Pro - 204hp",
+        "Electric GTX - 286hp"
+      ]
+    },
+    "id-4": {
+      "2021-2024": [
+        "Electric - 174hp",
+        "Electric - 204hp",
+        "Electric - 299hp"
+      ],
+      "2025-2026": [
+        "Electric Pro - 286hp",
+        "Electric GTX - 340hp"
+      ]
+    },
+    "id-5": {
+      "2022-2024": [
+        "Electric - 174hp",
+        "Electric - 204hp",
+        "Electric - 299hp"
+      ],
+      "2025-2026": [
+        "Electric Pro - 286hp",
+        "Electric GTX - 340hp"
+      ]
+    },
+    "id-buzz": {
+      "2023-2024": [
+        "Electric - 204hp",
+        "Electric - 286hp"
+      ],
+      "2025-2026": [
+        "Electric - 286hp",
+        "Electric GTX - 340hp"
+      ]
+    },
+    "beetle": {
+      "2006-2011": [
+        "1.6 - 102hp",
+        "2.0 - 115hp",
+        "1.9 TDI - 105hp",
+        "2.0 TDI - 140hp"
+      ],
+      "2012-2019": [
+        "1.2 TSI - 105hp",
+        "1.4 TSI - 150hp",
+        "2.0 TSI - 220hp",
+        "1.6 TDI - 105hp",
+        "2.0 TDI - 150hp"
+      ]
+    },
+    "sharan": {
+      "2005-2010": [
+        "1.8 Turbo - 150hp",
+        "2.0 - 115hp",
+        "1.9 TDI - 115hp",
+        "2.0 TDI - 140hp"
+      ],
+      "2011-2022": [
+        "1.4 TSI - 150hp",
+        "2.0 TSI - 200hp",
+        "2.0 TDI - 150hp",
+        "2.0 TDI - 177hp"
+      ]
+    },
+    "up": {
+      "2012-2016": [
+        "1.0 - 60hp",
+        "1.0 - 75hp"
+      ],
+      "2017-2023": [
+        "1.0 - 65hp",
+        "1.0 TSI - 90hp",
+        "Electric - 83hp"
+      ]
+    },
+    "amarok": {
+      "2010-2016": [
+        "2.0 TDI - 122hp",
+        "2.0 BiTDI - 180hp"
+      ],
+      "2017-2022": [
+        "3.0 V6 TDI - 204hp",
+        "3.0 V6 TDI - 224hp",
+        "3.0 V6 TDI - 258hp"
+      ],
+      "2023-2026": [
+        "2.0 TDI - 170hp",
+        "2.0 BiTDI - 205hp",
+        "3.0 V6 TDI - 240hp"
+      ]
+    },
     "golf-gti": {
       "1992-1997": [
         "2.0 - 150hp"
@@ -2355,6 +2509,14 @@ const CarnageVehicleDB = {
         "2.0 318d - 150hp",
         "2.0 320d - 190hp",
         "3.0 330d - 286hp"
+      ],
+      "2025-2026": [
+        "2.0 320i Mild Hybrid - 184hp",
+        "2.0 330i Mild Hybrid - 272hp",
+        "3.0 M340i - 382hp",
+        "2.0 320d - 190hp",
+        "2.0 320e PHEV - 292hp",
+        "3.0 330e PHEV - 313hp"
       ]
     },
     "5-series": {
@@ -2409,6 +2571,14 @@ const CarnageVehicleDB = {
         "2.0 520d - 190hp",
         "3.0 530d - 286hp",
         "3.0 540d - 340hp"
+      ],
+      "2025-2026": [
+        "2.0 520i Mild Hybrid - 197hp",
+        "2.0 530i Mild Hybrid - 272hp",
+        "3.0 540i - 340hp",
+        "2.0 520d Mild Hybrid - 197hp",
+        "3.0 530d Mild Hybrid - 286hp",
+        "2.0 530e PHEV - 292hp"
       ]
     },
     "1-series": {
@@ -2445,6 +2615,11 @@ const CarnageVehicleDB = {
         "2.0 M135i - 306hp",
         "2.0 118d - 150hp",
         "2.0 120d - 190hp"
+      ],
+      "2025-2026": [
+        "2.0 120i Mild Hybrid - 170hp",
+        "2.0 M135i - 300hp",
+        "2.0 120d Mild Hybrid - 163hp"
       ]
     },
     "x1": {
@@ -2471,6 +2646,12 @@ const CarnageVehicleDB = {
         "2.0 sDrive18d - 150hp",
         "2.0 xDrive20d - 163hp",
         "2.0 xDrive23d - 211hp"
+      ],
+      "2025-2026": [
+        "2.0 xDrive20i Mild Hybrid - 197hp",
+        "2.0 xDrive23i Mild Hybrid - 218hp",
+        "2.0 xDrive20d Mild Hybrid - 163hp",
+        "2.0 xDrive20e PHEV - 326hp"
       ]
     },
     "x3": {
@@ -2499,6 +2680,13 @@ const CarnageVehicleDB = {
         "2.0 xDrive20d - 190hp",
         "3.0 xDrive30d - 286hp",
         "3.0 M40d - 340hp"
+      ],
+      "2025-2026": [
+        "2.0 xDrive20i Mild Hybrid - 197hp",
+        "2.0 xDrive30i Mild Hybrid - 265hp",
+        "3.0 M40i - 387hp",
+        "2.0 xDrive20d Mild Hybrid - 197hp",
+        "3.0 xDrive30d Mild Hybrid - 286hp"
       ]
     },
     "x5": {
@@ -2532,6 +2720,12 @@ const CarnageVehicleDB = {
         "3.0 xDrive30d - 265hp",
         "3.0 xDrive40d - 340hp",
         "3.0 M50d - 400hp"
+      ],
+      "2025-2026": [
+        "3.0 xDrive40i Mild Hybrid - 381hp",
+        "4.4 xDrive50i Mild Hybrid - 530hp",
+        "3.0 xDrive40d Mild Hybrid - 340hp",
+        "3.0 xDrive50e PHEV - 489hp"
       ]
     },
     "2-series": {
@@ -3022,6 +3216,13 @@ const CarnageVehicleDB = {
         "1.5 A180d - 116hp",
         "2.0 A200d - 150hp",
         "2.0 A220d - 190hp"
+      ],
+      "2025-2026": [
+        "2.0 A200 Mild Hybrid - 170hp",
+        "2.0 A250 Mild Hybrid - 224hp",
+        "2.0 A35 AMG - 306hp",
+        "2.0 A200d Mild Hybrid - 150hp",
+        "2.0 A250e PHEV - 218hp"
       ]
     },
     "c-class": {
@@ -3086,6 +3287,13 @@ const CarnageVehicleDB = {
         "2.0 C200d - 163hp",
         "2.0 C220d - 200hp",
         "3.0 C300d - 265hp"
+      ],
+      "2025-2026": [
+        "2.0 C200 Mild Hybrid - 204hp",
+        "2.0 C300 Mild Hybrid - 258hp",
+        "2.0 C300e PHEV - 313hp",
+        "2.0 C220d Mild Hybrid - 200hp",
+        "4.0 C63 S E-Performance - 680hp"
       ]
     },
     "e-class": {
@@ -3138,6 +3346,13 @@ const CarnageVehicleDB = {
         "2.0 E200d - 150hp",
         "2.0 E220d - 194hp",
         "3.0 E350d - 286hp"
+      ],
+      "2025-2026": [
+        "2.0 E200 Mild Hybrid - 204hp",
+        "2.0 E300 Mild Hybrid - 258hp",
+        "3.0 E450 Mild Hybrid - 381hp",
+        "2.0 E220d Mild Hybrid - 197hp",
+        "2.0 E300e PHEV - 313hp"
       ]
     },
     "gla": {
@@ -3158,6 +3373,13 @@ const CarnageVehicleDB = {
         "2.0 GLA45 AMG - 421hp",
         "2.0 GLA200d - 150hp",
         "2.0 GLA220d - 190hp"
+      ],
+      "2025-2026": [
+        "2.0 GLA200 Mild Hybrid - 163hp",
+        "2.0 GLA250 Mild Hybrid - 224hp",
+        "2.0 GLA35 AMG - 306hp",
+        "2.0 GLA200d Mild Hybrid - 150hp",
+        "2.0 GLA250e PHEV - 218hp"
       ]
     },
     "glc": {
@@ -3178,6 +3400,13 @@ const CarnageVehicleDB = {
         "2.0 GLC200d - 163hp",
         "2.0 GLC220d - 194hp",
         "2.0 GLC300d - 245hp"
+      ],
+      "2025-2026": [
+        "2.0 GLC200 Mild Hybrid - 204hp",
+        "2.0 GLC300 Mild Hybrid - 258hp",
+        "2.0 GLC300e PHEV - 313hp",
+        "2.0 GLC220d Mild Hybrid - 200hp",
+        "3.0 GLC43 AMG - 421hp"
       ]
     },
     "gle": {
@@ -3204,6 +3433,13 @@ const CarnageVehicleDB = {
         "2.0 GLE300d - 245hp",
         "3.0 GLE350d - 286hp",
         "3.0 GLE400d - 330hp"
+      ],
+      "2025-2026": [
+        "2.0 GLE300 Mild Hybrid - 258hp",
+        "3.0 GLE450 Mild Hybrid - 381hp",
+        "3.0 GLE350de PHEV - 320hp",
+        "3.0 GLE350d Mild Hybrid - 286hp",
+        "3.0 GLE53 AMG - 449hp"
       ]
     },
     "b-class": {
@@ -3532,7 +3768,14 @@ const CarnageVehicleDB = {
         "1.2 Turbo - 100hp",
         "1.2 Turbo - 130hp",
         "1.5 Turbo D - 100hp",
-        "1.5 Turbo D - 130hp"
+        "1.5 Turbo D - 130hp",
+        "Electric - 136hp"
+      ],
+      "2025-2026": [
+        "1.2 Hybrid - 100hp",
+        "1.2 Hybrid - 136hp",
+        "Electric - 136hp",
+        "Electric - 156hp"
       ]
     },
     "astra": {
@@ -3571,7 +3814,15 @@ const CarnageVehicleDB = {
       "2022-2024": [
         "1.2 Turbo - 110hp",
         "1.2 Turbo - 130hp",
-        "1.5 Turbo D - 130hp"
+        "1.5 Turbo D - 130hp",
+        "1.6 Hybrid - 180hp",
+        "Electric - 156hp"
+      ],
+      "2025-2026": [
+        "1.2 Turbo - 130hp",
+        "1.2 Hybrid - 136hp",
+        "1.6 Hybrid - 180hp",
+        "Electric - 156hp"
       ]
     },
     "insignia": {
@@ -3780,7 +4031,13 @@ const CarnageVehicleDB = {
       ],
       "2020-2024": [
         "1.0 DIG-T - 114hp",
-        "1.3 DIG-T - 140hp"
+        "1.3 DIG-T - 140hp",
+        "1.6 Hybrid - 143hp"
+      ],
+      "2025-2026": [
+        "1.0 DIG-T - 114hp",
+        "1.3 DIG-T - 140hp",
+        "1.6 Hybrid - 143hp"
       ]
     },
     "qashqai": {
@@ -3802,7 +4059,14 @@ const CarnageVehicleDB = {
       "2021-2024": [
         "1.3 DIG-T - 140hp",
         "1.3 DIG-T - 158hp",
-        "1.5 e-Power - 158hp"
+        "1.5 e-Power - 158hp",
+        "1.5 e-Power e-4ORCE - 190hp"
+      ],
+      "2025-2026": [
+        "1.3 DIG-T - 140hp",
+        "1.3 DIG-T - 158hp",
+        "1.5 e-Power - 190hp",
+        "1.5 e-Power e-4ORCE - 213hp"
       ]
     },
     "x-trail": {
@@ -3819,7 +4083,12 @@ const CarnageVehicleDB = {
         "2.0 dCi - 177hp"
       ],
       "2022-2024": [
-        "1.5 e-Power - 204hp"
+        "1.5 e-Power - 204hp",
+        "1.5 e-Power e-4ORCE - 213hp"
+      ],
+      "2025-2026": [
+        "1.5 e-Power - 204hp",
+        "1.5 e-Power e-4ORCE - 213hp"
       ]
     },
     "leaf": {
@@ -3831,7 +4100,12 @@ const CarnageVehicleDB = {
         "Electric - 217hp"
       ],
       "2023-2024": [
-        "Electric - 150hp"
+        "Electric - 150hp",
+        "Electric e+ - 217hp"
+      ],
+      "2025-2026": [
+        "Electric - 150hp",
+        "Electric e+ - 217hp"
       ]
     },
     "gt-r": {
@@ -3881,6 +4155,12 @@ const CarnageVehicleDB = {
         "Electric 63kWh - 218hp",
         "Electric 87kWh - 242hp",
         "Electric 87kWh e-4ORCE - 306hp"
+      ],
+      "2025-2026": [
+        "Electric 63kWh - 218hp",
+        "Electric 87kWh - 242hp",
+        "Electric 87kWh e-4ORCE - 306hp",
+        "Electric NISMO - 435hp"
       ]
     },
     "370z": {
@@ -3971,7 +4251,15 @@ const CarnageVehicleDB = {
         "1.2 PureTech - 100hp",
         "1.2 PureTech - 130hp",
         "1.5 BlueHDi - 100hp",
-        "1.5 BlueHDi - 130hp"
+        "1.5 BlueHDi - 130hp",
+        "Electric - 136hp",
+        "Electric - 156hp"
+      ],
+      "2025-2026": [
+        "1.2 Hybrid - 100hp",
+        "1.2 Hybrid - 136hp",
+        "Electric - 136hp",
+        "Electric - 156hp"
       ]
     },
     "307": {
@@ -4014,7 +4302,13 @@ const CarnageVehicleDB = {
         "1.2 PureTech - 110hp",
         "1.2 PureTech - 130hp",
         "1.6 PureTech - 180hp",
-        "1.5 BlueHDi - 130hp"
+        "1.5 BlueHDi - 130hp",
+        "1.2 Hybrid - 136hp"
+      ],
+      "2025-2026": [
+        "1.2 Hybrid - 136hp",
+        "1.6 Hybrid - 195hp",
+        "Electric - 156hp"
       ]
     },
     "407": {
@@ -4046,7 +4340,14 @@ const CarnageVehicleDB = {
         "1.6 PureTech - 180hp",
         "1.6 PureTech - 225hp",
         "2.0 BlueHDi - 163hp",
-        "2.0 BlueHDi - 180hp"
+        "2.0 BlueHDi - 180hp",
+        "1.6 Hybrid - 225hp",
+        "1.6 Hybrid4 - 360hp"
+      ],
+      "2025-2026": [
+        "1.2 Hybrid - 136hp",
+        "1.6 Hybrid - 225hp",
+        "1.6 Hybrid4 - 360hp"
       ]
     },
     "2008": {
@@ -4151,11 +4452,17 @@ const CarnageVehicleDB = {
       "2020-2024": [
         "Electric - 136hp",
         "Electric - 156hp"
+      ],
+      "2025-2026": [
+        "Electric - 156hp"
       ]
     },
     "e-2008": {
       "2020-2024": [
         "Electric - 136hp",
+        "Electric - 156hp"
+      ],
+      "2025-2026": [
         "Electric - 156hp"
       ]
     },
@@ -4218,7 +4525,14 @@ const CarnageVehicleDB = {
         "1.3 TCe - 130hp",
         "1.3 TCe - 140hp",
         "1.5 Blue dCi - 85hp",
-        "1.5 Blue dCi - 115hp"
+        "1.5 Blue dCi - 115hp",
+        "1.6 E-Tech - 145hp"
+      ],
+      "2025-2026": [
+        "1.0 TCe - 90hp",
+        "1.0 TCe - 100hp",
+        "1.3 TCe - 140hp",
+        "1.6 E-Tech - 145hp"
       ]
     },
     "megane": {
@@ -4253,6 +4567,11 @@ const CarnageVehicleDB = {
       ],
       "2023-2024": [
         "1.2 TCe - 130hp",
+        "1.6 E-Tech - 200hp"
+      ],
+      "2025-2026": [
+        "1.2 Mild Hybrid - 130hp",
+        "1.6 E-Tech - 160hp",
         "1.6 E-Tech - 200hp"
       ]
     },
@@ -4356,12 +4675,20 @@ const CarnageVehicleDB = {
       "2020-2024": [
         "Electric R110 - 108hp",
         "Electric R135 - 135hp"
+      ],
+      "2025-2026": [
+        "Electric R110 - 108hp",
+        "Electric R135 - 135hp"
       ]
     },
     "arkana": {
       "2021-2024": [
         "1.3 TCe - 140hp",
         "1.3 TCe - 160hp",
+        "1.6 E-Tech - 145hp"
+      ],
+      "2025-2026": [
+        "1.3 TCe Mild Hybrid - 140hp",
         "1.6 E-Tech - 145hp"
       ]
     },
@@ -4376,6 +4703,11 @@ const CarnageVehicleDB = {
         "1.3 TCe - 130hp",
         "1.5 Blue dCi - 95hp",
         "1.5 Blue dCi - 115hp"
+      ],
+      "2025-2026": [
+        "1.3 TCe - 130hp",
+        "1.5 Blue dCi - 115hp",
+        "Electric - 122hp"
       ]
     },
     "twingo": {
@@ -4821,7 +5153,13 @@ const CarnageVehicleDB = {
       ],
       "2020-2024": [
         "1.0 VVT-i - 72hp",
-        "1.5 VVT-i Hybrid - 116hp"
+        "1.5 VVT-i Hybrid - 116hp",
+        "1.6 GR Turbo - 261hp"
+      ],
+      "2025-2026": [
+        "1.5 Hybrid - 116hp",
+        "1.5 Hybrid - 130hp",
+        "1.6 GR Turbo - 280hp"
       ]
     },
     "corolla": {
@@ -4854,7 +5192,13 @@ const CarnageVehicleDB = {
       "2019-2024": [
         "1.2 Turbo - 116hp",
         "1.8 VVT-i Hybrid - 122hp",
-        "2.0 VVT-i Hybrid - 184hp"
+        "2.0 VVT-i Hybrid - 184hp",
+        "2.0 GR - 300hp"
+      ],
+      "2025-2026": [
+        "1.8 Hybrid - 140hp",
+        "2.0 Hybrid - 196hp",
+        "2.0 GR - 300hp"
       ]
     },
     "prius": {
@@ -4869,6 +5213,9 @@ const CarnageVehicleDB = {
       ],
       "2016-2024": [
         "1.8 VVT-i Hybrid - 122hp"
+      ],
+      "2025-2026": [
+        "2.0 Plug-in Hybrid - 223hp"
       ]
     },
     "camry": {
@@ -4909,6 +5256,11 @@ const CarnageVehicleDB = {
         "1.2 Turbo - 116hp",
         "1.8 VVT-i Hybrid - 122hp",
         "2.0 VVT-i Hybrid - 184hp"
+      ],
+      "2025-2026": [
+        "1.8 Hybrid - 140hp",
+        "2.0 Hybrid - 198hp",
+        "2.0 PHEV - 223hp"
       ]
     },
     "rav4": {
@@ -4938,6 +5290,11 @@ const CarnageVehicleDB = {
         "2.0 VVT-i - 173hp",
         "2.5 VVT-i Hybrid - 218hp",
         "2.5 PHEV - 306hp"
+      ],
+      "2025-2026": [
+        "2.5 Hybrid - 222hp",
+        "2.5 Hybrid AWD-i - 222hp",
+        "2.5 Plug-in Hybrid - 306hp"
       ]
     },
     "highlander": {
@@ -5073,6 +5430,11 @@ const CarnageVehicleDB = {
       "2023-2024": [
         "Electric FWD - 204hp",
         "Electric AWD - 218hp"
+      ],
+      "2025-2026": [
+        "Electric FWD - 204hp",
+        "Electric AWD - 218hp",
+        "Electric AWD Performance - 343hp"
       ]
     },
     "mirai": {
@@ -5210,6 +5572,10 @@ const CarnageVehicleDB = {
     "e": {
       "2020-2024": [
         "Electric - 154hp"
+      ],
+      "2025-2026": [
+        "Electric R110 - 108hp",
+        "Electric R135 - 135hp"
       ]
     },
     "civic-type-r": {
@@ -5307,6 +5673,10 @@ const CarnageVehicleDB = {
         "1.5 Skyactiv-G - 75hp",
         "1.5 Skyactiv-G - 90hp",
         "1.5 Skyactiv-G - 115hp"
+      ],
+      "2025-2026": [
+        "1.5 Skyactiv-G Mild Hybrid - 90hp",
+        "1.5 Skyactiv-G Mild Hybrid - 116hp"
       ]
     },
     "mazda3": {
@@ -5337,6 +5707,12 @@ const CarnageVehicleDB = {
         "2.0 Skyactiv-G - 180hp",
         "2.5 Skyactiv-G - 186hp",
         "1.8 Skyactiv-D - 116hp"
+      ],
+      "2025-2026": [
+        "2.0 Skyactiv-G Mild Hybrid - 122hp",
+        "2.5 Skyactiv-G Mild Hybrid - 186hp",
+        "2.0 Skyactiv-X - 186hp",
+        "1.8 Skyactiv-D Mild Hybrid - 116hp"
       ]
     },
     "mazda6": {
@@ -5365,6 +5741,11 @@ const CarnageVehicleDB = {
         "2.5 Skyactiv-G - 194hp",
         "2.5 Turbo - 231hp",
         "2.2 Skyactiv-D - 184hp"
+      ],
+      "2025-2026": [
+        "2.5 Skyactiv-G Mild Hybrid - 194hp",
+        "2.5 Turbo Mild Hybrid - 265hp",
+        "2.0 Skyactiv-X - 186hp"
       ]
     },
     "cx-3": {
@@ -5382,6 +5763,11 @@ const CarnageVehicleDB = {
         "2.0 Skyactiv-G - 150hp",
         "2.0 Skyactiv-X - 186hp",
         "1.8 Skyactiv-D - 116hp"
+      ],
+      "2025-2026": [
+        "2.0 Skyactiv-G Mild Hybrid - 150hp",
+        "2.0 Skyactiv-X - 186hp",
+        "2.5 Skyactiv-G Mild Hybrid - 186hp"
       ]
     },
     "cx-5": {
@@ -5396,12 +5782,22 @@ const CarnageVehicleDB = {
         "2.5 Skyactiv-G - 194hp",
         "2.5 Turbo - 231hp",
         "2.2 Skyactiv-D - 184hp"
+      ],
+      "2025-2026": [
+        "2.5 Skyactiv-G Mild Hybrid - 194hp",
+        "2.5 Turbo Mild Hybrid - 256hp",
+        "2.5 PHEV - 327hp"
       ]
     },
     "cx-60": {
       "2022-2024": [
         "2.5 PHEV - 327hp",
         "3.3 Skyactiv-D - 254hp"
+      ],
+      "2025-2026": [
+        "2.5 PHEV - 327hp",
+        "3.3 Skyactiv-D Mild Hybrid - 254hp",
+        "3.0 Skyactiv-X Mild Hybrid - 286hp"
       ]
     },
     "mx-5": {
@@ -5416,6 +5812,9 @@ const CarnageVehicleDB = {
       "2016-2024": [
         "1.5 Skyactiv-G - 132hp",
         "2.0 Skyactiv-G - 184hp"
+      ],
+      "2025-2026": [
+        "2.0 Skyactiv-G Mild Hybrid - 184hp"
       ]
     },
     "cx-7": {
@@ -5514,6 +5913,21 @@ const CarnageVehicleDB = {
         "2.0 T-GDi - 230hp",
         "1.6 CRDi - 136hp",
         "2.0 CRDi - 185hp"
+      ]
+    },
+    "genesis": {
+      "2009-2014": [
+        "3.8 V6 - 290hp",
+        "4.6 V8 - 375hp"
+      ],
+      "2015-2020": [
+        "3.8 V6 - 315hp",
+        "5.0 V8 - 425hp"
+      ],
+      "2021-2026": [
+        "2.5 T-GDi - 300hp",
+        "3.5 T-GDi - 380hp",
+        "Electric - 370hp"
       ]
     },
     "i10": {
@@ -5672,6 +6086,12 @@ const CarnageVehicleDB = {
         "1.6 T-GDi - 204hp",
         "1.6 CRDi - 115hp",
         "1.6 CRDi - 136hp"
+      ],
+      "2025-2026": [
+        "1.0 T-GDi Mild Hybrid - 120hp",
+        "1.5 T-GDi Mild Hybrid - 160hp",
+        "1.6 Hybrid - 141hp",
+        "1.6 PHEV - 180hp"
       ]
     },
     "sportage": {
@@ -5693,6 +6113,11 @@ const CarnageVehicleDB = {
         "2.0 T-GDi - 265hp",
         "1.6 CRDi - 136hp",
         "2.0 CRDi - 186hp"
+      ],
+      "2025-2026": [
+        "1.6 T-GDi Mild Hybrid - 180hp",
+        "1.6 PHEV - 265hp",
+        "1.6 Hybrid - 230hp"
       ]
     },
     "niro": {
@@ -5703,6 +6128,11 @@ const CarnageVehicleDB = {
       "2022-2024": [
         "1.6 GDi Hybrid - 141hp",
         "1.6 T-GDi Hybrid - 183hp"
+      ],
+      "2025-2026": [
+        "1.6 Hybrid - 141hp",
+        "1.6 PHEV - 183hp",
+        "Electric - 204hp"
       ]
     },
     "picanto": {
@@ -5718,6 +6148,10 @@ const CarnageVehicleDB = {
       "2017-2024": [
         "1.0 - 67hp",
         "1.2 - 84hp"
+      ],
+      "2025-2026": [
+        "1.0 Mild Hybrid - 79hp",
+        "1.2 Mild Hybrid - 84hp"
       ]
     },
     "rio": {
@@ -5779,10 +6213,19 @@ const CarnageVehicleDB = {
       "2021-2024": [
         "1.6 T-GDi Hybrid - 230hp",
         "2.2 CRDi - 202hp"
+      ],
+      "2025-2026": [
+        "1.6 T-GDi Hybrid - 230hp",
+        "1.6 PHEV - 265hp"
       ]
     },
     "ev6": {
       "2022-2024": [
+        "Electric RWD - 229hp",
+        "Electric AWD - 325hp",
+        "Electric GT - 585hp"
+      ],
+      "2025-2026": [
         "Electric RWD - 229hp",
         "Electric AWD - 325hp",
         "Electric GT - 585hp"
@@ -5853,6 +6296,11 @@ const CarnageVehicleDB = {
       "2023-2024": [
         "Electric RWD - 204hp",
         "Electric AWD - 385hp"
+      ],
+      "2025-2026": [
+        "Electric RWD - 204hp",
+        "Electric AWD - 385hp",
+        "Electric GT-Line AWD - 385hp"
       ]
     },
     "carnival": {
@@ -7171,72 +7619,135 @@ const CarnageVehicleDB = {
   },
   "mini": {
     "hatch": {
-      "2006-2013": [
+      "2006-2010": [
         "1.4 One - 95hp",
         "1.6 Cooper - 120hp",
+        "1.6 Cooper D - 109hp",
+        "1.6 One D - 90hp",
+        "1.6 Cooper S - 175hp",
+        "1.6 JCW - 211hp"
+      ],
+      "2011-2013": [
+        "1.6 One - 98hp",
+        "1.6 Cooper - 122hp",
+        "1.6 Cooper D - 112hp",
+        "2.0 Cooper SD - 143hp",
         "1.6 Cooper S - 175hp",
         "1.6 JCW - 211hp",
         "1.6 D - 110hp"
       ],
-      "2014-2024": [
+      "2014-2017": [
         "1.2 One - 102hp",
+        "1.5 One D - 95hp",
         "1.5 Cooper - 136hp",
+        "1.5 Cooper D - 116hp",
+        "2.0 Cooper SD - 170hp",
         "2.0 Cooper S - 192hp",
-        "2.0 JCW - 231hp",
-        "1.5 D - 116hp",
-        "2.0 D - 150hp"
+        "2.0 JCW - 231hp"
+      ],
+      "2018-2021": [
+        "1.5 One - 102hp",
+        "1.5 Cooper - 136hp",
+        "1.5 Cooper D - 116hp",
+        "2.0 Cooper S - 192hp",
+        "2.0 Cooper SD - 170hp",
+        "2.0 JCW - 231hp"
+      ],
+      "2022-2026": [
+        "1.5 Cooper - 136hp",
+        "2.0 Cooper S - 178hp",
+        "2.0 Cooper S - 204hp",
+        "Electric Cooper E - 184hp",
+        "Electric Cooper SE - 218hp",
+        "2.0 JCW - 231hp"
       ]
     },
     "clubman": {
-      "2007-2014": [
+      "2007-2010": [
+        "1.6 One - 98hp",
         "1.6 Cooper - 122hp",
-        "1.6 Cooper S - 175hp",
+        "1.6 Cooper D - 109hp",
+        "1.6 Cooper S - 174hp"
+      ],
+      "2011-2014": [
+        "1.6 Cooper - 122hp",
+        "1.6 Cooper S - 184hp",
         "1.6 JCW - 211hp",
         "1.6 D - 112hp",
         "2.0 D - 143hp"
       ],
-      "2015-2024": [
+      "2015-2019": [
+        "1.5 One - 102hp",
         "1.5 Cooper - 136hp",
+        "1.5 Cooper D - 150hp",
+        "2.0 Cooper SD - 190hp",
         "2.0 Cooper S - 192hp",
-        "2.0 JCW - 306hp",
-        "1.5 D - 116hp",
-        "2.0 D - 190hp"
+        "2.0 JCW - 306hp"
+      ],
+      "2020-2024": [
+        "1.5 Cooper - 136hp",
+        "2.0 Cooper S - 178hp",
+        "2.0 Cooper S - 192hp",
+        "2.0 JCW - 306hp"
       ]
     },
     "countryman": {
       "2010-2016": [
         "1.6 Cooper - 122hp",
         "1.6 Cooper S - 184hp",
+        "2.0 Cooper SD - 143hp",
         "1.6 JCW - 218hp",
         "1.6 D - 112hp",
         "2.0 D - 143hp"
       ],
-      "2017-2024": [
+      "2017-2020": [
+        "1.5 One - 102hp",
         "1.5 Cooper - 136hp",
+        "2.0 Cooper SD - 190hp",
         "2.0 Cooper S - 192hp",
+        "2.0 Cooper S ALL4 - 192hp",
         "2.0 JCW - 306hp",
-        "1.5 D - 116hp",
-        "2.0 D - 190hp"
+        "1.5 D - 116hp"
+      ],
+      "2021-2024": [
+        "1.5 Cooper - 136hp",
+        "1.5 Cooper D - 150hp",
+        "2.0 Cooper S - 178hp",
+        "2.0 Cooper S ALL4 - 178hp",
+        "2.0 JCW ALL4 - 306hp"
+      ],
+      "2025-2026": [
+        "1.5 C - 170hp",
+        "2.0 S ALL4 - 218hp",
+        "Electric Countryman E - 204hp",
+        "Electric Countryman SE ALL4 - 313hp",
+        "Electric JCW Countryman ALL4 - 313hp"
       ]
     },
     "convertible": {
       "2009-2015": [
+        "1.6 One - 98hp",
         "1.6 Cooper - 122hp",
         "1.6 Cooper S - 184hp",
         "1.6 JCW - 211hp"
       ],
-      "2016-2024": [
+      "2016-2020": [
         "1.5 Cooper - 136hp",
         "2.0 Cooper S - 192hp",
+        "2.0 JCW - 231hp"
+      ],
+      "2021-2026": [
+        "1.5 Cooper - 136hp",
+        "2.0 Cooper S - 178hp",
         "2.0 JCW - 231hp"
       ]
     },
     "paceman": {
       "2013-2016": [
+        "1.6 Cooper D - 112hp",
         "1.6 Cooper - 122hp",
         "1.6 Cooper S - 184hp",
         "1.6 JCW - 218hp",
-        "1.6 D - 112hp",
         "2.0 D - 143hp"
       ]
     },
@@ -7250,6 +7761,7 @@ const CarnageVehicleDB = {
     },
     "roadster": {
       "2012-2015": [
+        "2.0 Cooper SD - 143hp",
         "1.6 Cooper - 122hp",
         "1.6 Cooper S - 184hp",
         "1.6 JCW - 211hp"
@@ -7273,22 +7785,47 @@ const CarnageVehicleDB = {
       ]
     },
     "electric": {
-      "2020-2024": [
-        "Electric - 184hp"
+      "2020-2023": [
+        "Electric Cooper SE - 184hp"
+      ],
+      "2024-2026": [
+        "Electric Cooper E - 184hp",
+        "Electric Cooper SE - 218hp",
+        "Electric JCW - 258hp"
       ]
     },
     "jcw": {
-      "2008-2024": [
-        "1.6 Turbo - 211hp",
+      "2008-2014": [
+        "1.6 Turbo - 211hp"
+      ],
+      "2015-2019": [
+        "2.0 Turbo - 231hp"
+      ],
+      "2020-2026": [
         "2.0 Turbo - 231hp",
-        "2.0 Turbo - 306hp"
+        "2.0 Turbo - 306hp",
+        "Electric JCW - 258hp"
       ]
     },
     "cooper-s": {
-      "2006-2024": [
+      "2006-2013": [
         "1.6 Turbo - 175hp",
+        "1.6 Turbo - 184hp"
+      ],
+      "2014-2020": [
+        "2.0 Turbo - 192hp"
+      ],
+      "2021-2026": [
+        "2.0 Turbo - 178hp",
         "1.6 Turbo - 184hp",
         "2.0 Turbo - 192hp"
+      ]
+    },
+    "aceman": {
+      "2024-2026": [
+        "Electric Aceman E - 184hp",
+        "Electric Aceman SE - 218hp",
+        "Electric JCW Aceman - 258hp"
       ]
     }
   },
@@ -9207,7 +9744,316 @@ const CarnageVehicleDB = {
       ]
     }
   },
-  "ford": {}
+  "ford": {
+    "fiesta": {
+      "2008-2012": [
+        "1.25 - 82hp",
+        "1.4 - 96hp",
+        "1.6 Ti-VCT - 120hp",
+        "1.4 TDCi - 70hp",
+        "1.6 TDCi - 95hp"
+      ],
+      "2013-2017": [
+        "1.0 EcoBoost - 100hp",
+        "1.0 EcoBoost - 125hp",
+        "1.6 EcoBoost ST - 182hp",
+        "1.5 TDCi - 95hp"
+      ],
+      "2018-2023": [
+        "1.0 EcoBoost - 100hp",
+        "1.0 EcoBoost - 125hp",
+        "1.5 EcoBoost ST - 200hp",
+        "1.5 EcoBlue - 85hp",
+        "1.5 EcoBlue - 120hp"
+      ]
+    },
+    "focus": {
+      "2005-2010": [
+        "1.6 - 100hp",
+        "1.8 - 125hp",
+        "2.0 - 145hp",
+        "2.5 ST - 225hp",
+        "1.6 TDCi - 109hp",
+        "2.0 TDCi - 136hp"
+      ],
+      "2011-2018": [
+        "1.0 EcoBoost - 125hp",
+        "1.5 EcoBoost - 150hp",
+        "2.0 EcoBoost ST - 250hp",
+        "1.5 TDCi - 120hp",
+        "2.0 TDCi - 150hp",
+        "2.0 TDCi - 185hp"
+      ],
+      "2019-2026": [
+        "1.0 EcoBoost - 125hp",
+        "1.5 EcoBoost - 150hp",
+        "2.3 EcoBoost ST - 280hp",
+        "1.5 EcoBlue - 120hp",
+        "2.0 EcoBlue - 150hp",
+        "2.0 EcoBlue - 190hp"
+      ]
+    },
+    "mondeo": {
+      "2007-2014": [
+        "1.6 EcoBoost - 160hp",
+        "2.0 EcoBoost - 203hp",
+        "2.0 EcoBoost - 240hp",
+        "1.8 TDCi - 125hp",
+        "2.0 TDCi - 140hp",
+        "2.2 TDCi - 200hp"
+      ],
+      "2015-2022": [
+        "1.5 EcoBoost - 160hp",
+        "2.0 EcoBoost - 240hp",
+        "2.0 Hybrid - 187hp",
+        "1.5 TDCi - 120hp",
+        "2.0 TDCi - 150hp",
+        "2.0 TDCi - 180hp"
+      ]
+    },
+    "mustang": {
+      "2015-2017": [
+        "2.3 EcoBoost - 317hp",
+        "5.0 V8 GT - 421hp"
+      ],
+      "2018-2023": [
+        "2.3 EcoBoost - 290hp",
+        "5.0 V8 GT - 450hp"
+      ],
+      "2024-2026": [
+        "2.3 EcoBoost - 315hp",
+        "5.0 V8 GT - 446hp"
+      ]
+    },
+    "ecosport": {
+      "2014-2017": [
+        "1.0 EcoBoost - 125hp",
+        "1.5 Ti-VCT - 112hp",
+        "1.5 TDCi - 95hp"
+      ],
+      "2018-2022": [
+        "1.0 EcoBoost - 125hp",
+        "1.0 EcoBoost - 140hp",
+        "1.5 TDCi - 100hp"
+      ]
+    },
+    "puma": {
+      "2020-2023": [
+        "1.0 EcoBoost Hybrid - 125hp",
+        "1.0 EcoBoost Hybrid - 155hp",
+        "1.5 EcoBoost ST - 200hp"
+      ],
+      "2024-2026": [
+        "1.0 EcoBoost Hybrid - 125hp",
+        "1.0 EcoBoost Hybrid - 155hp",
+        "Electric - 168hp"
+      ]
+    },
+    "kuga": {
+      "2008-2012": [
+        "2.0 TDCi - 136hp",
+        "2.0 TDCi - 163hp",
+        "2.5 Turbo - 200hp"
+      ],
+      "2013-2019": [
+        "1.5 EcoBoost - 150hp",
+        "2.0 EcoBoost - 242hp",
+        "1.5 TDCi - 120hp",
+        "2.0 TDCi - 150hp",
+        "2.0 TDCi - 180hp"
+      ],
+      "2020-2026": [
+        "1.5 EcoBoost - 150hp",
+        "2.5 Hybrid - 190hp",
+        "2.5 PHEV - 225hp",
+        "1.5 EcoBlue - 120hp",
+        "2.0 EcoBlue - 150hp"
+      ]
+    },
+    "edge": {
+      "2016-2020": [
+        "2.0 EcoBlue - 150hp",
+        "2.0 EcoBlue - 190hp",
+        "2.0 EcoBoost - 245hp"
+      ],
+      "2021-2024": [
+        "2.0 EcoBlue - 190hp",
+        "2.0 EcoBlue - 238hp",
+        "2.7 EcoBoost - 335hp"
+      ]
+    },
+    "explorer": {
+      "2011-2019": [
+        "2.3 EcoBoost - 280hp",
+        "3.5 V6 - 290hp",
+        "3.5 EcoBoost - 365hp"
+      ],
+      "2020-2026": [
+        "2.3 EcoBoost - 300hp",
+        "3.0 EcoBoost - 457hp",
+        "3.3 Hybrid - 318hp"
+      ]
+    },
+    "transit": {
+      "2006-2013": [
+        "2.2 TDCi - 85hp",
+        "2.2 TDCi - 110hp",
+        "2.2 TDCi - 125hp",
+        "2.4 TDCi - 140hp"
+      ],
+      "2014-2019": [
+        "2.0 EcoBlue - 105hp",
+        "2.0 EcoBlue - 130hp",
+        "2.0 EcoBlue - 170hp"
+      ],
+      "2020-2026": [
+        "2.0 EcoBlue - 105hp",
+        "2.0 EcoBlue - 130hp",
+        "2.0 EcoBlue - 170hp",
+        "2.0 EcoBlue - 185hp"
+      ]
+    },
+    "transit-custom": {
+      "2013-2019": [
+        "2.2 TDCi - 100hp",
+        "2.2 TDCi - 125hp",
+        "2.2 TDCi - 155hp"
+      ],
+      "2020-2026": [
+        "2.0 EcoBlue - 105hp",
+        "2.0 EcoBlue - 130hp",
+        "2.0 EcoBlue - 170hp",
+        "2.0 EcoBlue - 185hp",
+        "Electric - 218hp"
+      ]
+    },
+    "ranger": {
+      "2012-2018": [
+        "2.2 TDCi - 125hp",
+        "2.2 TDCi - 150hp",
+        "3.2 TDCi - 200hp"
+      ],
+      "2019-2022": [
+        "2.0 EcoBlue - 130hp",
+        "2.0 EcoBlue - 170hp",
+        "2.0 Bi-Turbo - 213hp"
+      ],
+      "2023-2026": [
+        "2.0 EcoBlue - 170hp",
+        "2.0 Bi-Turbo - 205hp",
+        "3.0 V6 Diesel - 240hp",
+        "3.0 V6 Petrol Raptor - 292hp"
+      ]
+    },
+    "f-150": {
+      "2011-2020": [
+        "2.7 EcoBoost V6 - 325hp",
+        "3.5 EcoBoost V6 - 375hp",
+        "5.0 V8 - 395hp"
+      ],
+      "2021-2026": [
+        "2.7 EcoBoost V6 - 325hp",
+        "3.5 EcoBoost V6 - 400hp",
+        "3.5 PowerBoost Hybrid - 430hp",
+        "5.0 V8 - 400hp"
+      ]
+    },
+    "s-max": {
+      "2006-2014": [
+        "1.6 EcoBoost - 160hp",
+        "2.0 EcoBoost - 203hp",
+        "2.0 TDCi - 140hp",
+        "2.2 TDCi - 200hp"
+      ],
+      "2015-2023": [
+        "1.5 EcoBoost - 160hp",
+        "2.0 EcoBoost - 240hp",
+        "2.0 TDCi - 150hp",
+        "2.0 TDCi - 180hp",
+        "2.0 TDCi - 210hp"
+      ]
+    },
+    "galaxy": {
+      "2006-2014": [
+        "1.6 EcoBoost - 160hp",
+        "2.0 EcoBoost - 203hp",
+        "2.0 TDCi - 140hp",
+        "2.2 TDCi - 200hp"
+      ],
+      "2015-2023": [
+        "1.5 EcoBoost - 160hp",
+        "2.0 EcoBoost - 240hp",
+        "2.0 TDCi - 150hp",
+        "2.0 TDCi - 180hp",
+        "2.0 TDCi - 210hp"
+      ]
+    },
+    "tourneo": {
+      "2014-2019": [
+        "2.0 EcoBlue - 105hp",
+        "2.0 EcoBlue - 130hp",
+        "2.0 EcoBlue - 170hp"
+      ],
+      "2020-2026": [
+        "2.0 EcoBlue - 130hp",
+        "2.0 EcoBlue - 170hp",
+        "2.0 EcoBlue - 185hp",
+        "Electric - 218hp"
+      ]
+    },
+    "fiesta-st": {
+      "2013-2017": [
+        "1.6 EcoBoost - 182hp"
+      ],
+      "2018-2023": [
+        "1.5 EcoBoost - 200hp"
+      ]
+    },
+    "focus-st": {
+      "2005-2010": [
+        "2.5 Turbo - 225hp"
+      ],
+      "2012-2018": [
+        "2.0 EcoBoost - 250hp",
+        "2.0 TDCi - 185hp"
+      ],
+      "2019-2026": [
+        "2.3 EcoBoost - 280hp",
+        "2.0 EcoBlue - 190hp"
+      ]
+    },
+    "focus-rs": {
+      "2009-2011": [
+        "2.5 Turbo - 305hp"
+      ],
+      "2016-2018": [
+        "2.3 EcoBoost - 350hp"
+      ]
+    },
+    "mustang-mach-e": {
+      "2021-2024": [
+        "Electric RWD - 269hp",
+        "Electric AWD - 351hp",
+        "Electric GT - 487hp"
+      ],
+      "2025-2026": [
+        "Electric RWD - 269hp",
+        "Electric AWD Extended - 370hp",
+        "Electric GT Performance - 487hp"
+      ]
+    },
+    "bronco": {
+      "2021-2024": [
+        "2.3 EcoBoost - 300hp",
+        "2.7 EcoBoost - 330hp"
+      ],
+      "2025-2026": [
+        "2.3 EcoBoost - 300hp",
+        "2.7 EcoBoost - 335hp",
+        "3.0 EcoBoost Raptor - 418hp"
+      ]
+    }
+  }
 },
 
   /**
