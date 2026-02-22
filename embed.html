@@ -760,13 +760,65 @@
             return;
           }
 
-          // Deduplicate and display
-          Array.from(new Set(engines)).forEach(function(e) {
-            var opt = document.createElement('option');
-            opt.value = e;
-            opt.textContent = e;
-            eng.appendChild(opt);
-          });
+          // Deduplicate
+          var uniqueEngines = Array.from(new Set(engines));
+          
+          // Group by fuel type
+          var petrolEngines = [];
+          var dieselEngines = [];
+          var otherEngines = [];
+          
+          for (var i = 0; i < uniqueEngines.length; i++) {
+            var e = uniqueEngines[i];
+            var eLower = String(e).toLowerCase();
+            
+            if (/diesel|tdi|dci|hdi|crdi|ddi|cdti|bluehdI|d4d/.test(eLower)) {
+              dieselEngines.push(e);
+            } else if (/petrol|tsi|tfsi|t-jet|ecoboost|vvti|multiair|gdi|t-gdi/.test(eLower)) {
+              petrolEngines.push(e);
+            } else {
+              otherEngines.push(e);
+            }
+          }
+          
+          // Add petrol group
+          if (petrolEngines.length > 0) {
+            var petrolGroup = document.createElement('optgroup');
+            petrolGroup.label = '⛽ Petrol';
+            petrolEngines.forEach(function(e) {
+              var opt = document.createElement('option');
+              opt.value = e;
+              opt.textContent = e;
+              petrolGroup.appendChild(opt);
+            });
+            eng.appendChild(petrolGroup);
+          }
+          
+          // Add diesel group
+          if (dieselEngines.length > 0) {
+            var dieselGroup = document.createElement('optgroup');
+            dieselGroup.label = '🛢️ Diesel';
+            dieselEngines.forEach(function(e) {
+              var opt = document.createElement('option');
+              opt.value = e;
+              opt.textContent = e;
+              dieselGroup.appendChild(opt);
+            });
+            eng.appendChild(dieselGroup);
+          }
+          
+          // Add other engines (hybrid, electric, etc.)
+          if (otherEngines.length > 0) {
+            var otherGroup = document.createElement('optgroup');
+            otherGroup.label = '⚡ Other';
+            otherEngines.forEach(function(e) {
+              var opt = document.createElement('option');
+              opt.value = e;
+              opt.textContent = e;
+              otherGroup.appendChild(opt);
+            });
+            eng.appendChild(otherGroup);
+          }
         }
         checkReady();
       };
