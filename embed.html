@@ -147,6 +147,7 @@
     }
     select:disabled { opacity: 0.5; cursor: not-allowed; }
     option { background: #1a1a1a; color: #fff; }
+    optgroup { background: #0a0a0a; color: #fbbf24; font-weight: 700; }
     .btn-row { 
       display: flex; 
       gap: 0.75rem;
@@ -760,21 +761,76 @@
           }
 
           var uniqueEngines = Array.from(new Set(engines));
+          var petrol = [];
+          var diesel = [];
+          var ev = [];
+          var hybrid = [];
+          
+          // Categorize engines
           uniqueEngines.forEach(function(e) {
             var eLower = String(e).toLowerCase();
-            var prefix = '';
-            if (/electric|ev|battery/.test(eLower)) {
-              prefix = '[EV] ';
+            if (/electric|ev|battery|bev/.test(eLower)) {
+              ev.push(e);
             } else if (/diesel|tdi|dci|hdi|crdi/.test(eLower)) {
-              prefix = '[DIESEL] ';
-            } else if (/petrol|tsi|tfsi|t-jet|ecoboost/.test(eLower)) {
-              prefix = '[PETROL] ';
+              diesel.push(e);
+            } else if (/hybrid|phev/.test(eLower)) {
+              hybrid.push(e);
+            } else {
+              petrol.push(e);
             }
-            var opt = document.createElement('option');
-            opt.value = e;
-            opt.textContent = prefix + e;
-            eng.appendChild(opt);
           });
+          
+          // Add petrol group
+          if (petrol.length > 0) {
+            var petrolGroup = document.createElement('optgroup');
+            petrolGroup.label = '━━ PETROL ━━';
+            petrol.forEach(function(e) {
+              var opt = document.createElement('option');
+              opt.value = e;
+              opt.textContent = e;
+              petrolGroup.appendChild(opt);
+            });
+            eng.appendChild(petrolGroup);
+          }
+          
+          // Add diesel group
+          if (diesel.length > 0) {
+            var dieselGroup = document.createElement('optgroup');
+            dieselGroup.label = '━━ DIESEL ━━';
+            diesel.forEach(function(e) {
+              var opt = document.createElement('option');
+              opt.value = e;
+              opt.textContent = e;
+              dieselGroup.appendChild(opt);
+            });
+            eng.appendChild(dieselGroup);
+          }
+          
+          // Add hybrid group
+          if (hybrid.length > 0) {
+            var hybridGroup = document.createElement('optgroup');
+            hybridGroup.label = '━━ HYBRID ━━';
+            hybrid.forEach(function(e) {
+              var opt = document.createElement('option');
+              opt.value = e;
+              opt.textContent = e;
+              hybridGroup.appendChild(opt);
+            });
+            eng.appendChild(hybridGroup);
+          }
+          
+          // Add EV group
+          if (ev.length > 0) {
+            var evGroup = document.createElement('optgroup');
+            evGroup.label = '━━ ELECTRIC ━━';
+            ev.forEach(function(e) {
+              var opt = document.createElement('option');
+              opt.value = e;
+              opt.textContent = e;
+              evGroup.appendChild(opt);
+            });
+            eng.appendChild(evGroup);
+          }
         }
         checkReady();
       };
