@@ -49,9 +49,41 @@ function parseEngineLabel(label) {
 }
 
 /**
- * Score how similar two engine labels are (0-100, higher = more similar)
+ * Deduplicate engines by fuel type + power combination
+ * Returns unique engines, keeping the first occurrence of each power level per fuel type
  */
-function scoreEngineMatch(csvEngine, yearEngineLabel) {
+function deduplicateByPowerAndFuel(engines) {
+  const seen = new Set();
+  const result = [];
+  
+  for (const engine of engines) {
+    const label = String(engine).toLowerCase();
+    
+    // Extract power (e.g., "155hp", "150 hp")
+    const powerMatch = label.match(/(\d+)\s*(?:hp|ps|kw)/);
+    const power = powerMatch ? powerMatch[1] : null;
+    
+    // Determine fuel type
+    let fuel = 'unknown';
+    if (/diesel|tdi|dci|hdi|crdi/.test(label)) {
+      fuel = 'diesel';
+    } else if (/petrol|tsi|tfsi|t-jet|ecoboost|vvti|multiair|gdi/.test(label)) {
+      fuel = 'petrol';
+    } else if (/electric|ev|battery/.test(label)) {
+      fuel = 'electric';
+    } else if (/hybrid|phev/.test(label)) {
+      fuel = 'hybrid';
+    }
+    
+    const key = `${fuel}-${power}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      result.push(engine);
+    }
+  }
+  
+  return result;
+}
   const csv = parseEngineLabel(csvEngine.engineLabel);
   const year = parseEngineLabel(yearEngineLabel);
   
@@ -173,6 +205,11 @@ function smartMerge() {
               stats.enginesMatched++;
             }
           }
+        }
+        
+        // Deduplicate by fuel type + power
+        if (modelYears[yearRange]) {
+          modelYears[yearRange] = deduplicateByPowerAndFuel(modelYears[yearRange]);
         }
         
         if (addedThisYear > 0) {
