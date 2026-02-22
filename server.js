@@ -1876,6 +1876,7 @@ app.get('/api/vrm-lookup', async (req, res) => {
     const vrmRaw = (req.query.vrm || '').toString().trim();
     const email = (req.query.email || '').toString().trim();
     const iframeId = (req.query.iframeId || '').toString().trim();
+    let lookupEmail = email;
 
     if (!vrmRaw) {
       return res.status(400).json({ error: 'vrm is required' });
@@ -1890,6 +1891,10 @@ app.get('/api/vrm-lookup', async (req, res) => {
           .eq('id', iframeId)
           .single();
 
+        if (!iframeError && iframe?.email && !lookupEmail) {
+          lookupEmail = String(iframe.email).trim();
+        }
+
         if (!iframeError && iframe && iframe.status === 'locked') {
           console.log(`🔒 VRM Lookup blocked - iframe ${iframeId} is locked`);
           return res.status(403).json({ 
@@ -1901,13 +1906,13 @@ app.get('/api/vrm-lookup', async (req, res) => {
         console.warn('Error checking iframe lock status:', err);
         // Continue - don't block on database errors
       }
-    } else if (email) {
+    } else if (lookupEmail) {
       // Check email-based lock status if no iframeId
       try {
         const { data: lockedIframe, error: lockedError } = await supabase
           .from('iframes')
           .select('id, status')
-          .eq('email', email)
+          .eq('email', lookupEmail)
           .eq('status', 'locked')
           .eq('type', 'vrm')
           .order('created_at', { ascending: false })
@@ -1915,7 +1920,7 @@ app.get('/api/vrm-lookup', async (req, res) => {
           .single();
 
         if (!lockedError && lockedIframe) {
-          console.log(`🔒 VRM Lookup blocked - email ${email} has locked iframe`);
+          console.log(`🔒 VRM Lookup blocked - email ${lookupEmail} has locked iframe`);
           return res.status(403).json({ 
             error: 'This widget has been locked by an admin',
             locked: true
@@ -1928,41 +1933,67 @@ app.get('/api/vrm-lookup', async (req, res) => {
     }
 
     // Check VRM subscription (including expiry date)
-    if (email) {
+    if (lookupEmail) {
       try {
         const { data: subs, error: subError } = await supabase
           .from('subscriptions')
-          .select('id, status, subscription_type, current_period_end')
-          .eq('email', email)
-          .eq('subscription_type', 'vrm')
+          .select('id, status, type, subscription_type, current_period_end')
+          .eq('email', lookupEmail)
           .eq('status', 'active');
 
         if (subError) {
           console.error('Error checking subscriptions:', subError);
-        } else if (!subs || subs.length === 0) {
-          console.log(`❌ VRM Lookup blocked - no active VRM subscription for ${email}`);
-          return res.status(403).json({ 
-            error: 'VRM Lookup requires an active subscription (£17.99/month)',
-            needsSubscription: true,
-            subscriptionType: 'vrm'
-          });
         } else {
-          // Check if subscription has expired
-          const sub = subs[0];
-          const expiryDate = new Date(sub.current_period_end);
+          const vrmSubs = (subs || []).filter((sub) => {
+            const normalizedType = String(sub?.type || '').toLowerCase().trim();
+            const normalizedSubscriptionType = String(sub?.subscription_type || '').toLowerCase().trim();
+            return [normalizedType, normalizedSubscriptionType].some((value) =>
+              value === 'vrm' || value === 'vrm_lookup' || value === 'vrm-lookup'
+            );
+          });
+
+          if (!vrmSubs.length) {
+            console.log(`❌ VRM Lookup blocked - no active VRM subscription for ${lookupEmail}`);
+            return res.status(403).json({ 
+              error: 'VRM Lookup requires an active subscription (£17.99/month)',
+              needsSubscription: true,
+              subscriptionType: 'vrm'
+            });
+          }
+
+          // Check if at least one VRM subscription has not expired
           const now = new Date();
-          
-          if (expiryDate < now) {
-            console.log(`❌ VRM Lookup blocked - subscription expired on ${expiryDate.toISOString()} for ${email}`);
+          const activeSub = vrmSubs.find((sub) => {
+            if (!sub.current_period_end) return true;
+            const expiryDate = new Date(sub.current_period_end);
+            return expiryDate >= now;
+          });
+
+          if (!activeSub) {
+            const latestExpiry = new Date(
+              vrmSubs
+                .map((sub) => sub.current_period_end)
+                .filter(Boolean)
+                .sort()
+                .slice(-1)[0]
+            );
+            console.log(`❌ VRM Lookup blocked - subscription expired on ${latestExpiry.toISOString()} for ${lookupEmail}`);
             return res.status(403).json({ 
               error: 'VRM Lookup subscription expired. Please renew your subscription.',
               needsSubscription: true,
               subscriptionType: 'vrm',
-              expiredDate: expiryDate.toISOString()
+              expiredDate: latestExpiry.toISOString()
             });
           }
-          
-          console.log(`✅ VRM Lookup allowed - active subscription for ${email}, expires ${expiryDate.toISOString()}`);
+
+          if (activeSub.current_period_end) {
+            const expiryDate = new Date(activeSub.current_period_end);
+            console.log(`✅ VRM Lookup allowed - active subscription for ${lookupEmail}, expires ${expiryDate.toISOString()}`);
+          } else {
+            console.log(`✅ VRM Lookup allowed - active subscription for ${lookupEmail}`);
+          }
+
+          // Continue request
         }
       } catch (err) {
         console.error('Subscription check error:', err);
