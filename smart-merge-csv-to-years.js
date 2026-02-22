@@ -57,25 +57,25 @@ function scoreEngineMatch(csvEngine, yearEngineLabel) {
   
   let score = 0;
   
-  // Capacity match: +40 points
+  // Capacity match: +40 points (stricter: only ±0.05L)
   if (csv.capacity && year.capacity) {
     const csvCap = parseFloat(csv.capacity);
     const yearCap = parseFloat(year.capacity);
-    if (Math.abs(csvCap - yearCap) < 0.1) {
+    if (Math.abs(csvCap - yearCap) < 0.05) {
       score += 40;
-    } else if (Math.abs(csvCap - yearCap) < 0.2) {
-      score += 30;
+    } else if (Math.abs(csvCap - yearCap) < 0.1) {
+      score += 25;
     }
   }
   
-  // Power match: +40 points (allow ±5% tolerance)
+  // Power match: +40 points (allow ±3% tolerance only)
   if (csv.power && year.power) {
     const diff = Math.abs(csv.power - year.power);
-    const tolerance = Math.max(5, year.power * 0.05);
+    const tolerance = Math.max(3, year.power * 0.03);
     if (diff <= tolerance) {
       score += 40;
     } else if (diff <= tolerance * 1.5) {
-      score += 20;
+      score += 15;
     }
   }
   
@@ -162,8 +162,8 @@ function smartMerge() {
             }
           }
           
-          // If we found a reasonably close match (score > 50), assign this CSV engine to this year
-          if (bestScore > 50) {
+          // If we found a reasonably close match (score > 65), assign this CSV engine to this year
+          if (bestScore > 65) {
             const trimmedLabel = String(csvLabel).trim();
             if (!existingSet.has(trimmedLabel)) {
               modelYears[yearRange].push(trimmedLabel);
