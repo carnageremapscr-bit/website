@@ -1952,7 +1952,18 @@ app.get('/api/vrm-lookup', async (req, res) => {
             );
           });
 
-          if (!vrmSubs.length) {
+          // Treat premium plans as entitled to VRM lookup access as well
+          const premiumSubs = (subs || []).filter((sub) => {
+            const normalizedType = String(sub?.type || '').toLowerCase().trim();
+            const normalizedSubscriptionType = String(sub?.subscription_type || '').toLowerCase().trim();
+            return [normalizedType, normalizedSubscriptionType].some((value) =>
+              value === 'premium' || value === 'premium-plan' || value === 'premium_plan'
+            );
+          });
+
+          const entitledSubs = vrmSubs.length ? vrmSubs : premiumSubs;
+
+          if (!entitledSubs.length) {
             console.log(`❌ VRM Lookup blocked - no active VRM subscription for ${lookupEmail}`);
             return res.status(403).json({ 
               error: 'VRM Lookup requires an active subscription (£17.99/month)',
@@ -1961,9 +1972,9 @@ app.get('/api/vrm-lookup', async (req, res) => {
             });
           }
 
-          // Check if at least one VRM subscription has not expired
+          // Check if at least one entitled subscription has not expired
           const now = new Date();
-          const activeSub = vrmSubs.find((sub) => {
+          const activeSub = entitledSubs.find((sub) => {
             if (!sub.current_period_end) return true;
             const expiryDate = new Date(sub.current_period_end);
             return expiryDate >= now;
@@ -1971,7 +1982,7 @@ app.get('/api/vrm-lookup', async (req, res) => {
 
           if (!activeSub) {
             const latestExpiry = new Date(
-              vrmSubs
+              entitledSubs
                 .map((sub) => sub.current_period_end)
                 .filter(Boolean)
                 .sort()
