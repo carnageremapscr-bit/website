@@ -16,8 +16,10 @@ function slugify(str) {
 function parseEngineLabel(label) {
   const label_lower = String(label).toLowerCase();
   
-  // Extract capacity (e.g., "1.4L", "2.0L")
-  const capacityMatch = label_lower.match(/(\d+\.?\d*)\s*l(?:itre)?/);
+  // Extract capacity (supports "1.4L", "1.4", "2.0 tdi")
+  const capacityMatch =
+    label_lower.match(/\b(\d+\.\d)\s*l\b/) ||
+    label_lower.match(/\b(\d+\.\d)\b/);
   const capacity = capacityMatch ? capacityMatch[1] : null;
   
   // Extract power (e.g., "155hp", "150 hp")
@@ -85,7 +87,14 @@ function deduplicateByPowerAndFuel(engines) {
       fuel = 'hybrid';
     }
     
-    const key = `${fuel}-${power}`;
+    // Extract engine size so we only dedupe when the size matches (e.g. 1.6 with 1.6)
+    const capacityMatch =
+      label.match(/\b(\d+\.\d)\s*l\b/) ||
+      label.match(/\b(\d+\.\d)\b/);
+    const capacity = capacityMatch ? capacityMatch[1] : 'unknown';
+
+    // Deduplicate on fuel + engine size + rounded power
+    const key = `${fuel}-${capacity}-${power}`;
     if (!seen.has(key)) {
       seen.add(key);
       result.push(engine);
@@ -231,6 +240,17 @@ function smartMerge() {
           stats.perMake[csvMake].modelsWithMatches.push(csvModelSlug);
           stats.perMake[csvMake].totalEnginesAdded += addedThisYear;
         }
+      }
+    }
+  }
+
+  // Final cleanup pass: enforce dedupe across all makes/models/year buckets
+  for (const make of Object.keys(result)) {
+    for (const modelSlug of Object.keys(result[make] || {})) {
+      for (const yearRange of Object.keys(result[make][modelSlug] || {})) {
+        result[make][modelSlug][yearRange] = deduplicateByPowerAndFuel(
+          result[make][modelSlug][yearRange] || []
+        );
       }
     }
   }

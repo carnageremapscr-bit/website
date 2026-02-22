@@ -1,32 +1,49 @@
 {
   "makesProcessed": 60,
   "modelsProcessed": 450,
-  "enginesAdded": 3166,
-  "enginesMatched": 3166,
+  "enginesAdded": 6417,
+  "enginesMatched": 6417,
   "perMake": {
     "abarth": {
       "modelsWithMatches": [
         "595",
         "695",
-        "grande-punto"
+        "124-spider",
+        "grande-punto",
+        "punto-evo"
       ],
-      "totalEnginesAdded": 8
+      "totalEnginesAdded": 13
     },
     "alfa-romeo": {
       "modelsWithMatches": [
+        "147",
+        "156",
+        "159",
+        "brera",
+        "giulia",
         "giulietta",
         "giulietta",
-        "mito"
+        "gt",
+        "mito",
+        "spider",
+        "stelvio",
+        "tonale"
       ],
-      "totalEnginesAdded": 8
+      "totalEnginesAdded": 63
     },
     "alpine": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "a110"
+      ],
+      "totalEnginesAdded": 3
     },
     "aston-martin": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "db11",
+        "rapide",
+        "vantage"
+      ],
+      "totalEnginesAdded": 4
     },
     "audi": {
       "modelsWithMatches": [
@@ -75,9 +92,16 @@
         "q7",
         "q7",
         "q8",
+        "r8",
+        "r8",
+        "rs3",
         "rs3",
         "rs4",
+        "rs4",
+        "rs4",
         "rs5",
+        "rs5",
+        "rs6",
         "rs6",
         "rs6",
         "rs7",
@@ -85,42 +109,96 @@
         "tt",
         "tt"
       ],
-      "totalEnginesAdded": 1413
+      "totalEnginesAdded": 1825
     },
     "bentley": {
       "modelsWithMatches": [
-        "bentayga"
+        "bentayga",
+        "continental-gt",
+        "continental-gt"
+      ],
+      "totalEnginesAdded": 6
+    },
+    "bmw": {
+      "modelsWithMatches": [
+        "1-series",
+        "1-series",
+        "1-series",
+        "1-series",
+        "1-series",
+        "2-series",
+        "2-series",
+        "3-series",
+        "3-series",
+        "3-series",
+        "3-series",
+        "3-series",
+        "3-series",
+        "3-series",
+        "3-series",
+        "4-series",
+        "4-series",
+        "5-series",
+        "5-series",
+        "5-series",
+        "5-series",
+        "5-series",
+        "5-series",
+        "6-series",
+        "7-series",
+        "7-series",
+        "7-series",
+        "8-series"
+      ],
+      "totalEnginesAdded": 365
+    },
+    "bugatti": {
+      "modelsWithMatches": [
+        "veyron"
       ],
       "totalEnginesAdded": 1
     },
-    "bmw": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
-    },
-    "bugatti": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
-    },
     "buick": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "encore"
+      ],
+      "totalEnginesAdded": 1
     },
     "cadillac": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "ct6",
+        "escalade"
+      ],
+      "totalEnginesAdded": 5
     },
     "chevrolet": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "camaro",
+        "colorado",
+        "corvette",
+        "corvette",
+        "cruze",
+        "malibu",
+        "suburban",
+        "tahoe",
+        "traverse",
+        "trax"
+      ],
+      "totalEnginesAdded": 24
     },
     "chrysler": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "300",
+        "voyager"
+      ],
+      "totalEnginesAdded": 6
     },
     "citroen": {
       "modelsWithMatches": [
         "berlingo",
         "berlingo",
+        "c1",
+        "c1",
         "c3",
         "c3",
         "c3-aircross",
@@ -136,13 +214,14 @@
         "c5",
         "c5-aircross",
         "dispatch",
+        "dispatch",
         "jumpy",
         "jumpy",
         "nemo",
         "relay",
         "relay"
       ],
-      "totalEnginesAdded": 144
+      "totalEnginesAdded": 219
     },
     "cupra": {
       "modelsWithMatches": [
@@ -157,39 +236,70 @@
         "dokker",
         "duster",
         "duster",
+        "jogger",
         "lodgy",
         "logan",
         "logan",
         "sandero",
         "sandero",
+        "sandero",
         "spring"
       ],
-      "totalEnginesAdded": 35
+      "totalEnginesAdded": 62
     },
     "daihatsu": {
       "modelsWithMatches": [],
       "totalEnginesAdded": 0
     },
     "dodge": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "avenger",
+        "caliber",
+        "challenger",
+        "charger",
+        "durango",
+        "grand-caravan",
+        "journey",
+        "viper"
+      ],
+      "totalEnginesAdded": 15
     },
     "ds": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "ds4",
+        "ds4"
+      ],
+      "totalEnginesAdded": 2
     },
     "ferrari": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "488"
+      ],
+      "totalEnginesAdded": 2
     },
     "fiat": {
       "modelsWithMatches": [
+        "500",
+        "500",
+        "500",
+        "500",
         "500l",
         "500x",
+        "500x",
         "bravo",
+        "doblo",
+        "ducato",
+        "fiorino",
+        "panda",
+        "panda",
+        "punto",
+        "punto",
+        "qubo",
+        "talento",
+        "tipo",
         "tipo"
       ],
-      "totalEnginesAdded": 7
+      "totalEnginesAdded": 123
     },
     "ford": {
       "modelsWithMatches": [
@@ -198,6 +308,8 @@
         "ecosport",
         "ecosport",
         "edge",
+        "edge",
+        "explorer",
         "explorer",
         "f-150",
         "f-150",
@@ -205,9 +317,11 @@
         "fiesta",
         "fiesta",
         "fiesta-st",
+        "fiesta-st",
         "focus",
         "focus",
         "focus",
+        "focus-rs",
         "focus-st",
         "focus-st",
         "galaxy",
@@ -223,67 +337,139 @@
         "puma",
         "puma",
         "ranger",
+        "ranger",
+        "ranger",
         "s-max",
         "s-max",
-        "transit"
+        "transit",
+        "transit",
+        "transit",
+        "transit-custom"
       ],
-      "totalEnginesAdded": 326
+      "totalEnginesAdded": 492
     },
     "gmc": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "acadia",
+        "canyon",
+        "yukon"
+      ],
+      "totalEnginesAdded": 5
     },
     "honda": {
       "modelsWithMatches": [
         "accord",
+        "accord",
+        "civic",
+        "civic",
+        "civic",
+        "civic",
+        "civic",
         "civic",
         "cr-v",
+        "cr-v",
+        "cr-v",
+        "cr-v",
         "cr-z",
-        "fr-v"
+        "fr-v",
+        "hr-v",
+        "insight",
+        "jazz",
+        "jazz",
+        "legend",
+        "s2000"
       ],
-      "totalEnginesAdded": 10
+      "totalEnginesAdded": 63
     },
     "hummer": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "h3"
+      ],
+      "totalEnginesAdded": 2
     },
     "hyundai": {
       "modelsWithMatches": [
+        "genesis",
+        "genesis",
         "i10",
+        "i10",
+        "i10",
+        "i20",
+        "i20",
+        "i20",
         "i30",
         "i30",
         "i30",
+        "i30-n",
         "i40",
         "ix20",
         "ix35",
+        "kona",
+        "kona",
         "santa-fe",
         "santa-fe",
         "santa-fe",
         "tucson",
         "tucson",
-        "tucson"
+        "tucson",
+        "veloster",
+        "veloster"
       ],
-      "totalEnginesAdded": 100
+      "totalEnginesAdded": 193
     },
     "infiniti": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "q30",
+        "q50",
+        "q70",
+        "qx30",
+        "qx70",
+        "qx80"
+      ],
+      "totalEnginesAdded": 18
     },
     "iveco": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "daily"
+      ],
+      "totalEnginesAdded": 2
     },
     "jaguar": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "e-pace",
+        "f-pace",
+        "f-type",
+        "s-type",
+        "xe",
+        "xf",
+        "xf",
+        "xfr",
+        "xj",
+        "xj",
+        "xk",
+        "x-type"
+      ],
+      "totalEnginesAdded": 69
     },
     "jeep": {
       "modelsWithMatches": [
+        "cherokee",
+        "cherokee",
+        "cherokee",
         "compass",
+        "compass",
+        "gladiator",
+        "grand-cherokee",
+        "grand-cherokee",
+        "grand-cherokee",
+        "liberty",
+        "patriot",
         "renegade",
+        "renegade",
+        "wrangler",
         "wrangler"
       ],
-      "totalEnginesAdded": 4
+      "totalEnginesAdded": 44
     },
     "kia": {
       "modelsWithMatches": [
@@ -292,12 +478,22 @@
         "ceed",
         "ceed",
         "ceed",
+        "ceed",
+        "ceed-gt",
+        "niro",
+        "niro",
+        "niro",
         "optima",
         "optima",
         "picanto",
+        "picanto",
+        "picanto",
+        "picanto",
+        "proceed",
         "rio",
         "rio",
         "rio",
+        "sorento",
         "sorento",
         "sorento",
         "sorento",
@@ -308,66 +504,172 @@
         "sportage",
         "sportage",
         "stinger",
+        "stonic",
         "venga"
       ],
-      "totalEnginesAdded": 116
+      "totalEnginesAdded": 189
     },
     "lamborghini": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "huracan",
+        "urus"
+      ],
+      "totalEnginesAdded": 5
     },
     "lancia": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "delta",
+        "musa",
+        "thema",
+        "ypsilon"
+      ],
+      "totalEnginesAdded": 15
     },
     "land-rover": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "defender",
+        "discovery",
+        "discovery",
+        "discovery",
+        "discovery-sport",
+        "discovery-sport",
+        "freelander",
+        "range-rover",
+        "range-rover",
+        "range-rover",
+        "range-rover-evoque",
+        "range-rover-evoque",
+        "range-rover-sport"
+      ],
+      "totalEnginesAdded": 85
     },
     "lexus": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "gs",
+        "is",
+        "is",
+        "lx",
+        "rx",
+        "rx"
+      ],
+      "totalEnginesAdded": 9
     },
     "lincoln": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "corsair",
+        "navigator"
+      ],
+      "totalEnginesAdded": 3
     },
     "maserati": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "ghibli",
+        "grancabrio",
+        "granturismo",
+        "levante",
+        "quattroporte",
+        "quattroporte"
+      ],
+      "totalEnginesAdded": 15
     },
     "mazda": {
       "modelsWithMatches": [
-        "cx-30"
+        "cx-3",
+        "cx-30",
+        "cx-30",
+        "cx-5",
+        "cx-5",
+        "cx-5",
+        "cx-7",
+        "cx-9",
+        "mx-5",
+        "mx-5",
+        "rx-8"
       ],
-      "totalEnginesAdded": 2
+      "totalEnginesAdded": 57
     },
     "mclaren": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "540c",
+        "570s",
+        "720s"
+      ],
+      "totalEnginesAdded": 3
     },
     "mercedes": {
       "modelsWithMatches": [
         "a-class",
-        "e-class"
+        "a-class",
+        "a-class",
+        "a-class",
+        "b-class",
+        "b-class",
+        "b-class",
+        "c63-amg",
+        "c-class",
+        "c-class",
+        "c-class",
+        "c-class",
+        "c-class",
+        "c-class",
+        "c-class",
+        "e-class",
+        "e-class",
+        "e-class",
+        "e-class",
+        "e-class",
+        "e-class",
+        "g-class",
+        "g-class",
+        "s-class",
+        "s-class",
+        "s-class",
+        "v-class",
+        "vito"
       ],
-      "totalEnginesAdded": 2
+      "totalEnginesAdded": 209
     },
     "mg": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "zs"
+      ],
+      "totalEnginesAdded": 1
     },
     "mini": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "clubman",
+        "clubman",
+        "clubman",
+        "clubman",
+        "cooper-s",
+        "cooper-s",
+        "cooper-s",
+        "countryman",
+        "countryman",
+        "coupe",
+        "paceman"
+      ],
+      "totalEnginesAdded": 49
     },
     "mitsubishi": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "asx",
+        "eclipse-cross",
+        "l200",
+        "l200",
+        "lancer",
+        "mirage",
+        "outlander",
+        "outlander",
+        "space-star"
+      ],
+      "totalEnginesAdded": 35
     },
     "nissan": {
       "modelsWithMatches": [
         "interstar",
+        "juke",
+        "juke",
         "juke",
         "juke",
         "micra",
@@ -382,30 +684,59 @@
         "nv400",
         "pathfinder",
         "pathfinder",
+        "patrol",
+        "patrol",
+        "pixo",
         "primastar",
         "primastar",
         "pulsar",
         "qashqai",
         "qashqai",
+        "qashqai",
+        "qashqai",
         "x-trail",
         "x-trail"
       ],
-      "totalEnginesAdded": 89
+      "totalEnginesAdded": 138
     },
     "opel": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "adam",
+        "agila",
+        "antara",
+        "astra",
+        "astra",
+        "astra",
+        "combo",
+        "corsa",
+        "corsa",
+        "corsa",
+        "insignia",
+        "insignia",
+        "karl",
+        "meriva",
+        "mokka",
+        "mokka",
+        "movano",
+        "vivaro"
+      ],
+      "totalEnginesAdded": 77
     },
     "peugeot": {
       "modelsWithMatches": [
+        "108",
+        "208",
         "208",
         "208",
         "307",
         "308",
         "308",
+        "308",
         "407",
         "508",
         "508",
+        "508",
+        "2008",
         "2008",
         "3008",
         "3008",
@@ -421,30 +752,54 @@
         "rcz",
         "rifter"
       ],
-      "totalEnginesAdded": 180
+      "totalEnginesAdded": 266
     },
     "porsche": {
       "modelsWithMatches": [
+        "911",
+        "911",
+        "911",
+        "718-boxster",
+        "718-cayman",
+        "911-gt3",
+        "911-turbo",
+        "911-turbo",
+        "carrera",
+        "carrera",
+        "cayenne",
+        "cayenne",
+        "cayenne",
         "macan",
-        "macan"
+        "macan",
+        "panamera",
+        "panamera"
       ],
-      "totalEnginesAdded": 8
+      "totalEnginesAdded": 109
     },
     "proton": {
       "modelsWithMatches": [],
       "totalEnginesAdded": 0
     },
     "ram": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "1500",
+        "2500",
+        "3500",
+        "promaster"
+      ],
+      "totalEnginesAdded": 7
     },
     "renault": {
       "modelsWithMatches": [
+        "arkana",
+        "arkana",
         "captur",
         "captur",
         "clio",
         "clio",
         "clio",
+        "clio",
+        "clio-rs",
         "espace",
         "espace",
         "fluence",
@@ -459,22 +814,34 @@
         "megane",
         "megane",
         "megane",
+        "megane",
+        "megane",
+        "megane-rs",
+        "megane-rs",
         "scenic",
         "scenic",
         "scenic",
         "trafic",
         "trafic",
+        "twingo",
         "twingo"
       ],
-      "totalEnginesAdded": 321
+      "totalEnginesAdded": 492
     },
     "rolls-royce": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "dawn",
+        "ghost",
+        "wraith"
+      ],
+      "totalEnginesAdded": 3
     },
     "saab": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "9-3",
+        "9-5"
+      ],
+      "totalEnginesAdded": 5
     },
     "seat": {
       "modelsWithMatches": [
@@ -489,13 +856,15 @@
         "leon",
         "leon",
         "leon-cupra",
+        "mii",
         "tarraco",
         "toledo"
       ],
-      "totalEnginesAdded": 177
+      "totalEnginesAdded": 262
     },
     "skoda": {
       "modelsWithMatches": [
+        "citigo",
         "fabia",
         "fabia",
         "fabia",
@@ -511,42 +880,156 @@
         "superb",
         "yeti"
       ],
-      "totalEnginesAdded": 194
+      "totalEnginesAdded": 280
     },
     "smart": {
       "modelsWithMatches": [
+        "forfour",
+        "fortwo",
         "fortwo"
       ],
-      "totalEnginesAdded": 1
+      "totalEnginesAdded": 8
     },
     "ssangyong": {
       "modelsWithMatches": [
-        "korando"
+        "actyon",
+        "korando",
+        "rexton",
+        "tivoli"
       ],
-      "totalEnginesAdded": 6
+      "totalEnginesAdded": 15
     },
     "subaru": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "brz",
+        "forester",
+        "forester",
+        "forester",
+        "forester",
+        "impreza",
+        "impreza",
+        "legacy",
+        "legacy",
+        "levorg",
+        "outback",
+        "outback",
+        "outback",
+        "wrx",
+        "wrx-sti",
+        "wrx-sti",
+        "xv",
+        "xv"
+      ],
+      "totalEnginesAdded": 59
     },
     "suzuki": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "alto",
+        "baleno",
+        "grand-vitara",
+        "ignis",
+        "jimny",
+        "s-cross",
+        "splash",
+        "swift",
+        "swift",
+        "swift",
+        "sx4",
+        "vitara"
+      ],
+      "totalEnginesAdded": 31
     },
     "toyota": {
       "modelsWithMatches": [
+        "auris",
+        "auris",
+        "avensis",
+        "avensis",
+        "aygo",
+        "aygo",
+        "camry",
+        "camry",
+        "camry",
+        "camry",
         "corolla",
-        "rav4"
+        "corolla",
+        "corolla",
+        "corolla",
+        "corolla",
+        "corolla",
+        "gt86",
+        "highlander",
+        "highlander",
+        "highlander",
+        "hilux",
+        "hilux",
+        "land-cruiser",
+        "land-cruiser",
+        "land-cruiser",
+        "proace",
+        "proace",
+        "rav4",
+        "rav4",
+        "rav4",
+        "rav4",
+        "rav4",
+        "rav4",
+        "supra",
+        "verso",
+        "yaris",
+        "yaris",
+        "yaris",
+        "yaris",
+        "yaris"
       ],
-      "totalEnginesAdded": 4
+      "totalEnginesAdded": 149
     },
     "vauxhall": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "astra",
+        "astra",
+        "astra",
+        "astra",
+        "astra",
+        "combo",
+        "corsa",
+        "corsa",
+        "corsa",
+        "insignia",
+        "insignia",
+        "insignia",
+        "mokka",
+        "movano",
+        "vivaro",
+        "vivaro",
+        "zafira",
+        "zafira"
+      ],
+      "totalEnginesAdded": 95
     },
     "volvo": {
-      "modelsWithMatches": [],
-      "totalEnginesAdded": 0
+      "modelsWithMatches": [
+        "c30",
+        "c70",
+        "s40",
+        "s60",
+        "s60",
+        "s80",
+        "s80",
+        "v40",
+        "v50",
+        "v60",
+        "v60",
+        "v70",
+        "v70",
+        "v90",
+        "xc60",
+        "xc60",
+        "xc70",
+        "xc70",
+        "xc90"
+      ],
+      "totalEnginesAdded": 109
     }
   }
 }
