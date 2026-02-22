@@ -744,32 +744,32 @@
           var mfrKey = mfr.value;
           var mdlKey = mdl.dataset.actualKey || mdl.value;
           var yearData = DB.yearEngines[mfrKey] && DB.yearEngines[mfrKey][mdlKey];
-          var csvByMake = DB.csvEngines[mfrKey] || {};
-          var csvForModel = csvByMake[mdlKey] || [];
           var engines = [];
 
-          // Year-specific engines from curated database
+          // Use year-specific engines from curated database first
           if (yearData && yearData[yr.value]) {
-            engines = engines.concat(yearData[yr.value]);
+            engines = yearData[yr.value];
           }
 
-          // CSV-derived engines for this model (not year-specific)
-          if (csvForModel && csvForModel.length) {
-            engines = engines.concat(csvForModel);
+          // If no year-specific engines, fall back to CSV engines for this model
+          var csvByMake = DB.csvEngines[mfrKey] || {};
+          var csvForModel = csvByMake[mdlKey] || [];
+          if (!engines || engines.length === 0) {
+            if (csvForModel && csvForModel.length) {
+              engines = csvForModel;
+            } else {
+              var unverifiedOpt = document.createElement('option');
+              unverifiedOpt.value = '';
+              unverifiedOpt.textContent = 'No engines available for selected year/model';
+              eng.appendChild(unverifiedOpt);
+              eng.disabled = true;
+              checkReady();
+              return;
+            }
           }
 
           // Deduplicate while preserving order
           engines = Array.from(new Set(engines));
-
-          if (!engines.length) {
-            var unverifiedOpt = document.createElement('option');
-            unverifiedOpt.value = '';
-            unverifiedOpt.textContent = 'No engines available for selected year/model';
-            eng.appendChild(unverifiedOpt);
-            eng.disabled = true;
-            checkReady();
-            return;
-          }
 
           engines.forEach(function(e) {
             var opt = document.createElement('option');
