@@ -745,57 +745,34 @@
           var yearData = DB.yearEngines[mfrKey] && DB.yearEngines[mfrKey][mdlKey];
           var engines = null;
 
-          // Get year-specific engines (now includes CSV engines via smart merge)
           if (yearData && yearData[yr.value]) {
             engines = yearData[yr.value];
           }
 
           if (!engines || engines.length === 0) {
-            var unverifiedOpt = document.createElement('option');
-            unverifiedOpt.value = '';
-            unverifiedOpt.textContent = 'No engines available for selected year/model';
-            eng.appendChild(unverifiedOpt);
+            var noneOpt = document.createElement('option');
+            noneOpt.value = '';
+            noneOpt.textContent = 'No engines for this year';
+            eng.appendChild(noneOpt);
             eng.disabled = true;
             checkReady();
             return;
           }
 
-          // Deduplicate and label by fuel type
           var uniqueEngines = Array.from(new Set(engines));
-          var labeledEngines = [];
-          
-          for (var i = 0; i < uniqueEngines.length; i++) {
-            var e = uniqueEngines[i];
+          uniqueEngines.forEach(function(e) {
             var eLower = String(e).toLowerCase();
             var prefix = '';
-            
-            if (/electric|ev|battery|bev/.test(eLower)) {
-              prefix = '[⚡ EV] ';
-            } else if (/diesel|tdi|dci|hdi|crdi|ddi|cdti|bluehdi|d4d/.test(eLower)) {
-              prefix = '[🛢️] ';
-            } else if (/petrol|tsi|tfsi|t-jet|ecoboost|vvti|multiair|gdi|t-gdi/.test(eLower)) {
-              prefix = '[⛽] ';
-            } else if (/hybrid|phev/.test(eLower)) {
-              prefix = '[🔋] ';
+            if (/electric|ev|battery/.test(eLower)) {
+              prefix = '[EV] ';
+            } else if (/diesel|tdi|dci|hdi|crdi/.test(eLower)) {
+              prefix = '[DIESEL] ';
+            } else if (/petrol|tsi|tfsi|t-jet|ecoboost/.test(eLower)) {
+              prefix = '[PETROL] ';
             }
-            
-            labeledEngines.push({ label: prefix + e, value: e });
-          }
-          
-          // Sort by fuel type prefix for grouping
-          labeledEngines.sort(function(a, b) {
-            var order = { '[⛽] ': 0, '[🛢️] ': 1, '[🔋] ': 2, '[⚡ EV] ': 3 };
-            var aOrder = order[a.label.substring(0, 5)] || 99;
-            var bOrder = order[b.label.substring(0, 5)] || 99;
-            if (aOrder !== bOrder) return aOrder - bOrder;
-            return a.label.localeCompare(b.label);
-          });
-          
-          // Add to dropdown
-          labeledEngines.forEach(function(item) {
             var opt = document.createElement('option');
-            opt.value = item.value;
-            opt.textContent = item.label;
+            opt.value = e;
+            opt.textContent = prefix + e;
             eng.appendChild(opt);
           });
         }
