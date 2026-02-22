@@ -69,6 +69,62 @@ app.set('trust proxy', 1);
 const path = require('path');
 const fs = require('fs');
 const CarnageVehicleDB = require('./assets/js/vehicle-database.js');
+
+// Optional merged year/engine database enriched from CSV (used for iframe engine lists)
+function safeLoadJson(relativePath) {
+  try {
+    const fullPath = path.join(__dirname, relativePath);
+    if (fs.existsSync(fullPath)) {
+      // require caches by full path automatically
+      return require(fullPath);
+    }
+  } catch (err) {
+    console.warn(`Optional JSON ${relativePath} not loaded:`, err.message);
+  }
+  return null;
+}
+
+const mergedYearEnginesFromCsv = safeLoadJson('vehicle-engine-db-merged-from-csv.json');
+let cachedCsvEnginesByModel = null;
+
+function getCsvEnginesByModel() {
+  if (cachedCsvEnginesByModel) return cachedCsvEnginesByModel;
+
+  const result = {};
+  if (!mergedYearEnginesFromCsv || typeof mergedYearEnginesFromCsv !== 'object') {
+    cachedCsvEnginesByModel = result;
+    return result;
+  }
+
+  for (const [make, models] of Object.entries(mergedYearEnginesFromCsv)) {
+    if (!models || typeof models !== 'object') continue;
+    const modelMap = {};
+
+    for (const [modelSlug, years] of Object.entries(models)) {
+      if (!years || typeof years !== 'object') continue;
+      const engineSet = new Set();
+
+      for (const engines of Object.values(years)) {
+        if (!Array.isArray(engines)) continue;
+        for (const e of engines) {
+          const label = String(e || '').trim();
+          if (label) engineSet.add(label);
+        }
+      }
+
+      if (engineSet.size > 0) {
+        modelMap[modelSlug] = Array.from(engineSet);
+      }
+    }
+
+    if (Object.keys(modelMap).length > 0) {
+      result[make] = modelMap;
+    }
+  }
+
+  cachedCsvEnginesByModel = result;
+  return result;
+}
 // Multer for handling file uploads
 const multer = require('multer');
 
@@ -1670,7 +1726,15 @@ app.get('/api/vehicles', (req, res) => {
   // Enable CORS for embed widgets on external sites
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Cache-Control', 'no-cache'); // Don't cache so updates reflect immediately
-  res.json(CarnageVehicleDB.getAPIData());
+
+  const core = CarnageVehicleDB.getAPIData();
+  const csvEngines = getCsvEnginesByModel();
+
+  res.json({
+    models: core.models || {},
+    yearEngines: core.yearEngines || {},
+    csvEngines: csvEngines || {}
+  });
 });
 
 // VRM lookup via CheckCarDetails

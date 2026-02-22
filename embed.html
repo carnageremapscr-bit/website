@@ -605,7 +605,7 @@
       var resultsView = document.getElementById('resultsView');
 
       // Vehicle database (will be populated from API)
-      var DB = { models: {}, engines: {}, yearData: {}, yearEngines: {} };
+      var DB = { models: {}, engines: {}, yearData: {}, yearEngines: {}, csvEngines: {} };
 
       // Year ranges for models (fallback)
       var YEAR_RANGES = ['2021-2026', '2017-2020', '2013-2016', '2009-2012', '2005-2008', '2000-2004'];
@@ -641,8 +641,9 @@
       })
         .then(function(r) { return r.json(); })
         .then(function(data) {
-          DB.models = data.models;
+          DB.models = data.models || {};
           DB.yearEngines = data.yearEngines || {};
+          DB.csvEngines = data.csvEngines || {};
           populateManufacturers();
         })
         .catch(function(err) {
@@ -743,25 +744,34 @@
           var mfrKey = mfr.value;
           var mdlKey = mdl.dataset.actualKey || mdl.value;
           var yearData = DB.yearEngines[mfrKey] && DB.yearEngines[mfrKey][mdlKey];
-          var engines = null;
-          
-          // Try year-specific engines first
+          var csvByMake = DB.csvEngines[mfrKey] || {};
+          var csvForModel = csvByMake[mdlKey] || [];
+          var engines = [];
+
+          // Year-specific engines from curated database
           if (yearData && yearData[yr.value]) {
-            engines = yearData[yr.value];
+            engines = engines.concat(yearData[yr.value]);
           }
-          
-          // Strict mode: only show year-verified engines for selected model/year
-          if (!engines || engines.length === 0) {
+
+          // CSV-derived engines for this model (not year-specific)
+          if (csvForModel && csvForModel.length) {
+            engines = engines.concat(csvForModel);
+          }
+
+          // Deduplicate while preserving order
+          engines = Array.from(new Set(engines));
+
+          if (!engines.length) {
             var unverifiedOpt = document.createElement('option');
             unverifiedOpt.value = '';
-            unverifiedOpt.textContent = 'No verified engines for selected year';
+            unverifiedOpt.textContent = 'No engines available for selected year/model';
             eng.appendChild(unverifiedOpt);
             eng.disabled = true;
             checkReady();
             return;
           }
 
-          Array.from(new Set(engines)).forEach(function(e) {
+          engines.forEach(function(e) {
             var opt = document.createElement('option');
             opt.value = e;
             opt.textContent = e;
