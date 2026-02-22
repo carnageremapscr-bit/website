@@ -1876,7 +1876,7 @@ app.get('/api/vrm-lookup', async (req, res) => {
     const vrmRaw = (req.query.vrm || '').toString().trim();
     const email = (req.query.email || '').toString().trim();
     const iframeId = (req.query.iframeId || '').toString().trim();
-    let lookupEmail = email;
+    let lookupEmail = email.toLowerCase();
 
     if (!vrmRaw) {
       return res.status(400).json({ error: 'vrm is required' });
@@ -1912,7 +1912,7 @@ app.get('/api/vrm-lookup', async (req, res) => {
         const { data: lockedIframe, error: lockedError } = await supabase
           .from('iframes')
           .select('id, status')
-          .eq('email', lookupEmail)
+          .ilike('email', lookupEmail)
           .eq('status', 'locked')
           .eq('type', 'vrm')
           .order('created_at', { ascending: false })
@@ -1938,8 +1938,8 @@ app.get('/api/vrm-lookup', async (req, res) => {
         const { data: subs, error: subError } = await supabase
           .from('subscriptions')
           .select('id, status, type, subscription_type, current_period_end')
-          .eq('email', lookupEmail)
-          .eq('status', 'active');
+          .ilike('email', lookupEmail)
+          .in('status', ['active', 'trialing']);
 
         if (subError) {
           console.error('Error checking subscriptions:', subError);
