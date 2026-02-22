@@ -49,8 +49,9 @@ function parseEngineLabel(label) {
 }
 
 /**
- * Deduplicate engines by fuel type + power combination
- * Returns unique engines, keeping the first occurrence of each power level per fuel type
+ * Deduplicate engines by fuel type + rounded power combination
+ * Rounds power to nearest 5 (101-104 hp becomes 100, 105-109 becomes 105, etc.)
+ * Returns unique engines, keeping the first occurrence of each rounded power
  */
 function deduplicateByPowerAndFuel(engines) {
   const seen = new Set();
@@ -61,12 +62,21 @@ function deduplicateByPowerAndFuel(engines) {
     
     // Extract power (e.g., "155hp", "150 hp")
     const powerMatch = label.match(/(\d+)\s*(?:hp|ps|kw)/);
-    const power = powerMatch ? powerMatch[1] : null;
+    let power = powerMatch ? parseInt(powerMatch[1]) : null;
     
-    // Determine fuel type
+    // Round power to nearest 5
+    if (power !== null) {
+      power = Math.round(power / 5) * 5;
+    }
+    
+    // Determine fuel type (distinguish TDI CR from older TDI)
     let fuel = 'unknown';
     if (/diesel|tdi|dci|hdi|crdi/.test(label)) {
       fuel = 'diesel';
+      // Distinguish newer CR engines from older ones
+      if (/cr|common.?rail/.test(label)) {
+        fuel = 'diesel-cr';
+      }
     } else if (/petrol|tsi|tfsi|t-jet|ecoboost|vvti|multiair|gdi/.test(label)) {
       fuel = 'petrol';
     } else if (/electric|ev|battery/.test(label)) {
@@ -84,6 +94,11 @@ function deduplicateByPowerAndFuel(engines) {
   
   return result;
 }
+
+/**
+ * Score how similar two engine labels are (0-100, higher = more similar)
+ */
+function scoreEngineMatch(csvEngine, yearEngineLabel) {
   const csv = parseEngineLabel(csvEngine.engineLabel);
   const year = parseEngineLabel(yearEngineLabel);
   
