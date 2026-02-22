@@ -1,0 +1,6573 @@
+{
+  "makesSeenInCsv": 148,
+  "makesMatchedToDb": 60,
+  "modelsProcessed": 1117,
+  "modelsMatchedWithYearData": 450,
+  "modelsSkippedNoYearData": 667,
+  "enginesAdded": 13878,
+  "perMake": {
+    "abarth": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "595",
+          "modelName": "595",
+          "yearRanges": [
+            "2008-2024"
+          ]
+        },
+        {
+          "modelKey": "695",
+          "modelName": "695",
+          "yearRanges": [
+            "2008-2024"
+          ]
+        },
+        {
+          "modelKey": "124-spider",
+          "modelName": "124 Spider",
+          "yearRanges": [
+            "2016-2024"
+          ]
+        },
+        {
+          "modelKey": "grande-punto",
+          "modelName": "Grande Punto",
+          "yearRanges": [
+            "2007-2010"
+          ]
+        },
+        {
+          "modelKey": "punto-evo",
+          "modelName": "Punto Evo",
+          "yearRanges": [
+            "2010-2012"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "500",
+          "modelName": "500"
+        }
+      ]
+    },
+    "alfa-romeo": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "147",
+          "modelName": "147",
+          "yearRanges": [
+            "2001-2010"
+          ]
+        },
+        {
+          "modelKey": "156",
+          "modelName": "156",
+          "yearRanges": [
+            "1997-2005"
+          ]
+        },
+        {
+          "modelKey": "159",
+          "modelName": "159",
+          "yearRanges": [
+            "2005-2011"
+          ]
+        },
+        {
+          "modelKey": "brera",
+          "modelName": "Brera",
+          "yearRanges": [
+            "2006-2010"
+          ]
+        },
+        {
+          "modelKey": "giulia",
+          "modelName": "Giulia",
+          "yearRanges": [
+            "2016-2024"
+          ]
+        },
+        {
+          "modelKey": "giulietta",
+          "modelName": "Giulietta",
+          "yearRanges": [
+            "2010-2013",
+            "2014-2020"
+          ]
+        },
+        {
+          "modelKey": "gt",
+          "modelName": "GT",
+          "yearRanges": [
+            "2004-2010"
+          ]
+        },
+        {
+          "modelKey": "mito",
+          "modelName": "MiTo",
+          "yearRanges": [
+            "2008-2018"
+          ]
+        },
+        {
+          "modelKey": "spider",
+          "modelName": "Spider",
+          "yearRanges": [
+            "2006-2010"
+          ]
+        },
+        {
+          "modelKey": "stelvio",
+          "modelName": "Stelvio",
+          "yearRanges": [
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "tonale",
+          "modelName": "Tonale",
+          "yearRanges": [
+            "2022-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "145",
+          "modelName": "145"
+        },
+        {
+          "modelSlug": "146",
+          "modelName": "146"
+        },
+        {
+          "modelSlug": "166",
+          "modelName": "166"
+        },
+        {
+          "modelSlug": "4c",
+          "modelName": "4C"
+        },
+        {
+          "modelSlug": "gtv",
+          "modelName": "GTV"
+        }
+      ]
+    },
+    "alpine": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "a110",
+          "modelName": "A110",
+          "yearRanges": [
+            "2017-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": []
+    },
+    "aston-martin": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "db11",
+          "modelName": "DB11",
+          "yearRanges": [
+            "2016-2024"
+          ]
+        },
+        {
+          "modelKey": "dbs",
+          "modelName": "DBS",
+          "yearRanges": [
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "rapide",
+          "modelName": "Rapide",
+          "yearRanges": [
+            "2010-2020"
+          ]
+        },
+        {
+          "modelKey": "vantage",
+          "modelName": "Vantage",
+          "yearRanges": [
+            "2005-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "db9",
+          "modelName": "DB9"
+        },
+        {
+          "modelSlug": "rapid-s",
+          "modelName": "Rapid S"
+        },
+        {
+          "modelSlug": "v12-vantage-s",
+          "modelName": "V12 Vantage S"
+        },
+        {
+          "modelSlug": "vanquish",
+          "modelName": "Vanquish"
+        }
+      ]
+    },
+    "audi": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "a1",
+          "modelName": "A1",
+          "yearRanges": [
+            "2010-2014",
+            "2015-2018",
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "a3",
+          "modelName": "A3",
+          "yearRanges": [
+            "2003-2005",
+            "2006-2008",
+            "2009-2012",
+            "2013-2016",
+            "2017-2020",
+            "2021-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "a4",
+          "modelName": "A4",
+          "yearRanges": [
+            "1995-2000",
+            "2001-2004",
+            "2005-2008",
+            "2009-2012",
+            "2013-2016",
+            "2017-2019",
+            "2020-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "a5",
+          "modelName": "A5",
+          "yearRanges": [
+            "2007-2016",
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "a6",
+          "modelName": "A6",
+          "yearRanges": [
+            "1997-2004",
+            "2004-2008",
+            "2009-2011",
+            "2012-2014",
+            "2015-2018",
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "a7",
+          "modelName": "A7",
+          "yearRanges": [
+            "2011-2017",
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "a8",
+          "modelName": "A8",
+          "yearRanges": [
+            "2003-2009",
+            "2010-2017",
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "q2",
+          "modelName": "Q2",
+          "yearRanges": [
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "q3",
+          "modelName": "Q3",
+          "yearRanges": [
+            "2012-2014",
+            "2015-2018",
+            "2019-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "q5",
+          "modelName": "Q5",
+          "yearRanges": [
+            "2009-2012",
+            "2013-2016",
+            "2017-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "q7",
+          "modelName": "Q7",
+          "yearRanges": [
+            "2006-2015",
+            "2016-2019",
+            "2020-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "q8",
+          "modelName": "Q8",
+          "yearRanges": [
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "r8",
+          "modelName": "R8",
+          "yearRanges": [
+            "2007-2014",
+            "2015-2024"
+          ]
+        },
+        {
+          "modelKey": "rs3",
+          "modelName": "RS3",
+          "yearRanges": [
+            "2011-2016",
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "rs4",
+          "modelName": "RS4",
+          "yearRanges": [
+            "2000-2008",
+            "2012-2016",
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "rs5",
+          "modelName": "RS5",
+          "yearRanges": [
+            "2010-2016",
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "rs6",
+          "modelName": "RS6",
+          "yearRanges": [
+            "2003-2010",
+            "2013-2018",
+            "2020-2024"
+          ]
+        },
+        {
+          "modelKey": "rs7",
+          "modelName": "RS7",
+          "yearRanges": [
+            "2014-2018",
+            "2020-2024"
+          ]
+        },
+        {
+          "modelKey": "tt",
+          "modelName": "TT",
+          "yearRanges": [
+            "2007-2014",
+            "2015-2023"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "a2",
+          "modelName": "A2"
+        },
+        {
+          "modelSlug": "a5-sportback",
+          "modelName": "A5 Sportback"
+        },
+        {
+          "modelSlug": "a6-allroad",
+          "modelName": "A6 Allroad"
+        },
+        {
+          "modelSlug": "a6-avant",
+          "modelName": "A6 Avant"
+        },
+        {
+          "modelSlug": "q3-rs",
+          "modelName": "Q3 RS"
+        },
+        {
+          "modelSlug": "q3-rs-performance",
+          "modelName": "Q3 RS Performance"
+        },
+        {
+          "modelSlug": "rsq3",
+          "modelName": "RSQ3"
+        },
+        {
+          "modelSlug": "rsq5",
+          "modelName": "RSQ5"
+        },
+        {
+          "modelSlug": "s1",
+          "modelName": "S1"
+        },
+        {
+          "modelSlug": "s3",
+          "modelName": "S3"
+        },
+        {
+          "modelSlug": "s4",
+          "modelName": "S4"
+        },
+        {
+          "modelSlug": "s5",
+          "modelName": "S5"
+        },
+        {
+          "modelSlug": "s6",
+          "modelName": "S6"
+        },
+        {
+          "modelSlug": "s7",
+          "modelName": "S7"
+        },
+        {
+          "modelSlug": "s8",
+          "modelName": "S8"
+        },
+        {
+          "modelSlug": "sq2",
+          "modelName": "SQ2"
+        },
+        {
+          "modelSlug": "sq5",
+          "modelName": "SQ5"
+        },
+        {
+          "modelSlug": "sq7",
+          "modelName": "SQ7"
+        },
+        {
+          "modelSlug": "sq8",
+          "modelName": "SQ8"
+        },
+        {
+          "modelSlug": "tts-coupe",
+          "modelName": "TTS Coupe"
+        }
+      ]
+    },
+    "bentley": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "bentayga",
+          "modelName": "Bentayga",
+          "yearRanges": [
+            "2016-2024"
+          ]
+        },
+        {
+          "modelKey": "continental-gt",
+          "modelName": "Continental GT",
+          "yearRanges": [
+            "2003-2010",
+            "2011-2024"
+          ]
+        },
+        {
+          "modelKey": "mulsanne",
+          "modelName": "Mulsanne",
+          "yearRanges": [
+            "2010-2020"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "arnage",
+          "modelName": "Arnage"
+        },
+        {
+          "modelSlug": "azure",
+          "modelName": "Azure"
+        },
+        {
+          "modelSlug": "brooklands",
+          "modelName": "Brooklands"
+        },
+        {
+          "modelSlug": "continental",
+          "modelName": "Continental"
+        },
+        {
+          "modelSlug": "continental-flying-spur",
+          "modelName": "Continental Flying Spur"
+        }
+      ]
+    },
+    "bmw": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "1-series",
+          "modelName": "1-Series",
+          "yearRanges": [
+            "2005-2011",
+            "2012-2015",
+            "2016-2019",
+            "2020-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "2-series",
+          "modelName": "2-Series",
+          "yearRanges": [
+            "2014-2021",
+            "2022-2024"
+          ]
+        },
+        {
+          "modelKey": "3-series",
+          "modelName": "3-Series",
+          "yearRanges": [
+            "1990-1998",
+            "1999-2005",
+            "2005-2008",
+            "2009-2011",
+            "2012-2015",
+            "2016-2018",
+            "2019-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "4-series",
+          "modelName": "4-Series",
+          "yearRanges": [
+            "2014-2020",
+            "2021-2024"
+          ]
+        },
+        {
+          "modelKey": "5-series",
+          "modelName": "5-Series",
+          "yearRanges": [
+            "2005-2010",
+            "2011-2013",
+            "2014-2016",
+            "2017-2020",
+            "2021-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "6-series",
+          "modelName": "6-Series",
+          "yearRanges": [
+            "2011-2018"
+          ]
+        },
+        {
+          "modelKey": "7-series",
+          "modelName": "7-Series",
+          "yearRanges": [
+            "2009-2015",
+            "2016-2022",
+            "2023-2024"
+          ]
+        },
+        {
+          "modelKey": "8-series",
+          "modelName": "8-Series",
+          "yearRanges": [
+            "2019-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "1m-series",
+          "modelName": "1M-Series"
+        },
+        {
+          "modelSlug": "3-series-gt",
+          "modelName": "3-Series GT"
+        },
+        {
+          "modelSlug": "5-series-gt",
+          "modelName": "5-Series GT"
+        },
+        {
+          "modelSlug": "6-series-gt",
+          "modelName": "6-Series GT"
+        },
+        {
+          "modelSlug": "i8-coup",
+          "modelName": "i8 Coupé"
+        },
+        {
+          "modelSlug": "m2-series",
+          "modelName": "M2-Series"
+        },
+        {
+          "modelSlug": "m3-series",
+          "modelName": "M3-Series"
+        },
+        {
+          "modelSlug": "m4-series",
+          "modelName": "M4-Series"
+        },
+        {
+          "modelSlug": "m5-series",
+          "modelName": "M5-Series"
+        },
+        {
+          "modelSlug": "m6-series",
+          "modelName": "M6-Series"
+        },
+        {
+          "modelSlug": "m8-series",
+          "modelName": "M8-Series"
+        },
+        {
+          "modelSlug": "x1-series",
+          "modelName": "X1-Series"
+        },
+        {
+          "modelSlug": "x2-series",
+          "modelName": "X2-Series"
+        },
+        {
+          "modelSlug": "x3-series",
+          "modelName": "X3-Series"
+        },
+        {
+          "modelSlug": "x4-series",
+          "modelName": "X4-Series"
+        },
+        {
+          "modelSlug": "x5-series",
+          "modelName": "X5-Series"
+        },
+        {
+          "modelSlug": "x6-series",
+          "modelName": "X6-Series"
+        },
+        {
+          "modelSlug": "x7-series",
+          "modelName": "X7-Series"
+        },
+        {
+          "modelSlug": "z3-series",
+          "modelName": "Z3-Series"
+        },
+        {
+          "modelSlug": "z4-series",
+          "modelName": "Z4-Series"
+        }
+      ]
+    },
+    "bugatti": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "veyron",
+          "modelName": "Veyron",
+          "yearRanges": [
+            "2005-2015"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": []
+    },
+    "buick": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "enclave",
+          "modelName": "Enclave",
+          "yearRanges": [
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "encore",
+          "modelName": "Encore",
+          "yearRanges": [
+            "2013-2024"
+          ]
+        },
+        {
+          "modelKey": "envision",
+          "modelName": "Envision",
+          "yearRanges": [
+            "2016-2024"
+          ]
+        },
+        {
+          "modelKey": "regal",
+          "modelName": "Regal",
+          "yearRanges": [
+            "2018-2020"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "allure",
+          "modelName": "Allure"
+        },
+        {
+          "modelSlug": "cascada",
+          "modelName": "Cascada"
+        },
+        {
+          "modelSlug": "excelle",
+          "modelName": "Excelle"
+        },
+        {
+          "modelSlug": "gl8",
+          "modelName": "GL8"
+        },
+        {
+          "modelSlug": "lacrosse",
+          "modelName": "LaCrosse"
+        },
+        {
+          "modelSlug": "lucerne",
+          "modelName": "Lucerne"
+        },
+        {
+          "modelSlug": "rainier",
+          "modelName": "Rainier"
+        },
+        {
+          "modelSlug": "rendezvous",
+          "modelName": "Rendezvous"
+        },
+        {
+          "modelSlug": "terraza",
+          "modelName": "Terraza"
+        },
+        {
+          "modelSlug": "verano",
+          "modelName": "Verano"
+        }
+      ]
+    },
+    "cadillac": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "ct6",
+          "modelName": "CT6",
+          "yearRanges": [
+            "2016-2020"
+          ]
+        },
+        {
+          "modelKey": "escalade",
+          "modelName": "Escalade",
+          "yearRanges": [
+            "2015-2024"
+          ]
+        },
+        {
+          "modelKey": "xt5",
+          "modelName": "XT5",
+          "yearRanges": [
+            "2017-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "ats",
+          "modelName": "ATS"
+        },
+        {
+          "modelSlug": "atx",
+          "modelName": "ATX"
+        },
+        {
+          "modelSlug": "bls",
+          "modelName": "BLS"
+        },
+        {
+          "modelSlug": "cts",
+          "modelName": "CTS"
+        },
+        {
+          "modelSlug": "dts",
+          "modelName": "DTS"
+        },
+        {
+          "modelSlug": "sls",
+          "modelName": "SLS"
+        },
+        {
+          "modelSlug": "srx",
+          "modelName": "SRX"
+        },
+        {
+          "modelSlug": "sts",
+          "modelName": "STS"
+        },
+        {
+          "modelSlug": "xlr",
+          "modelName": "XLR"
+        },
+        {
+          "modelSlug": "xts",
+          "modelName": "XTS"
+        }
+      ]
+    },
+    "chevrolet": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "camaro",
+          "modelName": "Camaro",
+          "yearRanges": [
+            "2010-2024"
+          ]
+        },
+        {
+          "modelKey": "colorado",
+          "modelName": "Colorado",
+          "yearRanges": [
+            "2012-2024"
+          ]
+        },
+        {
+          "modelKey": "corvette",
+          "modelName": "Corvette",
+          "yearRanges": [
+            "2005-2013",
+            "2014-2019",
+            "2020-2024"
+          ]
+        },
+        {
+          "modelKey": "cruze",
+          "modelName": "Cruze",
+          "yearRanges": [
+            "2009-2019"
+          ]
+        },
+        {
+          "modelKey": "equinox",
+          "modelName": "Equinox",
+          "yearRanges": [
+            "2010-2024"
+          ]
+        },
+        {
+          "modelKey": "malibu",
+          "modelName": "Malibu",
+          "yearRanges": [
+            "2012-2024"
+          ]
+        },
+        {
+          "modelKey": "silverado",
+          "modelName": "Silverado",
+          "yearRanges": [
+            "2007-2024"
+          ]
+        },
+        {
+          "modelKey": "spark",
+          "modelName": "Spark",
+          "yearRanges": [
+            "2010-2022"
+          ]
+        },
+        {
+          "modelKey": "suburban",
+          "modelName": "Suburban",
+          "yearRanges": [
+            "2007-2024"
+          ]
+        },
+        {
+          "modelKey": "tahoe",
+          "modelName": "Tahoe",
+          "yearRanges": [
+            "2007-2024"
+          ]
+        },
+        {
+          "modelKey": "trailblazer",
+          "modelName": "Trailblazer",
+          "yearRanges": [
+            "2020-2024"
+          ]
+        },
+        {
+          "modelKey": "traverse",
+          "modelName": "Traverse",
+          "yearRanges": [
+            "2009-2024"
+          ]
+        },
+        {
+          "modelKey": "trax",
+          "modelName": "Trax",
+          "yearRanges": [
+            "2013-2024"
+          ]
+        },
+        {
+          "modelKey": "volt",
+          "modelName": "Volt",
+          "yearRanges": [
+            "2011-2019"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "acadia",
+          "modelName": "Acadia"
+        },
+        {
+          "modelSlug": "agile",
+          "modelName": "Agile"
+        },
+        {
+          "modelSlug": "avalanche",
+          "modelName": "Avalanche"
+        },
+        {
+          "modelSlug": "aveo",
+          "modelName": "Aveo"
+        },
+        {
+          "modelSlug": "camaro-ss",
+          "modelName": "Camaro SS"
+        },
+        {
+          "modelSlug": "caprice",
+          "modelName": "Caprice"
+        },
+        {
+          "modelSlug": "captiva",
+          "modelName": "Captiva"
+        },
+        {
+          "modelSlug": "cobalt",
+          "modelName": "Cobalt"
+        },
+        {
+          "modelSlug": "epica",
+          "modelName": "Epica"
+        },
+        {
+          "modelSlug": "express",
+          "modelName": "Express"
+        },
+        {
+          "modelSlug": "express-1500",
+          "modelName": "Express 1500"
+        },
+        {
+          "modelSlug": "express-2500",
+          "modelName": "Express 2500"
+        },
+        {
+          "modelSlug": "express-3500",
+          "modelName": "Express 3500"
+        },
+        {
+          "modelSlug": "hhr",
+          "modelName": "HHR"
+        },
+        {
+          "modelSlug": "impala",
+          "modelName": "Impala"
+        },
+        {
+          "modelSlug": "lacetti",
+          "modelName": "Lacetti"
+        },
+        {
+          "modelSlug": "lumina",
+          "modelName": "Lumina"
+        },
+        {
+          "modelSlug": "montana",
+          "modelName": "Montana"
+        },
+        {
+          "modelSlug": "monte-carlo",
+          "modelName": "Monte Carlo"
+        },
+        {
+          "modelSlug": "onix",
+          "modelName": "Onix"
+        },
+        {
+          "modelSlug": "orlando",
+          "modelName": "Orlando"
+        },
+        {
+          "modelSlug": "prisma",
+          "modelName": "Prisma"
+        },
+        {
+          "modelSlug": "s10",
+          "modelName": "S10"
+        },
+        {
+          "modelSlug": "sail",
+          "modelName": "Sail"
+        },
+        {
+          "modelSlug": "silverado-1500",
+          "modelName": "Silverado 1500"
+        },
+        {
+          "modelSlug": "silverado-2500-hd",
+          "modelName": "Silverado 2500 HD"
+        },
+        {
+          "modelSlug": "silverado-3500hd",
+          "modelName": "Silverado 3500HD"
+        },
+        {
+          "modelSlug": "silverado-3500-hd",
+          "modelName": "Silverado 3500 HD"
+        },
+        {
+          "modelSlug": "silverado-hd",
+          "modelName": "Silverado HD"
+        },
+        {
+          "modelSlug": "sonic",
+          "modelName": "Sonic"
+        },
+        {
+          "modelSlug": "spin",
+          "modelName": "Spin"
+        },
+        {
+          "modelSlug": "ss",
+          "modelName": "SS"
+        },
+        {
+          "modelSlug": "suburban-1500",
+          "modelName": "Suburban 1500"
+        },
+        {
+          "modelSlug": "suburban-2500",
+          "modelName": "Suburban 2500"
+        },
+        {
+          "modelSlug": "tornado",
+          "modelName": "Tornado"
+        },
+        {
+          "modelSlug": "tosca",
+          "modelName": "Tosca"
+        },
+        {
+          "modelSlug": "tracker",
+          "modelName": "Tracker"
+        },
+        {
+          "modelSlug": "uplander",
+          "modelName": "Uplander"
+        },
+        {
+          "modelSlug": "utility",
+          "modelName": "Utility"
+        },
+        {
+          "modelSlug": "vectra",
+          "modelName": "Vectra"
+        }
+      ]
+    },
+    "chrysler": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "300",
+          "modelName": "300",
+          "yearRanges": [
+            "2005-2024"
+          ]
+        },
+        {
+          "modelKey": "pacifica",
+          "modelName": "Pacifica",
+          "yearRanges": [
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "pt-cruiser",
+          "modelName": "Pt Cruiser",
+          "yearRanges": [
+            "2000-2010"
+          ]
+        },
+        {
+          "modelKey": "sebring",
+          "modelName": "Sebring",
+          "yearRanges": [
+            "2007-2010"
+          ]
+        },
+        {
+          "modelKey": "voyager",
+          "modelName": "Voyager",
+          "yearRanges": [
+            "2020-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "200",
+          "modelName": "200"
+        },
+        {
+          "modelSlug": "aspen",
+          "modelName": "Aspen"
+        },
+        {
+          "modelSlug": "town-and-country",
+          "modelName": "Town and Country"
+        }
+      ]
+    },
+    "citroen": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "berlingo",
+          "modelName": "Berlingo",
+          "yearRanges": [
+            "2008-2018",
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "c1",
+          "modelName": "C1",
+          "yearRanges": [
+            "2005-2014",
+            "2015-2021"
+          ]
+        },
+        {
+          "modelKey": "c3",
+          "modelName": "C3",
+          "yearRanges": [
+            "2010-2016",
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "c3-aircross",
+          "modelName": "C3 Aircross",
+          "yearRanges": [
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "c3-picasso",
+          "modelName": "C3 Picasso",
+          "yearRanges": [
+            "2009-2017"
+          ]
+        },
+        {
+          "modelKey": "c4",
+          "modelName": "C4",
+          "yearRanges": [
+            "2010-2017",
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "c4-cactus",
+          "modelName": "C4 Cactus",
+          "yearRanges": [
+            "2014-2017",
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "c4-grand-picasso",
+          "modelName": "C4 Grand Picasso",
+          "yearRanges": [
+            "2007-2013",
+            "2014-2018"
+          ]
+        },
+        {
+          "modelKey": "c4-picasso",
+          "modelName": "C4 Picasso",
+          "yearRanges": [
+            "2007-2013",
+            "2014-2018"
+          ]
+        },
+        {
+          "modelKey": "c5",
+          "modelName": "C5",
+          "yearRanges": [
+            "2008-2017"
+          ]
+        },
+        {
+          "modelKey": "c5-aircross",
+          "modelName": "C5 Aircross",
+          "yearRanges": [
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "dispatch",
+          "modelName": "Dispatch",
+          "yearRanges": [
+            "2007-2016",
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "jumpy",
+          "modelName": "Jumpy",
+          "yearRanges": [
+            "2007-2016",
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "nemo",
+          "modelName": "Nemo",
+          "yearRanges": [
+            "2008-2021"
+          ]
+        },
+        {
+          "modelKey": "relay",
+          "modelName": "Relay",
+          "yearRanges": [
+            "2006-2014",
+            "2015-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "ami",
+          "modelName": "AMI"
+        },
+        {
+          "modelSlug": "c2",
+          "modelName": "C2"
+        },
+        {
+          "modelSlug": "c3-pluriel",
+          "modelName": "C3 Pluriel"
+        },
+        {
+          "modelSlug": "c4-aircross",
+          "modelName": "C4 Aircross"
+        },
+        {
+          "modelSlug": "c4-coupe",
+          "modelName": "C4 Coupe"
+        },
+        {
+          "modelSlug": "c4-spacetourer",
+          "modelName": "C4 SpaceTourer"
+        },
+        {
+          "modelSlug": "c6",
+          "modelName": "C6"
+        },
+        {
+          "modelSlug": "c8",
+          "modelName": "C8"
+        },
+        {
+          "modelSlug": "c-crosser",
+          "modelName": "C-Crosser"
+        },
+        {
+          "modelSlug": "c-elysee",
+          "modelName": "C-Elysee"
+        },
+        {
+          "modelSlug": "ds-3",
+          "modelName": "DS 3"
+        },
+        {
+          "modelSlug": "ds-4",
+          "modelName": "DS 4"
+        },
+        {
+          "modelSlug": "ds-5",
+          "modelName": "DS 5"
+        },
+        {
+          "modelSlug": "evasion",
+          "modelName": "Evasion"
+        },
+        {
+          "modelSlug": "jumper",
+          "modelName": "Jumper"
+        },
+        {
+          "modelSlug": "saxo",
+          "modelName": "Saxo"
+        },
+        {
+          "modelSlug": "spacetourer",
+          "modelName": "SpaceTourer"
+        },
+        {
+          "modelSlug": "xantia",
+          "modelName": "Xantia"
+        },
+        {
+          "modelSlug": "xsara",
+          "modelName": "Xsara"
+        },
+        {
+          "modelSlug": "xsara-picasso",
+          "modelName": "Xsara Picasso"
+        }
+      ]
+    },
+    "cupra": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "ateca",
+          "modelName": "Ateca",
+          "yearRanges": [
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "formentor",
+          "modelName": "Formentor",
+          "yearRanges": [
+            "2021-2024"
+          ]
+        },
+        {
+          "modelKey": "leon",
+          "modelName": "Leon",
+          "yearRanges": [
+            "2021-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": []
+    },
+    "dacia": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "dokker",
+          "modelName": "Dokker",
+          "yearRanges": [
+            "2012-2021"
+          ]
+        },
+        {
+          "modelKey": "duster",
+          "modelName": "Duster",
+          "yearRanges": [
+            "2010-2017",
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "jogger",
+          "modelName": "Jogger",
+          "yearRanges": [
+            "2022-2024"
+          ]
+        },
+        {
+          "modelKey": "lodgy",
+          "modelName": "Lodgy",
+          "yearRanges": [
+            "2012-2021"
+          ]
+        },
+        {
+          "modelKey": "logan",
+          "modelName": "Logan",
+          "yearRanges": [
+            "2004-2012",
+            "2013-2020"
+          ]
+        },
+        {
+          "modelKey": "sandero",
+          "modelName": "Sandero",
+          "yearRanges": [
+            "2008-2012",
+            "2013-2020",
+            "2021-2024"
+          ]
+        },
+        {
+          "modelKey": "spring",
+          "modelName": "Spring",
+          "yearRanges": [
+            "2021-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "logan-mcv",
+          "modelName": "Logan MCV"
+        }
+      ]
+    },
+    "daihatsu": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "cuore",
+          "modelName": "Cuore",
+          "yearRanges": [
+            "2000-2007"
+          ]
+        },
+        {
+          "modelKey": "sirion",
+          "modelName": "Sirion",
+          "yearRanges": [
+            "2000-2004",
+            "2005-2011"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": []
+    },
+    "dodge": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "avenger",
+          "modelName": "Avenger",
+          "yearRanges": [
+            "2008-2014"
+          ]
+        },
+        {
+          "modelKey": "caliber",
+          "modelName": "Caliber",
+          "yearRanges": [
+            "2006-2012"
+          ]
+        },
+        {
+          "modelKey": "challenger",
+          "modelName": "Challenger",
+          "yearRanges": [
+            "2008-2024"
+          ]
+        },
+        {
+          "modelKey": "charger",
+          "modelName": "Charger",
+          "yearRanges": [
+            "2006-2024"
+          ]
+        },
+        {
+          "modelKey": "durango",
+          "modelName": "Durango",
+          "yearRanges": [
+            "2011-2024"
+          ]
+        },
+        {
+          "modelKey": "grand-caravan",
+          "modelName": "Grand Caravan",
+          "yearRanges": [
+            "2008-2020"
+          ]
+        },
+        {
+          "modelKey": "journey",
+          "modelName": "Journey",
+          "yearRanges": [
+            "2008-2020"
+          ]
+        },
+        {
+          "modelKey": "ram-1500",
+          "modelName": "Ram 1500",
+          "yearRanges": [
+            "2009-2024"
+          ]
+        },
+        {
+          "modelKey": "ram-2500",
+          "modelName": "Ram 2500",
+          "yearRanges": [
+            "2010-2024"
+          ]
+        },
+        {
+          "modelKey": "ram-3500",
+          "modelName": "RAM 3500",
+          "yearRanges": [
+            "2010-2024"
+          ]
+        },
+        {
+          "modelKey": "viper",
+          "modelName": "Viper",
+          "yearRanges": [
+            "2003-2010",
+            "2013-2017"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "attitude",
+          "modelName": "Attitude"
+        },
+        {
+          "modelSlug": "dart",
+          "modelName": "Dart"
+        },
+        {
+          "modelSlug": "ram-chassis-cab",
+          "modelName": "RAM Chassis Cab"
+        },
+        {
+          "modelSlug": "ram-h100",
+          "modelName": "Ram H100"
+        },
+        {
+          "modelSlug": "sprinter",
+          "modelName": "Sprinter"
+        }
+      ]
+    },
+    "ds": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "ds4",
+          "modelName": "DS4",
+          "yearRanges": [
+            "2021-2024",
+            "2025-2026"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "ds3",
+          "modelName": "DS3"
+        },
+        {
+          "modelSlug": "ds5",
+          "modelName": "DS5"
+        },
+        {
+          "modelSlug": "ds7",
+          "modelName": "DS7"
+        }
+      ]
+    },
+    "ferrari": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "488",
+          "modelName": "488",
+          "yearRanges": [
+            "2015-2019"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "458",
+          "modelName": "458"
+        },
+        {
+          "modelSlug": "488-gtb",
+          "modelName": "488 GTB"
+        },
+        {
+          "modelSlug": "california-t",
+          "modelName": "California T"
+        },
+        {
+          "modelSlug": "f12-berlinetta",
+          "modelName": "F12 Berlinetta"
+        },
+        {
+          "modelSlug": "ff",
+          "modelName": "Ff"
+        }
+      ]
+    },
+    "fiat": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "500",
+          "modelName": "500",
+          "yearRanges": [
+            "2008-2012",
+            "2013-2015",
+            "2016-2020",
+            "2021-2024"
+          ]
+        },
+        {
+          "modelKey": "500e",
+          "modelName": "500e",
+          "yearRanges": [
+            "2008-2012",
+            "2013-2015",
+            "2016-2020",
+            "2021-2024"
+          ]
+        },
+        {
+          "modelKey": "500l",
+          "modelName": "500L",
+          "yearRanges": [
+            "2013-2022"
+          ]
+        },
+        {
+          "modelKey": "500x",
+          "modelName": "500X",
+          "yearRanges": [
+            "2015-2018",
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "bravo",
+          "modelName": "Bravo",
+          "yearRanges": [
+            "2007-2014"
+          ]
+        },
+        {
+          "modelKey": "doblo",
+          "modelName": "Doblo",
+          "yearRanges": [
+            "2010-2022"
+          ]
+        },
+        {
+          "modelKey": "ducato",
+          "modelName": "Ducato",
+          "yearRanges": [
+            "2006-2024"
+          ]
+        },
+        {
+          "modelKey": "fiorino",
+          "modelName": "Fiorino",
+          "yearRanges": [
+            "2008-2024"
+          ]
+        },
+        {
+          "modelKey": "panda",
+          "modelName": "Panda",
+          "yearRanges": [
+            "2003-2011",
+            "2012-2024"
+          ]
+        },
+        {
+          "modelKey": "punto",
+          "modelName": "Punto",
+          "yearRanges": [
+            "1999-2010",
+            "2012-2018"
+          ]
+        },
+        {
+          "modelKey": "qubo",
+          "modelName": "Qubo",
+          "yearRanges": [
+            "2008-2021"
+          ]
+        },
+        {
+          "modelKey": "talento",
+          "modelName": "Talento",
+          "yearRanges": [
+            "2016-2024"
+          ]
+        },
+        {
+          "modelKey": "tipo",
+          "modelName": "Tipo",
+          "yearRanges": [
+            "2016-2020",
+            "2021-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "124-spider",
+          "modelName": "124 Spider"
+        },
+        {
+          "modelSlug": "500c",
+          "modelName": "500C"
+        },
+        {
+          "modelSlug": "albea",
+          "modelName": "Albea"
+        },
+        {
+          "modelSlug": "argo",
+          "modelName": "Argo"
+        },
+        {
+          "modelSlug": "brava",
+          "modelName": "Brava"
+        },
+        {
+          "modelSlug": "croma",
+          "modelName": "Croma"
+        },
+        {
+          "modelSlug": "cronos",
+          "modelName": "Cronos"
+        },
+        {
+          "modelSlug": "freemont",
+          "modelName": "Freemont"
+        },
+        {
+          "modelSlug": "fullback",
+          "modelName": "Fullback"
+        },
+        {
+          "modelSlug": "grande-punto",
+          "modelName": "Grande Punto"
+        },
+        {
+          "modelSlug": "idea",
+          "modelName": "Idea"
+        },
+        {
+          "modelSlug": "linea",
+          "modelName": "Linea"
+        },
+        {
+          "modelSlug": "marea",
+          "modelName": "Marea"
+        },
+        {
+          "modelSlug": "marengo",
+          "modelName": "Marengo"
+        },
+        {
+          "modelSlug": "mobi",
+          "modelName": "Mobi"
+        },
+        {
+          "modelSlug": "multipla",
+          "modelName": "Multipla"
+        },
+        {
+          "modelSlug": "ottimo",
+          "modelName": "Ottimo"
+        },
+        {
+          "modelSlug": "palio",
+          "modelName": "Palio"
+        },
+        {
+          "modelSlug": "punto-evo",
+          "modelName": "Punto Evo"
+        },
+        {
+          "modelSlug": "scudo",
+          "modelName": "Scudo"
+        },
+        {
+          "modelSlug": "sedici",
+          "modelName": "Sedici"
+        },
+        {
+          "modelSlug": "seicento",
+          "modelName": "Seicento"
+        },
+        {
+          "modelSlug": "siena",
+          "modelName": "Siena"
+        },
+        {
+          "modelSlug": "stilo",
+          "modelName": "Stilo"
+        },
+        {
+          "modelSlug": "strada",
+          "modelName": "Strada"
+        },
+        {
+          "modelSlug": "titano",
+          "modelName": "Titano"
+        },
+        {
+          "modelSlug": "topolino",
+          "modelName": "Topolino"
+        },
+        {
+          "modelSlug": "toro",
+          "modelName": "Toro"
+        },
+        {
+          "modelSlug": "ulysse",
+          "modelName": "Ulysse"
+        },
+        {
+          "modelSlug": "uno",
+          "modelName": "Uno"
+        },
+        {
+          "modelSlug": "viaggio",
+          "modelName": "Viaggio"
+        }
+      ]
+    },
+    "ford": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "bronco",
+          "modelName": "Bronco",
+          "yearRanges": [
+            "2021-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "ecosport",
+          "modelName": "Ecosport",
+          "yearRanges": [
+            "2014-2017",
+            "2018-2022"
+          ]
+        },
+        {
+          "modelKey": "edge",
+          "modelName": "Edge",
+          "yearRanges": [
+            "2016-2020",
+            "2021-2024"
+          ]
+        },
+        {
+          "modelKey": "explorer",
+          "modelName": "Explorer",
+          "yearRanges": [
+            "2011-2019",
+            "2020-2026"
+          ]
+        },
+        {
+          "modelKey": "f-150",
+          "modelName": "F-150",
+          "yearRanges": [
+            "2011-2020",
+            "2021-2026"
+          ]
+        },
+        {
+          "modelKey": "fiesta",
+          "modelName": "Fiesta",
+          "yearRanges": [
+            "2008-2012",
+            "2013-2017",
+            "2018-2023"
+          ]
+        },
+        {
+          "modelKey": "fiesta-st",
+          "modelName": "Fiesta ST",
+          "yearRanges": [
+            "2013-2017",
+            "2018-2023"
+          ]
+        },
+        {
+          "modelKey": "focus",
+          "modelName": "Focus",
+          "yearRanges": [
+            "2005-2010",
+            "2011-2018",
+            "2019-2026"
+          ]
+        },
+        {
+          "modelKey": "focus-rs",
+          "modelName": "Focus RS",
+          "yearRanges": [
+            "2009-2011",
+            "2016-2018"
+          ]
+        },
+        {
+          "modelKey": "focus-st",
+          "modelName": "Focus ST",
+          "yearRanges": [
+            "2005-2010",
+            "2012-2018",
+            "2019-2026"
+          ]
+        },
+        {
+          "modelKey": "galaxy",
+          "modelName": "Galaxy",
+          "yearRanges": [
+            "2006-2014",
+            "2015-2023"
+          ]
+        },
+        {
+          "modelKey": "kuga",
+          "modelName": "Kuga",
+          "yearRanges": [
+            "2008-2012",
+            "2013-2019",
+            "2020-2026"
+          ]
+        },
+        {
+          "modelKey": "mondeo",
+          "modelName": "Mondeo",
+          "yearRanges": [
+            "2007-2014",
+            "2015-2022"
+          ]
+        },
+        {
+          "modelKey": "mustang",
+          "modelName": "Mustang",
+          "yearRanges": [
+            "2015-2017",
+            "2018-2023",
+            "2024-2026"
+          ]
+        },
+        {
+          "modelKey": "puma",
+          "modelName": "Puma",
+          "yearRanges": [
+            "2020-2023",
+            "2024-2026"
+          ]
+        },
+        {
+          "modelKey": "ranger",
+          "modelName": "Ranger",
+          "yearRanges": [
+            "2012-2018",
+            "2019-2022",
+            "2023-2026"
+          ]
+        },
+        {
+          "modelKey": "s-max",
+          "modelName": "S-Max",
+          "yearRanges": [
+            "2006-2014",
+            "2015-2023"
+          ]
+        },
+        {
+          "modelKey": "tourneo",
+          "modelName": "Tourneo",
+          "yearRanges": [
+            "2014-2019",
+            "2020-2026"
+          ]
+        },
+        {
+          "modelKey": "transit",
+          "modelName": "Transit",
+          "yearRanges": [
+            "2006-2013",
+            "2014-2019",
+            "2020-2026"
+          ]
+        },
+        {
+          "modelKey": "transit-custom",
+          "modelName": "Transit Custom",
+          "yearRanges": [
+            "2013-2019",
+            "2020-2026"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "aspire",
+          "modelName": "Aspire"
+        },
+        {
+          "modelSlug": "bantam",
+          "modelName": "Bantam"
+        },
+        {
+          "modelSlug": "b-max",
+          "modelName": "B-Max"
+        },
+        {
+          "modelSlug": "c-max",
+          "modelName": "C-Max"
+        },
+        {
+          "modelSlug": "e-350",
+          "modelName": "E-350"
+        },
+        {
+          "modelSlug": "e-450",
+          "modelName": "E-450"
+        },
+        {
+          "modelSlug": "endeavour",
+          "modelName": "Endeavour"
+        },
+        {
+          "modelSlug": "escape",
+          "modelName": "Escape"
+        },
+        {
+          "modelSlug": "e-series",
+          "modelName": "E-Series"
+        },
+        {
+          "modelSlug": "everest",
+          "modelName": "Everest"
+        },
+        {
+          "modelSlug": "expedition",
+          "modelName": "Expedition"
+        },
+        {
+          "modelSlug": "f-250",
+          "modelName": "F-250"
+        },
+        {
+          "modelSlug": "f-250-super-duty",
+          "modelName": "F-250 Super Duty"
+        },
+        {
+          "modelSlug": "f-350-super-duty",
+          "modelName": "F-350 Super Duty"
+        },
+        {
+          "modelSlug": "f-450-super-duty",
+          "modelName": "F-450 Super Duty"
+        },
+        {
+          "modelSlug": "f-550-super-duty",
+          "modelName": "F-550 Super Duty"
+        },
+        {
+          "modelSlug": "f-650",
+          "modelName": "F-650"
+        },
+        {
+          "modelSlug": "f-750",
+          "modelName": "F-750"
+        },
+        {
+          "modelSlug": "fairlane",
+          "modelName": "Fairlane"
+        },
+        {
+          "modelSlug": "falcon",
+          "modelName": "Falcon"
+        },
+        {
+          "modelSlug": "figo",
+          "modelName": "Figo"
+        },
+        {
+          "modelSlug": "focus-c-max",
+          "modelName": "Focus C-Max"
+        },
+        {
+          "modelSlug": "freestyle",
+          "modelName": "Freestyle"
+        },
+        {
+          "modelSlug": "fusion",
+          "modelName": "Fusion"
+        },
+        {
+          "modelSlug": "grand-c-max",
+          "modelName": "Grand C-Max"
+        },
+        {
+          "modelSlug": "gt",
+          "modelName": "GT"
+        },
+        {
+          "modelSlug": "interceptor",
+          "modelName": "Interceptor"
+        },
+        {
+          "modelSlug": "ka",
+          "modelName": "Ka"
+        },
+        {
+          "modelSlug": "lobo",
+          "modelName": "Lobo"
+        },
+        {
+          "modelSlug": "maverick",
+          "modelName": "Maverick"
+        },
+        {
+          "modelSlug": "taurus",
+          "modelName": "Taurus"
+        },
+        {
+          "modelSlug": "territory",
+          "modelName": "Territory"
+        },
+        {
+          "modelSlug": "tourneo-connect",
+          "modelName": "Tourneo Connect"
+        },
+        {
+          "modelSlug": "tourneo-courier",
+          "modelName": "Tourneo Courier"
+        },
+        {
+          "modelSlug": "tourneo-custom",
+          "modelName": "Tourneo Custom"
+        },
+        {
+          "modelSlug": "transit-connect",
+          "modelName": "Transit Connect"
+        },
+        {
+          "modelSlug": "transit-courier",
+          "modelName": "Transit Courier"
+        },
+        {
+          "modelSlug": "troller",
+          "modelName": "Troller"
+        }
+      ]
+    },
+    "gmc": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "acadia",
+          "modelName": "Acadia",
+          "yearRanges": [
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "canyon",
+          "modelName": "Canyon",
+          "yearRanges": [
+            "2015-2024"
+          ]
+        },
+        {
+          "modelKey": "sierra",
+          "modelName": "Sierra",
+          "yearRanges": [
+            "2014-2024"
+          ]
+        },
+        {
+          "modelKey": "terrain",
+          "modelName": "Terrain",
+          "yearRanges": [
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "yukon",
+          "modelName": "Yukon",
+          "yearRanges": [
+            "2015-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "denali",
+          "modelName": "Denali"
+        },
+        {
+          "modelSlug": "envoy",
+          "modelName": "Envoy"
+        },
+        {
+          "modelSlug": "savana",
+          "modelName": "Savana"
+        },
+        {
+          "modelSlug": "savana-1500",
+          "modelName": "Savana 1500"
+        },
+        {
+          "modelSlug": "savana-2500",
+          "modelName": "Savana 2500"
+        },
+        {
+          "modelSlug": "savana-3500",
+          "modelName": "Savana 3500"
+        },
+        {
+          "modelSlug": "sierra-1500",
+          "modelName": "Sierra 1500"
+        },
+        {
+          "modelSlug": "sierra-2500-hd",
+          "modelName": "Sierra 2500 HD"
+        },
+        {
+          "modelSlug": "sierra-3500-hd",
+          "modelName": "Sierra 3500 HD"
+        },
+        {
+          "modelSlug": "yukon-xl-1500",
+          "modelName": "Yukon XL 1500"
+        },
+        {
+          "modelSlug": "yukon-xl-2500",
+          "modelName": "Yukon XL 2500"
+        }
+      ]
+    },
+    "honda": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "accord",
+          "modelName": "Accord",
+          "yearRanges": [
+            "1998-2002",
+            "2003-2007",
+            "2008-2015",
+            "2016-2024"
+          ]
+        },
+        {
+          "modelKey": "civic",
+          "modelName": "Civic",
+          "yearRanges": [
+            "1996-2000",
+            "2001-2005",
+            "2006-2011",
+            "2012-2016",
+            "2017-2021",
+            "2022-2024"
+          ]
+        },
+        {
+          "modelKey": "cr-v",
+          "modelName": "CR-V",
+          "yearRanges": [
+            "1997-2001",
+            "2002-2006",
+            "2007-2012",
+            "2013-2017",
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "cr-z",
+          "modelName": "CR-Z",
+          "yearRanges": [
+            "2010-2016"
+          ]
+        },
+        {
+          "modelKey": "fr-v",
+          "modelName": "FR-V",
+          "yearRanges": [
+            "2005-2009"
+          ]
+        },
+        {
+          "modelKey": "hr-v",
+          "modelName": "HR-V",
+          "yearRanges": [
+            "1999-2005",
+            "2015-2021",
+            "2022-2024"
+          ]
+        },
+        {
+          "modelKey": "insight",
+          "modelName": "Insight",
+          "yearRanges": [
+            "2009-2014",
+            "2019-2022"
+          ]
+        },
+        {
+          "modelKey": "jazz",
+          "modelName": "Jazz",
+          "yearRanges": [
+            "2001-2007",
+            "2008-2014",
+            "2015-2019",
+            "2020-2024"
+          ]
+        },
+        {
+          "modelKey": "legend",
+          "modelName": "Legend",
+          "yearRanges": [
+            "2006-2012",
+            "2015-2021"
+          ]
+        },
+        {
+          "modelKey": "s2000",
+          "modelName": "S2000",
+          "yearRanges": [
+            "1999-2009"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "brio",
+          "modelName": "Brio"
+        },
+        {
+          "modelSlug": "city",
+          "modelName": "City"
+        },
+        {
+          "modelSlug": "cross-road",
+          "modelName": "Cross Road"
+        },
+        {
+          "modelSlug": "crosstour",
+          "modelName": "Crosstour"
+        },
+        {
+          "modelSlug": "crv",
+          "modelName": "CRV"
+        },
+        {
+          "modelSlug": "element",
+          "modelName": "Element"
+        },
+        {
+          "modelSlug": "fit",
+          "modelName": "Fit"
+        },
+        {
+          "modelSlug": "freed",
+          "modelName": "Freed"
+        },
+        {
+          "modelSlug": "odyssey",
+          "modelName": "Odyssey"
+        },
+        {
+          "modelSlug": "passport",
+          "modelName": "Passport"
+        },
+        {
+          "modelSlug": "pgm-fi",
+          "modelName": "PGM-FI"
+        },
+        {
+          "modelSlug": "pilot",
+          "modelName": "Pilot"
+        },
+        {
+          "modelSlug": "ridgeline",
+          "modelName": "Ridgeline"
+        },
+        {
+          "modelSlug": "vezel",
+          "modelName": "Vezel"
+        }
+      ]
+    },
+    "hummer": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "h2",
+          "modelName": "H2",
+          "yearRanges": [
+            "2003-2009"
+          ]
+        },
+        {
+          "modelKey": "h3",
+          "modelName": "H3",
+          "yearRanges": [
+            "2006-2010"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": []
+    },
+    "hyundai": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "bayon",
+          "modelName": "Bayon",
+          "yearRanges": [
+            "2021-2024"
+          ]
+        },
+        {
+          "modelKey": "genesis",
+          "modelName": "Genesis",
+          "yearRanges": [
+            "2009-2014",
+            "2015-2020",
+            "2021-2026"
+          ]
+        },
+        {
+          "modelKey": "i10",
+          "modelName": "I10",
+          "yearRanges": [
+            "2008-2013",
+            "2014-2019",
+            "2020-2024"
+          ]
+        },
+        {
+          "modelKey": "i20",
+          "modelName": "i20",
+          "yearRanges": [
+            "2009-2014",
+            "2015-2020",
+            "2021-2024"
+          ]
+        },
+        {
+          "modelKey": "i30",
+          "modelName": "i30",
+          "yearRanges": [
+            "2007-2012",
+            "2013-2016",
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "i30-n",
+          "modelName": "i30 N",
+          "yearRanges": [
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "i40",
+          "modelName": "i40",
+          "yearRanges": [
+            "2012-2019"
+          ]
+        },
+        {
+          "modelKey": "ix20",
+          "modelName": "ix20",
+          "yearRanges": [
+            "2010-2019"
+          ]
+        },
+        {
+          "modelKey": "ix35",
+          "modelName": "ix35",
+          "yearRanges": [
+            "2010-2015"
+          ]
+        },
+        {
+          "modelKey": "kona",
+          "modelName": "Kona",
+          "yearRanges": [
+            "2018-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "santa-fe",
+          "modelName": "Santa Fe",
+          "yearRanges": [
+            "2006-2012",
+            "2013-2018",
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "tucson",
+          "modelName": "Tucson",
+          "yearRanges": [
+            "2010-2015",
+            "2016-2020",
+            "2021-2024"
+          ]
+        },
+        {
+          "modelKey": "veloster",
+          "modelName": "Veloster",
+          "yearRanges": [
+            "2011-2018",
+            "2019-2022"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "accent",
+          "modelName": "Accent"
+        },
+        {
+          "modelSlug": "alcazar",
+          "modelName": "Alcazar"
+        },
+        {
+          "modelSlug": "avante",
+          "modelName": "Avante"
+        },
+        {
+          "modelSlug": "azera",
+          "modelName": "Azera"
+        },
+        {
+          "modelSlug": "cantus",
+          "modelName": "Cantus"
+        },
+        {
+          "modelSlug": "click",
+          "modelName": "Click"
+        },
+        {
+          "modelSlug": "creta",
+          "modelName": "Creta"
+        },
+        {
+          "modelSlug": "custo",
+          "modelName": "Custo"
+        },
+        {
+          "modelSlug": "elantra",
+          "modelName": "Elantra"
+        },
+        {
+          "modelSlug": "equus",
+          "modelName": "Equus"
+        },
+        {
+          "modelSlug": "exter",
+          "modelName": "Exter"
+        },
+        {
+          "modelSlug": "getz",
+          "modelName": "Getz"
+        },
+        {
+          "modelSlug": "grandeur",
+          "modelName": "Grandeur"
+        },
+        {
+          "modelSlug": "grand-starex",
+          "modelName": "Grand Starex"
+        },
+        {
+          "modelSlug": "gv",
+          "modelName": "GV"
+        },
+        {
+          "modelSlug": "h-1",
+          "modelName": "H-1"
+        },
+        {
+          "modelSlug": "h-100",
+          "modelName": "H-100"
+        },
+        {
+          "modelSlug": "h300",
+          "modelName": "H300"
+        },
+        {
+          "modelSlug": "h350",
+          "modelName": "H350"
+        },
+        {
+          "modelSlug": "hb20",
+          "modelName": "Hb20"
+        },
+        {
+          "modelSlug": "i25",
+          "modelName": "i25"
+        },
+        {
+          "modelSlug": "i45",
+          "modelName": "i45"
+        },
+        {
+          "modelSlug": "i55",
+          "modelName": "i55"
+        },
+        {
+          "modelSlug": "i800",
+          "modelName": "i800"
+        },
+        {
+          "modelSlug": "iload",
+          "modelName": "iLoad"
+        },
+        {
+          "modelSlug": "imax",
+          "modelName": "iMax"
+        },
+        {
+          "modelSlug": "ionic",
+          "modelName": "Ionic"
+        },
+        {
+          "modelSlug": "ix25",
+          "modelName": "ix25"
+        },
+        {
+          "modelSlug": "ix55",
+          "modelName": "ix55"
+        },
+        {
+          "modelSlug": "lafesta",
+          "modelName": "Lafesta"
+        },
+        {
+          "modelSlug": "matrix",
+          "modelName": "Matrix"
+        },
+        {
+          "modelSlug": "mighty",
+          "modelName": "Mighty"
+        },
+        {
+          "modelSlug": "mistra",
+          "modelName": "MIstra"
+        },
+        {
+          "modelSlug": "neo-fludic-elantra",
+          "modelName": "Neo Fludic Elantra"
+        },
+        {
+          "modelSlug": "pde",
+          "modelName": "PDE"
+        },
+        {
+          "modelSlug": "porter",
+          "modelName": "porter"
+        },
+        {
+          "modelSlug": "solaris",
+          "modelName": "Solaris"
+        },
+        {
+          "modelSlug": "sonata",
+          "modelName": "Sonata"
+        },
+        {
+          "modelSlug": "sonica",
+          "modelName": "Sonica"
+        },
+        {
+          "modelSlug": "starex-royale",
+          "modelName": "Starex Royale"
+        },
+        {
+          "modelSlug": "tiburon",
+          "modelName": "Tiburon"
+        },
+        {
+          "modelSlug": "venue",
+          "modelName": "Venue"
+        },
+        {
+          "modelSlug": "veracruz",
+          "modelName": "Veracruz"
+        },
+        {
+          "modelSlug": "verna",
+          "modelName": "Verna"
+        },
+        {
+          "modelSlug": "xcent",
+          "modelName": "Xcent"
+        }
+      ]
+    },
+    "infiniti": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "fx",
+          "modelName": "FX",
+          "yearRanges": [
+            "2003-2008",
+            "2009-2013"
+          ]
+        },
+        {
+          "modelKey": "q30",
+          "modelName": "Q30",
+          "yearRanges": [
+            "2016-2019"
+          ]
+        },
+        {
+          "modelKey": "q50",
+          "modelName": "Q50",
+          "yearRanges": [
+            "2014-2024"
+          ]
+        },
+        {
+          "modelKey": "q70",
+          "modelName": "Q70",
+          "yearRanges": [
+            "2014-2019"
+          ]
+        },
+        {
+          "modelKey": "qx30",
+          "modelName": "QX30",
+          "yearRanges": [
+            "2017-2019"
+          ]
+        },
+        {
+          "modelKey": "qx50",
+          "modelName": "QX50",
+          "yearRanges": [
+            "2014-2024"
+          ]
+        },
+        {
+          "modelKey": "qx70",
+          "modelName": "QX70",
+          "yearRanges": [
+            "2013-2017"
+          ]
+        },
+        {
+          "modelKey": "qx80",
+          "modelName": "QX80",
+          "yearRanges": [
+            "2013-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "ex",
+          "modelName": "EX"
+        },
+        {
+          "modelSlug": "fx30",
+          "modelName": "FX30"
+        },
+        {
+          "modelSlug": "m30",
+          "modelName": "M30"
+        },
+        {
+          "modelSlug": "q50l",
+          "modelName": "Q50L"
+        },
+        {
+          "modelSlug": "qx56",
+          "modelName": "QX56"
+        }
+      ]
+    },
+    "iveco": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "daily",
+          "modelName": "Daily",
+          "yearRanges": [
+            "2014-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "70c18",
+          "modelName": "70C18"
+        }
+      ]
+    },
+    "jaguar": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "e-pace",
+          "modelName": "E-Pace",
+          "yearRanges": [
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "f-pace",
+          "modelName": "F-Pace",
+          "yearRanges": [
+            "2016-2024"
+          ]
+        },
+        {
+          "modelKey": "f-type",
+          "modelName": "F-type",
+          "yearRanges": [
+            "2013-2024"
+          ]
+        },
+        {
+          "modelKey": "i-pace",
+          "modelName": "I-PACE",
+          "yearRanges": [
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "s-type",
+          "modelName": "S-type",
+          "yearRanges": [
+            "1999-2007"
+          ]
+        },
+        {
+          "modelKey": "xe",
+          "modelName": "XE",
+          "yearRanges": [
+            "2015-2024"
+          ]
+        },
+        {
+          "modelKey": "xf",
+          "modelName": "XF",
+          "yearRanges": [
+            "2008-2015",
+            "2016-2024"
+          ]
+        },
+        {
+          "modelKey": "xfr",
+          "modelName": "XFR",
+          "yearRanges": [
+            "2009-2015",
+            "2016-2021"
+          ]
+        },
+        {
+          "modelKey": "xj",
+          "modelName": "XJ",
+          "yearRanges": [
+            "2003-2009",
+            "2010-2019"
+          ]
+        },
+        {
+          "modelKey": "xk",
+          "modelName": "XK",
+          "yearRanges": [
+            "2006-2014"
+          ]
+        },
+        {
+          "modelKey": "x-type",
+          "modelName": "X-type",
+          "yearRanges": [
+            "2001-2009"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "xel",
+          "modelName": "XEL"
+        },
+        {
+          "modelSlug": "xfl",
+          "modelName": "XFL"
+        },
+        {
+          "modelSlug": "xjr",
+          "modelName": "XJR"
+        }
+      ]
+    },
+    "jeep": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "cherokee",
+          "modelName": "Cherokee",
+          "yearRanges": [
+            "2002-2007",
+            "2008-2013",
+            "2014-2024"
+          ]
+        },
+        {
+          "modelKey": "commander",
+          "modelName": "Commander",
+          "yearRanges": [
+            "2006-2010"
+          ]
+        },
+        {
+          "modelKey": "compass",
+          "modelName": "Compass",
+          "yearRanges": [
+            "2007-2016",
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "gladiator",
+          "modelName": "Gladiator",
+          "yearRanges": [
+            "2020-2024"
+          ]
+        },
+        {
+          "modelKey": "grand-cherokee",
+          "modelName": "Grand Cherokee",
+          "yearRanges": [
+            "1999-2004",
+            "2005-2010",
+            "2011-2021",
+            "2022-2024"
+          ]
+        },
+        {
+          "modelKey": "liberty",
+          "modelName": "Liberty",
+          "yearRanges": [
+            "2002-2007",
+            "2008-2012"
+          ]
+        },
+        {
+          "modelKey": "patriot",
+          "modelName": "Patriot",
+          "yearRanges": [
+            "2007-2017"
+          ]
+        },
+        {
+          "modelKey": "renegade",
+          "modelName": "Renegade",
+          "yearRanges": [
+            "2015-2018",
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "wrangler",
+          "modelName": "Wrangler",
+          "yearRanges": [
+            "2007-2017",
+            "2018-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "grand-commander",
+          "modelName": "Grand Commander"
+        }
+      ]
+    },
+    "kia": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "carnival",
+          "modelName": "Carnival",
+          "yearRanges": [
+            "2006-2014",
+            "2015-2024"
+          ]
+        },
+        {
+          "modelKey": "ceed",
+          "modelName": "Ceed",
+          "yearRanges": [
+            "2007-2012",
+            "2013-2018",
+            "2019-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "ceed-gt",
+          "modelName": "Ceed Gt",
+          "yearRanges": [
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "niro",
+          "modelName": "Niro",
+          "yearRanges": [
+            "2017-2021",
+            "2022-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "optima",
+          "modelName": "Optima",
+          "yearRanges": [
+            "2012-2015",
+            "2016-2020"
+          ]
+        },
+        {
+          "modelKey": "picanto",
+          "modelName": "Picanto",
+          "yearRanges": [
+            "2004-2011",
+            "2011-2017",
+            "2017-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "proceed",
+          "modelName": "Proceed",
+          "yearRanges": [
+            "2008-2012",
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "rio",
+          "modelName": "Rio",
+          "yearRanges": [
+            "2005-2011",
+            "2012-2017",
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "sorento",
+          "modelName": "Sorento",
+          "yearRanges": [
+            "2006-2009",
+            "2010-2014",
+            "2015-2020",
+            "2021-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "soul",
+          "modelName": "Soul",
+          "yearRanges": [
+            "2009-2013",
+            "2014-2019",
+            "2020-2024"
+          ]
+        },
+        {
+          "modelKey": "sportage",
+          "modelName": "Sportage",
+          "yearRanges": [
+            "2010-2015",
+            "2016-2021",
+            "2022-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "stinger",
+          "modelName": "Stinger",
+          "yearRanges": [
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "stonic",
+          "modelName": "Stonic",
+          "yearRanges": [
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "venga",
+          "modelName": "Venga",
+          "yearRanges": [
+            "2010-2019"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "borrego",
+          "modelName": "Borrego"
+        },
+        {
+          "modelSlug": "cadenza",
+          "modelName": "Cadenza"
+        },
+        {
+          "modelSlug": "carens",
+          "modelName": "Carens"
+        },
+        {
+          "modelSlug": "cerato",
+          "modelName": "Cerato"
+        },
+        {
+          "modelSlug": "forte",
+          "modelName": "Forte"
+        },
+        {
+          "modelSlug": "k3",
+          "modelName": "K3"
+        },
+        {
+          "modelSlug": "k4",
+          "modelName": "K4"
+        },
+        {
+          "modelSlug": "k5",
+          "modelName": "K5"
+        },
+        {
+          "modelSlug": "k7",
+          "modelName": "K7"
+        },
+        {
+          "modelSlug": "k9",
+          "modelName": "K9"
+        },
+        {
+          "modelSlug": "k900",
+          "modelName": "K900"
+        },
+        {
+          "modelSlug": "kx3",
+          "modelName": "KX3"
+        },
+        {
+          "modelSlug": "magentis",
+          "modelName": "Magentis"
+        },
+        {
+          "modelSlug": "mohave",
+          "modelName": "Mohave"
+        },
+        {
+          "modelSlug": "morning",
+          "modelName": "Morning"
+        },
+        {
+          "modelSlug": "new-bongo",
+          "modelName": "New Bongo"
+        },
+        {
+          "modelSlug": "quoris",
+          "modelName": "Quoris"
+        },
+        {
+          "modelSlug": "ray",
+          "modelName": "Ray"
+        },
+        {
+          "modelSlug": "seltos",
+          "modelName": "Seltos"
+        },
+        {
+          "modelSlug": "soluto",
+          "modelName": "Soluto"
+        },
+        {
+          "modelSlug": "telluride",
+          "modelName": "Telluride"
+        },
+        {
+          "modelSlug": "x-ceed",
+          "modelName": "X-Ceed"
+        }
+      ]
+    },
+    "lamborghini": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "huracan",
+          "modelName": "Huracan",
+          "yearRanges": [
+            "2014-2024"
+          ]
+        },
+        {
+          "modelKey": "urus",
+          "modelName": "Urus",
+          "yearRanges": [
+            "2018-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "gallardo",
+          "modelName": "Gallardo"
+        }
+      ]
+    },
+    "lancia": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "delta",
+          "modelName": "Delta",
+          "yearRanges": [
+            "2008-2014"
+          ]
+        },
+        {
+          "modelKey": "musa",
+          "modelName": "Musa",
+          "yearRanges": [
+            "2004-2012"
+          ]
+        },
+        {
+          "modelKey": "thema",
+          "modelName": "Thema",
+          "yearRanges": [
+            "2011-2014"
+          ]
+        },
+        {
+          "modelKey": "ypsilon",
+          "modelName": "Ypsilon",
+          "yearRanges": [
+            "2011-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "flavia",
+          "modelName": "Flavia"
+        },
+        {
+          "modelSlug": "lybra",
+          "modelName": "Lybra"
+        },
+        {
+          "modelSlug": "phedra",
+          "modelName": "Phedra"
+        },
+        {
+          "modelSlug": "thesis",
+          "modelName": "Thesis"
+        },
+        {
+          "modelSlug": "voyager",
+          "modelName": "Voyager"
+        }
+      ]
+    },
+    "land-rover": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "defender",
+          "modelName": "Defender",
+          "yearRanges": [
+            "2020-2024"
+          ]
+        },
+        {
+          "modelKey": "discovery",
+          "modelName": "Discovery",
+          "yearRanges": [
+            "2004-2009",
+            "2010-2016",
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "discovery-sport",
+          "modelName": "Discovery Sport",
+          "yearRanges": [
+            "2015-2019",
+            "2020-2024"
+          ]
+        },
+        {
+          "modelKey": "freelander",
+          "modelName": "Freelander",
+          "yearRanges": [
+            "1998-2006",
+            "2007-2015"
+          ]
+        },
+        {
+          "modelKey": "range-rover",
+          "modelName": "Range Rover",
+          "yearRanges": [
+            "2002-2012",
+            "2013-2021",
+            "2022-2024"
+          ]
+        },
+        {
+          "modelKey": "range-rover-evoque",
+          "modelName": "Range Rover Evoque",
+          "yearRanges": [
+            "2011-2018",
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "range-rover-sport",
+          "modelName": "Range Rover Sport",
+          "yearRanges": [
+            "2005-2013",
+            "2014-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "evoque",
+          "modelName": "Evoque"
+        },
+        {
+          "modelSlug": "velar",
+          "modelName": "Velar"
+        }
+      ]
+    },
+    "lexus": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "gs",
+          "modelName": "GS",
+          "yearRanges": [
+            "2005-2011",
+            "2012-2020"
+          ]
+        },
+        {
+          "modelKey": "is",
+          "modelName": "IS",
+          "yearRanges": [
+            "2005-2013",
+            "2014-2024"
+          ]
+        },
+        {
+          "modelKey": "lx",
+          "modelName": "LX",
+          "yearRanges": [
+            "2008-2015",
+            "2016-2024"
+          ]
+        },
+        {
+          "modelKey": "rx",
+          "modelName": "RX",
+          "yearRanges": [
+            "2003-2008",
+            "2009-2015",
+            "2016-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "es240",
+          "modelName": "ES240"
+        },
+        {
+          "modelSlug": "es350",
+          "modelName": "ES350"
+        },
+        {
+          "modelSlug": "gs300",
+          "modelName": "GS300"
+        },
+        {
+          "modelSlug": "gs350",
+          "modelName": "GS350"
+        },
+        {
+          "modelSlug": "gs430",
+          "modelName": "GS430"
+        },
+        {
+          "modelSlug": "gx400",
+          "modelName": "GX400"
+        },
+        {
+          "modelSlug": "is220",
+          "modelName": "IS220"
+        },
+        {
+          "modelSlug": "is220d",
+          "modelName": "IS220D"
+        },
+        {
+          "modelSlug": "is250",
+          "modelName": "IS250"
+        },
+        {
+          "modelSlug": "is300",
+          "modelName": "IS300"
+        },
+        {
+          "modelSlug": "is350",
+          "modelName": "IS350"
+        },
+        {
+          "modelSlug": "ls460",
+          "modelName": "LS460"
+        },
+        {
+          "modelSlug": "ls600",
+          "modelName": "LS600"
+        },
+        {
+          "modelSlug": "rc350",
+          "modelName": "RC350"
+        },
+        {
+          "modelSlug": "rx350",
+          "modelName": "RX350"
+        },
+        {
+          "modelSlug": "rx400",
+          "modelName": "RX400"
+        },
+        {
+          "modelSlug": "sc430",
+          "modelName": "SC430"
+        }
+      ]
+    },
+    "lincoln": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "corsair",
+          "modelName": "Corsair",
+          "yearRanges": [
+            "2020-2024"
+          ]
+        },
+        {
+          "modelKey": "navigator",
+          "modelName": "Navigator",
+          "yearRanges": [
+            "2018-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "continental",
+          "modelName": "Continental"
+        },
+        {
+          "modelSlug": "mark-lt",
+          "modelName": "Mark LT"
+        },
+        {
+          "modelSlug": "mkc",
+          "modelName": "MKC"
+        },
+        {
+          "modelSlug": "mks",
+          "modelName": "MKS"
+        },
+        {
+          "modelSlug": "mkt",
+          "modelName": "MKT"
+        },
+        {
+          "modelSlug": "mkx",
+          "modelName": "MKX"
+        },
+        {
+          "modelSlug": "mkz",
+          "modelName": "MKZ"
+        },
+        {
+          "modelSlug": "navigator-l",
+          "modelName": "Navigator L"
+        }
+      ]
+    },
+    "maserati": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "ghibli",
+          "modelName": "Ghibli",
+          "yearRanges": [
+            "2014-2024"
+          ]
+        },
+        {
+          "modelKey": "grancabrio",
+          "modelName": "GranCabrio",
+          "yearRanges": [
+            "2010-2019"
+          ]
+        },
+        {
+          "modelKey": "granturismo",
+          "modelName": "GranTurismo",
+          "yearRanges": [
+            "2008-2019",
+            "2023-2024"
+          ]
+        },
+        {
+          "modelKey": "levante",
+          "modelName": "Levante",
+          "yearRanges": [
+            "2016-2024"
+          ]
+        },
+        {
+          "modelKey": "quattroporte",
+          "modelName": "Quattroporte",
+          "yearRanges": [
+            "2004-2012",
+            "2013-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "gransport",
+          "modelName": "GranSport"
+        }
+      ]
+    },
+    "mazda": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "cx-3",
+          "modelName": "CX-3",
+          "yearRanges": [
+            "2015-2021"
+          ]
+        },
+        {
+          "modelKey": "cx-30",
+          "modelName": "CX-30",
+          "yearRanges": [
+            "2019-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "cx-5",
+          "modelName": "CX-5",
+          "yearRanges": [
+            "2012-2016",
+            "2017-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "cx-7",
+          "modelName": "CX-7",
+          "yearRanges": [
+            "2007-2012"
+          ]
+        },
+        {
+          "modelKey": "cx-9",
+          "modelName": "CX-9",
+          "yearRanges": [
+            "2007-2015",
+            "2016-2024"
+          ]
+        },
+        {
+          "modelKey": "mx-5",
+          "modelName": "MX-5",
+          "yearRanges": [
+            "1998-2005",
+            "2006-2015",
+            "2016-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "rx-8",
+          "modelName": "RX-8",
+          "yearRanges": [
+            "2003-2012"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "2",
+          "modelName": "2"
+        },
+        {
+          "modelSlug": "3",
+          "modelName": "3"
+        },
+        {
+          "modelSlug": "5",
+          "modelName": "5"
+        },
+        {
+          "modelSlug": "6",
+          "modelName": "6"
+        },
+        {
+          "modelSlug": "atenza",
+          "modelName": "Atenza"
+        },
+        {
+          "modelSlug": "biante",
+          "modelName": "Biante"
+        },
+        {
+          "modelSlug": "bt-50",
+          "modelName": "Bt-50"
+        },
+        {
+          "modelSlug": "cx-4",
+          "modelName": "CX-4"
+        },
+        {
+          "modelSlug": "cx-8",
+          "modelName": "CX-8"
+        },
+        {
+          "modelSlug": "demio",
+          "modelName": "Demio"
+        },
+        {
+          "modelSlug": "premacy",
+          "modelName": "Premacy"
+        },
+        {
+          "modelSlug": "tribute",
+          "modelName": "Tribute"
+        }
+      ]
+    },
+    "mclaren": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "540c",
+          "modelName": "540C",
+          "yearRanges": [
+            "2015-2019"
+          ]
+        },
+        {
+          "modelKey": "570s",
+          "modelName": "570S",
+          "yearRanges": [
+            "2015-2021"
+          ]
+        },
+        {
+          "modelKey": "720s",
+          "modelName": "720S",
+          "yearRanges": [
+            "2017-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "570gt",
+          "modelName": "570GT"
+        },
+        {
+          "modelSlug": "600lt",
+          "modelName": "600LT"
+        },
+        {
+          "modelSlug": "620r",
+          "modelName": "620R"
+        },
+        {
+          "modelSlug": "650s",
+          "modelName": "650S"
+        },
+        {
+          "modelSlug": "mp4",
+          "modelName": "MP4"
+        },
+        {
+          "modelSlug": "mp4-12c",
+          "modelName": "MP4-12C"
+        },
+        {
+          "modelSlug": "speedtail",
+          "modelName": "Speedtail"
+        }
+      ]
+    },
+    "mercedes": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "a-class",
+          "modelName": "A-Class",
+          "yearRanges": [
+            "2005-2012",
+            "2013-2018",
+            "2019-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "b-class",
+          "modelName": "B-Class",
+          "yearRanges": [
+            "2005-2011",
+            "2012-2018",
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "c63-amg",
+          "modelName": "C63 AMG",
+          "yearRanges": [
+            "2008-2014",
+            "2015-2024"
+          ]
+        },
+        {
+          "modelKey": "c-class",
+          "modelName": "C-Class",
+          "yearRanges": [
+            "1993-2000",
+            "2001-2007",
+            "2005-2007",
+            "2008-2014",
+            "2015-2021",
+            "2022-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "e-class",
+          "modelName": "E-Class",
+          "yearRanges": [
+            "2024",
+            "1995-2002",
+            "2003-2009",
+            "2010-2016",
+            "2017-2023",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "eqc",
+          "modelName": "EQC",
+          "yearRanges": [
+            "2019-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "g-class",
+          "modelName": "G-Class",
+          "yearRanges": [
+            "2000-2018",
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "s-class",
+          "modelName": "S-Class",
+          "yearRanges": [
+            "2006-2013",
+            "2014-2020",
+            "2021-2024"
+          ]
+        },
+        {
+          "modelKey": "sprinter",
+          "modelName": "Sprinter",
+          "yearRanges": [
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "v-class",
+          "modelName": "V-Class",
+          "yearRanges": [
+            "2015-2024"
+          ]
+        },
+        {
+          "modelKey": "vito",
+          "modelName": "Vito",
+          "yearRanges": [
+            "2015-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "citan",
+          "modelName": "Citan"
+        },
+        {
+          "modelSlug": "cl65-amg",
+          "modelName": "CL65 AMG"
+        },
+        {
+          "modelSlug": "cla-class",
+          "modelName": "CLA-Class"
+        },
+        {
+          "modelSlug": "clc-class",
+          "modelName": "CLC-Class"
+        },
+        {
+          "modelSlug": "cl-class",
+          "modelName": "CL-Class"
+        },
+        {
+          "modelSlug": "clk-class",
+          "modelName": "CLK-Class"
+        },
+        {
+          "modelSlug": "cls-class",
+          "modelName": "CLS-Class"
+        },
+        {
+          "modelSlug": "e55-amg",
+          "modelName": "E55 AMG"
+        },
+        {
+          "modelSlug": "gla-class",
+          "modelName": "GLA-Class"
+        },
+        {
+          "modelSlug": "glb-class",
+          "modelName": "GLB-Class"
+        },
+        {
+          "modelSlug": "glc-class",
+          "modelName": "GLC-Class"
+        },
+        {
+          "modelSlug": "gl-class",
+          "modelName": "GL-Class"
+        },
+        {
+          "modelSlug": "gle-class",
+          "modelName": "GLE-Class"
+        },
+        {
+          "modelSlug": "gle-class-coupe",
+          "modelName": "GLE-Class Coupe"
+        },
+        {
+          "modelSlug": "glk-class",
+          "modelName": "GLK-Class"
+        },
+        {
+          "modelSlug": "gls-class",
+          "modelName": "GLS-Class"
+        },
+        {
+          "modelSlug": "gt",
+          "modelName": "GT"
+        },
+        {
+          "modelSlug": "gt-amg",
+          "modelName": "GT AMG"
+        },
+        {
+          "modelSlug": "metris",
+          "modelName": "Metris"
+        },
+        {
+          "modelSlug": "ml-class",
+          "modelName": "ML-Class"
+        },
+        {
+          "modelSlug": "r-class",
+          "modelName": "R-Class"
+        },
+        {
+          "modelSlug": "s55-amg",
+          "modelName": "S55 AMG"
+        },
+        {
+          "modelSlug": "s65-amg",
+          "modelName": "S65 AMG"
+        },
+        {
+          "modelSlug": "sl55-amg",
+          "modelName": "SL55 AMG"
+        },
+        {
+          "modelSlug": "sl65-amg",
+          "modelName": "SL65 AMG"
+        },
+        {
+          "modelSlug": "slc-class",
+          "modelName": "SLC-Class"
+        },
+        {
+          "modelSlug": "sl-class",
+          "modelName": "SL-Class"
+        },
+        {
+          "modelSlug": "slk32-amg",
+          "modelName": "SLK32 AMG"
+        },
+        {
+          "modelSlug": "slk-class",
+          "modelName": "SLK-Class"
+        },
+        {
+          "modelSlug": "slr-mclaren",
+          "modelName": "SLR McLaren"
+        },
+        {
+          "modelSlug": "sls-class",
+          "modelName": "SLS-Class"
+        },
+        {
+          "modelSlug": "sportcoupe",
+          "modelName": "SportCoupe"
+        },
+        {
+          "modelSlug": "valente",
+          "modelName": "Valente"
+        },
+        {
+          "modelSlug": "viano",
+          "modelName": "Viano"
+        },
+        {
+          "modelSlug": "x-class",
+          "modelName": "X-Class"
+        }
+      ]
+    },
+    "mg": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "hs",
+          "modelName": "HS",
+          "yearRanges": [
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "zs",
+          "modelName": "Zs",
+          "yearRanges": [
+            "2017-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "3",
+          "modelName": "3"
+        },
+        {
+          "modelSlug": "ehs",
+          "modelName": "EHS"
+        },
+        {
+          "modelSlug": "rattan",
+          "modelName": "Rattan"
+        }
+      ]
+    },
+    "mini": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "clubman",
+          "modelName": "Clubman",
+          "yearRanges": [
+            "2007-2010",
+            "2011-2014",
+            "2015-2019",
+            "2020-2024"
+          ]
+        },
+        {
+          "modelKey": "cooper-s",
+          "modelName": "Cooper S",
+          "yearRanges": [
+            "2006-2013",
+            "2014-2020",
+            "2021-2026"
+          ]
+        },
+        {
+          "modelKey": "countryman",
+          "modelName": "Countryman",
+          "yearRanges": [
+            "2010-2016",
+            "2017-2020",
+            "2021-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "coupe",
+          "modelName": "Coupe",
+          "yearRanges": [
+            "2011-2015"
+          ]
+        },
+        {
+          "modelKey": "paceman",
+          "modelName": "Paceman",
+          "yearRanges": [
+            "2013-2016"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "cooper",
+          "modelName": "Cooper"
+        },
+        {
+          "modelSlug": "cooper-clubman",
+          "modelName": "Cooper Clubman"
+        },
+        {
+          "modelSlug": "cooper-countryman",
+          "modelName": "Cooper Countryman"
+        },
+        {
+          "modelSlug": "cooper-d-paceman",
+          "modelName": "Cooper D Paceman"
+        },
+        {
+          "modelSlug": "cooper-jcw",
+          "modelName": "Cooper JCW"
+        },
+        {
+          "modelSlug": "cooper-paceman",
+          "modelName": "Cooper Paceman"
+        },
+        {
+          "modelSlug": "cooper-s-clubman",
+          "modelName": "Cooper S Clubman"
+        },
+        {
+          "modelSlug": "cooper-s-countryman",
+          "modelName": "Cooper S Countryman"
+        },
+        {
+          "modelSlug": "cooper-s-countryman-all4",
+          "modelName": "Cooper S Countryman ALL4"
+        },
+        {
+          "modelSlug": "cooper-s-countryman-all4-jcw",
+          "modelName": "Cooper S Countryman ALL4 JCW"
+        },
+        {
+          "modelSlug": "cooper-s-e-countryman",
+          "modelName": "Cooper S E Countryman"
+        },
+        {
+          "modelSlug": "cooper-s-jcw",
+          "modelName": "Cooper S JCW"
+        },
+        {
+          "modelSlug": "cooper-s-paceman",
+          "modelName": "Cooper S Paceman"
+        },
+        {
+          "modelSlug": "cooper-s-paceman-all4",
+          "modelName": "Cooper S Paceman ALL4"
+        },
+        {
+          "modelSlug": "cooper-s-paceman-all4-jcw",
+          "modelName": "Cooper S Paceman ALL4 JCW"
+        },
+        {
+          "modelSlug": "countryman-jcw",
+          "modelName": "Countryman JCW"
+        },
+        {
+          "modelSlug": "first",
+          "modelName": "First"
+        },
+        {
+          "modelSlug": "mini",
+          "modelName": "Mini"
+        },
+        {
+          "modelSlug": "one",
+          "modelName": "One"
+        },
+        {
+          "modelSlug": "one-clubman",
+          "modelName": "One Clubman"
+        },
+        {
+          "modelSlug": "one-countryman",
+          "modelName": "One Countryman"
+        },
+        {
+          "modelSlug": "one-first",
+          "modelName": "One First"
+        },
+        {
+          "modelSlug": "roadster-cooper-sd",
+          "modelName": "Roadster Cooper SD"
+        }
+      ]
+    },
+    "mitsubishi": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "asx",
+          "modelName": "Asx",
+          "yearRanges": [
+            "2010-2024"
+          ]
+        },
+        {
+          "modelKey": "colt",
+          "modelName": "Colt",
+          "yearRanges": [
+            "2004-2013"
+          ]
+        },
+        {
+          "modelKey": "eclipse-cross",
+          "modelName": "Eclipse Cross",
+          "yearRanges": [
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "l200",
+          "modelName": "L200",
+          "yearRanges": [
+            "2006-2015",
+            "2016-2024"
+          ]
+        },
+        {
+          "modelKey": "lancer",
+          "modelName": "Lancer",
+          "yearRanges": [
+            "2008-2017"
+          ]
+        },
+        {
+          "modelKey": "mirage",
+          "modelName": "Mirage",
+          "yearRanges": [
+            "2013-2024"
+          ]
+        },
+        {
+          "modelKey": "outlander",
+          "modelName": "Outlander",
+          "yearRanges": [
+            "2007-2012",
+            "2013-2021",
+            "2022-2024"
+          ]
+        },
+        {
+          "modelKey": "pajero",
+          "modelName": "Pajero",
+          "yearRanges": [
+            "2007-2021"
+          ]
+        },
+        {
+          "modelKey": "space-star",
+          "modelName": "Space Star",
+          "yearRanges": [
+            "2013-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "canter",
+          "modelName": "Canter"
+        },
+        {
+          "modelSlug": "delica-d5",
+          "modelName": "Delica D5"
+        },
+        {
+          "modelSlug": "grandis",
+          "modelName": "Grandis"
+        },
+        {
+          "modelSlug": "l300",
+          "modelName": "L300"
+        },
+        {
+          "modelSlug": "pajero-sport",
+          "modelName": "Pajero Sport"
+        },
+        {
+          "modelSlug": "triton",
+          "modelName": "Triton"
+        }
+      ]
+    },
+    "nissan": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "interstar",
+          "modelName": "Interstar",
+          "yearRanges": [
+            "2004-2024"
+          ]
+        },
+        {
+          "modelKey": "juke",
+          "modelName": "Juke",
+          "yearRanges": [
+            "2010-2014",
+            "2015-2019",
+            "2020-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "leaf",
+          "modelName": "Leaf",
+          "yearRanges": [
+            "2011-2017",
+            "2018-2022",
+            "2023-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "micra",
+          "modelName": "Micra",
+          "yearRanges": [
+            "2003-2010",
+            "2011-2016",
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "navara",
+          "modelName": "Navara",
+          "yearRanges": [
+            "2005-2015",
+            "2016-2024"
+          ]
+        },
+        {
+          "modelKey": "note",
+          "modelName": "Note",
+          "yearRanges": [
+            "2006-2012",
+            "2013-2020",
+            "2021-2024"
+          ]
+        },
+        {
+          "modelKey": "nv200",
+          "modelName": "NV200",
+          "yearRanges": [
+            "2010-2024"
+          ]
+        },
+        {
+          "modelKey": "nv300",
+          "modelName": "NV300",
+          "yearRanges": [
+            "2016-2024"
+          ]
+        },
+        {
+          "modelKey": "nv400",
+          "modelName": "NV400",
+          "yearRanges": [
+            "2011-2024"
+          ]
+        },
+        {
+          "modelKey": "pathfinder",
+          "modelName": "Pathfinder",
+          "yearRanges": [
+            "2005-2014",
+            "2015-2024"
+          ]
+        },
+        {
+          "modelKey": "patrol",
+          "modelName": "Patrol",
+          "yearRanges": [
+            "1998-2010",
+            "2011-2024"
+          ]
+        },
+        {
+          "modelKey": "pixo",
+          "modelName": "Pixo",
+          "yearRanges": [
+            "2009-2013"
+          ]
+        },
+        {
+          "modelKey": "primastar",
+          "modelName": "Primastar",
+          "yearRanges": [
+            "2002-2014",
+            "2015-2024"
+          ]
+        },
+        {
+          "modelKey": "pulsar",
+          "modelName": "Pulsar",
+          "yearRanges": [
+            "2014-2018"
+          ]
+        },
+        {
+          "modelKey": "qashqai",
+          "modelName": "Qashqai",
+          "yearRanges": [
+            "2007-2013",
+            "2014-2020",
+            "2021-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "x-trail",
+          "modelName": "X-trail",
+          "yearRanges": [
+            "2007-2013",
+            "2014-2021",
+            "2022-2024",
+            "2025-2026"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "almera",
+          "modelName": "Almera"
+        },
+        {
+          "modelSlug": "almera-classic",
+          "modelName": "Almera Classic"
+        },
+        {
+          "modelSlug": "atleon",
+          "modelName": "Atleon"
+        },
+        {
+          "modelSlug": "cabstar",
+          "modelName": "Cabstar"
+        },
+        {
+          "modelSlug": "e-nv200",
+          "modelName": "e-NV200"
+        },
+        {
+          "modelSlug": "frontier",
+          "modelName": "Frontier"
+        },
+        {
+          "modelSlug": "kubistar",
+          "modelName": "Kubistar"
+        },
+        {
+          "modelSlug": "lafesta-highway-star",
+          "modelName": "Lafesta Highway Star"
+        },
+        {
+          "modelSlug": "lp300",
+          "modelName": "Lp300"
+        },
+        {
+          "modelSlug": "march",
+          "modelName": "March"
+        },
+        {
+          "modelSlug": "murano",
+          "modelName": "Murano"
+        },
+        {
+          "modelSlug": "np300",
+          "modelName": "Np300"
+        },
+        {
+          "modelSlug": "nt400",
+          "modelName": "NT400"
+        },
+        {
+          "modelSlug": "nv-400",
+          "modelName": "Nv 400"
+        },
+        {
+          "modelSlug": "primera",
+          "modelName": "Primera"
+        },
+        {
+          "modelSlug": "rogue-sport",
+          "modelName": "Rogue Sport"
+        },
+        {
+          "modelSlug": "sentra",
+          "modelName": "Sentra"
+        },
+        {
+          "modelSlug": "serena",
+          "modelName": "Serena"
+        },
+        {
+          "modelSlug": "sylphy",
+          "modelName": "Sylphy"
+        },
+        {
+          "modelSlug": "teana",
+          "modelName": "Teana"
+        },
+        {
+          "modelSlug": "tiida",
+          "modelName": "Tiida"
+        },
+        {
+          "modelSlug": "titan",
+          "modelName": "Titan"
+        },
+        {
+          "modelSlug": "townstar",
+          "modelName": "Townstar"
+        },
+        {
+          "modelSlug": "versa",
+          "modelName": "Versa"
+        }
+      ]
+    },
+    "opel": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "adam",
+          "modelName": "Adam",
+          "yearRanges": [
+            "2013-2019"
+          ]
+        },
+        {
+          "modelKey": "agila",
+          "modelName": "Agila",
+          "yearRanges": [
+            "2008-2014"
+          ]
+        },
+        {
+          "modelKey": "antara",
+          "modelName": "Antara",
+          "yearRanges": [
+            "2007-2015"
+          ]
+        },
+        {
+          "modelKey": "astra",
+          "modelName": "Astra",
+          "yearRanges": [
+            "2010-2015",
+            "2016-2021",
+            "2022-2024"
+          ]
+        },
+        {
+          "modelKey": "cascada",
+          "modelName": "Cascada",
+          "yearRanges": [
+            "2013-2019"
+          ]
+        },
+        {
+          "modelKey": "combo",
+          "modelName": "Combo",
+          "yearRanges": [
+            "2012-2024"
+          ]
+        },
+        {
+          "modelKey": "corsa",
+          "modelName": "Corsa",
+          "yearRanges": [
+            "2006-2014",
+            "2015-2019",
+            "2020-2024"
+          ]
+        },
+        {
+          "modelKey": "insignia",
+          "modelName": "Insignia",
+          "yearRanges": [
+            "2009-2017",
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "karl",
+          "modelName": "Karl",
+          "yearRanges": [
+            "2015-2019"
+          ]
+        },
+        {
+          "modelKey": "meriva",
+          "modelName": "Meriva",
+          "yearRanges": [
+            "2010-2017"
+          ]
+        },
+        {
+          "modelKey": "mokka",
+          "modelName": "Mokka",
+          "yearRanges": [
+            "2013-2020",
+            "2021-2024"
+          ]
+        },
+        {
+          "modelKey": "movano",
+          "modelName": "Movano",
+          "yearRanges": [
+            "2010-2024"
+          ]
+        },
+        {
+          "modelKey": "vivaro",
+          "modelName": "Vivaro",
+          "yearRanges": [
+            "2014-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "aura",
+          "modelName": "Aura"
+        },
+        {
+          "modelSlug": "crossland-x",
+          "modelName": "Crossland X"
+        },
+        {
+          "modelSlug": "grandland-x",
+          "modelName": "Grandland X"
+        },
+        {
+          "modelSlug": "gt",
+          "modelName": "GT"
+        },
+        {
+          "modelSlug": "insignia-opc",
+          "modelName": "Insignia OPC"
+        },
+        {
+          "modelSlug": "rocks-e",
+          "modelName": "Rocks-e"
+        },
+        {
+          "modelSlug": "signum",
+          "modelName": "Signum"
+        },
+        {
+          "modelSlug": "tigra",
+          "modelName": "Tigra"
+        },
+        {
+          "modelSlug": "trax",
+          "modelName": "Trax"
+        },
+        {
+          "modelSlug": "vectra",
+          "modelName": "Vectra"
+        },
+        {
+          "modelSlug": "zafira",
+          "modelName": "Zafira"
+        },
+        {
+          "modelSlug": "zafira-tourer",
+          "modelName": "Zafira Tourer"
+        }
+      ]
+    },
+    "peugeot": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "108",
+          "modelName": "108",
+          "yearRanges": [
+            "2014-2021"
+          ]
+        },
+        {
+          "modelKey": "208",
+          "modelName": "208",
+          "yearRanges": [
+            "2012-2019",
+            "2020-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "307",
+          "modelName": "307",
+          "yearRanges": [
+            "2001-2008"
+          ]
+        },
+        {
+          "modelKey": "308",
+          "modelName": "308",
+          "yearRanges": [
+            "2007-2013",
+            "2014-2021",
+            "2022-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "407",
+          "modelName": "407",
+          "yearRanges": [
+            "2004-2011"
+          ]
+        },
+        {
+          "modelKey": "508",
+          "modelName": "508",
+          "yearRanges": [
+            "2011-2018",
+            "2019-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "2008",
+          "modelName": "2008",
+          "yearRanges": [
+            "2013-2019",
+            "2020-2024"
+          ]
+        },
+        {
+          "modelKey": "3008",
+          "modelName": "3008",
+          "yearRanges": [
+            "2009-2016",
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "4007",
+          "modelName": "4007",
+          "yearRanges": [
+            "2007-2012"
+          ]
+        },
+        {
+          "modelKey": "5008",
+          "modelName": "5008",
+          "yearRanges": [
+            "2009-2016",
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "boxer",
+          "modelName": "Boxer",
+          "yearRanges": [
+            "2006-2014",
+            "2015-2024"
+          ]
+        },
+        {
+          "modelKey": "expert",
+          "modelName": "Expert",
+          "yearRanges": [
+            "2007-2016",
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "partner",
+          "modelName": "Partner",
+          "yearRanges": [
+            "2008-2018",
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "rcz",
+          "modelName": "RCZ",
+          "yearRanges": [
+            "2010-2015"
+          ]
+        },
+        {
+          "modelKey": "rifter",
+          "modelName": "Rifter",
+          "yearRanges": [
+            "2018-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "106",
+          "modelName": "106"
+        },
+        {
+          "modelSlug": "107",
+          "modelName": "107"
+        },
+        {
+          "modelSlug": "206",
+          "modelName": "206"
+        },
+        {
+          "modelSlug": "207",
+          "modelName": "207"
+        },
+        {
+          "modelSlug": "301",
+          "modelName": "301"
+        },
+        {
+          "modelSlug": "306",
+          "modelName": "306"
+        },
+        {
+          "modelSlug": "406",
+          "modelName": "406"
+        },
+        {
+          "modelSlug": "408",
+          "modelName": "408"
+        },
+        {
+          "modelSlug": "607",
+          "modelName": "607"
+        },
+        {
+          "modelSlug": "806",
+          "modelName": "806"
+        },
+        {
+          "modelSlug": "807",
+          "modelName": "807"
+        },
+        {
+          "modelSlug": "1007",
+          "modelName": "1007"
+        },
+        {
+          "modelSlug": "4008",
+          "modelName": "4008"
+        },
+        {
+          "modelSlug": "6008",
+          "modelName": "6008"
+        },
+        {
+          "modelSlug": "bipper",
+          "modelName": "Bipper"
+        },
+        {
+          "modelSlug": "hoggar",
+          "modelName": "Hoggar"
+        },
+        {
+          "modelSlug": "landtrek",
+          "modelName": "Landtrek"
+        },
+        {
+          "modelSlug": "manager",
+          "modelName": "Manager"
+        },
+        {
+          "modelSlug": "ranch",
+          "modelName": "Ranch"
+        },
+        {
+          "modelSlug": "tepee",
+          "modelName": "Tepee"
+        },
+        {
+          "modelSlug": "traveller",
+          "modelName": "Traveller"
+        }
+      ]
+    },
+    "porsche": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "911",
+          "modelName": "911",
+          "yearRanges": [
+            "2005-2011",
+            "2012-2018",
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "718-boxster",
+          "modelName": "718 Boxster",
+          "yearRanges": [
+            "2016-2024"
+          ]
+        },
+        {
+          "modelKey": "718-cayman",
+          "modelName": "718 Cayman",
+          "yearRanges": [
+            "2016-2024"
+          ]
+        },
+        {
+          "modelKey": "911-gt3",
+          "modelName": "911 GT3",
+          "yearRanges": [
+            "2005-2011",
+            "2012-2018",
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "911-turbo",
+          "modelName": "911 Turbo",
+          "yearRanges": [
+            "2005-2011",
+            "2012-2018",
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "carrera",
+          "modelName": "Carrera",
+          "yearRanges": [
+            "2005-2011",
+            "2012-2018",
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "cayenne",
+          "modelName": "Cayenne",
+          "yearRanges": [
+            "2003-2010",
+            "2011-2017",
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "macan",
+          "modelName": "Macan",
+          "yearRanges": [
+            "2014-2018",
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "panamera",
+          "modelName": "Panamera",
+          "yearRanges": [
+            "2010-2016",
+            "2017-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "918",
+          "modelName": "918"
+        },
+        {
+          "modelSlug": "957",
+          "modelName": "957"
+        },
+        {
+          "modelSlug": "996",
+          "modelName": "996"
+        },
+        {
+          "modelSlug": "718-spyder",
+          "modelName": "718 Spyder"
+        },
+        {
+          "modelSlug": "911-carrera",
+          "modelName": "911 Carrera"
+        },
+        {
+          "modelSlug": "911-carrera-4",
+          "modelName": "911 Carrera 4"
+        },
+        {
+          "modelSlug": "911-carrera-4-cabriolet",
+          "modelName": "911 Carrera 4 Cabriolet"
+        },
+        {
+          "modelSlug": "911-carrera-4s",
+          "modelName": "911 Carrera 4S"
+        },
+        {
+          "modelSlug": "911-carrera-4s-cabriolet",
+          "modelName": "911 Carrera 4S Cabriolet"
+        },
+        {
+          "modelSlug": "911-carrera-cabriolet",
+          "modelName": "911 Carrera Cabriolet"
+        },
+        {
+          "modelSlug": "911-carrera-s",
+          "modelName": "911 Carrera S"
+        },
+        {
+          "modelSlug": "911-carrera-targa",
+          "modelName": "911 Carrera Targa"
+        },
+        {
+          "modelSlug": "911-carrera-targa-4s",
+          "modelName": "911 Carrera Targa 4S"
+        },
+        {
+          "modelSlug": "911-carrera-targa-cabriolet",
+          "modelName": "911 Carrera Targa Cabriolet"
+        },
+        {
+          "modelSlug": "911-gt3-rs",
+          "modelName": "911 GT3 RS"
+        },
+        {
+          "modelSlug": "911-targa-4",
+          "modelName": "911 Targa 4"
+        },
+        {
+          "modelSlug": "911-turbo-s",
+          "modelName": "911 Turbo S"
+        },
+        {
+          "modelSlug": "boxster",
+          "modelName": "Boxster"
+        },
+        {
+          "modelSlug": "boxster-s",
+          "modelName": "Boxster S"
+        },
+        {
+          "modelSlug": "cayenne-gts",
+          "modelName": "Cayenne GTS"
+        },
+        {
+          "modelSlug": "cayenne-s",
+          "modelName": "Cayenne S"
+        },
+        {
+          "modelSlug": "cayman",
+          "modelName": "Cayman"
+        },
+        {
+          "modelSlug": "macan-s",
+          "modelName": "Macan S"
+        },
+        {
+          "modelSlug": "macan-turbo",
+          "modelName": "Macan Turbo"
+        },
+        {
+          "modelSlug": "panamera-s",
+          "modelName": "Panamera S"
+        }
+      ]
+    },
+    "proton": {
+      "modelsWithYearData": [],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "x50",
+          "modelName": "X50"
+        }
+      ]
+    },
+    "ram": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "1500",
+          "modelName": "1500",
+          "yearRanges": [
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "2500",
+          "modelName": "2500",
+          "yearRanges": [
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "3500",
+          "modelName": "3500",
+          "yearRanges": [
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "promaster",
+          "modelName": "Promaster",
+          "yearRanges": [
+            "2014-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "5500",
+          "modelName": "5500"
+        },
+        {
+          "modelSlug": "1500-trx",
+          "modelName": "1500 TRX"
+        },
+        {
+          "modelSlug": "cargo-van",
+          "modelName": "Cargo Van"
+        },
+        {
+          "modelSlug": "chassis-cab",
+          "modelName": "Chassis Cab"
+        },
+        {
+          "modelSlug": "promaster-city",
+          "modelName": "ProMaster City"
+        }
+      ]
+    },
+    "renault": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "arkana",
+          "modelName": "Arkana",
+          "yearRanges": [
+            "2021-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "captur",
+          "modelName": "Captur",
+          "yearRanges": [
+            "2013-2019",
+            "2020-2024"
+          ]
+        },
+        {
+          "modelKey": "clio",
+          "modelName": "Clio",
+          "yearRanges": [
+            "2005-2012",
+            "2013-2019",
+            "2020-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "clio-rs",
+          "modelName": "Clio RS",
+          "yearRanges": [
+            "2013-2022"
+          ]
+        },
+        {
+          "modelKey": "espace",
+          "modelName": "Espace",
+          "yearRanges": [
+            "2003-2014",
+            "2015-2024"
+          ]
+        },
+        {
+          "modelKey": "fluence",
+          "modelName": "Fluence",
+          "yearRanges": [
+            "2010-2016"
+          ]
+        },
+        {
+          "modelKey": "kadjar",
+          "modelName": "Kadjar",
+          "yearRanges": [
+            "2016-2022"
+          ]
+        },
+        {
+          "modelKey": "kangoo",
+          "modelName": "Kangoo",
+          "yearRanges": [
+            "2008-2021",
+            "2021-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "koleos",
+          "modelName": "Koleos",
+          "yearRanges": [
+            "2008-2015",
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "laguna",
+          "modelName": "Laguna",
+          "yearRanges": [
+            "2007-2015"
+          ]
+        },
+        {
+          "modelKey": "master",
+          "modelName": "Master",
+          "yearRanges": [
+            "2010-2024"
+          ]
+        },
+        {
+          "modelKey": "megane",
+          "modelName": "Megane",
+          "yearRanges": [
+            "2003-2008",
+            "2009-2015",
+            "2016-2022",
+            "2023-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "megane-rs",
+          "modelName": "Megane RS",
+          "yearRanges": [
+            "2010-2017",
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "scenic",
+          "modelName": "Scenic",
+          "yearRanges": [
+            "2003-2009",
+            "2009-2016",
+            "2016-2023"
+          ]
+        },
+        {
+          "modelKey": "trafic",
+          "modelName": "Trafic",
+          "yearRanges": [
+            "2001-2014",
+            "2014-2024"
+          ]
+        },
+        {
+          "modelKey": "twingo",
+          "modelName": "Twingo",
+          "yearRanges": [
+            "2007-2014",
+            "2014-2024"
+          ]
+        },
+        {
+          "modelKey": "zoe",
+          "modelName": "Zoe",
+          "yearRanges": [
+            "2013-2019",
+            "2020-2024",
+            "2025-2026"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "alaskan",
+          "modelName": "Alaskan"
+        },
+        {
+          "modelSlug": "austral",
+          "modelName": "Austral"
+        },
+        {
+          "modelSlug": "avantime",
+          "modelName": "Avantime"
+        },
+        {
+          "modelSlug": "clio-gt",
+          "modelName": "Clio GT"
+        },
+        {
+          "modelSlug": "duster",
+          "modelName": "Duster"
+        },
+        {
+          "modelSlug": "express",
+          "modelName": "Express"
+        },
+        {
+          "modelSlug": "fluence-gt",
+          "modelName": "Fluence GT"
+        },
+        {
+          "modelSlug": "grand-kangoo",
+          "modelName": "Grand Kangoo"
+        },
+        {
+          "modelSlug": "grand-modus",
+          "modelName": "Grand Modus"
+        },
+        {
+          "modelSlug": "grand-scenic",
+          "modelName": "Grand Scenic"
+        },
+        {
+          "modelSlug": "kangoo-be-bop",
+          "modelName": "Kangoo be bop"
+        },
+        {
+          "modelSlug": "kwid",
+          "modelName": "KWID"
+        },
+        {
+          "modelSlug": "latitude",
+          "modelName": "Latitude"
+        },
+        {
+          "modelSlug": "logan",
+          "modelName": "Logan"
+        },
+        {
+          "modelSlug": "mascott",
+          "modelName": "Mascott"
+        },
+        {
+          "modelSlug": "maxity",
+          "modelName": "Maxity"
+        },
+        {
+          "modelSlug": "megane-gt",
+          "modelName": "Megane GT"
+        },
+        {
+          "modelSlug": "modus",
+          "modelName": "Modus"
+        },
+        {
+          "modelSlug": "sandero",
+          "modelName": "Sandero"
+        },
+        {
+          "modelSlug": "symbol",
+          "modelName": "Symbol"
+        },
+        {
+          "modelSlug": "talisman",
+          "modelName": "Talisman"
+        },
+        {
+          "modelSlug": "vel-satis",
+          "modelName": "Vel Satis"
+        }
+      ]
+    },
+    "rolls-royce": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "cullinan",
+          "modelName": "Cullinan",
+          "yearRanges": [
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "dawn",
+          "modelName": "Dawn",
+          "yearRanges": [
+            "2016-2024"
+          ]
+        },
+        {
+          "modelKey": "ghost",
+          "modelName": "Ghost",
+          "yearRanges": [
+            "2010-2024"
+          ]
+        },
+        {
+          "modelKey": "phantom",
+          "modelName": "Phantom",
+          "yearRanges": [
+            "2003-2024"
+          ]
+        },
+        {
+          "modelKey": "wraith",
+          "modelName": "Wraith",
+          "yearRanges": [
+            "2014-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": []
+    },
+    "saab": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "9-3",
+          "modelName": "9-3",
+          "yearRanges": [
+            "2003-2014"
+          ]
+        },
+        {
+          "modelKey": "9-5",
+          "modelName": "9-5",
+          "yearRanges": [
+            "2006-2012"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "9-7",
+          "modelName": "9-7"
+        }
+      ]
+    },
+    "seat": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "alhambra",
+          "modelName": "Alhambra",
+          "yearRanges": [
+            "2010-2020"
+          ]
+        },
+        {
+          "modelKey": "arona",
+          "modelName": "Arona",
+          "yearRanges": [
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "ateca",
+          "modelName": "Ateca",
+          "yearRanges": [
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "exeo",
+          "modelName": "Exeo",
+          "yearRanges": [
+            "2009-2013"
+          ]
+        },
+        {
+          "modelKey": "ibiza",
+          "modelName": "Ibiza",
+          "yearRanges": [
+            "2008-2012",
+            "2013-2017",
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "leon",
+          "modelName": "Leon",
+          "yearRanges": [
+            "2005-2012",
+            "2013-2020",
+            "2021-2024"
+          ]
+        },
+        {
+          "modelKey": "leon-cupra",
+          "modelName": "Leon Cupra",
+          "yearRanges": [
+            "2014-2020"
+          ]
+        },
+        {
+          "modelKey": "mii",
+          "modelName": "Mii",
+          "yearRanges": [
+            "2012-2021"
+          ]
+        },
+        {
+          "modelKey": "tarraco",
+          "modelName": "Tarraco",
+          "yearRanges": [
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "toledo",
+          "modelName": "Toledo",
+          "yearRanges": [
+            "2013-2019"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "altea",
+          "modelName": "Altea"
+        },
+        {
+          "modelSlug": "altea-freetrack",
+          "modelName": "Altea Freetrack"
+        },
+        {
+          "modelSlug": "altea-xl",
+          "modelName": "Altea XL"
+        },
+        {
+          "modelSlug": "arosa",
+          "modelName": "Arosa"
+        },
+        {
+          "modelSlug": "cordoba",
+          "modelName": "Cordoba"
+        },
+        {
+          "modelSlug": "cordoba-vario",
+          "modelName": "Cordoba Vario"
+        },
+        {
+          "modelSlug": "cupra-ateca",
+          "modelName": "Cupra Ateca"
+        },
+        {
+          "modelSlug": "exeo-st",
+          "modelName": "Exeo ST"
+        },
+        {
+          "modelSlug": "ibiza-sc",
+          "modelName": "Ibiza SC"
+        },
+        {
+          "modelSlug": "ibiza-st",
+          "modelName": "Ibiza ST"
+        },
+        {
+          "modelSlug": "leon-fr",
+          "modelName": "Leon FR"
+        },
+        {
+          "modelSlug": "leon-sc",
+          "modelName": "Leon SC"
+        },
+        {
+          "modelSlug": "leon-st",
+          "modelName": "Leon ST"
+        }
+      ]
+    },
+    "skoda": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "citigo",
+          "modelName": "Citigo",
+          "yearRanges": [
+            "2012-2019"
+          ]
+        },
+        {
+          "modelKey": "fabia",
+          "modelName": "Fabia",
+          "yearRanges": [
+            "2007-2014",
+            "2015-2021",
+            "2022-2024"
+          ]
+        },
+        {
+          "modelKey": "kamiq",
+          "modelName": "Kamiq",
+          "yearRanges": [
+            "2020-2024"
+          ]
+        },
+        {
+          "modelKey": "karoq",
+          "modelName": "Karoq",
+          "yearRanges": [
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "kodiaq",
+          "modelName": "Kodiaq",
+          "yearRanges": [
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "octavia",
+          "modelName": "Octavia",
+          "yearRanges": [
+            "2004-2013",
+            "2014-2019",
+            "2020-2024"
+          ]
+        },
+        {
+          "modelKey": "rapid",
+          "modelName": "Rapid",
+          "yearRanges": [
+            "2013-2019"
+          ]
+        },
+        {
+          "modelKey": "roomster",
+          "modelName": "Roomster",
+          "yearRanges": [
+            "2006-2015"
+          ]
+        },
+        {
+          "modelKey": "superb",
+          "modelName": "Superb",
+          "yearRanges": [
+            "2008-2015",
+            "2015-2024"
+          ]
+        },
+        {
+          "modelKey": "yeti",
+          "modelName": "Yeti",
+          "yearRanges": [
+            "2009-2017"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "fabia-combi",
+          "modelName": "Fabia Combi"
+        },
+        {
+          "modelSlug": "octavia-rs",
+          "modelName": "Octavia RS"
+        },
+        {
+          "modelSlug": "octavia-rs-iv",
+          "modelName": "Octavia RS iV"
+        },
+        {
+          "modelSlug": "praktik",
+          "modelName": "Praktik"
+        },
+        {
+          "modelSlug": "rapid-spaceback",
+          "modelName": "Rapid Spaceback"
+        }
+      ]
+    },
+    "smart": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "forfour",
+          "modelName": "forfour",
+          "yearRanges": [
+            "2015-2024"
+          ]
+        },
+        {
+          "modelKey": "fortwo",
+          "modelName": "fortwo",
+          "yearRanges": [
+            "2007-2014",
+            "2015-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": []
+    },
+    "ssangyong": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "actyon",
+          "modelName": "Actyon",
+          "yearRanges": [
+            "2006-2013"
+          ]
+        },
+        {
+          "modelKey": "korando",
+          "modelName": "Korando",
+          "yearRanges": [
+            "2011-2024"
+          ]
+        },
+        {
+          "modelKey": "rexton",
+          "modelName": "Rexton",
+          "yearRanges": [
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "rodius",
+          "modelName": "Rodius",
+          "yearRanges": [
+            "2005-2013"
+          ]
+        },
+        {
+          "modelKey": "tivoli",
+          "modelName": "Tivoli",
+          "yearRanges": [
+            "2015-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "stavic",
+          "modelName": "Stavic"
+        },
+        {
+          "modelSlug": "xlv",
+          "modelName": "XLV"
+        }
+      ]
+    },
+    "subaru": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "brz",
+          "modelName": "BRZ",
+          "yearRanges": [
+            "2013-2024"
+          ]
+        },
+        {
+          "modelKey": "crosstrek",
+          "modelName": "Crosstrek",
+          "yearRanges": [
+            "2024-2026"
+          ]
+        },
+        {
+          "modelKey": "forester",
+          "modelName": "Forester",
+          "yearRanges": [
+            "2002-2007",
+            "2008-2012",
+            "2013-2018",
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "impreza",
+          "modelName": "Impreza",
+          "yearRanges": [
+            "2000-2007",
+            "2008-2016",
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "legacy",
+          "modelName": "Legacy",
+          "yearRanges": [
+            "2004-2009",
+            "2010-2024"
+          ]
+        },
+        {
+          "modelKey": "levorg",
+          "modelName": "Levorg",
+          "yearRanges": [
+            "2015-2024"
+          ]
+        },
+        {
+          "modelKey": "outback",
+          "modelName": "Outback",
+          "yearRanges": [
+            "2004-2009",
+            "2010-2014",
+            "2015-2024"
+          ]
+        },
+        {
+          "modelKey": "wrx",
+          "modelName": "Wrx",
+          "yearRanges": [
+            "2001-2007",
+            "2008-2014",
+            "2015-2024"
+          ]
+        },
+        {
+          "modelKey": "wrx-sti",
+          "modelName": "WRX STi",
+          "yearRanges": [
+            "2001-2007",
+            "2008-2014",
+            "2015-2021"
+          ]
+        },
+        {
+          "modelKey": "xv",
+          "modelName": "XV",
+          "yearRanges": [
+            "2012-2017",
+            "2018-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "ascent",
+          "modelName": "Ascent"
+        },
+        {
+          "modelSlug": "b9-tribeca",
+          "modelName": "B9 Tribeca"
+        },
+        {
+          "modelSlug": "forester-ts",
+          "modelName": "Forester tS"
+        },
+        {
+          "modelSlug": "impreza-wrx",
+          "modelName": "Impreza WRX"
+        },
+        {
+          "modelSlug": "liberty",
+          "modelName": "Liberty"
+        },
+        {
+          "modelSlug": "traviq",
+          "modelName": "Traviq"
+        },
+        {
+          "modelSlug": "trezia",
+          "modelName": "Trezia"
+        },
+        {
+          "modelSlug": "wrx-s4",
+          "modelName": "WRX S4"
+        }
+      ]
+    },
+    "suzuki": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "alto",
+          "modelName": "Alto",
+          "yearRanges": [
+            "2009-2014"
+          ]
+        },
+        {
+          "modelKey": "baleno",
+          "modelName": "Baleno",
+          "yearRanges": [
+            "2016-2022"
+          ]
+        },
+        {
+          "modelKey": "grand-vitara",
+          "modelName": "Grand Vitara",
+          "yearRanges": [
+            "2005-2015"
+          ]
+        },
+        {
+          "modelKey": "ignis",
+          "modelName": "Ignis",
+          "yearRanges": [
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "jimny",
+          "modelName": "Jimny",
+          "yearRanges": [
+            "1998-2018",
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "s-cross",
+          "modelName": "S-Cross",
+          "yearRanges": [
+            "2014-2024"
+          ]
+        },
+        {
+          "modelKey": "splash",
+          "modelName": "Splash",
+          "yearRanges": [
+            "2008-2015"
+          ]
+        },
+        {
+          "modelKey": "swift",
+          "modelName": "Swift",
+          "yearRanges": [
+            "2005-2010",
+            "2011-2017",
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "sx4",
+          "modelName": "Sx4",
+          "yearRanges": [
+            "2006-2014"
+          ]
+        },
+        {
+          "modelKey": "vitara",
+          "modelName": "Vitara",
+          "yearRanges": [
+            "2015-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "forenza",
+          "modelName": "Forenza"
+        },
+        {
+          "modelSlug": "new-sx4",
+          "modelName": "New SX4"
+        },
+        {
+          "modelSlug": "reno",
+          "modelName": "Reno"
+        },
+        {
+          "modelSlug": "sx4-s-cross",
+          "modelName": "SX4 S-Cross"
+        },
+        {
+          "modelSlug": "wagon-r",
+          "modelName": "Wagon R+"
+        }
+      ]
+    },
+    "toyota": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "auris",
+          "modelName": "Auris",
+          "yearRanges": [
+            "2007-2012",
+            "2013-2018"
+          ]
+        },
+        {
+          "modelKey": "avensis",
+          "modelName": "Avensis",
+          "yearRanges": [
+            "2003-2008",
+            "2009-2018"
+          ]
+        },
+        {
+          "modelKey": "aygo",
+          "modelName": "Aygo",
+          "yearRanges": [
+            "2005-2013",
+            "2014-2021"
+          ]
+        },
+        {
+          "modelKey": "camry",
+          "modelName": "Camry",
+          "yearRanges": [
+            "1997-2001",
+            "2002-2006",
+            "2007-2011",
+            "2012-2017",
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "corolla",
+          "modelName": "Corolla",
+          "yearRanges": [
+            "1997-2001",
+            "2002-2006",
+            "2007-2013",
+            "2014-2018",
+            "2019-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "gt86",
+          "modelName": "GT86",
+          "yearRanges": [
+            "2012-2021"
+          ]
+        },
+        {
+          "modelKey": "highlander",
+          "modelName": "Highlander",
+          "yearRanges": [
+            "2001-2007",
+            "2008-2013",
+            "2014-2019",
+            "2020-2024"
+          ]
+        },
+        {
+          "modelKey": "hilux",
+          "modelName": "Hilux",
+          "yearRanges": [
+            "1998-2004",
+            "2005-2015",
+            "2016-2024"
+          ]
+        },
+        {
+          "modelKey": "land-cruiser",
+          "modelName": "Land Cruiser",
+          "yearRanges": [
+            "1998-2007",
+            "2008-2015",
+            "2016-2021",
+            "2022-2024"
+          ]
+        },
+        {
+          "modelKey": "prius",
+          "modelName": "Prius",
+          "yearRanges": [
+            "1997-2003",
+            "2004-2009",
+            "2010-2015",
+            "2016-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "proace",
+          "modelName": "Proace",
+          "yearRanges": [
+            "2013-2016",
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "rav4",
+          "modelName": "RAV4",
+          "yearRanges": [
+            "1994-2000",
+            "2001-2005",
+            "2006-2012",
+            "2013-2018",
+            "2019-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "supra",
+          "modelName": "Supra",
+          "yearRanges": [
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "verso",
+          "modelName": "Verso",
+          "yearRanges": [
+            "2009-2018"
+          ]
+        },
+        {
+          "modelKey": "yaris",
+          "modelName": "Yaris",
+          "yearRanges": [
+            "1999-2005",
+            "2006-2011",
+            "2012-2019",
+            "2020-2024",
+            "2025-2026"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "4runner",
+          "modelName": "4Runner"
+        },
+        {
+          "modelSlug": "allex",
+          "modelName": "Allex"
+        },
+        {
+          "modelSlug": "allion",
+          "modelName": "Allion"
+        },
+        {
+          "modelSlug": "alphard",
+          "modelName": "Alphard"
+        },
+        {
+          "modelSlug": "altezza",
+          "modelName": "Altezza"
+        },
+        {
+          "modelSlug": "aurion",
+          "modelName": "Aurion"
+        },
+        {
+          "modelSlug": "avalon",
+          "modelName": "Avalon"
+        },
+        {
+          "modelSlug": "avensis-verso",
+          "modelName": "Avensis Verso"
+        },
+        {
+          "modelSlug": "bb",
+          "modelName": "bB"
+        },
+        {
+          "modelSlug": "belta",
+          "modelName": "Belta"
+        },
+        {
+          "modelSlug": "blade",
+          "modelName": "Blade"
+        },
+        {
+          "modelSlug": "ch-r",
+          "modelName": "CH-R"
+        },
+        {
+          "modelSlug": "corolla-altis",
+          "modelName": "Corolla Altis"
+        },
+        {
+          "modelSlug": "corolla-axio",
+          "modelName": "Corolla Axio"
+        },
+        {
+          "modelSlug": "corolla-verso",
+          "modelName": "Corolla Verso"
+        },
+        {
+          "modelSlug": "crown",
+          "modelName": "Crown"
+        },
+        {
+          "modelSlug": "crown-majesta",
+          "modelName": "Crown Majesta"
+        },
+        {
+          "modelSlug": "dyna",
+          "modelName": "Dyna"
+        },
+        {
+          "modelSlug": "estima",
+          "modelName": "Estima"
+        },
+        {
+          "modelSlug": "etios",
+          "modelName": "Etios"
+        },
+        {
+          "modelSlug": "fj-cruiser",
+          "modelName": "FJ Cruiser"
+        },
+        {
+          "modelSlug": "fortuner",
+          "modelName": "Fortuner"
+        },
+        {
+          "modelSlug": "harrier",
+          "modelName": "Harrier"
+        },
+        {
+          "modelSlug": "hiace",
+          "modelName": "Hiace"
+        },
+        {
+          "modelSlug": "hilux-surf",
+          "modelName": "Hilux Surf"
+        },
+        {
+          "modelSlug": "hilux-vigo",
+          "modelName": "Hilux Vigo"
+        },
+        {
+          "modelSlug": "hilux-vigo-8th",
+          "modelName": "Hilux / Vigo (8th)"
+        },
+        {
+          "modelSlug": "innova",
+          "modelName": "Innova"
+        },
+        {
+          "modelSlug": "iq",
+          "modelName": "iQ"
+        },
+        {
+          "modelSlug": "ist",
+          "modelName": "Ist"
+        },
+        {
+          "modelSlug": "kluger",
+          "modelName": "Kluger"
+        },
+        {
+          "modelSlug": "land-cruiser-prado",
+          "modelName": "Land Cruiser Prado"
+        },
+        {
+          "modelSlug": "levin",
+          "modelName": "Levin"
+        },
+        {
+          "modelSlug": "limo",
+          "modelName": "Limo"
+        },
+        {
+          "modelSlug": "mark",
+          "modelName": "Mark"
+        },
+        {
+          "modelSlug": "mark-x",
+          "modelName": "Mark X"
+        },
+        {
+          "modelSlug": "matrix",
+          "modelName": "Matrix"
+        },
+        {
+          "modelSlug": "platz",
+          "modelName": "Platz"
+        },
+        {
+          "modelSlug": "premio",
+          "modelName": "Premio"
+        },
+        {
+          "modelSlug": "previa",
+          "modelName": "Previa"
+        },
+        {
+          "modelSlug": "proace-city",
+          "modelName": "Proace City"
+        },
+        {
+          "modelSlug": "proace-verso",
+          "modelName": "Proace Verso"
+        },
+        {
+          "modelSlug": "quantum",
+          "modelName": "Quantum"
+        },
+        {
+          "modelSlug": "ractis",
+          "modelName": "Ractis"
+        },
+        {
+          "modelSlug": "reiz",
+          "modelName": "Reiz"
+        },
+        {
+          "modelSlug": "scepter",
+          "modelName": "Scepter"
+        },
+        {
+          "modelSlug": "sequoia",
+          "modelName": "Sequoia"
+        },
+        {
+          "modelSlug": "sienna",
+          "modelName": "Sienna"
+        },
+        {
+          "modelSlug": "spade",
+          "modelName": "Spade"
+        },
+        {
+          "modelSlug": "sw4",
+          "modelName": "SW4"
+        },
+        {
+          "modelSlug": "tacoma",
+          "modelName": "Tacoma"
+        },
+        {
+          "modelSlug": "tarago",
+          "modelName": "Tarago"
+        },
+        {
+          "modelSlug": "trezia",
+          "modelName": "Trezia"
+        },
+        {
+          "modelSlug": "tundra",
+          "modelName": "Tundra"
+        },
+        {
+          "modelSlug": "urban-cruiser",
+          "modelName": "Urban Cruiser"
+        },
+        {
+          "modelSlug": "vanguard",
+          "modelName": "Vanguard"
+        },
+        {
+          "modelSlug": "venza",
+          "modelName": "Venza"
+        },
+        {
+          "modelSlug": "verso-s",
+          "modelName": "Verso S"
+        },
+        {
+          "modelSlug": "vigo",
+          "modelName": "Vigo"
+        },
+        {
+          "modelSlug": "vios",
+          "modelName": "Vios"
+        },
+        {
+          "modelSlug": "vitz",
+          "modelName": "Vitz"
+        },
+        {
+          "modelSlug": "wish",
+          "modelName": "Wish"
+        },
+        {
+          "modelSlug": "yaris-ia",
+          "modelName": "Yaris iA"
+        },
+        {
+          "modelSlug": "yaris-l",
+          "modelName": "Yaris L"
+        },
+        {
+          "modelSlug": "yaris-r",
+          "modelName": "Yaris R"
+        },
+        {
+          "modelSlug": "yaris-sport",
+          "modelName": "Yaris Sport"
+        },
+        {
+          "modelSlug": "yaris-verso",
+          "modelName": "Yaris Verso"
+        }
+      ]
+    },
+    "vauxhall": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "astra",
+          "modelName": "Astra",
+          "yearRanges": [
+            "2004-2009",
+            "2010-2015",
+            "2016-2021",
+            "2022-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "combo",
+          "modelName": "Combo",
+          "yearRanges": [
+            "2012-2018",
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "corsa",
+          "modelName": "Corsa",
+          "yearRanges": [
+            "2006-2010",
+            "2011-2014",
+            "2015-2019",
+            "2020-2024",
+            "2025-2026"
+          ]
+        },
+        {
+          "modelKey": "insignia",
+          "modelName": "Insignia",
+          "yearRanges": [
+            "2009-2013",
+            "2014-2017",
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "mokka",
+          "modelName": "Mokka",
+          "yearRanges": [
+            "2013-2019",
+            "2020-2024"
+          ]
+        },
+        {
+          "modelKey": "movano",
+          "modelName": "Movano",
+          "yearRanges": [
+            "2010-2021"
+          ]
+        },
+        {
+          "modelKey": "vivaro",
+          "modelName": "Vivaro",
+          "yearRanges": [
+            "2014-2019",
+            "2020-2024"
+          ]
+        },
+        {
+          "modelKey": "zafira",
+          "modelName": "Zafira",
+          "yearRanges": [
+            "2005-2014",
+            "2015-2019"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "adam",
+          "modelName": "Adam"
+        },
+        {
+          "modelSlug": "agila",
+          "modelName": "Agila"
+        },
+        {
+          "modelSlug": "antara",
+          "modelName": "Antara"
+        },
+        {
+          "modelSlug": "aura",
+          "modelName": "Aura"
+        },
+        {
+          "modelSlug": "crossland-x",
+          "modelName": "Crossland X"
+        },
+        {
+          "modelSlug": "grandland-x",
+          "modelName": "Grandland X"
+        },
+        {
+          "modelSlug": "insignia-opc",
+          "modelName": "Insignia OPC"
+        },
+        {
+          "modelSlug": "meriva",
+          "modelName": "Meriva"
+        },
+        {
+          "modelSlug": "signum",
+          "modelName": "Signum"
+        },
+        {
+          "modelSlug": "tigra",
+          "modelName": "Tigra"
+        },
+        {
+          "modelSlug": "trax",
+          "modelName": "Trax"
+        },
+        {
+          "modelSlug": "vectra",
+          "modelName": "Vectra"
+        }
+      ]
+    },
+    "volvo": {
+      "modelsWithYearData": [
+        {
+          "modelKey": "c30",
+          "modelName": "C30",
+          "yearRanges": [
+            "2007-2013"
+          ]
+        },
+        {
+          "modelKey": "c70",
+          "modelName": "C70",
+          "yearRanges": [
+            "2006-2013"
+          ]
+        },
+        {
+          "modelKey": "s40",
+          "modelName": "S40",
+          "yearRanges": [
+            "2004-2012"
+          ]
+        },
+        {
+          "modelKey": "s60",
+          "modelName": "S60",
+          "yearRanges": [
+            "2010-2018",
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "s80",
+          "modelName": "S80",
+          "yearRanges": [
+            "1998-2006",
+            "2007-2016"
+          ]
+        },
+        {
+          "modelKey": "v40",
+          "modelName": "V40",
+          "yearRanges": [
+            "2013-2019"
+          ]
+        },
+        {
+          "modelKey": "v50",
+          "modelName": "V50",
+          "yearRanges": [
+            "2004-2012"
+          ]
+        },
+        {
+          "modelKey": "v60",
+          "modelName": "V60",
+          "yearRanges": [
+            "2011-2018",
+            "2019-2024"
+          ]
+        },
+        {
+          "modelKey": "v70",
+          "modelName": "V70",
+          "yearRanges": [
+            "1997-2007",
+            "2008-2016"
+          ]
+        },
+        {
+          "modelKey": "v90",
+          "modelName": "V90",
+          "yearRanges": [
+            "2017-2024"
+          ]
+        },
+        {
+          "modelKey": "xc40",
+          "modelName": "XC40",
+          "yearRanges": [
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "xc60",
+          "modelName": "XC60",
+          "yearRanges": [
+            "2009-2017",
+            "2018-2024"
+          ]
+        },
+        {
+          "modelKey": "xc70",
+          "modelName": "XC70",
+          "yearRanges": [
+            "2000-2007",
+            "2008-2016"
+          ]
+        },
+        {
+          "modelKey": "xc90",
+          "modelName": "XC90",
+          "yearRanges": [
+            "2015-2024"
+          ]
+        }
+      ],
+      "modelsWithoutYearData": [
+        {
+          "modelSlug": "fe",
+          "modelName": "FE"
+        }
+      ]
+    }
+  }
+}

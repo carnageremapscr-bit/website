@@ -84,46 +84,16 @@ function safeLoadJson(relativePath) {
   return null;
 }
 
-const mergedYearEnginesFromCsv = safeLoadJson('vehicle-engine-db-merged-from-csv.json');
-let cachedCsvEnginesByModel = null;
+// Use the smart-merged database (CSV engines assigned to correct year ranges)
+const smartMergedYearEngines = safeLoadJson('vehicle-engine-db-smart-merged.json');
+let cachedSmartMergedEngines = null;
 
-function getCsvEnginesByModel() {
-  if (cachedCsvEnginesByModel) return cachedCsvEnginesByModel;
-
-  const result = {};
-  if (!mergedYearEnginesFromCsv || typeof mergedYearEnginesFromCsv !== 'object') {
-    cachedCsvEnginesByModel = result;
-    return result;
-  }
-
-  for (const [make, models] of Object.entries(mergedYearEnginesFromCsv)) {
-    if (!models || typeof models !== 'object') continue;
-    const modelMap = {};
-
-    for (const [modelSlug, years] of Object.entries(models)) {
-      if (!years || typeof years !== 'object') continue;
-      const engineSet = new Set();
-
-      for (const engines of Object.values(years)) {
-        if (!Array.isArray(engines)) continue;
-        for (const e of engines) {
-          const label = String(e || '').trim();
-          if (label) engineSet.add(label);
-        }
-      }
-
-      if (engineSet.size > 0) {
-        modelMap[modelSlug] = Array.from(engineSet);
-      }
-    }
-
-    if (Object.keys(modelMap).length > 0) {
-      result[make] = modelMap;
-    }
-  }
-
-  cachedCsvEnginesByModel = result;
-  return result;
+function getSmartMergedYearEngines() {
+  if (cachedSmartMergedEngines) return cachedSmartMergedEngines;
+  
+  // Use smart merged if available, otherwise fall back to original DB
+  cachedSmartMergedEngines = smartMergedYearEngines || CarnageVehicleDB.VEHICLE_ENGINE_DATABASE;
+  return cachedSmartMergedEngines;
 }
 // Multer for handling file uploads
 const multer = require('multer');
@@ -1728,12 +1698,11 @@ app.get('/api/vehicles', (req, res) => {
   res.setHeader('Cache-Control', 'no-cache'); // Don't cache so updates reflect immediately
 
   const core = CarnageVehicleDB.getAPIData();
-  const csvEngines = getCsvEnginesByModel();
+  const smartMerged = getSmartMergedYearEngines();
 
   res.json({
     models: core.models || {},
-    yearEngines: core.yearEngines || {},
-    csvEngines: csvEngines || {}
+    yearEngines: smartMerged || core.yearEngines || {}
   });
 });
 
