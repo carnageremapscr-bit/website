@@ -27,6 +27,8 @@ const stripe = stripeConfigured ? require('stripe')(STRIPE_KEY) : null;
 
 // Vehicle data lookup (CheckCarDetails)
 const CHECKCAR_API_KEY = process.env.CHECKCAR_API_KEY || '';
+const CHECKCAR_LIVE_API_KEY = process.env.CHECKCAR_LIVE_API_KEY || CHECKCAR_API_KEY;
+const CHECKCAR_TEST_API_KEY = process.env.CHECKCAR_TEST_API_KEY || 'e80ce7141c39ae0b111a1999f6a0891b';
 const CHECKCAR_DATAPOINT = process.env.CHECKCAR_DATAPOINT || 'ukvehicledata';
 
 // DVLA Open Data API
@@ -54,6 +56,8 @@ console.log('===========================');
 
 console.log('=== VRM Lookup Configuration ===');
 console.log('CHECKCAR_API_KEY set:', !!CHECKCAR_API_KEY);
+console.log('CHECKCAR_LIVE_API_KEY set:', !!CHECKCAR_LIVE_API_KEY);
+console.log('CHECKCAR_TEST_API_KEY set:', !!CHECKCAR_TEST_API_KEY);
 console.log('CHECKCAR_DATAPOINT:', CHECKCAR_DATAPOINT);
 console.log('DVLA_API_KEY set:', !!DVLA_API_KEY);
 console.log('DVLA_API_BASE_URL:', DVLA_API_BASE_URL);
@@ -2050,37 +2054,73 @@ app.get('/api/vrm-lookup', async (req, res) => {
     }
     */
     
-    // Prefer env key; if missing, fall back to provided test key (letters must include 'A')
-    const apiKey = CHECKCAR_API_KEY || 'e80ce7141c39ae0b111a1999f6a0891b';
+    const testApiKey = CHECKCAR_TEST_API_KEY;
+    const liveApiKey = CHECKCAR_LIVE_API_KEY;
 
-    if (!apiKey) {
-      console.warn('⚠️ CHECKCAR_API_KEY not configured');
+    if (!testApiKey && !liveApiKey) {
+      console.warn('⚠️ No CheckCar API keys configured');
       return res.status(500).json({ error: 'VRM lookup is not configured' });
     }
 
     const vrm = vrmRaw.replace(/\s+/g, '').toUpperCase();
     // Default to vehiclespecs for richer data, allow explicit override
     const datapoint = (req.query.datapoint || 'vehiclespecs').toString().trim();
-    const url = `https://api.checkcardetails.co.uk/vehicledata/${encodeURIComponent(datapoint)}?apikey=${encodeURIComponent(apiKey)}&vrm=${encodeURIComponent(vrm)}`;
+    const buildProviderUrl = (apiKey) => `https://api.checkcardetails.co.uk/vehicledata/${encodeURIComponent(datapoint)}?apikey=${encodeURIComponent(apiKey)}&vrm=${encodeURIComponent(vrm)}`;
+    const isLimitExceeded = (statusCode, body) => {
+      const text = `${statusCode} ${typeof body === 'string' ? body : JSON.stringify(body || {})}`.toLowerCase();
+      return (
+        text.includes('daily limit') ||
+        text.includes('limit exceeded') ||
+        text.includes('quota exceeded') ||
+        text.includes('rate limit') ||
+        text.includes('usage limit')
+      );
+    };
+
+    const callProvider = async (apiKey, keyType) => {
+      const providerResp = await fetch(buildProviderUrl(apiKey), { headers: { 'Accept': 'application/json' } });
+      const rawText = await providerResp.text();
+      let providerJson = null;
+
+      try {
+        providerJson = JSON.parse(rawText);
+      } catch (err) {
+        console.warn('⚠️ Failed to parse provider response as JSON');
+      }
+
+      return {
+        keyType,
+        providerResp,
+        rawText,
+        providerJson,
+        ok: providerResp.ok
+      };
+    };
 
     console.log(`📍 VRM Lookup: ${vrm} via ${datapoint}`);
+    const primaryKey = testApiKey || liveApiKey;
+    const primaryType = testApiKey ? 'test' : 'live';
+    let lookupResult = await callProvider(primaryKey, primaryType);
 
-    const providerResp = await fetch(url, { headers: { 'Accept': 'application/json' } });
-    const rawText = await providerResp.text();
-    let providerJson = null;
+    const shouldFallbackToLive =
+      lookupResult.keyType === 'test' &&
+      !!liveApiKey &&
+      liveApiKey !== primaryKey &&
+      isLimitExceeded(lookupResult.providerResp.status, lookupResult.providerJson || lookupResult.rawText);
 
-    try {
-      providerJson = JSON.parse(rawText);
-    } catch (err) {
-      // Keep raw text when JSON parse fails
-      console.warn('⚠️ Failed to parse provider response as JSON');
+    if (shouldFallbackToLive) {
+      console.warn('⚠️ CheckCar test key limit reached - retrying with live key');
+      lookupResult = await callProvider(liveApiKey, 'live');
     }
+
+    const { providerResp, rawText, providerJson } = lookupResult;
 
     if (!providerResp.ok) {
       console.error(`❌ Provider error (${providerResp.status}):`, providerJson?.error || rawText?.substring(0, 200));
       return res.status(providerResp.status).json({
         error: providerJson?.error || providerJson?.message || 'Lookup failed',
         providerStatus: providerResp.status,
+        providerKeyType: lookupResult.keyType,
         providerBody: providerJson || rawText
       });
     }
@@ -2092,6 +2132,7 @@ app.get('/api/vrm-lookup', async (req, res) => {
       vrm,
       datapoint,
       provider: 'checkcardetails',
+      providerKeyType: lookupResult.keyType,
       vehicle,
       providerStatus: providerResp.status
     });
