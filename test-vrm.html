@@ -9,9 +9,9 @@
     :root {
       --accent-color: #dc2626;
       --accent-light: #ef4444;
-      --brand-primary: #16c1ce;
-      --brand-secondary: #0ea5b9;
-      --brand-rgb: 22, 193, 206;
+      --brand-primary: #dc2626;
+      --brand-secondary: #ef4444;
+      --brand-rgb: 220, 38, 38;
       --gold-color: #ffc107;
       --text-muted: #a3a3a3;
       --surface-strong: rgba(10, 10, 10, 0.62);
@@ -20,7 +20,7 @@
       --surface-mid: rgba(18, 18, 18, 0.78);
       --plate-bg: rgba(238, 209, 76, 0.45);
       --plate-input-bg: rgba(238, 209, 76, 0.34);
-      --plate-flag-bg: rgba(var(--brand-rgb), 0.52);
+      --plate-flag-bg: #0e42ae;
       --plate-border: rgba(var(--brand-rgb), 0.72);
       --bg-dark: transparent;
       --bg-panel: transparent;
@@ -190,7 +190,7 @@
     .contact-btn:active { transform: translateY(0); }
     .contact-btn.wa { background: #25D366 !important; }
     .contact-btn.email { background: #EA4335 !important; }
-    .contact-btn.sms { background: #0088cc !important; }
+    .contact-btn.sms { background: var(--brand-primary) !important; }
     .status {
       margin-top: 14px;
       padding: 10px 12px;
@@ -433,7 +433,7 @@
 <body>
   <!-- Subscription Check Overlay -->
   <div id="subscription-check" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);align-items:center;justify-content:center;z-index:10000;font-family:inherit">
-    <div style="background:#0f172a;border:1px solid #22c55e;border-radius:12px;padding:40px;text-align:center;max-width:400px;color:#fff">
+    <div style="background:#0f0f0f;border:1px solid #22c55e;border-radius:12px;padding:40px;text-align:center;max-width:400px;color:#fff">
       <div style="font-size:3rem;margin-bottom:1rem">🔒</div>
       <h2 style="margin-bottom:1rem;font-size:1.5rem">Subscription Required</h2>
       <p style="color:var(--text-muted);margin-bottom:1.5rem;line-height:1.6">This VRM lookup widget requires an active VRM Lookup subscription (£17.99/month)</p>
@@ -443,7 +443,7 @@
 
   <!-- Iframe Locked Overlay -->
   <div id="iframe-locked" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);align-items:center;justify-content:center;z-index:10000;font-family:inherit">
-    <div style="background:#0f172a;border:1px solid #f97316;border-radius:12px;padding:40px;text-align:center;max-width:420px;color:#fff">
+    <div style="background:#0f0f0f;border:1px solid #f97316;border-radius:12px;padding:40px;text-align:center;max-width:420px;color:#fff">
       <div style="font-size:3rem;margin-bottom:1rem">⏸️</div>
       <h2 style="margin-bottom:1rem;font-size:1.5rem">Widget Locked</h2>
       <p style="color:#fcd34d;margin-bottom:1.25rem;line-height:1.6">This VRM widget has been locked by an admin.</p>
@@ -453,7 +453,7 @@
 
   <!-- VRM Disabled Overlay -->
   <div id="vrm-disabled" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);align-items:center;justify-content:center;z-index:10000;font-family:inherit">
-    <div style="background:#0f172a;border:1px solid #f97316;border-radius:12px;padding:40px;text-align:center;max-width:420px;color:#fff">
+    <div style="background:#0f0f0f;border:1px solid #f97316;border-radius:12px;padding:40px;text-align:center;max-width:420px;color:#fff">
       <div style="font-size:3rem;margin-bottom:1rem">⏸️</div>
       <h2 style="margin-bottom:1rem;font-size:1.5rem">VRM Lookup Disabled</h2>
       <p style="color:#fcd34d;margin-bottom:1.5rem;line-height:1.6">This service is temporarily turned off by the admin.</p>
@@ -538,7 +538,7 @@
     function mixHex(hexA, hexB, ratio = 0.5) {
       const rgbA = hexToRgb(hexA);
       const rgbB = hexToRgb(hexB);
-      if (!rgbA && !rgbB) return '#0ea5b9';
+      if (!rgbA && !rgbB) return '#dc2626';
       if (!rgbA) return hexB;
       if (!rgbB) return hexA;
       const clampRatio = Math.min(1, Math.max(0, ratio));
@@ -552,7 +552,7 @@
 
     // Parse URL parameters for customization
     const params = new URLSearchParams(window.location.search);
-    const accentColor = params.get('color') || '#16c1ce';
+    const accentColor = params.get('color') || '#dc2626';
     const accentLight = params.get('colorLight') || mixHex(accentColor, '#ffffff', 0.2);
     const mutedColor = params.get('muted') || '#a3a3a3';
     const goldColor = params.get('gold') || '#ffc107';
@@ -562,8 +562,8 @@
     const panelMid = params.get('panelMid') || 'rgba(18, 18, 18, 0.78)';
     const plateBg = params.get('plate') || 'rgba(238, 209, 76, 0.45)';
     const plateInputBg = params.get('plateInput') || 'rgba(238, 209, 76, 0.34)';
-    const plateFlagBg = params.get('flag') || `rgba(${(hexToRgb(accentColor) || { r: 22, g: 193, b: 206 }).r}, ${(hexToRgb(accentColor) || { r: 22, g: 193, b: 206 }).g}, ${(hexToRgb(accentColor) || { r: 22, g: 193, b: 206 }).b}, 0.52)`;
-    const plateBorder = params.get('plateBorder') || `rgba(${(hexToRgb(accentColor) || { r: 22, g: 193, b: 206 }).r}, ${(hexToRgb(accentColor) || { r: 22, g: 193, b: 206 }).g}, ${(hexToRgb(accentColor) || { r: 22, g: 193, b: 206 }).b}, 0.72)`;
+    const plateFlagBg = '#0e42ae';
+    const plateBorder = params.get('plateBorder') || `rgba(${(hexToRgb(accentColor) || { r: 220, g: 38, b: 38 }).r}, ${(hexToRgb(accentColor) || { r: 220, g: 38, b: 38 }).g}, ${(hexToRgb(accentColor) || { r: 220, g: 38, b: 38 }).b}, 0.72)`;
     const bgDark = params.get('bg') || 'transparent';
     const bgPanel = params.get('bgPanel') || 'transparent';
     const bgGradient = params.get('bgGradient');
@@ -589,7 +589,7 @@
     document.documentElement.style.setProperty('--bg-dark', bgDark);
     document.documentElement.style.setProperty('--bg-panel', bgPanel);
 
-    const accentRgb = hexToRgb(accentColor) || { r: 22, g: 193, b: 206 };
+    const accentRgb = hexToRgb(accentColor) || { r: 220, g: 38, b: 38 };
     document.documentElement.style.setProperty('--brand-rgb', `${accentRgb.r}, ${accentRgb.g}, ${accentRgb.b}`);
 
     const computedGradient = bgGradient || 'transparent';
