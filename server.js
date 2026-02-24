@@ -1057,10 +1057,10 @@ app.use(express.json({ limit: '10mb' }));
 // Compression for better performance
 app.use(compression());
 
-// Security headers with Helmet (EXCLUDING embed.html which needs to be embeddable)
+// Security headers with Helmet (EXCLUDING embeddable widget pages)
 app.use((req, res, next) => {
-  // Skip helmet entirely for embed.html - it will be handled by its dedicated route
-  if (req.path === '/embed.html') {
+  // Skip helmet entirely for embeddable pages - handled by dedicated routes
+  if (req.path === '/embed.html' || req.path === '/test-vrm.html' || req.path === '/vrm-lookup.html') {
     return next();
   }
   
@@ -1101,6 +1101,14 @@ app.get('/test-vrm.html', (req, res) => {
   // Allow embedding from any origin
   res.setHeader('Access-Control-Allow-Origin', '*');
   // Don't set frame-ancestors at all - this allows embedding from anywhere
+  res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; connect-src *;");
+  res.sendFile(path.join(__dirname, 'test-vrm.html'));
+});
+
+// Canonical VRM widget route (alias of test-vrm.html) to keep live iframe links stable
+app.get('/vrm-lookup.html', (req, res) => {
+  res.removeHeader('X-Frame-Options');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; connect-src *;");
   res.sendFile(path.join(__dirname, 'test-vrm.html'));
 });

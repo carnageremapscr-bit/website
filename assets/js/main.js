@@ -3339,7 +3339,7 @@ I would like to request a quote for tuning this vehicle.`,
           vrmEmailParam ? `email=${encodeURIComponent(vrmEmailParam)}` : ''
         ].filter(Boolean).join('&');
 
-        const baseSrc = `${baseUrl}/test-vrm.html?${params}`;
+        const baseSrc = `${baseUrl}/vrm-lookup.html?${params}`;
         let iframeId = null;
 
         try {
@@ -4097,7 +4097,7 @@ I would like to request a quote for tuning this vehicle.`,
       if (emailVal) params.set('email', emailVal);
       const gradient = `linear-gradient(135deg, ${params.get('bg')} 0%, ${params.get('bgPanel')} 50%, ${params.get('bg')} 100%)`;
       params.set('bgGradient', gradient);
-      const src = `https://web-production-df12d.up.railway.app/test-vrm.html?${params.toString()}`;
+      const src = `https://web-production-df12d.up.railway.app/vrm-lookup.html?${params.toString()}`;
       return `<iframe src="${src}" width="100%" height="520" style="border:none;border-radius:12px;max-width:100%;" title="Carnage VRM Lookup" loading="lazy"></iframe>`;
     };
 
