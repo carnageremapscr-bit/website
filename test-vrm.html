@@ -195,7 +195,8 @@
     .status.info { background: rgba(255, 193, 7, 0.1); color: var(--gold-color); }
     .status.success { background: rgba(34,197,94,0.12); color: #86efac; }
     .status.error { background: rgba(239,68,68,0.12); color: #fca5a5; }
-    .results { margin-top: 18px; display: grid; gap: 14px; }
+    .results { margin-top: 18px; display: none; gap: 14px; }
+    .results.show { display: grid; }
     .card {
       background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
       border: 1px solid rgba(148,163,184,0.12);
@@ -310,6 +311,40 @@
     .metric-values .unit { font-size: 0.62em; color: #94a3b8; font-weight: 500; }
     .gain { color: #84cc16; font-weight: 800; font-size: 3rem; line-height: 1; }
     .muted { color: #94a3b8; font-size: 0.9rem; }
+    .embed-cta {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      background: linear-gradient(135deg, rgba(2, 6, 23, 0.7), rgba(15, 23, 42, 0.5));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .embed-cta-text {
+      color: #cbd5e1;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+    .embed-cta a {
+      color: #ffffff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-decoration: none;
+      border: 1px solid rgba(34, 211, 238, 0.35);
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: linear-gradient(135deg, rgba(8, 145, 178, 0.55), rgba(6, 182, 212, 0.55));
+      transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    }
+    .embed-cta a:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.08);
+      box-shadow: 0 8px 18px rgba(6, 182, 212, 0.25);
+    }
 
     #iframe-locked,
     #subscription-check,
@@ -372,6 +407,14 @@
       .metric-values .unit { font-size: 0.7em; }
       .gain { font-size: 1.35rem; }
       .contact-actions { padding: 0.75rem; }
+      .embed-cta {
+        margin-top: 10px;
+        padding: 10px;
+        justify-content: center;
+        text-align: center;
+      }
+      .embed-cta-text { width: 100%; font-size: 0.78rem; }
+      .embed-cta a { font-size: 0.74rem; padding: 7px 11px; }
     }
   </style>
 </head>
@@ -407,9 +450,6 @@
   </div>
 
   <div class="shell">
-    <h1>VRM Lookup</h1>
-    <div class="subtitle">Enter a UK vehicle registration number to get instant vehicle information</div>
-
     <div class="panel">
       <div class="panel-header">
         <img id="logo" src="" alt="Logo" style="display:none;">
@@ -427,8 +467,6 @@
         </div>
         <button id="lookup" class="btn" type="button"><span aria-hidden="true">⌕</span><span class="btn-label">Find</span></button>
       </div>
-
-      <p class="lookup-help"><a href="#" aria-label="Select vehicle instead">◌ Click here to select vehicle instead</a></p>
 
       <div id="status" class="status info" aria-live="polite"></div>
 
@@ -460,6 +498,11 @@
             SMS
           </a>
         </div>
+      </div>
+
+      <div class="embed-cta">
+        <span class="embed-cta-text">Want this widget on your own website?</span>
+        <a href="https://www.webportalpro.co.uk/vrm-lookup.html" target="_blank" rel="noopener">Click here to have this on your site</a>
       </div>
     </div>
   </div>
@@ -548,6 +591,7 @@
     const specGrid = document.getElementById('spec-grid');
     const perfGrid = document.getElementById('perf-grid');
     const lookupBtn = document.getElementById('lookup');
+    const resultsEl = document.querySelector('.results');
 
     function setStatus(msg, cls = 'info') {
       statusEl.textContent = msg;
@@ -705,6 +749,7 @@
         setStatus(`Found ${summary} ✓`, 'success');
         buildSpecs(vehicle);
         buildPerformance(vehicle);
+        if (resultsEl) resultsEl.classList.add('show');
         
         // Show contact actions after successful lookup
         if (hasContact && contactActions) {
@@ -714,6 +759,7 @@
         setStatus(err.message || 'Lookup failed', 'error');
         specGrid.innerHTML = '';
         perfGrid.innerHTML = '';
+        if (resultsEl) resultsEl.classList.remove('show');
       } finally {
         lookupBtn.disabled = false;
       }
