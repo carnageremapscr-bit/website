@@ -4070,11 +4070,11 @@ I would like to request a quote for tuning this vehicle.`,
     }
 
     const defaultTheme = {
-      plateBg: '#ffcc00',
+      plateBg: '#ffcc0073',
       plateText: '#000000',
-      flagBg: '#003399',
-      btnStart: '#00bcd4',
-      btnEnd: '#0097a7',
+      flagBg: '#00339973',
+      btnStart: '#00bcd4b8',
+      btnEnd: '#0097a7b8',
       accent: '#dc2626',
       accentLight: '#ef4444',
       gold: '#ffc107',
@@ -4086,17 +4086,13 @@ I would like to request a quote for tuning this vehicle.`,
       const params = new URLSearchParams({
         color: btnStart?.value || defaultTheme.accent,
         colorLight: accentLight?.value || defaultTheme.accentLight,
-        gold: gold?.value || defaultTheme.gold,
-        bg: bgDark?.value || defaultTheme.bgDark,
-        bgPanel: bgPanel?.value || defaultTheme.bgPanel
+        gold: gold?.value || defaultTheme.gold
       });
 
       const waVal = (contactPhone?.value || CONTACT_SETTINGS.whatsappNumber || '').trim();
       if (waVal) params.set('wa', waVal);
       const emailVal = (contactEmail?.value || CONTACT_SETTINGS.email || '').trim();
       if (emailVal) params.set('email', emailVal);
-      const gradient = `linear-gradient(135deg, ${params.get('bg')} 0%, ${params.get('bgPanel')} 50%, ${params.get('bg')} 100%)`;
-      params.set('bgGradient', gradient);
       const src = `https://web-production-df12d.up.railway.app/vrm-lookup.html?${params.toString()}`;
       return `<iframe src="${src}" width="100%" height="520" style="border:none;border-radius:12px;max-width:100%;" title="Carnage VRM Lookup" loading="lazy"></iframe>`;
     };
