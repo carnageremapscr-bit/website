@@ -4083,10 +4083,22 @@ I would like to request a quote for tuning this vehicle.`,
     };
 
     const buildEmbed = () => {
+      const plate = plateBg?.value || defaultTheme.plateBg;
+      const flag = flagBg?.value || defaultTheme.flagBg;
+      const panelStrong = bgDark?.value || defaultTheme.bgDark;
+      const panelSoft = bgPanel?.value || defaultTheme.bgPanel;
       const params = new URLSearchParams({
         color: btnStart?.value || defaultTheme.accent,
         colorLight: accentLight?.value || defaultTheme.accentLight,
-        gold: gold?.value || defaultTheme.gold
+        gold: gold?.value || defaultTheme.gold,
+        plate,
+        plateInput: plate,
+        flag,
+        plateBorder: flag,
+        panelStrong,
+        panelSoft,
+        panelDeep: panelStrong,
+        panelMid: panelSoft
       });
 
       const waVal = (contactPhone?.value || CONTACT_SETTINGS.whatsappNumber || '').trim();
