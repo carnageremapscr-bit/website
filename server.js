@@ -30,6 +30,7 @@ const CHECKCAR_API_KEY = process.env.CHECKCAR_API_KEY || '';
 const CHECKCAR_LIVE_API_KEY = process.env.CHECKCAR_LIVE_API_KEY || CHECKCAR_API_KEY;
 const CHECKCAR_TEST_API_KEY = process.env.CHECKCAR_TEST_API_KEY || 'e80ce7141c39ae0b111a1999f6a0891b';
 const CHECKCAR_DATAPOINT = process.env.CHECKCAR_DATAPOINT || 'ukvehicledata';
+const VRM_PORTAL_LOOKUP_PRICE = Number(process.env.VRM_PORTAL_LOOKUP_PRICE || 0.10);
 
 // DVLA Open Data API
 const DVLA_API_KEY = process.env.DVLA_API_KEY || '';
@@ -58,6 +59,7 @@ console.log('=== VRM Lookup Configuration ===');
 console.log('CHECKCAR_API_KEY set:', !!CHECKCAR_API_KEY);
 console.log('CHECKCAR_LIVE_API_KEY set:', !!CHECKCAR_LIVE_API_KEY);
 console.log('CHECKCAR_TEST_API_KEY set:', !!CHECKCAR_TEST_API_KEY);
+console.log('VRM_PORTAL_LOOKUP_PRICE:', VRM_PORTAL_LOOKUP_PRICE);
 console.log('CHECKCAR_DATAPOINT:', CHECKCAR_DATAPOINT);
 console.log('DVLA_API_KEY set:', !!DVLA_API_KEY);
 console.log('DVLA_API_BASE_URL:', DVLA_API_BASE_URL);
@@ -1890,7 +1892,11 @@ app.get('/api/vrm-lookup', async (req, res) => {
     const emailHeader = (req.headers['x-user-email'] || '').toString().trim();
     const email = emailQuery || emailHeader;
     const iframeId = (req.query.iframeId || '').toString().trim();
+    const source = (req.query.source || '').toString().trim().toLowerCase();
     let lookupEmail = email.toLowerCase();
+    const isPortalLookup = source === 'portal' && !iframeId;
+    const roundMoney = (value) => Math.round((Number(value || 0) + Number.EPSILON) * 100) / 100;
+    let chargedLookup = null;
 
     if (!vrmRaw) {
       return res.status(400).json({ error: 'vrm is required' });
@@ -2062,6 +2068,50 @@ app.get('/api/vrm-lookup', async (req, res) => {
       return res.status(500).json({ error: 'VRM lookup is not configured' });
     }
 
+    if (isPortalLookup) {
+      if (!lookupEmail) {
+        return res.status(401).json({
+          error: 'Portal VRM lookup requires user identity',
+          requiresLogin: true
+        });
+      }
+
+      if (!supabase) {
+        return res.status(500).json({ error: 'Database not configured' });
+      }
+
+      const { data: userRecord, error: userError } = await supabase
+        .from('users')
+        .select('id, email, role, credits')
+        .ilike('email', lookupEmail)
+        .limit(1)
+        .maybeSingle();
+
+      if (userError || !userRecord) {
+        console.error('❌ Portal VRM lookup user not found:', userError?.message || lookupEmail);
+        return res.status(404).json({ error: 'User account not found for portal lookup' });
+      }
+
+      const isAdminLookup = String(userRecord.role || '').toLowerCase() === 'admin';
+      const currentCredits = roundMoney(userRecord.credits);
+
+      if (!isAdminLookup && currentCredits < VRM_PORTAL_LOOKUP_PRICE) {
+        return res.status(402).json({
+          error: `Insufficient wallet balance. VRM lookup costs £${VRM_PORTAL_LOOKUP_PRICE.toFixed(2)}.`,
+          needsTopUp: true,
+          required: VRM_PORTAL_LOOKUP_PRICE,
+          balance: currentCredits
+        });
+      }
+
+      chargedLookup = {
+        userId: userRecord.id,
+        email: String(userRecord.email || lookupEmail),
+        isAdminLookup,
+        currentCredits
+      };
+    }
+
     const vrm = vrmRaw.replace(/\s+/g, '').toUpperCase();
     // Default to vehiclespecs for richer data, allow explicit override
     const datapoint = (req.query.datapoint || 'vehiclespecs').toString().trim();
@@ -2126,6 +2176,37 @@ app.get('/api/vrm-lookup', async (req, res) => {
     }
 
     const vehicle = normalizeVehicleResponse(providerJson || {});
+    let remainingCredits = null;
+
+    if (isPortalLookup && chargedLookup && !chargedLookup.isAdminLookup) {
+      const newCredits = roundMoney(chargedLookup.currentCredits - VRM_PORTAL_LOOKUP_PRICE);
+
+      const { error: updateCreditError } = await supabase
+        .from('users')
+        .update({ credits: newCredits })
+        .eq('id', chargedLookup.userId);
+
+      if (updateCreditError) {
+        console.error('❌ Failed to deduct VRM lookup credit:', updateCreditError.message);
+        return res.status(500).json({ error: 'Failed to process VRM lookup charge' });
+      }
+
+      remainingCredits = newCredits;
+
+      try {
+        await supabase.from('transactions').insert({
+          user_id: chargedLookup.userId,
+          email: chargedLookup.email,
+          type: 'vrm_lookup',
+          amount: -VRM_PORTAL_LOOKUP_PRICE,
+          status: 'completed',
+          description: `Portal VRM lookup charge (${vrm})`,
+          created_at: new Date().toISOString()
+        });
+      } catch (txnError) {
+        console.warn('⚠️ Failed to write VRM lookup transaction log:', txnError.message);
+      }
+    }
 
     res.json({
       success: true,
@@ -2133,6 +2214,9 @@ app.get('/api/vrm-lookup', async (req, res) => {
       datapoint,
       provider: 'checkcardetails',
       providerKeyType: lookupResult.keyType,
+      charged: !!(isPortalLookup && chargedLookup && !chargedLookup.isAdminLookup),
+      chargeAmount: isPortalLookup ? VRM_PORTAL_LOOKUP_PRICE : 0,
+      remainingCredits,
       vehicle,
       providerStatus: providerResp.status
     });

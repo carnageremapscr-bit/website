@@ -482,9 +482,6 @@
     const modelSelect = document.getElementById('vehicle-model');
     const yearSelect = document.getElementById('vehicle-year');
     const engineSelect = document.getElementById('vehicle-engine');
-    const vrmInput = document.getElementById('vehicle-registration');
-    const vrmLookupBtn = document.getElementById('vrm-lookup-btn');
-    const vrmStatus = document.getElementById('vrm-lookup-status');
     
     console.log('Vehicle dropdowns found:', {
       manufacturer: !!manufacturerSelect,
@@ -503,13 +500,6 @@
     if (detailsCard) {
       detailsCard.style.display = 'none';
     }
-
-    // VRM lookup via backend proxy
-    const setVrmStatus = (message, tone = 'info') => {
-      if (!vrmStatus) return;
-      vrmStatus.textContent = message;
-      vrmStatus.className = `vrm-status vrm-${tone}`;
-    };
 
     const normalizeMakeKey = (make) => {
       if (!make) return '';
@@ -624,70 +614,6 @@
       return result;
     };
 
-    const handleVrmLookup = async () => {
-      if (!vrmInput) return;
-      const vrmValue = vrmInput.value.trim();
-      if (!vrmValue) {
-        setVrmStatus('Enter a registration to look up.', 'error');
-        return;
-      }
-
-      const vrm = vrmValue.replace(/\s+/g, '').toUpperCase();
-      vrmInput.value = vrm;
-      setVrmStatus('Looking up vehicle...', 'loading');
-
-      if (vrmLookupBtn) {
-        vrmLookupBtn.disabled = true;
-        vrmLookupBtn.textContent = 'Checking...';
-      }
-
-      try {
-        const response = await fetch(`${API_URL}/api/dvla-lookup?vrm=${encodeURIComponent(vrm)}`);
-        let data = {};
-        try {
-          data = await response.json();
-        } catch (parseError) {
-          data = {};
-        }
-
-        if (!response.ok || !data.success) {
-          throw new Error(data.error || 'Lookup failed');
-        }
-
-        const selection = applyVrmSuggestion(data.vehicle || {});
-        const filled = [
-          selection.manufacturer ? 'make' : null,
-          selection.model ? 'model' : null,
-          selection.year ? 'year' : null,
-          selection.engine ? 'engine' : null
-        ].filter(Boolean).join(', ');
-
-        const summary = [data.vehicle?.make, data.vehicle?.model, data.vehicle?.year].filter(Boolean).join(' ');
-        const needsEngine = selection.year && !selection.engine;
-        const suffix = filled ? `Filled: ${filled}.` : 'Please confirm details.';
-        const engineNote = needsEngine ? ' Select the correct engine if it differs.' : '';
-
-        setVrmStatus(`Found ${summary || 'vehicle'}. ${suffix}${engineNote}`, 'success');
-      } catch (err) {
-        setVrmStatus(err.message || 'Lookup failed', 'error');
-      } finally {
-        if (vrmLookupBtn) {
-          vrmLookupBtn.disabled = false;
-          vrmLookupBtn.textContent = 'Lookup';
-        }
-      }
-    };
-
-    if (vrmLookupBtn && vrmInput) {
-      vrmLookupBtn.addEventListener('click', handleVrmLookup);
-      vrmInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          handleVrmLookup();
-        }
-      });
-    }
-    
     // Expose vehicle matching function globally for dashboard use
     window.matchVehicleFromAPI = function(vehicle) {
       if (!vehicleDatabase || !manufacturerSelect) {
@@ -2688,7 +2614,7 @@
         if (needsModel || needsEngine) {
           try {
             const fallbackEmail = (sessionStorage.getItem('userEmail') || localStorage.getItem('userEmail') || '').trim();
-            const ccUrl = `${API_URL}/api/vrm-lookup?vrm=${encodeURIComponent(vrm)}${fallbackEmail ? `&email=${encodeURIComponent(fallbackEmail)}` : ''}`;
+            const ccUrl = `${API_URL}/api/vrm-lookup?source=portal&vrm=${encodeURIComponent(vrm)}${fallbackEmail ? `&email=${encodeURIComponent(fallbackEmail)}` : ''}`;
             const ccResp = await fetch(ccUrl, {
               headers: fallbackEmail ? { 'x-user-email': fallbackEmail } : {}
             });
