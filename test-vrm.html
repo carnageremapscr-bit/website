@@ -338,17 +338,40 @@
       .lookup-help a { font-size: 1.55rem; }
       .spec-grid { grid-template-columns: 1fr; gap: 6px; }
       .spec-label { font-size: 0.7rem; }
-      .spec-value { word-break: break-word; }
+      .spec-value { word-break: break-word; line-height: 1.35; }
       .perf-card { padding: 12px; }
       .perf-card h3 { margin-bottom: 10px; }
       .stage-tabs { gap: 8px; }
-      .stage-tab { flex: 1; text-align: center; min-width: 92px; font-size: 0.95rem; padding: 9px 10px; }
+      .stage-tab { flex: 1; text-align: center; min-width: 86px; font-size: 0.9rem; padding: 8px 10px; }
       .stage-panel { padding: 12px; }
       .metric-row { grid-template-columns: 1fr; gap: 6px; padding: 10px 0; }
-      .stage-title { font-size: 1.5rem; }
-      .metric-values { font-size: 1.45rem; }
-      .gain { font-size: 2rem; justify-self: start; }
+      .stage-title { font-size: 1.25rem; }
+      .metric-values { font-size: 1.22rem; line-height: 1.25; }
+      .gain { font-size: 1.65rem; justify-self: start; }
       .results { gap: 12px; }
+    }
+
+    @media (max-width: 420px) {
+      .panel { padding: 12px; }
+      .card { padding: 10px; }
+      .card h3 { font-size: 0.9rem; margin-bottom: 8px; }
+      .plate-wrap { min-height: 58px; }
+      .flag { width: 46px; font-size: 1.2rem; }
+      .flag-code { font-size: 0.48rem; }
+      .plate-input { font-size: 1.5rem; padding: 0 8px; }
+      .btn { padding: 10px 14px; }
+      .btn-label { font-size: 1rem; }
+      .lookup-help a { font-size: 1.15rem; }
+      .stage-tabs { gap: 6px; }
+      .stage-tab { min-width: 74px; font-size: 0.82rem; padding: 7px 8px; border-radius: 10px; }
+      .stage-head { margin-bottom: 10px; gap: 8px; }
+      .stage-title { font-size: 1.1rem; }
+      .req { font-size: 0.66rem; padding: 3px 6px; }
+      .metric-label { font-size: 0.72rem; }
+      .metric-values { font-size: 1.05rem; gap: 6px; }
+      .metric-values .unit { font-size: 0.7em; }
+      .gain { font-size: 1.35rem; }
+      .contact-actions { padding: 0.75rem; }
     }
   </style>
 </head>
