@@ -9,9 +9,21 @@ const stockHp = document.getElementById('stock-hp');
 const stockNm = document.getElementById('stock-nm');
 const stageRows = document.getElementById('stage-rows');
 
-function renderVehicle(data) {
+function formatRegistrationForDisplay(value) {
+  const compact = String(value || '')
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, '');
+
+  if (compact.length <= 3) {
+    return compact;
+  }
+
+  return `${compact.slice(0, -3)} ${compact.slice(-3)}`;
+}
+
+function renderVehicle(data, searchedReg) {
   const { registration, make, model, year, stock, stage1, stage2, stage3 } = data;
-  regLabel.textContent = registration.toUpperCase();
+  regLabel.textContent = formatRegistrationForDisplay(searchedReg || registration);
   vehicleName.textContent = `${make} ${model}`;
   vehicleYear.textContent = year ? `Year ${year}` : '';
   stockHp.textContent = stock.hp;
@@ -67,7 +79,7 @@ form.addEventListener('submit', async (e) => {
       return;
     }
     const data = await res.json();
-    renderVehicle(data);
+    renderVehicle(data, reg);
   } catch (err) {
     showError('Network error, try again');
   }

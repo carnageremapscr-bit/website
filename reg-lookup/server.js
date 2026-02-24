@@ -11,16 +11,20 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+function normalizeRegistration(value) {
+  return String(value || '')
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, '');
+}
+
 app.get('/api/lookup', (req, res) => {
-  const reg = String(req.query.reg || '').trim().toUpperCase();
+  const reg = normalizeRegistration(req.query.reg);
 
   if (!reg) {
     return res.status(400).json({ error: 'Registration is required' });
   }
 
-  const match = vehicles.find(
-    (v) => v.registration.toUpperCase() === reg
-  );
+  const match = vehicles.find((v) => normalizeRegistration(v.registration) === reg);
 
   if (!match) {
     return res.status(404).json({ error: 'Registration not found' });

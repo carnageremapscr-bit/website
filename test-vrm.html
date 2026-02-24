@@ -30,20 +30,14 @@
     .shell { width: min(1080px, 100%); }
     h1 {
       font-size: clamp(2rem, 4vw, 2.8rem);
-      font-weight: 800;
+      font-weight: 700;
       letter-spacing: -0.02em;
       margin-bottom: 8px;
       text-align: center;
-      background: linear-gradient(135deg, var(--gold-color) 0%, #ff6b35 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: #06b6c9;
     }
     .subtitle {
-      text-align: center;
-      color: #93a7c2;
-      margin-bottom: 26px;
-      font-size: 1rem;
+      display: none;
     }
     .panel {
       background: linear-gradient(145deg, rgba(14,23,42,0.9), rgba(13,19,33,0.95)) !important;
@@ -52,69 +46,96 @@
       padding: 20px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.35);
     }
-    .panel-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .panel-header { display: none; }
     .panel-header img { max-width: 50px; height: auto; }
     .badge-icon { font-size: 1.4rem; }
     .panel-title { font-size: 1.5rem; font-weight: 800; color: #e2e8f0; }
     .panel-sub { color: #94a3b8; font-size: 0.95rem; margin-bottom: 14px; }
-    .lookup-row { display: flex; gap: 14px; align-items: stretch; flex-wrap: wrap; }
+    .lookup-row { display: flex; gap: 22px; align-items: center; justify-content: center; flex-wrap: wrap; }
     .plate-wrap {
       display: flex;
       flex: 1 1 480px;
-      background: linear-gradient(135deg, #0f172a, #111827);
-      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: #eed14c;
+      border: 3px solid #1f4ab1;
       border-radius: 12px;
       overflow: hidden;
-      min-height: 72px;
-      box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.6);
+      min-height: 80px;
+      box-shadow: 0 5px 14px rgba(0, 0, 0, 0.12);
     }
     .flag {
-      width: 92px;
-      background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-light) 100%);
-      color: #fefefe;
-      display: grid;
-      place-items: center;
+      width: 64px;
+      background: #0e42ae;
+      color: #f8d34f;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
       font-weight: 800;
-      letter-spacing: 1px;
-      font-size: 1.05rem;
-      border-right: 3px solid var(--gold-color);
-      position: relative;
+      letter-spacing: 0.4px;
+      font-size: 1.9rem;
+      border-right: 2px solid #e5c446;
     }
-    .flag::after {
-      content: '';
-      position: absolute;
-      inset: 8px;
-      border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 6px;
+    .flag-code {
+      font-size: 0.55rem;
+      line-height: 1;
+      margin-top: 2px;
+      text-transform: uppercase;
     }
     .plate-input {
       flex: 1;
       border: none;
-      background: #111827;
-      color: #cbd5e1;
-      font-weight: 800;
-      letter-spacing: 6px;
-      font-size: 1.3rem;
+      background: #eed14c;
+      color: #000;
+      font-weight: 900;
+      letter-spacing: 2px;
+      font-size: clamp(2rem, 5.5vw, 3.6rem);
       text-transform: uppercase;
-      padding: 0 16px;
+      padding: 0 20px;
       outline: none;
+      text-align: center;
+      font-family: "Arial Black", "Segoe UI", sans-serif;
     }
-    .plate-input::placeholder { color: #475569; }
-    .plate-input:focus { box-shadow: inset 0 0 0 2px rgba(255, 193, 7, 0.45); }
+    .plate-input::placeholder { color: rgba(0, 0, 0, 0.45); }
+    .plate-input:focus { box-shadow: inset 0 0 0 2px rgba(14, 66, 174, 0.35); }
     .btn {
-      background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-light) 100%);
+      background: linear-gradient(135deg, #16c1ce 0%, #0ea5b9 100%);
       color: #fff;
-      font-weight: 800;
-      padding: 16px 26px;
+      font-weight: 500;
+      padding: 16px 30px;
       border: none;
-      border-radius: 12px;
+      border-radius: 10px;
       cursor: pointer;
-      font-size: 1.05rem;
-      box-shadow: 0 12px 30px rgba(220, 38, 38, 0.4);
+      font-size: 2rem;
+      line-height: 1;
+      min-width: 150px;
+      box-shadow: 0 10px 22px rgba(14, 165, 185, 0.28);
       transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 15px 40px rgba(220, 38, 38, 0.6); }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(14, 165, 185, 0.34); }
     .btn:active { transform: translateY(0); }
+    .btn-label {
+      font-size: 2.2rem;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+    }
+    .lookup-help {
+      margin-top: 16px;
+      text-align: center;
+    }
+    .lookup-help a {
+      color: #95a9bd;
+      text-decoration: none;
+      font-size: 2rem;
+      font-weight: 500;
+    }
+    .lookup-help a:hover {
+      color: #7f95ab;
+    }
     .contact-actions {
       display: none;
       gap: 10px;
@@ -164,9 +185,12 @@
       border-radius: 10px;
       font-weight: 700;
       font-size: 0.95rem;
-      display: inline-flex;
+      display: none;
       align-items: center;
       gap: 8px;
+    }
+    .status.show {
+      display: inline-flex;
     }
     .status.info { background: rgba(255, 193, 7, 0.1); color: var(--gold-color); }
     .status.success { background: rgba(34,197,94,0.12); color: #86efac; }
@@ -224,11 +248,14 @@
       .shell { width: 100%; }
       .panel { padding: 16px; }
       .panel-header { flex-wrap: wrap; }
-      .lookup-row { gap: 10px; }
-      .plate-wrap { flex: 1 1 100%; min-height: 60px; }
-      .flag { width: 72px; font-size: 0.95rem; }
-      .plate-input { font-size: 1.05rem; letter-spacing: 3px; padding: 0 12px; }
-      .btn { width: 100%; padding: 14px 18px; font-size: 1rem; }
+      .lookup-row { gap: 12px; }
+      .plate-wrap { flex: 1 1 100%; min-height: 64px; }
+      .flag { width: 52px; font-size: 1.4rem; }
+      .plate-input { font-size: 2rem; letter-spacing: 1px; padding: 0 10px; }
+      .btn { width: 100%; padding: 12px 18px; }
+      .btn-label { font-size: 1.2rem; }
+      .lookup-help { margin-top: 12px; }
+      .lookup-help a { font-size: 1.55rem; }
       .spec-grid { grid-template-columns: 1fr; gap: 6px; }
       .spec-label { font-size: 0.7rem; }
       .spec-value { word-break: break-word; }
@@ -270,7 +297,7 @@
   </div>
 
   <div class="shell">
-    <h1>VRM Lookup Service</h1>
+    <h1>Vehicle Search</h1>
     <div class="subtitle">Enter a UK vehicle registration number to get instant vehicle information</div>
 
     <div class="panel">
@@ -285,13 +312,15 @@
 
       <div class="lookup-row">
         <div class="plate-wrap">
-          <div class="flag">GB UK</div>
+          <div class="flag">🇬🇧<span class="flag-code">UK</span></div>
           <input id="vrm" class="plate-input" type="text" maxlength="8" placeholder="AB12 CDE" autocomplete="off" aria-label="Registration">
         </div>
-        <button id="lookup" class="btn" type="button">FIND</button>
+        <button id="lookup" class="btn" type="button"><span aria-hidden="true">⌕</span><span class="btn-label">Find</span></button>
       </div>
 
-      <div id="status" class="status info" aria-live="polite">Awaiting input…</div>
+      <p class="lookup-help"><a href="#" aria-label="Select vehicle instead">◌ Click here to select vehicle instead</a></p>
+
+      <div id="status" class="status info" aria-live="polite"></div>
 
       <div class="results">
         <div class="card">
@@ -412,7 +441,7 @@
 
     function setStatus(msg, cls = 'info') {
       statusEl.textContent = msg;
-      statusEl.className = 'status ' + cls;
+      statusEl.className = 'status show ' + cls;
     }
 
     function buildSpecs(vehicle) {
@@ -484,6 +513,13 @@
       }).join('');
     }
 
+    function resolveUserEmail() {
+      const fromUrl = (params.get('email') || '').trim();
+      const fromSession = (sessionStorage.getItem('userEmail') || '').trim();
+      const fromLocal = (localStorage.getItem('userEmail') || '').trim();
+      return (fromUrl || fromSession || fromLocal || '').toLowerCase();
+    }
+
     async function fetchVehicle(vrm) {
       let url = `/api/vrm-lookup?vrm=${encodeURIComponent(vrm)}&datapoint=vehiclespecs`;
       if (userEmail) {
@@ -494,7 +530,9 @@
       }
       
       console.log('VRM Lookup request:', { vrm, email: userEmail, iframeId });
-      const resp = await fetch(url);
+      const resp = await fetch(url, {
+        headers: userEmail ? { 'x-user-email': userEmail } : {}
+      });
       const json = await resp.json();
       
       if (!resp.ok) {
@@ -545,7 +583,7 @@
         // Extract URL parameters for tracking
         const params = new URLSearchParams(window.location.search);
         const iframeId = params.get('iframeId');
-        const emailParam = params.get('email');
+        const emailParam = resolveUserEmail();
         
         // Store for use in fetch requests
         window.userEmail = emailParam;

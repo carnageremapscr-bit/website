@@ -1874,7 +1874,9 @@ function normalizeVehicleResponse(data) {
 app.get('/api/vrm-lookup', async (req, res) => {
   try {
     const vrmRaw = (req.query.vrm || '').toString().trim();
-    const email = (req.query.email || '').toString().trim();
+    const emailQuery = (req.query.email || '').toString().trim();
+    const emailHeader = (req.headers['x-user-email'] || '').toString().trim();
+    const email = emailQuery || emailHeader;
     const iframeId = (req.query.iframeId || '').toString().trim();
     let lookupEmail = email.toLowerCase();
 
@@ -1937,28 +1939,31 @@ app.get('/api/vrm-lookup', async (req, res) => {
       try {
         const { data: subs, error: subError } = await supabase
           .from('subscriptions')
-          .select('id, status, type, subscription_type, current_period_end')
-          .ilike('email', lookupEmail)
-          .in('status', ['active', 'trialing']);
+          .select('id, status, type, subscription_type, current_period_end, email')
+          .ilike('email', lookupEmail);
 
         if (subError) {
           console.error('Error checking subscriptions:', subError);
         } else {
-          const vrmSubs = (subs || []).filter((sub) => {
-            const normalizedType = String(sub?.type || '').toLowerCase().trim();
-            const normalizedSubscriptionType = String(sub?.subscription_type || '').toLowerCase().trim();
-            return [normalizedType, normalizedSubscriptionType].some((value) =>
-              value === 'vrm' || value === 'vrm_lookup' || value === 'vrm-lookup'
-            );
+          const normalizeToken = (value) => String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+          const hasToken = (value, token) => normalizeToken(value).includes(token);
+
+          const eligibleStatusSubs = (subs || []).filter((sub) => {
+            const normalizedStatus = normalizeToken(sub?.status);
+            return normalizedStatus === 'active' || normalizedStatus === 'trialing' || normalizedStatus === 'pastdue';
+          });
+
+          const vrmSubs = eligibleStatusSubs.filter((sub) => {
+            const typeA = String(sub?.type || '');
+            const typeB = String(sub?.subscription_type || '');
+            return hasToken(typeA, 'vrm') || hasToken(typeB, 'vrm');
           });
 
           // Treat premium plans as entitled to VRM lookup access as well
-          const premiumSubs = (subs || []).filter((sub) => {
-            const normalizedType = String(sub?.type || '').toLowerCase().trim();
-            const normalizedSubscriptionType = String(sub?.subscription_type || '').toLowerCase().trim();
-            return [normalizedType, normalizedSubscriptionType].some((value) =>
-              value === 'premium' || value === 'premium-plan' || value === 'premium_plan'
-            );
+          const premiumSubs = eligibleStatusSubs.filter((sub) => {
+            const typeA = String(sub?.type || '');
+            const typeB = String(sub?.subscription_type || '');
+            return hasToken(typeA, 'premium') || hasToken(typeB, 'premium');
           });
 
           const entitledSubs = vrmSubs.length ? vrmSubs : premiumSubs;
