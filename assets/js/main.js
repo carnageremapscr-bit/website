@@ -2687,7 +2687,11 @@
         const needsEngine = !vehicle.engine && !vehicle.engineLabel && !vehicle.engineCapacity;
         if (needsModel || needsEngine) {
           try {
-            const ccResp = await fetch(`${API_URL}/api/vrm-lookup?vrm=${encodeURIComponent(vrm)}`);
+            const fallbackEmail = (sessionStorage.getItem('userEmail') || localStorage.getItem('userEmail') || '').trim();
+            const ccUrl = `${API_URL}/api/vrm-lookup?vrm=${encodeURIComponent(vrm)}${fallbackEmail ? `&email=${encodeURIComponent(fallbackEmail)}` : ''}`;
+            const ccResp = await fetch(ccUrl, {
+              headers: fallbackEmail ? { 'x-user-email': fallbackEmail } : {}
+            });
             let ccData = {};
             try { ccData = await ccResp.json(); } catch (_) { ccData = {}; }
             if (ccResp.ok && ccData.success && ccData.vehicle) {
@@ -4287,7 +4291,13 @@ I would like to request a quote for tuning this vehicle.`,
 
         // Fallback / enrich: CheckCar normalized payload
         try {
-          const { resp, data } = await fetchJson(`${API_URL}/api/vrm-lookup?vrm=${encodeURIComponent(vrm)}`);
+          const fallbackEmail = (sessionStorage.getItem('userEmail') || localStorage.getItem('userEmail') || '').trim();
+          const fallbackUrl = `${API_URL}/api/vrm-lookup?vrm=${encodeURIComponent(vrm)}${fallbackEmail ? `&email=${encodeURIComponent(fallbackEmail)}` : ''}`;
+          const resp = await fetch(fallbackUrl, {
+            headers: fallbackEmail ? { 'x-user-email': fallbackEmail } : {}
+          });
+          let data = {};
+          try { data = await resp.json(); } catch (_) { data = {}; }
           if (resp.ok && data.success && data.vehicle) {
             usedFallback = true;
             vehicle = { ...(data.vehicle || {}), ...(vehicle || {}) }; // DVLA overrides when present

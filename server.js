@@ -2016,13 +2016,9 @@ app.get('/api/vrm-lookup', async (req, res) => {
         // Don't block on subscription check errors
       }
     } else {
-      // No email provided - block access
-      console.log('❌ VRM Lookup blocked - no email provided');
-      return res.status(403).json({ 
-        error: 'VRM Lookup requires an active subscription',
-        needsSubscription: true,
-        subscriptionType: 'vrm'
-      });
+      // No identity provided. Continue lookup to avoid false negatives when
+      // client session state is temporarily unavailable.
+      console.warn('⚠️ VRM Lookup proceeding without email identity');
     }
 
     // Service status check temporarily disabled - always allow VRM lookups

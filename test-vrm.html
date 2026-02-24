@@ -213,22 +213,83 @@
     .spec-grid { display: grid; grid-template-columns: 160px 1fr; gap: 8px 16px; font-size: 0.95rem; }
     .spec-label { color: #94a3b8; font-weight: 700; text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.3px; }
     .spec-value { color: #e2e8f0; font-weight: 600; }
-    .perf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
-    .stage {
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 193, 7, 0.3);
-      background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(15,23,42,0.35));
+    .perf-grid { display: block; }
+    .stage-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
     }
-    .stage.orange { border-color: rgba(220, 38, 38, 0.35); background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(15,23,42,0.35)); }
-    .stage.red { border-color: rgba(248,113,113,0.35); background: linear-gradient(135deg, rgba(248,113,113,0.14), rgba(15,23,42,0.35)); }
-    .stage-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: 800; }
+    .stage-tab {
+      border: 1px solid rgba(34, 211, 238, 0.45);
+      background: rgba(8, 145, 178, 0.25);
+      color: #67e8f9;
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+    }
+    .stage-tab:hover { background: rgba(8, 145, 178, 0.38); }
+    .stage-tab.active {
+      background: linear-gradient(135deg, #16c1ce 0%, #0ea5b9 100%);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 8px 16px rgba(14, 165, 185, 0.28);
+    }
+    .stage-panel {
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,0.25);
+      background: linear-gradient(135deg, rgba(15,23,42,0.8), rgba(2,6,23,0.72));
+    }
+    .stage-panel--stage2 {
+      border-color: rgba(245, 158, 11, 0.45);
+      background: linear-gradient(135deg, rgba(120, 53, 15, 0.25), rgba(15,23,42,0.82));
+    }
+    .stage-panel--stage3 {
+      border-color: rgba(248, 113, 113, 0.45);
+      background: linear-gradient(135deg, rgba(127, 29, 29, 0.25), rgba(15,23,42,0.82));
+    }
+    .stage-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-weight: 800;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .stage-title { font-size: 1.05rem; color: #e2e8f0; }
     .req { font-size: 0.72rem; background: rgba(255,255,255,0.08); padding: 4px 8px; border-radius: 6px; color: #cbd5e1; border: 1px solid rgba(255,255,255,0.12); }
-    .boxgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .box { background: rgba(15,23,42,0.6); border: 1px solid rgba(148,163,184,0.2); border-radius: 10px; padding: 8px; font-size: 0.85rem; }
-    .box .lbl { color: #94a3b8; text-transform: uppercase; font-weight: 700; font-size: 0.72rem; }
-    .vals { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
-    .gain { color: #22c55e; font-weight: 800; }
+    .metric-row {
+      display: grid;
+      grid-template-columns: 90px 1fr auto;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 0;
+      border-top: 1px solid rgba(148, 163, 184, 0.16);
+    }
+    .metric-row:first-of-type { border-top: none; }
+    .metric-label {
+      color: #94a3b8;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .metric-values {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .metric-values .arrow { color: #93c5fd; }
+    .metric-values .unit { font-size: 0.75em; color: #94a3b8; font-weight: 500; }
+    .gain { color: #84cc16; font-weight: 800; font-size: 1.9rem; }
     .muted { color: #94a3b8; font-size: 0.9rem; }
 
     #iframe-locked,
@@ -259,8 +320,12 @@
       .spec-grid { grid-template-columns: 1fr; gap: 6px; }
       .spec-label { font-size: 0.7rem; }
       .spec-value { word-break: break-word; }
-      .perf-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
-      .boxgrid { grid-template-columns: 1fr; }
+      .stage-tabs { gap: 8px; }
+      .stage-tab { flex: 1; text-align: center; min-width: 92px; }
+      .stage-panel { padding: 12px; }
+      .metric-row { grid-template-columns: 1fr; gap: 6px; padding: 10px 0; }
+      .metric-values { font-size: 1.05rem; }
+      .gain { font-size: 1.5rem; justify-self: start; }
       .results { gap: 12px; }
     }
   </style>
@@ -487,30 +552,65 @@
             { name: 'Stage 3', hp: 0.29, tq: 0.33, req: 'Cams + Full Exhaust + Remap', cls: 'red' },
           ];
 
-      perfGrid.innerHTML = stages.map((s, idx) => {
+      const enrichedStages = stages.map((s, idx) => {
         const tunedHp = Math.round(baseHp * (1 + s.hp));
         const tunedTq = Math.round(baseTq * (1 + s.tq));
         const hpGain = Math.round(baseHp * s.hp);
         const tqGain = Math.round(baseTq * s.tq);
-        const cls = idx === 1 ? 'stage orange' : idx === 2 ? 'stage red' : 'stage';
+        const panelClass = idx === 1 ? 'stage-panel--stage2' : idx === 2 ? 'stage-panel--stage3' : '';
+        return { ...s, tunedHp, tunedTq, hpGain, tqGain, panelClass };
+      });
+
+      function panelMarkup(stage) {
         return `
-          <div class="${cls}">
-            <div class="stage-head">
-              <span>${s.name}</span>
-              <span class="req">${s.req}</span>
-            </div>
-            <div class="boxgrid">
-              <div class="box">
-                <div class="lbl">Power</div>
-                <div class="vals"><span>${baseHp} → <strong>${tunedHp}</strong> bhp</span><span class="gain">+${hpGain}</span></div>
-              </div>
-              <div class="box">
-                <div class="lbl">Torque</div>
-                <div class="vals"><span>${baseTq} → <strong>${tunedTq}</strong> Nm</span><span class="gain">+${tqGain}</span></div>
-              </div>
-            </div>
-          </div>`;
-      }).join('');
+          <div class="stage-head">
+            <span class="stage-title">${stage.name}</span>
+            <span class="req">${stage.req}</span>
+          </div>
+          <div class="metric-row">
+            <div class="metric-label">Power</div>
+            <div class="metric-values">${baseHp} <span class="arrow">→</span> ${stage.tunedHp}<span class="unit">hp</span></div>
+            <div class="gain">+${stage.hpGain}</div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-label">Torque</div>
+            <div class="metric-values">${baseTq} <span class="arrow">→</span> ${stage.tunedTq}<span class="unit">Nm</span></div>
+            <div class="gain">+${stage.tqGain}</div>
+          </div>
+        `;
+      }
+
+      perfGrid.innerHTML = `
+        <div class="stage-tabs" role="tablist" aria-label="Performance stages">
+          ${enrichedStages.map((stage, idx) => `
+            <button class="stage-tab${idx === 0 ? ' active' : ''}" data-stage-index="${idx}" type="button" role="tab" aria-selected="${idx === 0 ? 'true' : 'false'}">
+              ${stage.name}
+            </button>
+          `).join('')}
+        </div>
+        <div class="stage-panel ${enrichedStages[0].panelClass}">
+          ${panelMarkup(enrichedStages[0])}
+        </div>
+      `;
+
+      const tabs = perfGrid.querySelectorAll('.stage-tab');
+      const panel = perfGrid.querySelector('.stage-panel');
+
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          const stageIndex = Number(tab.dataset.stageIndex || 0);
+          const selected = enrichedStages[stageIndex] || enrichedStages[0];
+
+          tabs.forEach((item) => {
+            const isActive = item === tab;
+            item.classList.toggle('active', isActive);
+            item.setAttribute('aria-selected', isActive ? 'true' : 'false');
+          });
+
+          panel.className = `stage-panel ${selected.panelClass}`.trim();
+          panel.innerHTML = panelMarkup(selected);
+        });
+      });
     }
 
     function resolveUserEmail() {
