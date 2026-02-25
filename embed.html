@@ -641,6 +641,7 @@
 
       // Vehicle database (will be populated from API)
       var DB = { models: {}, modelsByType: {}, engines: {}, yearData: {}, yearEngines: {} };
+      var activeTypeRequestId = 0;
 
       // Year ranges for models (fallback)
       var YEAR_RANGES = ['2021-2026', '2017-2020', '2013-2016', '2009-2012', '2005-2008', '2000-2004'];
@@ -669,35 +670,48 @@
         return null;
       }
 
-      // Load data from API with cache-busting
-      fetch(API + '/api/vehicles?v=' + Date.now(), {
-        cache: 'no-store',
-        headers: { 'Cache-Control': 'no-cache' }
-      })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-          DB.models = data.models || {};
-          DB.modelsByType = data.modelsByType || {};
-          DB.yearEngines = data.yearEngines || {};
-          if (vtype) {
-            vtype.value = normalizeUiType(defaultTypeParam || vtype.value || 'car');
-          }
-          populateManufacturers();
+      function loadVehicleDataForType(uiType) {
+        var selectedType = mapUiTypeToApiType(uiType || 'car');
+        var requestId = ++activeTypeRequestId;
+
+        mfr.innerHTML = '<option value="">Loading manufacturers...</option>';
+        mdl.innerHTML = '<option value="">Select Model</option>';
+        yr.innerHTML = '<option value="">Select Year Range</option>';
+        eng.innerHTML = '<option value="">Select Engine</option>';
+        mfr.disabled = true;
+        mdl.disabled = true;
+        yr.disabled = true;
+        eng.disabled = true;
+        checkReady();
+
+        return fetch(API + '/api/vehicles?type=' + encodeURIComponent(selectedType) + '&v=' + Date.now(), {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' }
         })
-        .catch(function(err) {
-          console.error('Failed to load vehicle data:', err);
-          mfr.innerHTML = '<option value="">Error loading data</option>';
-        });
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            if (requestId !== activeTypeRequestId) return;
+            DB.models = data.models || {};
+            DB.modelsByType = data.modelsByType || {};
+            DB.yearEngines = data.yearEngines || {};
+            populateManufacturers();
+            mfr.disabled = false;
+          })
+          .catch(function(err) {
+            if (requestId !== activeTypeRequestId) return;
+            console.error('Failed to load vehicle data:', err);
+            mfr.innerHTML = '<option value="">Error loading data</option>';
+          });
+      }
+
+      if (vtype) {
+        vtype.value = normalizeUiType(defaultTypeParam || vtype.value || 'car');
+      }
+      loadVehicleDataForType(vtype && vtype.value ? vtype.value : 'car');
 
       function populateManufacturers() {
         mfr.innerHTML = '<option value="">Select Manufacturer</option>';
-        var selectedType = mapUiTypeToApiType(vtype && vtype.value ? vtype.value : 'car');
-        var typedModels = DB.modelsByType[selectedType] || {};
-        var makeKeys = Object.keys(typedModels);
-
-        if (!makeKeys.length && selectedType === 'car') {
-          makeKeys = Object.keys(DB.models || {});
-        }
+        var makeKeys = Object.keys(DB.models || {});
 
         makeKeys.sort(function(a, b) {
           return formatName(a).localeCompare(formatName(b), undefined, { sensitivity: 'base' });
@@ -734,7 +748,7 @@
 
       if (vtype) {
         vtype.onchange = function() {
-          populateManufacturers();
+          loadVehicleDataForType(vtype.value || 'car');
         };
       }
 
@@ -747,9 +761,7 @@
         yr.disabled = true;
         eng.disabled = true;
 
-        var selectedType = mapUiTypeToApiType(vtype && vtype.value ? vtype.value : 'car');
-        var typedModels = DB.modelsByType[selectedType] || {};
-        var models = typedModels[mfr.value] || DB.models[mfr.value] || [];
+        var models = DB.models[mfr.value] || [];
 
         if (mfr.value && models.length) {
           models.slice().sort(function(a, b) {
