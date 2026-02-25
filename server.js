@@ -2388,6 +2388,18 @@ app.get('/api/vehicles', (req, res) => {
   } else {
     modelsForSelectedType = modelsByType[selectedType] || modelsByType.car || masterCsvData?.allModels || null;
   }
+
+  if (selectedType === 'car' && modelsForSelectedType && typeof modelsForSelectedType === 'object') {
+    const excludedFromCars = new Set([
+      'arctic-cat',
+      'ashok-layland'
+    ]);
+
+    modelsForSelectedType = Object.fromEntries(
+      Object.entries(modelsForSelectedType).filter(([makeKey]) => !excludedFromCars.has(normalizeMasterKey(makeKey)))
+    );
+  }
+
   const masterListModels = loadMasterMakeModelList();
   const yearEnginesWithCoverage = ensureEngineCoverageForModels(modelsForSelectedType || {}, smartMerged || core.yearEngines || {});
 
