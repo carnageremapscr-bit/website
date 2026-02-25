@@ -563,6 +563,35 @@ function normalizeVehicleType(value) {
   return normalized;
 }
 
+function getEngineMakeKeyForCars(makeKey, yearEnginesMap) {
+  if (!makeKey || !yearEnginesMap) return null;
+  if (yearEnginesMap[makeKey]) return makeKey;
+
+  const aliases = {
+    'alfa-romeo': 'alfa',
+    'mercedes-benz': 'mercedes',
+    'mercedes': 'mercedes',
+    'vw': 'volkswagen',
+    'vauxhall': 'opel',
+    'ssangyong': 'ssang-yong'
+  };
+
+  const alias = aliases[makeKey];
+  if (alias && yearEnginesMap[alias]) return alias;
+
+  const compact = String(makeKey).replace(/-/g, '');
+  const allKeys = Object.keys(yearEnginesMap);
+  const directMatch = allKeys.find((key) => String(key).replace(/-/g, '') === compact);
+  if (directMatch) return directMatch;
+
+  const looseMatch = allKeys.find((key) => {
+    const candidate = String(key).replace(/-/g, '');
+    return candidate.includes(compact) || compact.includes(candidate);
+  });
+
+  return looseMatch || null;
+}
+
 function getModelDedupeKey(makeKey, modelValue) {
   let key = normalizeMasterKey(modelValue);
   if (!key) return key;
@@ -2415,6 +2444,14 @@ app.get('/api/vehicles', (req, res) => {
   }
 
   if (selectedType === 'car' && modelsForSelectedType && typeof modelsForSelectedType === 'object') {
+    const carEngineSource = smartMerged || core.yearEngines || {};
+    modelsForSelectedType = Object.fromEntries(
+      Object.entries(modelsForSelectedType).filter(([makeKey]) => {
+        const normalizedKey = normalizeMasterKey(makeKey);
+        return !!getEngineMakeKeyForCars(normalizedKey, carEngineSource);
+      })
+    );
+
     const excludedFromCars = new Set([
       'arctic-cat',
       'ashok-layland'
