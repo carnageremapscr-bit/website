@@ -3,6 +3,7 @@
 <head>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-YGHMFR684T"></script>
+  <script src="/assets/js/vehicle-database.js"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -641,6 +642,7 @@
 
       // Vehicle database (will be populated from API)
       var DB = { models: {}, modelsByType: {}, engines: {}, yearData: {}, yearEngines: {} };
+      var LOCAL_VEHICLE_DATABASE = (window.CarnageVehicleDB && window.CarnageVehicleDB.VEHICLE_DATABASE) || {};
 
       // Year ranges for models (fallback)
       var YEAR_RANGES = ['2021-2026', '2017-2020', '2013-2016', '2009-2012', '2005-2008', '2000-2004'];
@@ -726,7 +728,9 @@
         mfr.innerHTML = '<option value="">Select Manufacturer</option>';
         var selectedType = mapUiTypeToApiType(vtype && vtype.value ? vtype.value : 'car');
         var typedSource = DB.modelsByType[selectedType] || {};
-        var makeKeys = Object.keys(typedSource);
+        var makeKeys = selectedType === 'car'
+          ? Object.keys(LOCAL_VEHICLE_DATABASE || {})
+          : Object.keys(typedSource);
 
         if (!makeKeys.length && selectedType === 'car') {
           makeKeys = Object.keys(DB.models || {});
@@ -787,7 +791,9 @@
         eng.disabled = true;
 
         var selectedType = mapUiTypeToApiType(vtype && vtype.value ? vtype.value : 'car');
-        var typedSource = DB.modelsByType[selectedType] || DB.models;
+        var typedSource = selectedType === 'car'
+          ? (LOCAL_VEHICLE_DATABASE || DB.models)
+          : (DB.modelsByType[selectedType] || DB.models);
         var models = typedSource[mfr.value] || DB.models[mfr.value] || [];
 
         if (mfr.value && models.length) {
