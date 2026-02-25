@@ -670,6 +670,38 @@
         return null;
       }
 
+      function getEngineMakeKey(manufacturer) {
+        if (!manufacturer) return null;
+        if (DB.yearEngines[manufacturer]) return manufacturer;
+
+        var aliases = {
+          'alfa-romeo': 'alfa',
+          'mercedes-benz': 'mercedes',
+          'mercedes': 'mercedes',
+          'vw': 'volkswagen',
+          'vauxhall': 'opel',
+          'ssangyong': 'ssang-yong'
+        };
+
+        var alias = aliases[manufacturer];
+        if (alias && DB.yearEngines[alias]) return alias;
+
+        var compact = String(manufacturer).replace(/-/g, '');
+        var keys = Object.keys(DB.yearEngines || {});
+        for (var i = 0; i < keys.length; i++) {
+          if (String(keys[i]).replace(/-/g, '') === compact) return keys[i];
+        }
+
+        for (var j = 0; j < keys.length; j++) {
+          var candidate = String(keys[j]).replace(/-/g, '');
+          if (candidate.indexOf(compact) !== -1 || compact.indexOf(candidate) !== -1) {
+            return keys[j];
+          }
+        }
+
+        return null;
+      }
+
       function loadVehicleDataForType(uiType) {
         var selectedType = mapUiTypeToApiType(uiType || 'car');
         var requestId = ++activeTypeRequestId;
@@ -711,7 +743,14 @@
 
       function populateManufacturers() {
         mfr.innerHTML = '<option value="">Select Manufacturer</option>';
+        var selectedType = mapUiTypeToApiType(vtype && vtype.value ? vtype.value : 'car');
         var makeKeys = Object.keys(DB.models || {});
+
+        if (selectedType === 'car') {
+          makeKeys = makeKeys.filter(function(make) {
+            return !!getEngineMakeKey(make);
+          });
+        }
 
         makeKeys.sort(function(a, b) {
           return formatName(a).localeCompare(formatName(b), undefined, { sensitivity: 'base' });
