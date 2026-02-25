@@ -3253,7 +3253,7 @@ I would like to request a quote for tuning this vehicle.`,
         // Always use HTTPS for external sites
         const baseUrl = 'https://web-production-df12d.up.railway.app';
         // Cache-busting version - increment when embed.html changes
-        const embedVersion = '13';
+        const embedVersion = '14';
 
         // Build query string with all settings (include branding/contact when present)
         const fallbackEmail = sessionStorage.getItem('userEmail') || '';
