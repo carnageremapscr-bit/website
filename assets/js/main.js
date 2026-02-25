@@ -41,6 +41,7 @@
 
   // Comprehensive Vehicle Database (central source)
   const VEHICLE_DATABASE = (window.CarnageVehicleDB && window.CarnageVehicleDB.VEHICLE_DATABASE) || {};
+  const VEHICLE_MODELS_BY_TYPE = {};
 
   // Year-Model-Engine Database (central source)
   const VEHICLE_ENGINE_DATABASE = (window.CarnageVehicleDB && window.CarnageVehicleDB.VEHICLE_ENGINE_DATABASE) || {};
@@ -68,7 +69,19 @@
   function populateManufacturerSelect(selectEl) {
     if (!selectEl) return;
     const current = selectEl.value;
-    const manufacturers = Object.keys(VEHICLE_DATABASE).sort();
+    const requestedType = selectEl.dataset.vehicleType || 'car';
+    const source = VEHICLE_MODELS_BY_TYPE[requestedType] || {};
+    let manufacturers = Object.keys(source);
+
+    if (!manufacturers.length && requestedType === 'car') {
+      manufacturers = Object.keys(VEHICLE_DATABASE);
+    }
+
+    if (requestedType === 'car') {
+      manufacturers = manufacturers.filter((make) => !!getEngineMakeKey(make));
+    }
+
+    manufacturers.sort();
     selectEl.innerHTML = '<option value="">Select Manufacturer</option>';
     manufacturers.forEach((manufacturer) => {
       const option = document.createElement('option');
@@ -79,6 +92,109 @@
     if (current && manufacturers.includes(current)) {
       selectEl.value = current;
     }
+  }
+
+  function getModelsForManufacturer(manufacturer, vehicleType = 'car') {
+    if (!manufacturer) return [];
+    const requestedType = mapUiTypeToApiType(vehicleType);
+    const typedSource = VEHICLE_MODELS_BY_TYPE[requestedType] || VEHICLE_DATABASE;
+    const csvModels = typedSource[manufacturer] || VEHICLE_DATABASE[manufacturer];
+    if (Array.isArray(csvModels) && csvModels.length) return csvModels;
+
+    return [];
+  }
+
+  function mapUiTypeToApiType(value) {
+    const key = String(value || '').toLowerCase().trim();
+    if (!key || key === 'car' || key === 'cars') return 'car';
+    if (key === 'van' || key === 'vans') return 'lcv';
+    if (key === 'motorcycle' || key === 'motorcycles' || key === 'bike' || key === 'bikes') return 'bike';
+    if (key === 'agricultural') return 'tractor';
+    return key;
+  }
+
+  function getEngineMakeKey(manufacturer) {
+    if (!manufacturer) return null;
+    if (VEHICLE_ENGINE_DATABASE[manufacturer]) return manufacturer;
+
+    const aliases = {
+      'alfa-romeo': 'alfa',
+      'mercedes-benz': 'mercedes',
+      'mercedes': 'mercedes',
+      'vw': 'volkswagen',
+      'vauxhall': 'opel',
+      'ssangyong': 'ssang-yong'
+    };
+
+    const alias = aliases[manufacturer];
+    if (alias && VEHICLE_ENGINE_DATABASE[alias]) return alias;
+
+    const compact = manufacturer.replace(/-/g, '');
+    const match = Object.keys(VEHICLE_ENGINE_DATABASE).find((key) => key.replace(/-/g, '') === compact);
+    if (match) return match;
+
+    const looseMatch = Object.keys(VEHICLE_ENGINE_DATABASE).find((key) => {
+      const candidate = key.replace(/-/g, '');
+      return candidate.includes(compact) || compact.includes(candidate);
+    });
+
+    return looseMatch || null;
+  }
+
+  function normalizeModelLookupKey(modelKey) {
+    return String(modelKey || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/-class\b/g, '')
+      .replace(/-series\b/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/--+/g, '-')
+      .trim();
+  }
+
+  function getModelYearMap(manufacturer, modelKey) {
+    const engineMakeKey = getEngineMakeKey(manufacturer);
+    if (!engineMakeKey || !modelKey || !VEHICLE_ENGINE_DATABASE[engineMakeKey]) {
+      return { engineMakeKey, actualModelKey: null, yearMap: null };
+    }
+
+    const actualModelKey = findModelInDatabase(manufacturer, modelKey);
+    const yearMap = actualModelKey ? VEHICLE_ENGINE_DATABASE[engineMakeKey][actualModelKey] : null;
+    return { engineMakeKey, actualModelKey, yearMap: yearMap || null };
+  }
+
+  function collectModelEnginesFromAllYears(yearMap) {
+    if (!yearMap || typeof yearMap !== 'object') return [];
+    const deduped = [];
+    const seen = new Set();
+
+    Object.keys(yearMap).forEach((yearKey) => {
+      const list = Array.isArray(yearMap[yearKey]) ? yearMap[yearKey] : [];
+      list.forEach((engineLabel) => {
+        const label = String(engineLabel || '').trim();
+        if (!label) return;
+        const normalized = label.toLowerCase();
+        if (seen.has(normalized)) return;
+        seen.add(normalized);
+        deduped.push(label);
+      });
+    });
+
+    return deduped;
+  }
+
+  function extractYearRangeStart(rangeText) {
+    const match = String(rangeText || '').match(/(\d{4})/);
+    return match ? parseInt(match[1], 10) : -1;
+  }
+
+  function sortYearRangesDesc(ranges) {
+    return [...(ranges || [])].sort((a, b) => {
+      const startA = extractYearRangeStart(a);
+      const startB = extractYearRangeStart(b);
+      if (startA !== startB) return startB - startA;
+      return String(a).localeCompare(String(b), undefined, { sensitivity: 'base' });
+    });
   }
 
   let vehicleDataHydrationPromise = null;
@@ -96,6 +212,7 @@
       .then((data) => {
         replaceObjectContents(VEHICLE_DATABASE, data.models || {});
         replaceObjectContents(VEHICLE_ENGINE_DATABASE, data.yearEngines || {});
+        replaceObjectContents(VEHICLE_MODELS_BY_TYPE, data.modelsByType || {});
         return data;
       })
       .catch((error) => {
@@ -304,30 +421,41 @@
   
   // Helper function to find model in database with multiple key variations
   function findModelInDatabase(manufacturer, modelKey) {
-    if (!VEHICLE_ENGINE_DATABASE[manufacturer]) return null;
+    const engineMakeKey = getEngineMakeKey(manufacturer);
+    if (!engineMakeKey || !VEHICLE_ENGINE_DATABASE[engineMakeKey]) return null;
+    const makeDb = VEHICLE_ENGINE_DATABASE[engineMakeKey];
+    const normalizedTarget = normalizeModelLookupKey(modelKey);
     
     // Try the direct key first
-    if (VEHICLE_ENGINE_DATABASE[manufacturer][modelKey]) {
+    if (makeDb[modelKey]) {
       return modelKey;
     }
     
     // Try removing hyphens between numbers/letters (e.g., ds-3-crossback -> ds3-crossback)
     const noHyphenKey = modelKey.replace(/-(\d)/g, '$1');
-    if (VEHICLE_ENGINE_DATABASE[manufacturer][noHyphenKey]) {
+    if (makeDb[noHyphenKey]) {
       return noHyphenKey;
     }
     
     // Try adding hyphens between numbers/letters (e.g., mg4-ev -> mg-4-ev)
     const withHyphenKey = modelKey.replace(/([a-z])(\d)/gi, '$1-$2').replace(/(\d)([a-z])/gi, '$1-$2');
-    if (VEHICLE_ENGINE_DATABASE[manufacturer][withHyphenKey]) {
+    if (makeDb[withHyphenKey]) {
       return withHyphenKey;
     }
     
     // Try without any special handling of numbers
     const simpleKey = modelKey.replace(/[^a-z0-9-]/g, '');
-    if (VEHICLE_ENGINE_DATABASE[manufacturer][simpleKey]) {
+    if (makeDb[simpleKey]) {
       return simpleKey;
     }
+
+    // Canonical/fuzzy fallback for aliases like cla <-> cla-class
+    const candidate = Object.keys(makeDb).find((dbModelKey) => {
+      const normDbKey = normalizeModelLookupKey(dbModelKey);
+      if (!normDbKey || !normalizedTarget) return false;
+      return normDbKey === normalizedTarget || normDbKey.replace(/-/g, '') === normalizedTarget.replace(/-/g, '');
+    });
+    if (candidate) return candidate;
     
     return null;
   }
@@ -482,6 +610,7 @@
     const modelSelect = document.getElementById('vehicle-model');
     const yearSelect = document.getElementById('vehicle-year');
     const engineSelect = document.getElementById('vehicle-engine');
+    const vehicleTypeSelect = document.getElementById('vehicle-type');
     
     console.log('Vehicle dropdowns found:', {
       manufacturer: !!manufacturerSelect,
@@ -490,10 +619,28 @@
       engine: !!engineSelect
     });
 
+    if (vehicleTypeSelect && !vehicleTypeSelect.value) {
+      vehicleTypeSelect.value = 'car';
+    }
+    const currentUploadType = mapUiTypeToApiType(vehicleTypeSelect?.value || 'car');
+    if (manufacturerSelect) manufacturerSelect.dataset.vehicleType = currentUploadType;
     populateManufacturerSelect(manufacturerSelect);
     hydrateVehicleDataFromAPI().then(() => {
+      const refreshedType = mapUiTypeToApiType(vehicleTypeSelect?.value || 'car');
+      if (manufacturerSelect) manufacturerSelect.dataset.vehicleType = refreshedType;
       populateManufacturerSelect(manufacturerSelect);
     });
+
+    if (vehicleTypeSelect && manufacturerSelect) {
+      vehicleTypeSelect.addEventListener('change', (e) => {
+        const selectedType = mapUiTypeToApiType(e.target.value || 'car');
+        manufacturerSelect.dataset.vehicleType = selectedType;
+        populateManufacturerSelect(manufacturerSelect);
+        modelSelect.innerHTML = '<option value="">Select Model</option>';
+        yearSelect.innerHTML = '<option value="">Select Year Range</option>';
+        engineSelect.innerHTML = '<option value="">Select Engine</option>';
+      });
+    }
     
     // Initialize vehicle details card as hidden
     const detailsCard = document.getElementById('vehicle-details-display');
@@ -654,15 +801,17 @@
         engineSelect.innerHTML = '<option value="">Select Engine</option>';
         
         // Populate models
-        if (manufacturer && VEHICLE_DATABASE[manufacturer]) {
-          console.log('Found models for', manufacturer, ':', VEHICLE_DATABASE[manufacturer]);
-          VEHICLE_DATABASE[manufacturer].forEach(model => {
+        const selectedType = manufacturerSelect.dataset.vehicleType || 'car';
+        const models = getModelsForManufacturer(manufacturer, selectedType);
+        if (manufacturer && models.length) {
+          console.log('Found models for', manufacturer, ':', models);
+          models.forEach(model => {
             const option = document.createElement('option');
             option.value = normalizeModelKey(model);
             option.textContent = model;
             modelSelect.appendChild(option);
           });
-          console.log('Populated', VEHICLE_DATABASE[manufacturer].length, 'models');
+          console.log('Populated', models.length, 'models');
         } else {
           console.warn('No models found for manufacturer:', manufacturer);
         }
@@ -675,24 +824,19 @@
         console.log('Model changed to:', model, 'for manufacturer:', manufacturer);
         yearSelect.innerHTML = '<option value="">Select Year Range</option>';
         engineSelect.innerHTML = '<option value="">Select Engine</option>';
-        
-        // Find the correct model key in the database
-        const actualModelKey = findModelInDatabase(manufacturer, model);
+
+        const { actualModelKey, yearMap } = getModelYearMap(manufacturer, model);
         console.log('Found model key:', actualModelKey);
-        
-        if (manufacturer && actualModelKey && VEHICLE_ENGINE_DATABASE[manufacturer] && VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey]) {
+
+        if (yearMap) {
           // Get all year ranges for this model
-          const yearRanges = Object.keys(VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey]);
+          const yearRanges = Object.keys(yearMap);
           console.log('Found year ranges:', yearRanges);
           
           // Sort year ranges by start year descending
-          yearRanges.sort((a, b) => {
-            const startA = parseInt(a.split('-')[0]);
-            const startB = parseInt(b.split('-')[0]);
-            return startB - startA;
-          });
+          const sortedYearRanges = sortYearRangesDesc(yearRanges);
           
-          yearRanges.forEach(range => {
+          sortedYearRanges.forEach(range => {
             const option = document.createElement('option');
             option.value = range;
             option.textContent = range;
@@ -701,7 +845,7 @@
           
           // Store the actual key for later use
           modelSelect.dataset.actualKey = actualModelKey;
-          console.log('Populated', yearRanges.length, 'year ranges');
+          console.log('Populated', sortedYearRanges.length, 'year ranges');
         } else {
           // Fallback to standard year ranges if model not in detailed database
           const fallbackYears = ['2021-2026', '2017-2020', '2013-2016', '2009-2012', '2005-2008', '2000-2004'];
@@ -726,12 +870,18 @@
         const yearRange = e.target.value;
         console.log('Year changed to:', yearRange, 'for model:', actualModelKey);
         engineSelect.innerHTML = '<option value="">Select Engine</option>';
-        
+
+        const { yearMap } = getModelYearMap(manufacturer, actualModelKey);
         let engines = null;
-        if (manufacturer && actualModelKey && yearRange && VEHICLE_ENGINE_DATABASE[manufacturer] && VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey]) {
-          // Get engines for this specific year range
-          engines = VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey][yearRange];
+
+        if (yearMap && yearRange) {
+          engines = yearMap[yearRange] || null;
           console.log('Found engines from database:', engines);
+        }
+
+        if ((!engines || engines.length === 0) && yearMap) {
+          engines = collectModelEnginesFromAllYears(yearMap);
+          console.log('Falling back to all model engines:', engines);
         }
         
         // Strict mode: only show year-verified engines
@@ -1970,6 +2120,7 @@
 
   // Initialize Vehicle Search page
   function initVehicleSearch() {
+    const searchType = document.getElementById('search-type');
     const searchManufacturer = document.getElementById('search-manufacturer');
     const searchModel = document.getElementById('search-model');
     const searchYear = document.getElementById('search-year');
@@ -1984,10 +2135,29 @@
     
     if (!searchManufacturer || !searchModel || !searchYear || !searchEngine || !searchBtn) return;
 
+    if (searchType && !searchType.value) {
+      searchType.value = 'car';
+    }
+    const selectedSearchType = mapUiTypeToApiType(searchType?.value || 'car');
+    searchManufacturer.dataset.vehicleType = selectedSearchType;
+
     populateManufacturerSelect(searchManufacturer);
     hydrateVehicleDataFromAPI().then(() => {
+      const refreshedSearchType = mapUiTypeToApiType(searchType?.value || 'car');
+      searchManufacturer.dataset.vehicleType = refreshedSearchType;
       populateManufacturerSelect(searchManufacturer);
     });
+
+    if (searchType) {
+      searchType.addEventListener('change', (e) => {
+        const selectedType = mapUiTypeToApiType(e.target.value || 'car');
+        searchManufacturer.dataset.vehicleType = selectedType;
+        populateManufacturerSelect(searchManufacturer);
+        searchModel.innerHTML = '<option value="">Select Model</option>';
+        searchYear.innerHTML = '<option value="">Select Year</option>';
+        searchEngine.innerHTML = '<option value="">Select Engine</option>';
+      });
+    }
     
     // Populate model dropdown when manufacturer changes
     searchManufacturer.addEventListener('change', (e) => {
@@ -1996,8 +2166,10 @@
       searchYear.innerHTML = '<option value="">Select Year</option>';
       searchEngine.innerHTML = '<option value="">Select Engine</option>';
       
-      if (manufacturer && VEHICLE_DATABASE[manufacturer]) {
-        VEHICLE_DATABASE[manufacturer].forEach(model => {
+      const selectedType = searchManufacturer.dataset.vehicleType || 'car';
+      const models = getModelsForManufacturer(manufacturer, selectedType);
+      if (manufacturer && models.length) {
+        models.forEach(model => {
           const option = document.createElement('option');
           option.value = normalizeModelKey(model);
           option.textContent = model;
@@ -2012,22 +2184,17 @@
       const model = e.target.value;
       searchYear.innerHTML = '<option value="">Select Year Range</option>';
       searchEngine.innerHTML = '<option value="">Select Engine</option>';
-      
-      // Find the correct model key in the database
-      const actualModelKey = findModelInDatabase(manufacturer, model);
-      
-      if (manufacturer && actualModelKey && VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey]) {
+
+      const { actualModelKey, yearMap } = getModelYearMap(manufacturer, model);
+
+      if (yearMap) {
         // Get all year ranges for this model and display them directly
-        const yearRanges = Object.keys(VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey]);
+        const yearRanges = Object.keys(yearMap);
         
         // Sort year ranges by start year descending
-        yearRanges.sort((a, b) => {
-          const startA = parseInt(a.split('-')[0]);
-          const startB = parseInt(b.split('-')[0]);
-          return startB - startA;
-        });
+        const sortedYearRanges = sortYearRangesDesc(yearRanges);
         
-        yearRanges.forEach(range => {
+        sortedYearRanges.forEach(range => {
           const option = document.createElement('option');
           option.value = range;
           option.textContent = range;
@@ -2056,12 +2223,16 @@
       const actualModelKey = searchModel.dataset.actualKey || model;
       const yearRange = e.target.value;
       searchEngine.innerHTML = '<option value="">Select Engine</option>';
-      
+
+      const { yearMap } = getModelYearMap(manufacturer, actualModelKey);
       let engines = null;
-      
-      if (manufacturer && actualModelKey && yearRange && VEHICLE_ENGINE_DATABASE[manufacturer] && VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey]) {
-        // Get engines for this specific year range
-        engines = VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey][yearRange];
+
+      if (yearMap && yearRange) {
+        engines = yearMap[yearRange] || null;
+      }
+
+      if ((!engines || engines.length === 0) && yearMap) {
+        engines = collectModelEnginesFromAllYears(yearMap);
       }
       
       // Strict mode: only show year-verified engines
@@ -6787,16 +6958,36 @@ I would like to request a quote for tuning this vehicle.`,
   
   // Public Vehicle Search Functions
   function initPublicVehicleSearch() {
+    const typeSelect = document.getElementById('public-type');
     const manufacturerSelect = document.getElementById('public-manufacturer');
     const modelSelect = document.getElementById('public-model');
     const yearSelect = document.getElementById('public-year');
     const engineSelect = document.getElementById('public-engine');
     const searchBtn = document.getElementById('public-search-btn');
 
+    if (typeSelect && !typeSelect.value) {
+      typeSelect.value = 'car';
+    }
+    const selectedPublicType = mapUiTypeToApiType(typeSelect?.value || 'car');
+    if (manufacturerSelect) manufacturerSelect.dataset.vehicleType = selectedPublicType;
+
     populateManufacturerSelect(manufacturerSelect);
     hydrateVehicleDataFromAPI().then(() => {
+      const refreshedPublicType = mapUiTypeToApiType(typeSelect?.value || 'car');
+      if (manufacturerSelect) manufacturerSelect.dataset.vehicleType = refreshedPublicType;
       populateManufacturerSelect(manufacturerSelect);
     });
+
+    if (typeSelect && manufacturerSelect) {
+      typeSelect.addEventListener('change', function() {
+        const nextType = mapUiTypeToApiType(this.value || 'car');
+        manufacturerSelect.dataset.vehicleType = nextType;
+        populateManufacturerSelect(manufacturerSelect);
+        modelSelect.innerHTML = '<option value="">Select Model</option>';
+        yearSelect.innerHTML = '<option value="">Select Year Range</option>';
+        engineSelect.innerHTML = '<option value="">Select Engine</option>';
+      });
+    }
     
     // Vehicle data (comprehensive database - same as authenticated version)
     const vehicleData = {
@@ -7897,8 +8088,10 @@ I would like to request a quote for tuning this vehicle.`,
       yearSelect.innerHTML = '<option value="">Select Year Range</option>';
       engineSelect.innerHTML = '<option value="">Select Engine</option>';
       
-      if (manufacturer && VEHICLE_DATABASE[manufacturer]) {
-        VEHICLE_DATABASE[manufacturer].forEach(model => {
+      const currentType = manufacturerSelect.dataset.vehicleType || 'car';
+      const models = getModelsForManufacturer(manufacturer, currentType);
+      if (manufacturer && models.length) {
+        models.forEach(model => {
           const option = document.createElement('option');
           option.value = model;
           option.textContent = model;
@@ -7919,12 +8112,13 @@ I would like to request a quote for tuning this vehicle.`,
       if (manufacturer && model) {
         // Try to find model in VEHICLE_ENGINE_DATABASE for accurate year ranges
         const modelKey = model.toLowerCase().replace(/\s+/g, '-');
-        const actualModelKey = findModelInDatabase(manufacturer, modelKey);
-        
-        if (actualModelKey && VEHICLE_ENGINE_DATABASE[manufacturer] && VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey]) {
+        const { yearMap } = getModelYearMap(manufacturer, modelKey);
+
+        if (yearMap) {
           // Use year ranges from the detailed database
-          const yearRanges = Object.keys(VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey]);
-          yearRanges.forEach(year => {
+          const yearRanges = Object.keys(yearMap);
+          const sortedYearRanges = sortYearRangesDesc(yearRanges);
+          sortedYearRanges.forEach(year => {
             const option = document.createElement('option');
             option.value = year;
             option.textContent = year;
@@ -7954,11 +8148,15 @@ I would like to request a quote for tuning this vehicle.`,
       if (manufacturer && model && year) {
         // Try to find model in VEHICLE_ENGINE_DATABASE for accurate engines
         const modelKey = model.toLowerCase().replace(/\s+/g, '-');
-        const actualModelKey = findModelInDatabase(manufacturer, modelKey);
-        
+        const { yearMap } = getModelYearMap(manufacturer, modelKey);
+
         let engines = null;
-        if (actualModelKey && VEHICLE_ENGINE_DATABASE[manufacturer] && VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey]) {
-          engines = VEHICLE_ENGINE_DATABASE[manufacturer][actualModelKey][year];
+        if (yearMap) {
+          engines = yearMap[year] || null;
+        }
+
+        if ((!engines || engines.length === 0) && yearMap) {
+          engines = collectModelEnginesFromAllYears(yearMap);
         }
         
         // Strict mode: only show year-verified engines

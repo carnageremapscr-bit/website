@@ -1,0 +1,4 @@
+﻿models_make_count=208
+yearEngines_make_count=67
+unresolved_make_mismatches=140
+sample_unresolved=acura, aixam, alpina, arctic-cat, ariel, ashok-leyland, baic, brilliance, case-construnction, case-ih, caterpillar, changan, changhe, chery, cirelli, cowin, daewoo, daimler, dallara, datsun

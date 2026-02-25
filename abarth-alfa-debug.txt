@@ -1,0 +1,9 @@
+﻿models_has_abarth=True
+engines_has_abarth=True
+models_has_alfa-romeo=True
+engines_has_alfa-romeo=True
+engines_has_alfa=False
+abarth_models=124 Spider, 500, 500C, 500e, 595, 600e, 695, Grande Punto, Punto Evo
+alfa_models=145, 146, 147, 155, 156, 159, 164, 166, 33, 4C, 75, 90
+abarth_engine_models=595, 695, 500e, 124-spider, grande-punto, punto-evo
+alfa_engine_models=147, 156, 159, giulietta, giulia, stelvio, mito, tonale, brera, spider, gt, giulia-quadrifoglio

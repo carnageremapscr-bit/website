@@ -31,6 +31,7 @@ const CHECKCAR_LIVE_API_KEY = process.env.CHECKCAR_LIVE_API_KEY || CHECKCAR_API_
 const CHECKCAR_TEST_API_KEY = process.env.CHECKCAR_TEST_API_KEY || 'e80ce7141c39ae0b111a1999f6a0891b';
 const CHECKCAR_DATAPOINT = process.env.CHECKCAR_DATAPOINT || 'ukvehicledata';
 const VRM_PORTAL_LOOKUP_PRICE = Number(process.env.VRM_PORTAL_LOOKUP_PRICE || 0.10);
+const MAX_VARIANTS_PER_YEAR = Number(process.env.MAX_VARIANTS_PER_YEAR || 8);
 
 // DVLA Open Data API
 const DVLA_API_KEY = process.env.DVLA_API_KEY || '';
@@ -75,6 +76,8 @@ app.set('trust proxy', 1);
 const path = require('path');
 const fs = require('fs');
 const CarnageVehicleDB = require('./assets/js/vehicle-database.js');
+const MASTER_VEHICLES_CSV_PATH = path.join(__dirname, 'vehicles-list.csv');
+const MASTER_MAKE_MODEL_LIST_PATH = path.join(__dirname, 'master-make-model-list.txt');
 
 // Optional merged year/engine database enriched from CSV (used for iframe engine lists)
 function safeLoadJson(relativePath) {
@@ -93,6 +96,15 @@ function safeLoadJson(relativePath) {
 // Use the smart-merged database (CSV engines assigned to correct year ranges)
 const smartMergedYearEngines = safeLoadJson('vehicle-engine-db-smart-merged.json');
 let cachedSmartMergedEngines = null;
+let cachedSortedYearEngines = null;
+let cachedCsvFallbackYearEngines = null;
+let cachedCsvFallbackYearEnginesMtime = 0;
+let cachedMergedYearEngines = null;
+let cachedMergedYearEnginesMtime = 0;
+let cachedMasterVehicleModels = null;
+let cachedMasterVehicleModelsMtime = 0;
+let cachedMasterListModels = null;
+let cachedMasterListModelsMtime = 0;
 
 function getSmartMergedYearEngines() {
   if (cachedSmartMergedEngines) return cachedSmartMergedEngines;
@@ -100,6 +112,647 @@ function getSmartMergedYearEngines() {
   // Use smart merged if available, otherwise fall back to original DB
   cachedSmartMergedEngines = smartMergedYearEngines || CarnageVehicleDB.VEHICLE_ENGINE_DATABASE;
   return cachedSmartMergedEngines;
+}
+
+function extractYearRangeStart(rangeKey) {
+  const text = String(rangeKey || '').trim();
+  const match = text.match(/(\d{4})/);
+  if (!match) return -1;
+  return Number(match[1]);
+}
+
+function sortYearRangeKeysDesc(keys) {
+  return [...(keys || [])].sort((a, b) => {
+    const startA = extractYearRangeStart(a);
+    const startB = extractYearRangeStart(b);
+    if (startA !== startB) return startB - startA;
+    return String(a).localeCompare(String(b), undefined, { sensitivity: 'base' });
+  });
+}
+
+function extractYearRangeEnd(rangeKey) {
+  const text = String(rangeKey || '').trim();
+  const all = text.match(/\d{4}/g) || [];
+  if (!all.length) return -1;
+  return Number(all[all.length - 1]);
+}
+
+function isPre2012Range(rangeKey) {
+  const endYear = extractYearRangeEnd(rangeKey);
+  return endYear > 0 && endYear < 2012;
+}
+
+function containsCrEngineLabel(label) {
+  const text = String(label || '').toLowerCase();
+  return /\bcr\b|common\s*rail/.test(text);
+}
+
+function normalizeEngineLabel(label) {
+  return String(label || '')
+    .toLowerCase()
+    .replace(/[–—]/g, '-')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function extractBhpValue(label) {
+  const text = String(label || '').toLowerCase();
+  const match = text.match(/(\d{2,4})\s*hp\b/);
+  if (!match) return null;
+  const value = Number(match[1]);
+  return Number.isFinite(value) ? value : null;
+}
+
+function getEngineFamilyKey(label) {
+  return normalizeEngineLabel(label)
+    .replace(/\d{2,4}\s*hp\b/g, '')
+    .replace(/\s*-\s*$/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function extractEngineDisplacementValue(label) {
+  const text = String(label || '').toLowerCase();
+  const liters = text.match(/(\d+(?:\.\d+)?)\s*l\b/);
+  if (liters) return Number(liters[1]);
+
+  const cc = text.match(/(\d{3,5})\s*cc\b/);
+  if (cc) {
+    const value = Number(cc[1]);
+    if (Number.isFinite(value) && value > 0) return value / 1000;
+  }
+
+  return null;
+}
+
+function sortEngineVariants(variants) {
+  return [...(variants || [])].sort((a, b) => {
+    const da = extractEngineDisplacementValue(a);
+    const db = extractEngineDisplacementValue(b);
+    if (da !== null && db !== null && da !== db) return da - db;
+    if (da !== null && db === null) return -1;
+    if (da === null && db !== null) return 1;
+
+    const ha = extractBhpValue(a);
+    const hb = extractBhpValue(b);
+    if (ha !== null && hb !== null && ha !== hb) return ha - hb;
+    if (ha !== null && hb === null) return -1;
+    if (ha === null && hb !== null) return 1;
+
+    return String(a).localeCompare(String(b), undefined, { sensitivity: 'base' });
+  });
+}
+
+function sanitizeYearEngineVariants(engines, yearKey) {
+  const list = Array.isArray(engines) ? engines : [];
+  const seenLabels = new Set();
+  const unique = [];
+  const pre2012 = isPre2012Range(yearKey);
+
+  for (const item of list) {
+    const label = String(item || '').trim();
+    if (!label) continue;
+
+    if (pre2012 && containsCrEngineLabel(label)) {
+      continue;
+    }
+
+    const normalized = normalizeEngineLabel(label);
+    if (!normalized || seenLabels.has(normalized)) continue;
+
+    seenLabels.add(normalized);
+    unique.push(label);
+  }
+
+  const sorted = sortEngineVariants(unique);
+  const filtered = [];
+  const hpByFamily = new Map();
+
+  for (const variant of sorted) {
+    const family = getEngineFamilyKey(variant);
+    const hp = extractBhpValue(variant);
+
+    if (family && hp !== null) {
+      const existingHp = hpByFamily.get(family) || [];
+      const isCloseDuplicate = existingHp.some((value) => Math.abs(value - hp) <= 4);
+      if (isCloseDuplicate) continue;
+      existingHp.push(hp);
+      hpByFamily.set(family, existingHp);
+    }
+
+    filtered.push(variant);
+    if (filtered.length >= MAX_VARIANTS_PER_YEAR) break;
+  }
+
+  return filtered;
+}
+
+function getSortedYearEngines() {
+  if (cachedSortedYearEngines) return cachedSortedYearEngines;
+
+  const source = getSmartMergedYearEngines() || {};
+  const sorted = {};
+
+  Object.keys(source).forEach((makeKey) => {
+    const models = source[makeKey] || {};
+    sorted[makeKey] = {};
+
+    Object.keys(models).forEach((modelKey) => {
+      const yearMap = models[modelKey] || {};
+      const orderedYearMap = {};
+      const yearKeys = sortYearRangeKeysDesc(Object.keys(yearMap));
+
+      yearKeys.forEach((yearKey) => {
+        orderedYearMap[yearKey] = sanitizeYearEngineVariants(yearMap[yearKey], yearKey);
+      });
+
+      sorted[makeKey][modelKey] = orderedYearMap;
+    });
+  });
+
+  cachedSortedYearEngines = sorted;
+  return sorted;
+}
+
+function buildEngineLabelFromCsvRow(engineRaw, powerPsRaw) {
+  const engine = String(engineRaw || '').trim();
+  const power = String(powerPsRaw || '').trim();
+  if (!engine) return '';
+  if (power && /^\d+$/.test(power)) return `${engine} - ${power}hp`;
+  return engine;
+}
+
+function loadCsvFallbackYearEngines() {
+  try {
+    if (!fs.existsSync(MASTER_VEHICLES_CSV_PATH)) return {};
+
+    const stats = fs.statSync(MASTER_VEHICLES_CSV_PATH);
+    const mtime = Number(stats.mtimeMs || 0);
+    if (cachedCsvFallbackYearEngines && cachedCsvFallbackYearEnginesMtime === mtime) {
+      return cachedCsvFallbackYearEngines;
+    }
+
+    const raw = fs.readFileSync(MASTER_VEHICLES_CSV_PATH, 'utf8');
+    const lines = raw.split(/\r?\n/).filter((line) => line.trim().length > 0);
+    if (lines.length < 2) return {};
+
+    const header = parseMasterCsvLine(lines[0]);
+    const indexByName = {};
+    header.forEach((name, idx) => {
+      indexByName[String(name || '').toLowerCase()] = idx;
+    });
+
+    const brandIdx = indexByName.brand;
+    const modelIdx = indexByName.model;
+    const engineIdx = indexByName.engine;
+    const powerIdx = indexByName['power(ps)'];
+    if (brandIdx === undefined || modelIdx === undefined || engineIdx === undefined) return {};
+
+    const grouped = {};
+    const seen = {};
+
+    for (let i = 1; i < lines.length; i++) {
+      const cols = parseMasterCsvLine(lines[i]);
+      const makeKey = normalizeMasterKey(cols[brandIdx]);
+      const modelKey = normalizeMasterKey(cols[modelIdx]);
+      if (!makeKey || !modelKey) continue;
+
+      const label = buildEngineLabelFromCsvRow(cols[engineIdx], powerIdx !== undefined ? cols[powerIdx] : '');
+      if (!label) continue;
+
+      if (!grouped[makeKey]) grouped[makeKey] = {};
+      if (!grouped[makeKey][modelKey]) grouped[makeKey][modelKey] = { '2000-2026': [] };
+
+      const key = `${makeKey}|${modelKey}`;
+      if (!seen[key]) seen[key] = new Set();
+      const normalized = normalizeEngineLabel(label);
+      if (!normalized || seen[key].has(normalized)) continue;
+
+      grouped[makeKey][modelKey]['2000-2026'].push(label);
+      seen[key].add(normalized);
+    }
+
+    Object.keys(grouped).forEach((makeKey) => {
+      Object.keys(grouped[makeKey]).forEach((modelKey) => {
+        const variants = grouped[makeKey][modelKey]['2000-2026'] || [];
+        grouped[makeKey][modelKey]['2000-2026'] = sanitizeYearEngineVariants(variants, '2000-2026');
+      });
+    });
+
+    cachedCsvFallbackYearEngines = grouped;
+    cachedCsvFallbackYearEnginesMtime = mtime;
+    return grouped;
+  } catch (err) {
+    console.warn('Failed to build CSV fallback year engines:', err.message);
+    return {};
+  }
+}
+
+function getMergedYearEngines() {
+  const fallback = loadCsvFallbackYearEngines() || {};
+  const fallbackMtime = cachedCsvFallbackYearEnginesMtime;
+
+  if (cachedMergedYearEngines && cachedMergedYearEnginesMtime === fallbackMtime) {
+    return cachedMergedYearEngines;
+  }
+
+  const primary = getSortedYearEngines() || {};
+  const merged = JSON.parse(JSON.stringify(primary));
+
+  Object.keys(fallback).forEach((makeKey) => {
+    if (!merged[makeKey]) merged[makeKey] = {};
+
+    Object.keys(fallback[makeKey]).forEach((modelKey) => {
+      const fallbackYears = fallback[makeKey][modelKey] || {};
+      const existingYears = merged[makeKey][modelKey] || {};
+      const existingYearKeys = Object.keys(existingYears);
+
+      if (!merged[makeKey][modelKey]) {
+        merged[makeKey][modelKey] = JSON.parse(JSON.stringify(fallbackYears));
+        return;
+      }
+
+      const hasAnyEngines = existingYearKeys.some((yk) => Array.isArray(existingYears[yk]) && existingYears[yk].length > 0);
+      if (!hasAnyEngines) {
+        merged[makeKey][modelKey] = JSON.parse(JSON.stringify(fallbackYears));
+        return;
+      }
+
+      Object.keys(fallbackYears).forEach((yearKey) => {
+        const existing = existingYears[yearKey];
+        if (!Array.isArray(existing) || existing.length === 0) {
+          existingYears[yearKey] = sanitizeYearEngineVariants(fallbackYears[yearKey], yearKey);
+        }
+      });
+
+      const orderedYearMap = {};
+      const yearKeys = sortYearRangeKeysDesc(Object.keys(existingYears));
+      yearKeys.forEach((yearKey) => {
+        orderedYearMap[yearKey] = sanitizeYearEngineVariants(existingYears[yearKey], yearKey);
+      });
+      merged[makeKey][modelKey] = orderedYearMap;
+
+      const stillEmpty = Object.keys(merged[makeKey][modelKey]).every((yk) => {
+        const list = merged[makeKey][modelKey][yk];
+        return !Array.isArray(list) || list.length === 0;
+      });
+      if (stillEmpty && fallbackYears['2000-2026']) {
+        merged[makeKey][modelKey]['2000-2026'] = sanitizeYearEngineVariants(fallbackYears['2000-2026'], '2000-2026');
+      }
+    });
+  });
+
+  cachedMergedYearEngines = merged;
+  cachedMergedYearEnginesMtime = fallbackMtime;
+  return merged;
+}
+
+function normalizeModelCoverageKey(value) {
+  return normalizeMasterKey(value)
+    .replace(/-class\b/g, '')
+    .replace(/-series\b/g, '')
+    .trim();
+}
+
+function getYearEnginesMakeKey(yearEngines, makeKey) {
+  if (!yearEngines || !makeKey) return null;
+  if (yearEngines[makeKey]) return makeKey;
+
+  const aliases = {
+    'alfa-romeo': 'alfa',
+    'mercedes-benz': 'mercedes',
+    'mercedes': 'mercedes',
+    'vw': 'volkswagen',
+    'vauxhall': 'opel',
+    'ssangyong': 'ssang-yong'
+  };
+
+  const alias = aliases[makeKey];
+  if (alias && yearEngines[alias]) return alias;
+
+  const compact = makeKey.replace(/-/g, '');
+  const exact = Object.keys(yearEngines).find((key) => key.replace(/-/g, '') === compact);
+  if (exact) return exact;
+
+  const loose = Object.keys(yearEngines).find((key) => {
+    const candidate = key.replace(/-/g, '');
+    return candidate.includes(compact) || compact.includes(candidate);
+  });
+  return loose || null;
+}
+
+function collectMakeFallbackEngines(makeYearMap) {
+  if (!makeYearMap || typeof makeYearMap !== 'object') return [];
+
+  const engines = [];
+  const seen = new Set();
+
+  Object.keys(makeYearMap).forEach((modelKey) => {
+    const yearMap = makeYearMap[modelKey] || {};
+    Object.keys(yearMap).forEach((yearKey) => {
+      const list = Array.isArray(yearMap[yearKey]) ? yearMap[yearKey] : [];
+      list.forEach((engineLabel) => {
+        const label = String(engineLabel || '').trim();
+        if (!label) return;
+        const normalized = normalizeEngineLabel(label);
+        if (!normalized || seen.has(normalized)) return;
+        seen.add(normalized);
+        engines.push(label);
+      });
+    });
+  });
+
+  return sanitizeYearEngineVariants(engines, '2000-2026');
+}
+
+function hasAnyModelEngines(yearMap) {
+  if (!yearMap || typeof yearMap !== 'object') return false;
+  return Object.keys(yearMap).some((yearKey) => {
+    const list = yearMap[yearKey];
+    return Array.isArray(list) && list.length > 0;
+  });
+}
+
+function ensureEngineCoverageForModels(modelsByMake, yearEngines) {
+  if (!modelsByMake || typeof modelsByMake !== 'object') return yearEngines || {};
+
+  const covered = JSON.parse(JSON.stringify(yearEngines || {}));
+
+  Object.keys(modelsByMake).forEach((makeKey) => {
+    const models = Array.isArray(modelsByMake[makeKey]) ? modelsByMake[makeKey] : [];
+    if (!models.length) return;
+
+    const resolvedMakeKey = getYearEnginesMakeKey(covered, makeKey) || makeKey;
+    if (!covered[resolvedMakeKey]) covered[resolvedMakeKey] = {};
+    const makeYearMap = covered[resolvedMakeKey];
+
+    const makeFallbackEngines = collectMakeFallbackEngines(makeYearMap);
+    if (!makeFallbackEngines.length) return;
+
+    const modelKeyLookup = new Map();
+    Object.keys(makeYearMap).forEach((existingModelKey) => {
+      modelKeyLookup.set(normalizeModelCoverageKey(existingModelKey), existingModelKey);
+    });
+
+    models.forEach((modelLabel) => {
+      const dedupeKey = getModelDedupeKey(makeKey, modelLabel);
+      const coverageKey = normalizeModelCoverageKey(dedupeKey || modelLabel);
+      const matchedModelKey = modelKeyLookup.get(coverageKey);
+      const resolvedModelKey = matchedModelKey || normalizeMasterKey(modelLabel);
+      if (!resolvedModelKey) return;
+
+      const existingYearMap = makeYearMap[resolvedModelKey] || null;
+      if (existingYearMap && hasAnyModelEngines(existingYearMap)) return;
+
+      makeYearMap[resolvedModelKey] = {
+        '2000-2026': sanitizeYearEngineVariants(makeFallbackEngines, '2000-2026')
+      };
+
+      if (!modelKeyLookup.has(coverageKey)) {
+        modelKeyLookup.set(coverageKey, resolvedModelKey);
+      }
+    });
+  });
+
+  return covered;
+}
+
+function parseMasterCsvLine(line) {
+  const out = [];
+  let current = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      inQuotes = !inQuotes;
+      continue;
+    }
+    if (ch === ';' && !inQuotes) {
+      out.push(current);
+      current = '';
+    } else {
+      current += ch;
+    }
+  }
+  out.push(current);
+  return out.map((s) => String(s || '').trim());
+}
+
+function normalizeMasterKey(value) {
+  return String(value || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function normalizeVehicleType(value) {
+  const normalized = normalizeMasterKey(value);
+  return normalized || 'car';
+}
+
+function getModelDedupeKey(makeKey, modelValue) {
+  let key = normalizeMasterKey(modelValue);
+  if (!key) return key;
+
+  const isMercedesFamily = makeKey === 'mercedes-benz' || makeKey === 'mercedes-amg' || makeKey === 'mercedes';
+  const isBmwFamily = makeKey === 'bmw';
+
+  if (isBmwFamily) {
+    key = key
+      .replace(/-series$/g, '')
+      .replace(/-series-(.+)$/g, '-$1');
+  }
+
+  if (isMercedesFamily) {
+    key = key
+      .replace(/-class$/g, '')
+      .replace(/^amg-gt$/g, 'gt');
+  }
+
+  return key;
+}
+
+function shouldPreferModelLabel(existingLabel, candidateLabel, makeKey) {
+  const existing = String(existingLabel || '').trim();
+  const candidate = String(candidateLabel || '').trim();
+  if (!candidate) return false;
+  if (!existing) return true;
+
+  const isMercedesFamily = makeKey === 'mercedes-benz' || makeKey === 'mercedes-amg' || makeKey === 'mercedes';
+  const isBmwFamily = makeKey === 'bmw';
+
+  if (isBmwFamily) {
+    const existingHasSeries = /(^|\s|-)series($|\s|-)/i.test(existing);
+    const candidateHasSeries = /(^|\s|-)series($|\s|-)/i.test(candidate);
+    if (existingHasSeries !== candidateHasSeries) {
+      return !candidateHasSeries;
+    }
+  }
+
+  if (isMercedesFamily) {
+    const existingHasClass = /(^|\s|-|\/)class$/i.test(existing);
+    const candidateHasClass = /(^|\s|-|\/)class$/i.test(candidate);
+    if (existingHasClass !== candidateHasClass) {
+      return !candidateHasClass;
+    }
+  }
+
+  return candidate.length < existing.length;
+}
+
+function loadMasterMakeModelList() {
+  try {
+    if (!fs.existsSync(MASTER_MAKE_MODEL_LIST_PATH)) return null;
+
+    const stats = fs.statSync(MASTER_MAKE_MODEL_LIST_PATH);
+    const mtime = Number(stats.mtimeMs || 0);
+
+    if (cachedMasterListModels && cachedMasterListModelsMtime === mtime) {
+      return cachedMasterListModels;
+    }
+
+    const raw = fs.readFileSync(MASTER_MAKE_MODEL_LIST_PATH, 'utf8');
+    const lines = raw
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+
+    const grouped = {};
+    lines.forEach((line) => {
+      const separatorIdx = line.indexOf(':');
+      if (separatorIdx === -1) return;
+
+      const make = line.slice(0, separatorIdx).trim();
+      const modelsPart = line.slice(separatorIdx + 1).trim().replace(/\.$/, '');
+      if (!make || !modelsPart) return;
+
+      const makeKey = normalizeMasterKey(make);
+      if (!makeKey) return;
+
+      const models = modelsPart
+        .split(',')
+        .map((m) => m.trim())
+        .filter(Boolean);
+
+      if (!grouped[makeKey]) grouped[makeKey] = [];
+      const seen = new Set(grouped[makeKey].map((m) => normalizeMasterKey(m)));
+
+      models.forEach((model) => {
+        const modelKey = normalizeMasterKey(model);
+        if (!modelKey || seen.has(modelKey)) return;
+        grouped[makeKey].push(model);
+        seen.add(modelKey);
+      });
+
+      grouped[makeKey].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+    });
+
+    cachedMasterListModels = grouped;
+    cachedMasterListModelsMtime = mtime;
+    return grouped;
+  } catch (err) {
+    console.warn('Failed to load master make/model list:', err.message);
+    return null;
+  }
+}
+
+function loadMasterVehicleModelsFromCsv() {
+  try {
+    if (!fs.existsSync(MASTER_VEHICLES_CSV_PATH)) return null;
+
+    const stats = fs.statSync(MASTER_VEHICLES_CSV_PATH);
+    const mtime = Number(stats.mtimeMs || 0);
+
+    if (cachedMasterVehicleModels && cachedMasterVehicleModelsMtime === mtime) {
+      return cachedMasterVehicleModels;
+    }
+
+    const raw = fs.readFileSync(MASTER_VEHICLES_CSV_PATH, 'utf8');
+    const lines = raw.split(/\r?\n/).filter((line) => line.trim().length > 0);
+    if (!lines.length) return null;
+
+    const header = parseMasterCsvLine(lines[0]);
+    const indexByName = {};
+    header.forEach((name, idx) => {
+      indexByName[String(name || '').toLowerCase()] = idx;
+    });
+
+    const typeIdx = indexByName['type'];
+    const brandIdx = indexByName['brand'];
+    const modelIdx = indexByName['model'];
+
+    if (brandIdx === undefined || modelIdx === undefined) return null;
+
+    const grouped = {};
+    const indexByMake = {};
+    const groupedByType = {};
+    const indexByTypeMake = {};
+
+    for (let i = 1; i < lines.length; i++) {
+      const cols = parseMasterCsvLine(lines[i]);
+      const typeValue = typeIdx !== undefined ? normalizeVehicleType(cols[typeIdx]) : 'car';
+
+      const makeRaw = String(cols[brandIdx] || '').trim();
+      const modelRaw = String(cols[modelIdx] || '').trim();
+      if (!makeRaw || !modelRaw) continue;
+
+      const makeKey = normalizeMasterKey(makeRaw);
+      if (!makeKey) continue;
+
+      if (!grouped[makeKey]) grouped[makeKey] = [];
+      if (!indexByMake[makeKey]) indexByMake[makeKey] = new Map();
+      if (!groupedByType[typeValue]) groupedByType[typeValue] = {};
+      if (!groupedByType[typeValue][makeKey]) groupedByType[typeValue][makeKey] = [];
+
+      const typeMakeKey = `${typeValue}|${makeKey}`;
+      if (!indexByTypeMake[typeMakeKey]) indexByTypeMake[typeMakeKey] = new Map();
+
+      const modelKey = getModelDedupeKey(makeKey, modelRaw);
+      if (!modelKey) continue;
+
+      if (!indexByMake[makeKey].has(modelKey)) {
+        grouped[makeKey].push(modelRaw);
+        indexByMake[makeKey].set(modelKey, grouped[makeKey].length - 1);
+      } else {
+        const idx = indexByMake[makeKey].get(modelKey);
+        if (shouldPreferModelLabel(grouped[makeKey][idx], modelRaw, makeKey)) {
+          grouped[makeKey][idx] = modelRaw;
+        }
+      }
+
+      if (!indexByTypeMake[typeMakeKey].has(modelKey)) {
+        groupedByType[typeValue][makeKey].push(modelRaw);
+        indexByTypeMake[typeMakeKey].set(modelKey, groupedByType[typeValue][makeKey].length - 1);
+      } else {
+        const idx = indexByTypeMake[typeMakeKey].get(modelKey);
+        if (shouldPreferModelLabel(groupedByType[typeValue][makeKey][idx], modelRaw, makeKey)) {
+          groupedByType[typeValue][makeKey][idx] = modelRaw;
+        }
+      }
+    }
+
+    Object.keys(grouped).forEach((make) => {
+      grouped[make].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+    });
+
+    Object.keys(groupedByType).forEach((typeKey) => {
+      Object.keys(groupedByType[typeKey]).forEach((make) => {
+        groupedByType[typeKey][make].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+      });
+    });
+
+    cachedMasterVehicleModels = {
+      allModels: grouped,
+      modelsByType: groupedByType
+    };
+    cachedMasterVehicleModelsMtime = mtime;
+    return cachedMasterVehicleModels;
+  } catch (err) {
+    console.warn('Failed to load models from master CSV:', err.message);
+    return null;
+  }
 }
 // Multer for handling file uploads
 const multer = require('multer');
@@ -1712,11 +2365,20 @@ app.get('/api/vehicles', (req, res) => {
   res.setHeader('Cache-Control', 'no-cache'); // Don't cache so updates reflect immediately
 
   const core = CarnageVehicleDB.getAPIData();
-  const smartMerged = getSmartMergedYearEngines();
+  const smartMerged = getMergedYearEngines();
+  const masterCsvData = loadMasterVehicleModelsFromCsv();
+  const selectedType = normalizeVehicleType(req.query.type || 'car');
+  const modelsByType = masterCsvData?.modelsByType || {};
+  const modelsForSelectedType = modelsByType[selectedType] || modelsByType.car || masterCsvData?.allModels || null;
+  const masterListModels = loadMasterMakeModelList();
+  const yearEnginesWithCoverage = ensureEngineCoverageForModels(modelsForSelectedType || {}, smartMerged || core.yearEngines || {});
 
   res.json({
-    models: core.models || {},
-    yearEngines: smartMerged || core.yearEngines || {}
+    models: modelsForSelectedType || core.models || {},
+    yearEngines: yearEnginesWithCoverage,
+    modelsByType,
+    selectedType,
+    masterModels: masterListModels || null
   });
 });
 

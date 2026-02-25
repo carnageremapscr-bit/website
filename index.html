@@ -103,6 +103,20 @@
           </div>
           
           <div class="form-group">
+            <label for="public-type">Vehicle Type</label>
+            <select id="public-type" class="form-control">
+              <option value="car" selected>Cars</option>
+              <option value="lcv">Vans / LCV</option>
+              <option value="truck">Trucks</option>
+              <option value="bike">Motorcycles</option>
+              <option value="tractor">Agricultural</option>
+              <option value="bus">Buses</option>
+              <option value="boat">Boats</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
             <label for="public-manufacturer">Manufacturer</label>
             <select id="public-manufacturer" class="form-control">
               <option value="">Select Manufacturer</option>
@@ -514,12 +528,14 @@
                   <div class="form-group">
                     <label>Vehicle Type</label>
                     <select id="vehicle-type" class="modern-select" required>
-                      <option value="">Cars/Vans</option>
-                      <option value="car">Cars</option>
-                      <option value="van">Vans</option>
+                      <option value="car" selected>Cars</option>
+                      <option value="lcv">Vans / LCV</option>
                       <option value="truck">Trucks</option>
-                      <option value="motorcycle">Motorcycles</option>
-                      <option value="agricultural">Agricultural</option>
+                      <option value="bike">Motorcycles</option>
+                      <option value="tractor">Agricultural</option>
+                      <option value="bus">Buses</option>
+                      <option value="boat">Boats</option>
+                      <option value="other">Other</option>
                     </select>
                   </div>
                   
@@ -1080,6 +1096,20 @@
               <p id="search-vrm-status" class="vrm-status" aria-live="polite"></p>
             </div>
             <div class="form-row">
+              <div class="form-group">
+                <label for="search-type">Vehicle Type</label>
+                <select id="search-type" class="form-control">
+                  <option value="car" selected>Cars</option>
+                  <option value="lcv">Vans / LCV</option>
+                  <option value="truck">Trucks</option>
+                  <option value="bike">Motorcycles</option>
+                  <option value="tractor">Agricultural</option>
+                  <option value="bus">Buses</option>
+                  <option value="boat">Boats</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
               <div class="form-group">
                 <label for="search-manufacturer">Manufacturer</label>
                 <select id="search-manufacturer" class="form-control">

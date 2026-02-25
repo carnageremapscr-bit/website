@@ -1,0 +1,7 @@
+﻿audi a3 2006-2008 count=6
+audi a3 2006-2008 sample=1.6 - 102hp | 1.9 TDI - 105hp | 2.0 TDI - 140hp | 2.0 FSI - 150hp | 2.0 TDI - 170hp | 2.0 TFSI - 200hp
+vw golf 2004-2008 count=8
+vw golf 2004-2008 sample=1.4 - 75hp | 1.9 TDI - 90hp | 1.6 - 102hp | 1.9 TDI - 105hp | 2.0 TDI - 140hp | 2.0 FSI - 150hp | 2.0 GTD - 170hp | 2.0 GTI - 200hp
+skoda octavia 2004-2013 count=8
+seat leon 2005-2012 count=8
+pre2012_cr_labels_found=0
