@@ -2378,9 +2378,16 @@ app.get('/api/vehicles', (req, res) => {
   const core = CarnageVehicleDB.getAPIData();
   const smartMerged = getMergedYearEngines();
   const masterCsvData = loadMasterVehicleModelsFromCsv();
-  const selectedType = normalizeVehicleType(req.query.type || 'car');
+  const requestedType = typeof req.query.type === 'string' ? String(req.query.type).trim() : '';
+  const selectedType = normalizeVehicleType(requestedType || 'car');
   const modelsByType = masterCsvData?.modelsByType || {};
-  const modelsForSelectedType = modelsByType[selectedType] || modelsByType.car || masterCsvData?.allModels || null;
+  let modelsForSelectedType = null;
+
+  if (requestedType) {
+    modelsForSelectedType = modelsByType[selectedType] || {};
+  } else {
+    modelsForSelectedType = modelsByType[selectedType] || modelsByType.car || masterCsvData?.allModels || null;
+  }
   const masterListModels = loadMasterMakeModelList();
   const yearEnginesWithCoverage = ensureEngineCoverageForModels(modelsForSelectedType || {}, smartMerged || core.yearEngines || {});
 
