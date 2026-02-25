@@ -549,7 +549,18 @@ function normalizeMasterKey(value) {
 
 function normalizeVehicleType(value) {
   const normalized = normalizeMasterKey(value);
-  return normalized || 'car';
+  if (!normalized) return 'other';
+
+  if (normalized === 'car' || normalized === 'cars') return 'car';
+  if (normalized === 'lcv' || normalized === 'van' || normalized === 'vans' || normalized === 'light-commercial-vehicle') return 'lcv';
+  if (normalized === 'truck' || normalized === 'trucks' || normalized === 'hgv') return 'truck';
+  if (normalized === 'bike' || normalized === 'bikes' || normalized === 'motorcycle' || normalized === 'motorcycles') return 'bike';
+  if (normalized === 'tractor' || normalized === 'agricultural') return 'tractor';
+  if (normalized === 'bus' || normalized === 'buses' || normalized === 'coach' || normalized === 'coaches') return 'bus';
+  if (normalized === 'boat' || normalized === 'boats' || normalized === 'marine') return 'boat';
+  if (normalized === 'other' || normalized === 'misc' || normalized === 'unknown') return 'other';
+
+  return normalized;
 }
 
 function getModelDedupeKey(makeKey, modelValue) {
