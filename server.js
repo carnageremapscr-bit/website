@@ -700,6 +700,7 @@ function loadMasterVehicleModelsFromCsv() {
     const indexByMake = {};
     const groupedByType = {};
     const indexByTypeMake = {};
+    const makeTypeCounts = {};
 
     for (let i = 1; i < lines.length; i++) {
       const cols = parseMasterCsvLine(lines[i]);
@@ -711,6 +712,9 @@ function loadMasterVehicleModelsFromCsv() {
 
       const makeKey = normalizeMasterKey(makeRaw);
       if (!makeKey) continue;
+
+      if (!makeTypeCounts[makeKey]) makeTypeCounts[makeKey] = {};
+      makeTypeCounts[makeKey][typeValue] = (makeTypeCounts[makeKey][typeValue] || 0) + 1;
 
       if (!grouped[makeKey]) grouped[makeKey] = [];
       if (!indexByMake[makeKey]) indexByMake[makeKey] = new Map();
@@ -753,6 +757,27 @@ function loadMasterVehicleModelsFromCsv() {
         groupedByType[typeKey][make].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
       });
     });
+
+    if (groupedByType.car) {
+      Object.keys(groupedByType.car).forEach((makeKey) => {
+        const counts = makeTypeCounts[makeKey] || {};
+        const entries = Object.entries(counts);
+        if (!entries.length) {
+          delete groupedByType.car[makeKey];
+          return;
+        }
+
+        const dominantType = entries
+          .sort((a, b) => {
+            if (b[1] !== a[1]) return b[1] - a[1];
+            return String(a[0]).localeCompare(String(b[0]), undefined, { sensitivity: 'base' });
+          })[0][0];
+
+        if (dominantType !== 'car') {
+          delete groupedByType.car[makeKey];
+        }
+      });
+    }
 
     cachedMasterVehicleModels = {
       allModels: grouped,
