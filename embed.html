@@ -465,10 +465,14 @@
       </div>
       <div class="form">
         <select id="vtype">
-          <option value="car">Car</option>
-          <option value="van">Van</option>
-          <option value="motorcycle">Motorcycle</option>
-          <option value="agricultural">Agricultural</option>
+          <option value="car">Cars</option>
+          <option value="lcv">Vans / LCV</option>
+          <option value="truck">Trucks</option>
+          <option value="bike">Motorcycles</option>
+          <option value="tractor">Agricultural</option>
+          <option value="bus">Buses</option>
+          <option value="boat">Boats</option>
+          <option value="other">Other</option>
         </select>
         <select id="mfr"><option value="">Select Manufacturer</option></select>
         <select id="mdl" disabled><option value="">Select Model</option></select>
@@ -576,9 +580,13 @@
       function normalizeUiType(value) {
         var key = String(value || '').toLowerCase().trim();
         if (!key || key === 'car' || key === 'cars') return 'car';
-        if (key === 'lcv' || key === 'van' || key === 'vans') return 'van';
-        if (key === 'bike' || key === 'bikes' || key === 'motorcycle' || key === 'motorcycles') return 'motorcycle';
-        if (key === 'tractor' || key === 'agricultural') return 'agricultural';
+        if (key === 'lcv' || key === 'van' || key === 'vans') return 'lcv';
+        if (key === 'bike' || key === 'bikes' || key === 'motorcycle' || key === 'motorcycles') return 'bike';
+        if (key === 'tractor' || key === 'agricultural') return 'tractor';
+        if (key === 'truck' || key === 'trucks') return 'truck';
+        if (key === 'bus' || key === 'buses') return 'bus';
+        if (key === 'boat' || key === 'boats') return 'boat';
+        if (key === 'other') return 'other';
         return 'car';
       }
 
