@@ -2788,6 +2788,60 @@ app.get('/api/vrm-lookup', async (req, res) => {
         text.includes('usage limit')
       );
     };
+    const isTestKeyRestriction = (statusCode, body) => {
+      const text = `${statusCode} ${typeof body === 'string' ? body : JSON.stringify(body || {})}`.toLowerCase();
+      return (
+        text.includes('test api key limitation') ||
+        text.includes("must contain the letter 'a'") ||
+        text.includes('must contain the letter a')
+      );
+    };
+
+    const tryDvlaFallback = async () => {
+      if (!DVLA_API_KEY) return { vehicle: null, reason: 'DVLA API key not configured' };
+
+      let jwtToken = null;
+      if (DVLA_USERNAME && DVLA_PASSWORD) {
+        try {
+          jwtToken = await getDvlaJwtToken();
+        } catch (authError) {
+          console.warn('⚠️ DVLA auth unavailable, falling back to API key only:', authError.message);
+        }
+      }
+
+      const response = await fetch(`${DVLA_API_BASE_URL}/vehicle-enquiry/v1/vehicles`, {
+        method: 'POST',
+        headers: {
+          'x-api-key': DVLA_API_KEY,
+          ...(jwtToken ? { 'Authorization': jwtToken } : {}),
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ registrationNumber: vrm })
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        if (response.status === 401 && jwtToken) {
+          dvlaJwtToken = null;
+          dvlaJwtExpiry = null;
+        }
+        const msg = data?.errors?.[0]?.title || data?.error || data?.message || `DVLA fallback failed (${response.status})`;
+        return { vehicle: null, reason: msg };
+      }
+
+      return {
+        vehicle: {
+          make: data.make,
+          model: data.model,
+          year: data.yearOfManufacture,
+          yearOfManufacture: data.yearOfManufacture,
+          engineCapacity: data.engineCapacity,
+          fuelType: data.fuelType,
+          colour: data.colour
+        },
+        reason: null
+      };
+    };
 
     const callProvider = async (apiKey, keyType) => {
       const providerResp = await fetch(buildProviderUrl(apiKey), { headers: { 'Accept': 'application/json' } });
@@ -2818,7 +2872,10 @@ app.get('/api/vrm-lookup', async (req, res) => {
       lookupResult.keyType === 'test' &&
       !!liveApiKey &&
       liveApiKey !== primaryKey &&
-      isLimitExceeded(lookupResult.providerResp.status, lookupResult.providerJson || lookupResult.rawText);
+      (
+        isLimitExceeded(lookupResult.providerResp.status, lookupResult.providerJson || lookupResult.rawText) ||
+        isTestKeyRestriction(lookupResult.providerResp.status, lookupResult.providerJson || lookupResult.rawText)
+      );
 
     if (shouldFallbackToLive) {
       console.warn('⚠️ CheckCar test key limit reached - retrying with live key');
@@ -2828,6 +2885,26 @@ app.get('/api/vrm-lookup', async (req, res) => {
     const { providerResp, rawText, providerJson } = lookupResult;
 
     if (!providerResp.ok) {
+      const restrictionTriggered =
+        lookupResult.keyType === 'test' &&
+        isTestKeyRestriction(providerResp.status, providerJson || rawText);
+
+      if (restrictionTriggered) {
+        console.warn('⚠️ CheckCar test key limitation detected - attempting DVLA fallback');
+        const dvlaFallback = await tryDvlaFallback();
+        if (dvlaFallback?.vehicle) {
+          return res.json({
+            success: true,
+            vrm,
+            provider: 'dvla-fallback',
+            vehicle: dvlaFallback.vehicle,
+            retrievedAt: new Date().toISOString()
+          });
+        }
+
+        console.warn('⚠️ DVLA fallback unavailable:', dvlaFallback?.reason || 'Unknown DVLA fallback error');
+      }
+
       console.error(`❌ Provider error (${providerResp.status}):`, providerJson?.error || rawText?.substring(0, 200));
       return res.status(providerResp.status).json({
         error: providerJson?.error || providerJson?.message || 'Lookup failed',
