@@ -464,6 +464,12 @@
         <p>Find ECU tuning options for your vehicle</p>
       </div>
       <div class="form">
+        <select id="vtype">
+          <option value="car">Car</option>
+          <option value="van">Van</option>
+          <option value="motorcycle">Motorcycle</option>
+          <option value="agricultural">Agricultural</option>
+        </select>
         <select id="mfr"><option value="">Select Manufacturer</option></select>
         <select id="mdl" disabled><option value="">Select Model</option></select>
         <select id="yr" disabled><option value="">Select Year Range</option></select>
@@ -525,6 +531,7 @@
       var showYear = params.get('showYear');
       var showPerf = params.get('showPerf');
       var showStages = params.get('showStages');
+      var defaultTypeParam = params.get('type');
       var logoParam = params.get('logo');
       var waParam = params.get('wa');
       var emailParam = params.get('email');
@@ -555,6 +562,24 @@
           // keep existing onerror behaviour
           logoImg.style.display = 'block';
         }
+      }
+
+      function mapUiTypeToApiType(value) {
+        var key = String(value || '').toLowerCase().trim();
+        if (!key || key === 'car' || key === 'cars') return 'car';
+        if (key === 'van' || key === 'vans') return 'lcv';
+        if (key === 'motorcycle' || key === 'motorcycles' || key === 'bike' || key === 'bikes') return 'bike';
+        if (key === 'agricultural') return 'tractor';
+        return key;
+      }
+
+      function normalizeUiType(value) {
+        var key = String(value || '').toLowerCase().trim();
+        if (!key || key === 'car' || key === 'cars') return 'car';
+        if (key === 'lcv' || key === 'van' || key === 'vans') return 'van';
+        if (key === 'bike' || key === 'bikes' || key === 'motorcycle' || key === 'motorcycles') return 'motorcycle';
+        if (key === 'tractor' || key === 'agricultural') return 'agricultural';
+        return 'car';
       }
 
       // Show/hide year dropdown
@@ -596,6 +621,7 @@
       // Show/hide all stage cards (handled after results are rendered)
       var _showStages = showStages;
 
+      var vtype = document.getElementById('vtype');
       var mfr = document.getElementById('mfr');
       var mdl = document.getElementById('mdl');
       var yr = document.getElementById('yr');
@@ -606,7 +632,7 @@
       var resultsView = document.getElementById('resultsView');
 
       // Vehicle database (will be populated from API)
-      var DB = { models: {}, engines: {}, yearData: {}, yearEngines: {} };
+      var DB = { models: {}, modelsByType: {}, engines: {}, yearData: {}, yearEngines: {} };
 
       // Year ranges for models (fallback)
       var YEAR_RANGES = ['2021-2026', '2017-2020', '2013-2016', '2009-2012', '2005-2008', '2000-2004'];
@@ -643,7 +669,11 @@
         .then(function(r) { return r.json(); })
         .then(function(data) {
           DB.models = data.models || {};
+          DB.modelsByType = data.modelsByType || {};
           DB.yearEngines = data.yearEngines || {};
+          if (vtype) {
+            vtype.value = normalizeUiType(defaultTypeParam || vtype.value || 'car');
+          }
           populateManufacturers();
         })
         .catch(function(err) {
@@ -653,22 +683,51 @@
 
       function populateManufacturers() {
         mfr.innerHTML = '<option value="">Select Manufacturer</option>';
-        Object.keys(DB.models).sort().forEach(function(key) {
+        var selectedType = mapUiTypeToApiType(vtype && vtype.value ? vtype.value : 'car');
+        var typedModels = DB.modelsByType[selectedType] || {};
+        var makeKeys = Object.keys(typedModels);
+
+        if (!makeKeys.length && selectedType === 'car') {
+          makeKeys = Object.keys(DB.models || {});
+        }
+
+        makeKeys.sort(function(a, b) {
+          return formatName(a).localeCompare(formatName(b), undefined, { sensitivity: 'base' });
+        }).forEach(function(key) {
           var opt = document.createElement('option');
           opt.value = key;
           opt.textContent = formatName(key);
           mfr.appendChild(opt);
         });
+
+        mdl.innerHTML = '<option value="">Select Model</option>';
+        yr.innerHTML = '<option value="">Select Year Range</option>';
+        eng.innerHTML = '<option value="">Select Engine</option>';
+        mdl.disabled = true;
+        yr.disabled = true;
+        eng.disabled = true;
+        checkReady();
       }
 
       function formatName(str) {
-        return str.split('-').map(function(w) {
-          return w.charAt(0).toUpperCase() + w.slice(1);
+        return String(str || '').split('-').map(function(w) {
+          var p = w.toLowerCase();
+          if (p === 'vw') return 'VW';
+          if (p === 'bmw') return 'BMW';
+          if (p === 'mg') return 'MG';
+          if (p === 'ds') return 'DS';
+          return p.charAt(0).toUpperCase() + p.slice(1);
         }).join(' ');
       }
 
       function checkReady() {
-        searchBtn.disabled = !(mfr.value && mdl.value && yr.value && eng.value);
+        searchBtn.disabled = !(vtype.value && mfr.value && mdl.value && yr.value && eng.value);
+      }
+
+      if (vtype) {
+        vtype.onchange = function() {
+          populateManufacturers();
+        };
       }
 
       mfr.onchange = function() {
@@ -680,8 +739,14 @@
         yr.disabled = true;
         eng.disabled = true;
 
-        if (mfr.value && DB.models[mfr.value]) {
-          DB.models[mfr.value].forEach(function(m) {
+        var selectedType = mapUiTypeToApiType(vtype && vtype.value ? vtype.value : 'car');
+        var typedModels = DB.modelsByType[selectedType] || {};
+        var models = typedModels[mfr.value] || DB.models[mfr.value] || [];
+
+        if (mfr.value && models.length) {
+          models.slice().sort(function(a, b) {
+            return String(a).localeCompare(String(b), undefined, { sensitivity: 'base' });
+          }).forEach(function(m) {
             var opt = document.createElement('option');
             opt.value = m.toLowerCase().replace(/\s+/g, '-');
             opt.textContent = m;
