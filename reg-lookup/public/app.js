@@ -9,6 +9,13 @@ const stockHp = document.getElementById('stock-hp');
 const stockNm = document.getElementById('stock-nm');
 const stageRows = document.getElementById('stage-rows');
 
+function normalizeRegistrationInput(value) {
+  return String(value || '')
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, '')
+    .slice(0, 8);
+}
+
 function formatRegistrationForDisplay(value) {
   const compact = String(value || '')
     .toUpperCase()
@@ -64,7 +71,8 @@ function showError(message) {
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const reg = regInput.value.trim();
+  const reg = normalizeRegistrationInput(regInput.value);
+  regInput.value = reg;
   if (!reg) {
     showError('Please enter a registration');
     return;
@@ -84,3 +92,13 @@ form.addEventListener('submit', async (e) => {
     showError('Network error, try again');
   }
 });
+
+if (regInput) {
+  regInput.setAttribute('autocapitalize', 'characters');
+  regInput.addEventListener('input', () => {
+    const normalized = normalizeRegistrationInput(regInput.value);
+    if (regInput.value !== normalized) {
+      regInput.value = normalized;
+    }
+  });
+}

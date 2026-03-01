@@ -475,7 +475,7 @@
       <div class="lookup-row">
         <div class="plate-wrap">
           <div class="flag">🇬🇧<span class="flag-code">UK</span></div>
-          <input id="vrm" class="plate-input" type="text" maxlength="8" placeholder="AB12 CDE" autocomplete="off" aria-label="Registration">
+          <input id="vrm" class="plate-input" type="text" maxlength="8" placeholder="ANC123" autocomplete="off" autocapitalize="characters" aria-label="Registration">
         </div>
         <button id="lookup" class="btn" type="button"><span aria-hidden="true">⌕</span><span class="btn-label">Find</span></button>
       </div>
@@ -799,8 +799,13 @@
       throw new Error(json.error || 'Lookup failed');
     }
 
+    function normalizeVrmInput(value) {
+      return (value || '').toString().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
+    }
+
     async function handleLookup() {
-      const vrm = (vrmInput.value || '').replace(/\s+/g, '').toUpperCase();
+      const vrm = normalizeVrmInput(vrmInput.value);
+      vrmInput.value = vrm;
       if (!vrm) {
         setStatus('Enter a registration.', 'error');
         return;
@@ -832,6 +837,12 @@
     }
 
     lookupBtn.addEventListener('click', handleLookup);
+    vrmInput.addEventListener('input', () => {
+      const normalized = normalizeVrmInput(vrmInput.value);
+      if (vrmInput.value !== normalized) {
+        vrmInput.value = normalized;
+      }
+    });
     vrmInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLookup(); });
 
     // Track iframe usage and check lock status

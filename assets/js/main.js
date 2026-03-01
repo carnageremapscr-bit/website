@@ -2132,6 +2132,8 @@
     const vrmInputSearch = document.getElementById('search-vrm');
     const vrmBtnSearch = document.getElementById('search-vrm-btn');
     const vrmStatusSearch = document.getElementById('search-vrm-status');
+
+    const normalizeVrmInput = (value, maxLen = 8) => String(value || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, maxLen);
     
     if (!searchManufacturer || !searchModel || !searchYear || !searchEngine || !searchBtn) return;
 
@@ -2758,7 +2760,7 @@
         return;
       }
 
-      const vrm = vrmValue.replace(/\s+/g, '').toUpperCase();
+      const vrm = normalizeVrmInput(vrmValue);
       vrmInputSearch.value = vrm;
       setVrmStatusSearch('Looking up vehicle...', 'loading');
 
@@ -2849,6 +2851,13 @@
     };
 
     if (vrmBtnSearch && vrmInputSearch) {
+      vrmInputSearch.setAttribute('autocapitalize', 'characters');
+      vrmInputSearch.addEventListener('input', () => {
+        const normalized = normalizeVrmInput(vrmInputSearch.value);
+        if (vrmInputSearch.value !== normalized) {
+          vrmInputSearch.value = normalized;
+        }
+      });
       vrmBtnSearch.addEventListener('click', handleVrmLookupSearch);
       vrmInputSearch.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
@@ -4158,6 +4167,8 @@ I would like to request a quote for tuning this vehicle.`,
     const contactPhone = document.getElementById('admin-contact-phone');
     const contactEmail = document.getElementById('admin-contact-email');
 
+    const normalizeVrmInput = (value, maxLen = 8) => String(value || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, maxLen);
+
     // Prefill contact inputs from saved CONTACT_SETTINGS so embeds carry defaults
     if (contactPhone && !contactPhone.value && CONTACT_SETTINGS.whatsappNumber) {
       contactPhone.value = CONTACT_SETTINGS.whatsappNumber;
@@ -4362,7 +4373,7 @@ I would like to request a quote for tuning this vehicle.`,
         setStatus('Enter a registration.', 'error');
         return;
       }
-      const vrm = raw.replace(/\s+/g, '').toUpperCase();
+      const vrm = normalizeVrmInput(raw);
       vrmInput.value = vrm;
       setStatus('Looking up vehicle...', 'loading');
       if (vrmBtn) {
@@ -4444,6 +4455,13 @@ I would like to request a quote for tuning this vehicle.`,
 
     if (vrmBtn) vrmBtn.addEventListener('click', performLookup);
     if (vrmInput) {
+      vrmInput.setAttribute('autocapitalize', 'characters');
+      vrmInput.addEventListener('input', () => {
+        const normalized = normalizeVrmInput(vrmInput.value);
+        if (vrmInput.value !== normalized) {
+          vrmInput.value = normalized;
+        }
+      });
       vrmInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
           e.preventDefault();
