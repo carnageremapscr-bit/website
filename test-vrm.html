@@ -141,10 +141,10 @@
       display: none;
     }
     .lookup-help a {
-      color: var(--text-muted);
-      text-decoration: none;
+      color: #ffffff;
+      text-decoration: underline;
       font-size: 0.95rem;
-      font-weight: 500;
+      font-weight: 700;
     }
     .lookup-help .sep {
       color: color-mix(in srgb, var(--text-muted) 70%, #ffffff);
@@ -489,10 +489,9 @@
       <div id="status" class="status info" aria-live="polite"></div>
 
       <div class="lookup-help" id="lookup-help">
-        <span>If you can't find your vehicle here, contact us for a quote:</span>
-        <a id="lookup-help-wa" href="#" target="_blank" rel="noopener">WhatsApp</a>
+        <a id="lookup-help-wa" href="#" target="_blank" rel="noopener">If you can't find your vehicle here, please contact us for a quote on WhatsApp.</a>
         <span class="sep">|</span>
-        <a id="lookup-help-email" href="#">Email</a>
+        <a id="lookup-help-email" href="#">Email us</a>
       </div>
 
       <div class="results">
@@ -634,7 +633,7 @@
     const defaultEmail = 'carnageremaps@gmail.com';
     const waParam = params.get('wa') || params.get('mobile') || defaultWa;
     const emailParam = params.get('email') || defaultEmail;
-    const quotePrefill = "Hi, I can't find my vehicle in your lookup tool. Please can you send me a quote?";
+    const baseQuotePrefill = "Hi, I can't find my vehicle in your lookup tool. Please can you send me a quote?";
 
     const normalizePhone = (p) => {
       if (!p) return '';
@@ -644,37 +643,42 @@
       return phone;
     };
 
-    let hasContact = false;
-    if (waParam && waBtn) {
-      const normalized = normalizePhone(waParam);
-      if (normalized) {
-        const waUrl = `https://wa.me/${normalized}?text=${encodeURIComponent(quotePrefill)}`;
+    const waNormalized = normalizePhone(waParam);
+    const hasWhatsappContact = !!waNormalized;
+    const hasEmailContact = !!(emailParam && emailBtn);
+    const hasContact = hasWhatsappContact || hasEmailContact || !!(waParam && smsBtn);
+
+    const buildQuotePrefill = (vrmValue) => {
+      const reg = normalizeVrmInput(vrmValue || '');
+      if (!reg) return baseQuotePrefill;
+      return `${baseQuotePrefill} Registration entered: ${reg}.`;
+    };
+
+    const updateContactPrefillLinks = (vrmValue) => {
+      const quotePrefill = buildQuotePrefill(vrmValue);
+
+      if (hasWhatsappContact && waBtn) {
+        const waUrl = `https://wa.me/${waNormalized}?text=${encodeURIComponent(quotePrefill)}`;
         waBtn.href = waUrl;
         if (lookupHelp && lookupHelpWa) {
           lookupHelpWa.href = waUrl;
           lookupHelp.style.display = 'block';
         }
-        hasContact = true;
       }
-    }
 
-    if (emailParam && emailBtn) {
-      const emailHref = `mailto:${emailParam}?subject=${encodeURIComponent('Reg Lookup Quote Request')}&body=${encodeURIComponent(quotePrefill)}`;
-      emailBtn.href = emailHref;
-      if (lookupHelp && lookupHelpEmail) {
-        lookupHelpEmail.href = emailHref;
-        lookupHelp.style.display = 'block';
+      if (hasEmailContact) {
+        const emailHref = `mailto:${emailParam}?subject=${encodeURIComponent('Reg Lookup Quote Request')}&body=${encodeURIComponent(quotePrefill)}`;
+        emailBtn.href = emailHref;
+        if (lookupHelp && lookupHelpEmail) {
+          lookupHelpEmail.href = emailHref;
+          lookupHelp.style.display = 'block';
+        }
       }
-      hasContact = true;
-    }
 
-    if (waParam && smsBtn) {
-      const normalized = normalizePhone(waParam);
-      if (normalized) {
-        smsBtn.href = `sms:+${normalized}`;
-        hasContact = true;
+      if (waParam && smsBtn && hasWhatsappContact) {
+        smsBtn.href = `sms:+${waNormalized}`;
       }
-    }
+    };
 
     // Contact actions will be shown after successful lookup
     // Keep hidden on initial load
@@ -830,6 +834,8 @@
       return (value || '').toString().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
     }
 
+    updateContactPrefillLinks(vrmInput?.value || '');
+
     async function handleLookup() {
       const vrm = normalizeVrmInput(vrmInput.value);
       vrmInput.value = vrm;
@@ -869,6 +875,7 @@
       if (vrmInput.value !== normalized) {
         vrmInput.value = normalized;
       }
+      updateContactPrefillLinks(vrmInput.value);
     });
     vrmInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLookup(); });
 
