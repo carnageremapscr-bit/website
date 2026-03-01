@@ -138,12 +138,18 @@
     .lookup-help {
       margin-top: 16px;
       text-align: center;
+      display: none;
     }
     .lookup-help a {
       color: var(--text-muted);
       text-decoration: none;
-      font-size: 2rem;
+      font-size: 0.95rem;
       font-weight: 500;
+    }
+    .lookup-help .sep {
+      color: color-mix(in srgb, var(--text-muted) 70%, #ffffff);
+      margin: 0 6px;
+      font-size: 0.95rem;
     }
     .lookup-help a:hover {
       color: color-mix(in srgb, var(--text-muted) 70%, #ffffff);
@@ -482,6 +488,13 @@
 
       <div id="status" class="status info" aria-live="polite"></div>
 
+      <div class="lookup-help" id="lookup-help">
+        <span>If you can't find your vehicle here, contact us for a quote:</span>
+        <a id="lookup-help-wa" href="#" target="_blank" rel="noopener">WhatsApp</a>
+        <span class="sep">|</span>
+        <a id="lookup-help-email" href="#">Email</a>
+      </div>
+
       <div class="results">
         <div class="card perf-card">
           <h3>Estimated Performance Gains</h3>
@@ -612,12 +625,16 @@
 
     const contactActions = document.getElementById('contact-actions');
     const waBtn = document.getElementById('contact-wa');
+    const lookupHelp = document.getElementById('lookup-help');
+    const lookupHelpWa = document.getElementById('lookup-help-wa');
+    const lookupHelpEmail = document.getElementById('lookup-help-email');
     const emailBtn = document.getElementById('contact-email');
     const smsBtn = document.getElementById('contact-sms');
     const defaultWa = '07546371963';
     const defaultEmail = 'carnageremaps@gmail.com';
     const waParam = params.get('wa') || params.get('mobile') || defaultWa;
     const emailParam = params.get('email') || defaultEmail;
+    const quotePrefill = "Hi, I can't find my vehicle in your lookup tool. Please can you send me a quote?";
 
     const normalizePhone = (p) => {
       if (!p) return '';
@@ -631,13 +648,23 @@
     if (waParam && waBtn) {
       const normalized = normalizePhone(waParam);
       if (normalized) {
-        waBtn.href = `https://wa.me/${normalized}`;
+        const waUrl = `https://wa.me/${normalized}?text=${encodeURIComponent(quotePrefill)}`;
+        waBtn.href = waUrl;
+        if (lookupHelp && lookupHelpWa) {
+          lookupHelpWa.href = waUrl;
+          lookupHelp.style.display = 'block';
+        }
         hasContact = true;
       }
     }
 
     if (emailParam && emailBtn) {
-      emailBtn.href = `mailto:${emailParam}?subject=Reg%20Lookup%20Enquiry`;
+      const emailHref = `mailto:${emailParam}?subject=${encodeURIComponent('Reg Lookup Quote Request')}&body=${encodeURIComponent(quotePrefill)}`;
+      emailBtn.href = emailHref;
+      if (lookupHelp && lookupHelpEmail) {
+        lookupHelpEmail.href = emailHref;
+        lookupHelp.style.display = 'block';
+      }
       hasContact = true;
     }
 
