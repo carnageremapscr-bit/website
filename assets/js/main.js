@@ -4210,7 +4210,7 @@ I would like to request a quote for tuning this vehicle.`,
 
       const waVal = (contactPhone?.value || CONTACT_SETTINGS.whatsappNumber || '').trim();
       if (waVal) params.set('wa', waVal);
-      const emailVal = (contactEmail?.value || CONTACT_SETTINGS.email || '').trim();
+      const emailVal = (contactEmail?.value || '').trim();
       if (emailVal) params.set('recipient-email', emailVal);
       const src = `https://web-production-df12d.up.railway.app/vrm-lookup.html?${params.toString()}`;
       return `<iframe src="${src}" width="100%" height="520" style="border:none;border-radius:12px;max-width:100%;" title="Carnage VRM Lookup" loading="lazy"></iframe>`;
