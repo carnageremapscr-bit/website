@@ -2665,8 +2665,16 @@ app.get('/api/vrm-lookup', async (req, res) => {
           .eq('id', iframeId)
           .single();
 
-        if (!iframeError && iframe?.email && !lookupEmail) {
-          lookupEmail = String(iframe.email).trim();
+        if (!iframeError && iframe?.email) {
+          const iframeEmail = String(iframe.email).trim();
+
+          if (lookupEmail && lookupEmail !== iframeEmail.toLowerCase()) {
+            console.log(`ℹ️ VRM Lookup email override via iframeId ${iframeId}: ${lookupEmail} -> ${iframeEmail}`);
+          }
+
+          // Treat iframe owner email as canonical for subscription checks.
+          // This avoids false negatives when the embed URL email parameter is mistyped.
+          lookupEmail = iframeEmail;
         }
 
         if (!iframeError && iframe && iframe.status === 'locked') {
