@@ -2666,9 +2666,9 @@ app.get('/api/vrm-lookup', async (req, res) => {
           .single();
 
         if (!iframeError && iframe?.email) {
-          const iframeEmail = String(iframe.email).trim();
+          const iframeEmail = String(iframe.email).trim().toLowerCase();
 
-          if (lookupEmail && lookupEmail !== iframeEmail.toLowerCase()) {
+          if (lookupEmail && lookupEmail !== iframeEmail) {
             console.log(`ℹ️ VRM Lookup email override via iframeId ${iframeId}: ${lookupEmail} -> ${iframeEmail}`);
           }
 
