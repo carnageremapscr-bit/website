@@ -650,7 +650,9 @@
     const defaultWa = '07546371963';
     const defaultEmail = 'carnageremaps@gmail.com';
     const waParam = params.get('wa') || params.get('mobile') || defaultWa;
-    const emailParam = params.get('email') || defaultEmail;
+    // EmailParam should be recipient email (where to send quotes TO), not user's subscription email
+    // The 'email' URL parameter is for subscription verification, not contact
+    const emailParam = params.get('recipient-email') || params.get('contact-email') || defaultEmail;
     const baseQuotePrefill = "Hi, I can't find my vehicle in your lookup tool. Please can you send me a quote?";
 
     const normalizePhone = (p) => {
