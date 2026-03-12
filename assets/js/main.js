@@ -3435,14 +3435,14 @@ I would like to request a quote for tuning this vehicle.`,
         const baseUrl = 'https://web-production-df12d.up.railway.app';
         
         const fallbackEmail = sessionStorage.getItem('userEmail') || '';
-        const vrmEmailParam = emailVal || fallbackEmail;
 
         const params = [
           `color=${encodeURIComponent(accentColor)}`,
           `bg=${encodeURIComponent(bgColor)}`,
           logoVal ? `logo=${encodeURIComponent(logoVal)}` : '',
           waVal ? `wa=${encodeURIComponent(waVal)}` : '',
-          vrmEmailParam ? `email=${encodeURIComponent(vrmEmailParam)}` : ''
+          emailVal ? `recipient-email=${encodeURIComponent(emailVal)}` : '',
+          fallbackEmail ? `email=${encodeURIComponent(fallbackEmail)}` : ''
         ].filter(Boolean).join('&');
 
         const baseSrc = `${baseUrl}/vrm-lookup.html?${params}`;
@@ -4211,7 +4211,7 @@ I would like to request a quote for tuning this vehicle.`,
       const waVal = (contactPhone?.value || CONTACT_SETTINGS.whatsappNumber || '').trim();
       if (waVal) params.set('wa', waVal);
       const emailVal = (contactEmail?.value || CONTACT_SETTINGS.email || '').trim();
-      if (emailVal) params.set('email', emailVal);
+      if (emailVal) params.set('recipient-email', emailVal);
       const src = `https://web-production-df12d.up.railway.app/vrm-lookup.html?${params.toString()}`;
       return `<iframe src="${src}" width="100%" height="520" style="border:none;border-radius:12px;max-width:100%;" title="Carnage VRM Lookup" loading="lazy"></iframe>`;
     };
