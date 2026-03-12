@@ -4070,7 +4070,7 @@ app.get('/api/iframes/:id/status', async (req, res) => {
       const { id } = req.params;
 
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-      const baseSelect = 'id, status, email, url, created_at, last_used, user_id, type';
+      const baseSelect = 'id, status, email, url, created_at, last_used, user_id, type, contact_email, whatsapp';
 
       const query = isUuid
         ? supabase.from('iframes').select(baseSelect).eq('id', id).single()
@@ -4118,7 +4118,7 @@ app.get('/api/iframes/status-by-email', async (req, res) => {
     // This ensures if ANY embed/vrm is locked, the lock shows
     let allLockedQuery = supabase
       .from('iframes')
-      .select('id, status, email, url, created_at, last_used, user_id, type')
+      .select('id, status, email, url, created_at, last_used, user_id, type, contact_email, whatsapp')
       .eq('email', email)
       .eq('status', 'locked');
 
@@ -4135,7 +4135,7 @@ app.get('/api/iframes/status-by-email', async (req, res) => {
     // If no locked iframe found, check for active iframe of the requested type
     let query = supabase
       .from('iframes')
-      .select('id, status, email, url, created_at, last_used, user_id, type')
+      .select('id, status, email, url, created_at, last_used, user_id, type, contact_email, whatsapp')
       .eq('email', email)
       .eq('status', 'active')
       .order('created_at', { ascending: false })

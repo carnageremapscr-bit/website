@@ -651,7 +651,7 @@
     const waParam = params.get('wa') || params.get('mobile') || defaultWa;
     // EmailParam should be recipient email (where to send quotes TO), not user's subscription email
     // The 'email' URL parameter is for subscription verification, not contact
-    const emailParam = (params.get('recipient-email') || params.get('contact-email') || '').trim();
+    let contactEmailParam = (params.get('recipient-email') || params.get('contact-email') || '').trim();
     const baseQuotePrefill = "Hi, I can't find my vehicle in your lookup tool. Please can you send me a quote?";
 
     const normalizePhone = (p) => {
@@ -663,9 +663,20 @@
     };
 
     const waNormalized = normalizePhone(waParam);
-    const hasWhatsappContact = !!waNormalized;
-    const hasEmailContact = !!(emailParam && emailBtn);
-    const hasContact = hasWhatsappContact || hasEmailContact || !!(waParam && smsBtn);
+    let hasWhatsappContact = !!waNormalized;
+    let hasEmailContact = !!(contactEmailParam && emailBtn);
+    let hasContact = hasWhatsappContact || hasEmailContact || !!(waParam && smsBtn);
+
+    const refreshContactAvailability = () => {
+      hasWhatsappContact = !!waNormalized;
+      hasEmailContact = !!(contactEmailParam && emailBtn);
+      hasContact = hasWhatsappContact || hasEmailContact || !!(waParam && smsBtn);
+
+      if (emailBtn && !hasEmailContact) emailBtn.href = '#';
+      if (lookupHelpEmail && !hasEmailContact) lookupHelpEmail.href = '#';
+    };
+
+    refreshContactAvailability();
 
     const buildQuotePrefill = (vrmValue) => {
       const reg = normalizeVrmInput(vrmValue || '');
@@ -674,6 +685,7 @@
     };
 
     const updateContactPrefillLinks = (vrmValue) => {
+      refreshContactAvailability();
       const quotePrefill = buildQuotePrefill(vrmValue);
 
       if (hasWhatsappContact && waBtn) {
@@ -686,7 +698,7 @@
       }
 
       if (hasEmailContact) {
-        const emailHref = `mailto:${emailParam}?subject=${encodeURIComponent('Reg Lookup Quote Request')}&body=${encodeURIComponent(quotePrefill)}`;
+        const emailHref = `mailto:${contactEmailParam}?subject=${encodeURIComponent('Reg Lookup Quote Request')}&body=${encodeURIComponent(quotePrefill)}`;
         emailBtn.href = emailHref;
         emailBtn.target = '_top';
         if (lookupHelp && lookupHelpEmail) {
@@ -911,7 +923,8 @@
       try {
         // Email and iframeId are already initialized synchronously above
         const iframeId = window.iframeId;
-        const emailParam = window.userEmail;
+        const creatorEmail = window.userEmail;
+        let statusData = null;
         
         // Check iframe lock status
         let locked = false;
@@ -919,21 +932,27 @@
         if (iframeId) {
           try {
             const statusResp = await fetch(`/api/iframes/${iframeId}/status`, { cache: 'no-store' });
-            const statusData = statusResp.ok ? await statusResp.json() : null;
+            statusData = statusResp.ok ? await statusResp.json() : null;
             locked = statusData?.iframe?.status === 'locked' || statusData?.iframe?.locked === true;
             console.log('Iframe lock status (by ID):', { iframeId, locked, status: statusData?.iframe?.status });
           } catch (err) {
             console.warn('Iframe status check failed', err);
           }
-        } else if (emailParam) {
+        } else if (creatorEmail) {
           try {
-            const statusResp = await fetch(`/api/iframes/status-by-email?email=${encodeURIComponent(emailParam)}&type=vrm`, { cache: 'no-store' });
-            const statusData = statusResp.ok ? await statusResp.json() : null;
+            const statusResp = await fetch(`/api/iframes/status-by-email?email=${encodeURIComponent(creatorEmail)}&type=vrm`, { cache: 'no-store' });
+            statusData = statusResp.ok ? await statusResp.json() : null;
             locked = statusData?.iframe?.status === 'locked' || statusData?.iframe?.locked === true;
-            console.log('Iframe lock status (by email):', { emailParam, locked, status: statusData?.iframe?.status });
+            console.log('Iframe lock status (by email):', { creatorEmail, locked, status: statusData?.iframe?.status });
           } catch (err) {
             console.warn('Iframe email status check failed', err);
           }
+        }
+
+        const resolvedContactEmail = (statusData?.iframe?.contact_email || '').trim();
+        if (!contactEmailParam && resolvedContactEmail) {
+          contactEmailParam = resolvedContactEmail;
+          updateContactPrefillLinks(vrmInput?.value || '');
         }
         
         // If locked, show overlay and hide content persistently
