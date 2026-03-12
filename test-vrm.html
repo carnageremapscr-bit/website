@@ -852,6 +852,12 @@
       return (value || '').toString().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
     }
 
+    // Initialize userEmail and iframeId immediately (synchronous)
+    // This must happen before updateContactPrefillLinks so email is available on page load
+    const initParams = new URLSearchParams(window.location.search);
+    window.iframeId = initParams.get('iframeId');
+    window.userEmail = resolveUserEmail();
+    
     updateContactPrefillLinks(vrmInput?.value || '');
 
     async function handleLookup() {
@@ -897,17 +903,12 @@
     });
     vrmInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLookup(); });
 
-    // Track iframe usage and check lock status
+    // Track iframe usage and check lock status (async initialization)
     (async () => {
       try {
-        // Extract URL parameters for tracking
-        const params = new URLSearchParams(window.location.search);
-        const iframeId = params.get('iframeId');
-        const emailParam = resolveUserEmail();
-        
-        // Store for use in fetch requests
-        window.userEmail = emailParam;
-        window.iframeId = iframeId;
+        // Email and iframeId are already initialized synchronously above
+        const iframeId = window.iframeId;
+        const emailParam = window.userEmail;
         
         // Check iframe lock status
         let locked = false;
