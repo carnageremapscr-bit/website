@@ -1105,14 +1105,14 @@
       setTimeout(() => {
         const whatsappBtn = document.querySelector('.whatsapp-quote');
         const emailBtn = document.querySelector('.email-quote');
-        
+        const phoneBtn = document.getElementById('quote-phone-btn');
+
         if (whatsappBtn) {
           whatsappBtn.addEventListener('click', () => {
             const manufacturer = manufacturerSelect.options[manufacturerSelect.selectedIndex]?.text || 'Unknown';
             const model = modelSelect.options[modelSelect.selectedIndex]?.text || 'Unknown';
             const year = yearSelect.options[yearSelect.selectedIndex]?.text || 'Unknown';
             const engine = engineSelect.options[engineSelect.selectedIndex]?.text || 'Unknown';
-            
             const message = encodeURIComponent(
               `Hi! I'm interested in getting a quote for:\n\n` +
               `Vehicle: ${manufacturer} ${model}\n` +
@@ -1124,18 +1124,16 @@
               `Please provide me with a quote and any additional information I need to know.\n\n` +
               `Thank you!`
             );
-            
             window.open(`https://wa.me/${CONTACT_SETTINGS.whatsappNumber.replace(/\s/g, '')}?text=${message}`, '_blank');
           });
         }
-        
+
         if (emailBtn) {
           emailBtn.addEventListener('click', () => {
             const manufacturer = manufacturerSelect.options[manufacturerSelect.selectedIndex]?.text || 'Unknown';
             const model = modelSelect.options[modelSelect.selectedIndex]?.text || 'Unknown';
             const year = yearSelect.options[yearSelect.selectedIndex]?.text || 'Unknown';
             const engine = engineSelect.options[engineSelect.selectedIndex]?.text || 'Unknown';
-            
             const subject = encodeURIComponent(`Quote Request: ${manufacturer.toUpperCase()} ${model} - ${engine}`);
             const body = encodeURIComponent(
               `Hi,\n\n` +
@@ -1163,8 +1161,15 @@
               `Thank you!\n\n` +
               `Best regards`
             );
-            
             window.location.href = `mailto:${CONTACT_SETTINGS.email}?subject=${subject}&body=${body}`;
+          });
+        }
+
+        if (phoneBtn) {
+          phoneBtn.addEventListener('click', () => {
+            // Remove spaces and ensure number is in correct format
+            const phoneNumber = CONTACT_SETTINGS.whatsappNumber.replace(/\s/g, '');
+            window.location.href = `tel:${phoneNumber}`;
           });
         }
       }, 100);
